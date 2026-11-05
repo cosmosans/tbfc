@@ -42,6 +42,7 @@ export default function MatchEventPage({
         </Alert>
       )}
       <Tabs
+        centered
         value={view}
         onChange={(_, next) =>
           setSearchParams(next === "board" ? { tab: "board" } : {}, {
