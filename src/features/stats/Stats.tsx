@@ -35,7 +35,7 @@ export default function Stats({ data }: { data: ClubData }) {
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Goals by season
+            Goals by Season
           </Typography>
           <Box sx={{ width: "100%", height: 320 }}>
             <ResponsiveContainer>

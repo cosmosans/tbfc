@@ -357,7 +357,7 @@ function OpponentDialog({
             })
           }
         >
-          Save team
+          Save Team
         </Button>
       </DialogActions>
     </Dialog>
