@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { Box, Button, Card, CardContent, Dialog, Stack, TextField, Typography } from "@mui/material";
 import type { Board, ClubData, Match } from "../../model";
@@ -20,11 +20,19 @@ export default function Matchboard({
   match: Match;
   update: (data: ClubData) => void;
 }) {
-  const lineup =
-    data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
-  const base = defaultBoard(match.id, lineup, data);
-  const saved = data.boards.find((b) => b.matchId === match.id);
-  const [board, setBoard] = useState<Board>(() =>
+  const lineup = useMemo(
+    () => data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id),
+    [data.lineups, match.id],
+  );
+  const base = useMemo(
+    () => defaultBoard(match.id, lineup, data),
+    [match.id, lineup, data.players],
+  );
+  const saved = useMemo(
+    () => data.boards.find((b) => b.matchId === match.id),
+    [data.boards, match.id],
+  );
+  const lineupBoard = useMemo<Board>(() =>
     saved && (saved.formation ?? '1-2-3-1') === lineup.formation
       ? {
           ...saved,
@@ -38,10 +46,17 @@ export default function Matchboard({
           })),
         }
       : { ...base, notes: saved?.notes ?? '' },
+    [saved, lineup.formation, base],
   );
+  const [board, setBoard] = useState<Board>(lineupBoard);
   const boardRef = useRef(board);
   const drag = useRef<{ id: string; pointerId: number } | null>(null);
   const [fullScreen, setFullScreen] = useState(false);
+  useEffect(() => {
+    if (drag.current) return;
+    boardRef.current = lineupBoard;
+    setBoard(lineupBoard);
+  }, [lineupBoard]);
   function persist(next: Board) {
     boardRef.current = next;
     setBoard(next);
