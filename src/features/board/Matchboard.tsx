@@ -4,7 +4,8 @@ import { Box, Button, Card, CardContent, Dialog, Stack, TextField, Typography } 
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
 import { Pitch, CenterLine, CenterCircle, TopBox, BottomBox, PitchMarker } from "./Matchboard.styles";
-import { NameplateText } from "../../components/LineupNameplate";
+import { NameplateText, goalkeeperPlate } from "../../components/LineupNameplate";
+import { formationSlots } from "../lineup/formations";
 import { canEditClub } from "../../editAccess";
 
 export default function Matchboard({
@@ -92,6 +93,10 @@ export default function Matchboard({
               key={marker.id}
               team={marker.team}
               kit={match.kit}
+              goalkeeper={goalkeeperPlate(
+                lineup.starters[Number(marker.id.replace('slot-', ''))],
+                formationSlots[lineup.formation][Number(marker.id.replace('slot-', ''))],
+              )}
               style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
               onPointerDown={(e) => {
                 if (drag.current || !e.isPrimary || e.button !== 0) return;

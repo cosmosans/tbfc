@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { nameplateStyles } from "../../components/LineupNameplate";
+import { nameplateStyles, type GoalkeeperPlate } from "../../components/LineupNameplate";
 import type { Marker } from "../../model";
 
 export const Pitch = styled("div")({
@@ -49,8 +49,8 @@ export const BottomBox = styled("div")({
   borderBottom: 0,
 });
 export const PitchMarker = styled("button", {
-  shouldForwardProp: (prop) => prop !== "team" && prop !== "kit",
-})<{ team: Marker["team"]; kit?: string }>(({ team, kit }) => ({
+  shouldForwardProp: (prop) => prop !== "team" && prop !== "kit" && prop !== "goalkeeper",
+})<{ team: Marker["team"]; kit?: string; goalkeeper?: GoalkeeperPlate }>(({ team, kit, goalkeeper }) => ({
   position: "absolute",
   transform: "translate(-50%,-50%)",
   minWidth: 54,
@@ -98,7 +98,7 @@ export const PitchMarker = styled("button", {
     : {}),
   ...(team === "tbfc"
     ? {
-        ...nameplateStyles(kit),
+        ...nameplateStyles(kit, goalkeeper),
         width: "22%",
         maxWidth: 160,
         padding: "5px 18px",

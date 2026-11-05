@@ -21,6 +21,7 @@ import {
 import {
   LineupNameplate,
   NameplateText,
+  goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { formationPoints, formationSlots } from "./formations";
 import PitchOverlay from "../../img/pitch-overlay.png";
@@ -139,12 +140,13 @@ export default function LineupPitch({
                   <LineupNameplate
                     key={person?.id ?? "empty"}
                     kit={kit}
+                    goalkeeper={goalkeeperPlate(person?.id, slots[index])}
                     data-player-number={person?.number}
                     aria-label={`${slots[index]}${row ? " substitute" : " starter"}: ${person ? `#${person.number} ${person.name}` : "Unassigned"}`}
                   >
                     <NameplateText
                       number={person?.number}
-                      name={person ? person.name.split(" ")[0] : slots[index]}
+                      name={person ? person.name.split(" ")[0] : ""}
                     />
                   </LineupNameplate>
                 ))}

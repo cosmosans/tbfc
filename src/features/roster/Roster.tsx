@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { canEditClub } from "../../editAccess";
+import { byPlayerNumber } from "../../playerOrder";
 import type { ClubData, Player, Position } from "../../model";
 import PlayerCard, { PositionSelect } from "./PlayerCard";
 import { FourColumnGrid } from "../../components/layout";
@@ -118,7 +119,7 @@ export default function Roster({
         </Dialog>
       )}
       <FourColumnGrid>
-        {data.players.map((player) => (
+        {[...data.players].sort(byPlayerNumber).map((player) => (
           <PlayerCard
             key={player.id}
             player={player}
