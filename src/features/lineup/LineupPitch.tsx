@@ -11,21 +11,14 @@ import {
   Typography,
 } from "@mui/material";
 import type { ClubData, Formation, Lineup } from "../../model";
-import {
-  Pitch,
-  CenterLine,
-  CenterCircle,
-  TopBox,
-  BottomBox,
-} from "../board/Matchboard.styles";
+import { Pitch } from "../board/Matchboard.styles";
+import PitchSurface from "../../components/PitchSurface";
 import {
   LineupNameplate,
   NameplateText,
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { formationPoints, formationSlots } from "./formations";
-import PitchOverlay from "../../img/pitch-overlay.png";
-import PitchImage from "../../img/pitch.png";
 export default function LineupPitch({
   data,
   lineup,
@@ -51,34 +44,7 @@ export default function LineupPitch({
         sx={{ minHeight: { xs: 380, sm: 500 }, touchAction: "auto" }}
         aria-label={`${lineup.formation} ${filterToStarters ? "starting formation" : "lineup with substitutes"}`}
       >
-        <img
-          src={PitchImage}
-          alt=""
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            filter: "grayscale(100%)",
-            pointerEvents: "none",
-            zIndex: 2,
-            opacity: 0.3,
-          }}
-        />
-
-        <img
-          src={PitchOverlay}
-          alt=""
-          style={{
-            position: "absolute",
-            inset: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-            opacity: 0.8,
-            zIndex: 1,
-          }}
-        />
+        <PitchSurface />
 
         <Box
           sx={{
@@ -87,10 +53,6 @@ export default function LineupPitch({
             zIndex: 5,
           }}
         >
-          <CenterLine />
-          <CenterCircle />
-          <TopBox />
-          <BottomBox />
           {points.map(([x, y], index) => {
             const player = data.players.find(
               (item) => item.id === lineup.starters[index],

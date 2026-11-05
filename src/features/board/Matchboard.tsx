@@ -3,7 +3,8 @@ import type { PointerEvent as ReactPointerEvent } from "react";
 import { Box, Button, Card, CardContent, Dialog, Stack, TextField, Typography } from "@mui/material";
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
-import { Pitch, CenterLine, CenterCircle, TopBox, BottomBox, PitchMarker } from "./Matchboard.styles";
+import { Pitch, PitchMarker } from "./Matchboard.styles";
+import PitchSurface from "../../components/PitchSurface";
 import { NameplateText, goalkeeperPlate } from "../../components/LineupNameplate";
 import { formationSlots } from "../lineup/formations";
 import SoccerBall from "./SoccerBall";
@@ -91,17 +92,14 @@ export default function Matchboard({
           onPointerCancel={() => { drag.current = null; }}
           onLostPointerCapture={() => { drag.current = null; }}
         >
-          <CenterLine />
-          <CenterCircle />
-          <TopBox />
-          <BottomBox />
+          <PitchSurface />
           {board.markers.map((marker) => (
             <PitchMarker
               key={marker.id}
               team={marker.team}
               data-ball={marker.team === "ball" ? "true" : undefined}
               data-player-marker={marker.team !== "ball" ? marker.id : undefined}
-              sx={marker.team === "ball" ? { zIndex: 2 } : undefined}
+              sx={{ zIndex: marker.team === "ball" ? 5 : 4 }}
               kit={match.kit}
               goalkeeper={goalkeeperPlate(
                 lineup.starters[Number(marker.id.replace('slot-', ''))],
