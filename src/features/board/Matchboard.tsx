@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { Box, Button, Card, CardContent, Dialog, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Dialog, IconButton, Stack, TextField, Typography } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
 import { Pitch, PitchMarker } from "./Matchboard.styles";
@@ -153,7 +154,13 @@ export default function Matchboard({
           } } }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 1, flexShrink: 0 }}>
             <Typography variant="h6">Matchboard</Typography>
-            <Button onClick={() => { ballMotion.stop(); setFullScreen(false); }}>Exit full screen</Button>
+            <IconButton
+              aria-label="Exit full screen"
+              onClick={() => { ballMotion.stop(); setFullScreen(false); }}
+              sx={{ color: "text.primary" }}
+            >
+              <CloseIcon />
+            </IconButton>
           </Stack>
           {fullScreen && pitch}
         </Dialog>
