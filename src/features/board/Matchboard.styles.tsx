@@ -49,8 +49,8 @@ export const BottomBox = styled("div")({
   borderBottom: 0,
 });
 export const PitchMarker = styled("button", {
-  shouldForwardProp: (prop) => prop !== "team" && prop !== "kit" && prop !== "goalkeeper",
-})<{ team: Marker["team"]; kit?: string; goalkeeper?: GoalkeeperPlate }>(({ team, kit, goalkeeper }) => ({
+  shouldForwardProp: (prop) => prop !== "team" && prop !== "kit" && prop !== "goalkeeper" && prop !== "opponentColor",
+})<{ team: Marker["team"]; kit?: string; goalkeeper?: GoalkeeperPlate; opponentColor?: string }>(({ team, kit, goalkeeper, opponentColor }) => ({
   position: "absolute",
   transform: "translate(-50%,-50%)",
   minWidth: 54,
@@ -66,9 +66,9 @@ export const PitchMarker = styled("button", {
   userSelect: "none",
   WebkitTouchCallout: "none",
   boxShadow: "0 3px 8px #0008",
-  color: team === "ball" ? "inherit" : "#171717",
+  color: team === "opponent" ? "#fff" : team === "ball" ? "inherit" : "#171717",
   background:
-    team === "tbfc" ? "#f47730" : team === "opponent" ? "#e6e6e6" : "#fff",
+    team === "tbfc" ? "#f47730" : team === "opponent" ? opponentColor || "#555" : "#fff",
   "&:active": { cursor: "grabbing" },
   "@media (max-width: 600px)": { minWidth: 48, minHeight: 48 },
   ...(team === "ball"
@@ -102,6 +102,17 @@ export const PitchMarker = styled("button", {
         width: "22%",
         maxWidth: 160,
         padding: "5px 18px",
+      }
+    : {}),
+  ...(team === "opponent"
+    ? {
+        width: "17%",
+        minWidth: 70,
+        maxWidth: 130,
+        height: 38,
+        padding: "4px 6px",
+        borderRadius: 0,
+        textAlign: "center" as const,
       }
     : {}),
 }));

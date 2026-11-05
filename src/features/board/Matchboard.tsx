@@ -1,12 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { Box, Button, Card, CardContent, Dialog, IconButton, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import type { Board, ClubData, Match } from "../../model";
+import type { Board, ClubData, Marker, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
+import { opponentFor } from "../../clubView";
 import { Pitch, PitchMarker } from "./Matchboard.styles";
 import PitchSurface from "../../components/PitchSurface";
-import { NameplateText, goalkeeperPlate } from "../../components/LineupNameplate";
+import {
+  NameplateText,
+  goalkeeperPlate,
+} from "../../components/LineupNameplate";
 import { formationSlots } from "../lineup/formations";
 import SoccerBall from "./SoccerBall";
 import { useBallMotion } from "./useBallMotion";
@@ -22,7 +36,9 @@ export default function Matchboard({
   update: (data: ClubData) => void;
 }) {
   const lineup = useMemo(
-    () => data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id),
+    () =>
+      data.lineups.find((l) => l.matchId === match.id) ??
+      defaultLineup(match.id),
     [data.lineups, match.id],
   );
   const base = useMemo(
@@ -33,26 +49,58 @@ export default function Matchboard({
     () => data.boards.find((b) => b.matchId === match.id),
     [data.boards, match.id],
   );
-  const lineupBoard = useMemo<Board>(() =>
-    saved && (saved.formation ?? '1-2-3-1') === lineup.formation
-      ? {
-          ...saved,
-          formation: lineup.formation,
-          markers: saved.markers.map((marker) => ({
-            ...marker,
-            playerNumber: base.markers.find((m) => m.id === marker.id)?.playerNumber,
-            label:
-              base.markers.find((m) => m.id === marker.id)?.label ??
-              marker.label,
-          })),
-        }
-      : { ...base, notes: saved?.notes ?? '' },
+  const opponentColor = opponentFor(data, match)?.color || "#555";
+  const lineupBoard = useMemo<Board>(
+    () =>
+      saved && (saved.formation ?? "1-2-3-1") === lineup.formation
+        ? {
+            ...saved,
+            formation: lineup.formation,
+            markers: base.markers.map((marker) => {
+              const previous = saved.markers.find((m) => m.id === marker.id);
+              if (!previous) return marker;
+              return marker.team === "tbfc"
+                ? { ...previous, playerNumber: marker.playerNumber, label: marker.label }
+                : { ...marker, ...previous };
+            }),
+          }
+        : {
+            ...base,
+            markers: base.markers.map((marker) => {
+              if (marker.team !== "opponent") return marker;
+              const previous = saved?.markers.find((m) => m.id === marker.id);
+              return previous
+                ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
+                : marker;
+            }),
+            notes: saved?.notes ?? "",
+          },
     [saved, lineup.formation, base],
   );
   const [board, setBoard] = useState<Board>(lineupBoard);
   const boardRef = useRef(board);
-  const drag = useRef<{ id: string; pointerId: number } | null>(null);
+  const drag = useRef<{ id: string; pointerId: number; x: number; y: number } | null>(null);
   const [fullScreen, setFullScreen] = useState(false);
+  const [editingOpponentId, setEditingOpponentId] = useState<string | null>(null);
+  const [opponentNumber, setOpponentNumber] = useState("");
+  const [opponentName, setOpponentName] = useState("");
+  function editOpponent(marker: Marker) {
+    setEditingOpponentId(marker.id);
+    setOpponentNumber(marker.playerNumber ?? "");
+    setOpponentName(marker.label);
+  }
+  function saveOpponent() {
+    if (!editingOpponentId) return;
+    persist({
+      ...boardRef.current,
+      markers: boardRef.current.markers.map((marker) =>
+        marker.id === editingOpponentId
+          ? { ...marker, playerNumber: opponentNumber.trim(), label: opponentName.trim() }
+          : marker,
+      ),
+    });
+    setEditingOpponentId(null);
+  }
   useEffect(() => {
     if (drag.current) return;
     boardRef.current = lineupBoard;
@@ -70,7 +118,12 @@ export default function Matchboard({
   const ballMotion = useBallMotion(boardRef, setBoard, persist);
   function move(event: ReactPointerEvent<HTMLDivElement>) {
     if (!drag.current || drag.current.pointerId !== event.pointerId) return;
-    if (drag.current.id === "ball") ballMotion.sample(event.clientX, event.clientY);
+    if (
+      drag.current.id.startsWith("opponent-") &&
+      Math.hypot(event.clientX - drag.current.x, event.clientY - drag.current.y) < 8
+    ) return;
+    if (drag.current.id === "ball")
+      ballMotion.sample(event.clientX, event.clientY);
     const rect = event.currentTarget.getBoundingClientRect();
     const x = Math.max(
       4,
@@ -90,73 +143,142 @@ export default function Matchboard({
     setBoard(next);
   }
   const pitch = (
-        <Pitch
-          ref={ballMotion.pitch}
-          sx={fullScreen ? { flex: 1, minHeight: '0 !important', touchAction: 'none', overflow: 'hidden' } : undefined}
-          onPointerMove={move}
-          onPointerUp={(e) => {
-            if (drag.current?.pointerId !== e.pointerId) return;
-            move(e);
-            const isBall = drag.current.id === "ball";
-            drag.current = null;
-            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-              e.currentTarget.releasePointerCapture(e.pointerId);
+    <Pitch
+      ref={ballMotion.pitch}
+      sx={
+        fullScreen
+          ? {
+              flex: 1,
+              minHeight: "0 !important",
+              touchAction: "none",
+              overflow: "hidden",
             }
-            if (isBall) ballMotion.release();
-            else persist(boardRef.current);
+          : undefined
+      }
+      onPointerMove={move}
+      onPointerUp={(e) => {
+        if (drag.current?.pointerId !== e.pointerId) return;
+        const pressed = drag.current;
+        if (
+          pressed.id.startsWith("opponent-") &&
+          Math.hypot(e.clientX - pressed.x, e.clientY - pressed.y) < 8
+        ) {
+          drag.current = null;
+          if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }
+          const marker = boardRef.current.markers.find((m) => m.id === pressed.id);
+          if (marker) editOpponent(marker);
+          return;
+        }
+        move(e);
+        const isBall = drag.current.id === "ball";
+        drag.current = null;
+        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }
+        if (isBall) ballMotion.release();
+        else persist(boardRef.current);
+      }}
+      onPointerCancel={() => {
+        drag.current = null;
+      }}
+      onLostPointerCapture={() => {
+        drag.current = null;
+      }}
+    >
+      <PitchSurface />
+      {board.markers.map((marker) => (
+        <PitchMarker
+          key={marker.id}
+          team={marker.team}
+          data-ball={marker.team === "ball" ? "true" : undefined}
+          data-player-marker={marker.team !== "ball" ? marker.id : undefined}
+          sx={{ zIndex: marker.team === "ball" ? 5 : 4 }}
+          kit={match.kit}
+          opponentColor={opponentColor}
+          goalkeeper={goalkeeperPlate(
+            lineup.starters[Number(marker.id.replace("slot-", ""))],
+            formationSlots[lineup.formation][
+              Number(marker.id.replace("slot-", ""))
+            ],
+          )}
+          style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
+          onPointerDown={(e) => {
+            if (drag.current || !e.isPrimary || e.button !== 0) return;
+            e.preventDefault();
+            if (marker.team === "ball") ballMotion.begin(e.clientX, e.clientY);
+            e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
+            drag.current = { id: marker.id, pointerId: e.pointerId, x: e.clientX, y: e.clientY };
           }}
-          onPointerCancel={() => { drag.current = null; }}
-          onLostPointerCapture={() => { drag.current = null; }}
+          type="button"
+          aria-label={
+            marker.team === "ball"
+              ? "Drag or flick soccer ball"
+              : marker.team === "opponent"
+                ? `Edit opponent ${marker.playerNumber || marker.label || marker.id}`
+              : `Move ${marker.label}`
+          }
         >
-          <PitchSurface />
-          {board.markers.map((marker) => (
-            <PitchMarker
-              key={marker.id}
-              team={marker.team}
-              data-ball={marker.team === "ball" ? "true" : undefined}
-              data-player-marker={marker.team !== "ball" ? marker.id : undefined}
-              sx={{ zIndex: marker.team === "ball" ? 5 : 4 }}
-              kit={match.kit}
-              goalkeeper={goalkeeperPlate(
-                lineup.starters[Number(marker.id.replace('slot-', ''))],
-                formationSlots[lineup.formation][Number(marker.id.replace('slot-', ''))],
-              )}
-              style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
-              onPointerDown={(e) => {
-                if (drag.current || !e.isPrimary || e.button !== 0) return;
-                e.preventDefault();
-                if (marker.team === "ball") ballMotion.begin(e.clientX, e.clientY);
-                e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
-                drag.current = { id: marker.id, pointerId: e.pointerId };
-              }}
-              type="button"
-              aria-label={marker.team === "ball" ? "Drag or flick soccer ball" : `Move ${marker.label}`}
-            >
-              {marker.team === "tbfc" ? (
-                <NameplateText number={marker.playerNumber} name={marker.label} />
-              ) : marker.team === "ball" ? <SoccerBall point={marker.point} /> : marker.label}
-            </PitchMarker>
-          ))}
-        </Pitch>
+          {marker.team === "tbfc" ? (
+            <NameplateText number={marker.playerNumber} name={marker.label} />
+          ) : marker.team === "ball" ? (
+            <SoccerBall point={marker.point} />
+          ) : (
+            <NameplateText number={marker.playerNumber} name={marker.label} />
+          )}
+        </PitchMarker>
+      ))}
+    </Pitch>
   );
   return (
     <Stack direction={{ xs: "column", lg: "row" }} gap={2}>
       <Box sx={{ flexGrow: 1 }}>
-        <Button variant="outlined" sx={{ mb: 1 }} onClick={() => { ballMotion.stop(); setFullScreen(true); }}>
-          Full screen
+        <Button
+          variant="outlined"
+          sx={{ mb: 1 }}
+          onClick={() => {
+            ballMotion.stop();
+            setFullScreen(true);
+          }}
+        >
+          Full Screen
         </Button>
         {!fullScreen && pitch}
-        <Dialog fullScreen open={fullScreen} onClose={() => { ballMotion.stop(); setFullScreen(false); }}
-          slotProps={{ paper: { sx: {
-            height: '100dvh', overflow: 'hidden', overscrollBehavior: 'none',
-            paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)',
-            paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)',
-          } } }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 1, flexShrink: 0 }}>
+        <Dialog
+          fullScreen
+          open={fullScreen}
+          onClose={() => {
+            ballMotion.stop();
+            setFullScreen(false);
+          }}
+          slotProps={{
+            paper: {
+              sx: {
+                height: "100dvh",
+                overflow: "hidden",
+                overscrollBehavior: "none",
+                paddingTop: "env(safe-area-inset-top)",
+                paddingBottom: "env(safe-area-inset-bottom)",
+                paddingLeft: "env(safe-area-inset-left)",
+                paddingRight: "env(safe-area-inset-right)",
+              },
+            },
+          }}
+        >
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ px: 2, py: 1, flexShrink: 0 }}
+          >
             <Typography variant="h6">Matchboard</Typography>
             <IconButton
-              aria-label="Exit full screen"
-              onClick={() => { ballMotion.stop(); setFullScreen(false); }}
+              aria-label="Exit Full Screen"
+              onClick={() => {
+                ballMotion.stop();
+                setFullScreen(false);
+              }}
               sx={{ color: "text.primary" }}
             >
               <CloseIcon />
@@ -164,21 +286,54 @@ export default function Matchboard({
           </Stack>
           {fullScreen && pitch}
         </Dialog>
+        <Dialog
+          open={Boolean(editingOpponentId)}
+          onClose={() => setEditingOpponentId(null)}
+          fullWidth
+          maxWidth="xs"
+        >
+          <Stack gap={2} sx={{ p: 3 }}>
+            <Typography variant="h6">Opponent player</Typography>
+            <TextField label="Number" value={opponentNumber} onChange={(e) => setOpponentNumber(e.target.value)} fullWidth autoFocus />
+            <TextField label="Name" value={opponentName} onChange={(e) => setOpponentName(e.target.value)} fullWidth />
+            <Stack direction="row" justifyContent="flex-end" gap={1}>
+              <Button onClick={() => setEditingOpponentId(null)}>Cancel</Button>
+              <Button variant="contained" onClick={saveOpponent}>Save</Button>
+            </Stack>
+          </Stack>
+        </Dialog>
       </Box>
       <Stack gap={2} sx={{ width: { lg: 280 } }}>
         <Card>
           <CardContent>
-            <Typography variant="h6">Coaching board</Typography>
+            <Typography variant="h6">Coaching Board</Typography>
             <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
               {canEditClub
-                ? 'Drag markers on the pitch. Positions save when released.'
-                : 'Drag markers to try a setup. Changes stay on this board until you leave.'}
+                ? "Drag markers on the pitch. Positions save when released."
+                : "Drag markers to try a setup. Changes stay on this board until you leave."}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Flick the ball to pass. It bounces off the sides and sticks to players.
-              Drag a player to carry it, or flick the ball away again.
+              Flick the ball to pass. It bounces off the sides and sticks to
+              players. Drag a player to carry it, or flick the ball away again.
             </Typography>
-            <Button variant="outlined" fullWidth onClick={() => { ballMotion.reset(); persist({ ...base, notes: boardRef.current.notes }); }}>
+            <Button
+              variant="outlined"
+              fullWidth
+              onClick={() => {
+                ballMotion.reset();
+                persist({
+                  ...base,
+                  notes: boardRef.current.notes,
+                  markers: base.markers.map((marker) => {
+                    if (marker.team !== "opponent") return marker;
+                    const previous = boardRef.current.markers.find((m) => m.id === marker.id);
+                    return previous
+                      ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
+                      : marker;
+                  }),
+                });
+              }}
+            >
               Reset to lineup
             </Button>
           </CardContent>
@@ -215,4 +370,3 @@ export default function Matchboard({
     </Stack>
   );
 }
-

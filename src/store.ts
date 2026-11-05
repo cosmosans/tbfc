@@ -188,6 +188,16 @@ export function defaultBoard(matchId: string, lineup: Lineup, data: ClubData): B
     team: 'tbfc',
     point: { x: positions[index][0], y: positions[index][1] },
   }));
-  markers.push({ id: 'ball', label: '⚽', team: 'ball', point: { x: 55, y: 55 } });
+  // Pair an opponent marker with each outfield slot, slightly toward the far goal.
+  positions.slice(1).forEach(([x, y], index) => {
+    markers.push({
+      id: `opponent-${index + 1}`,
+      label: '',
+      playerNumber: String(index + 1),
+      team: 'opponent',
+      point: { x: Math.max(8, Math.min(92, x + (index % 2 === 0 ? -3 : 3))), y: y - 13 },
+    });
+  });
+  markers.push({ id: 'ball', label: '⚽', team: 'ball', point: { x: 59, y: 47 } });
   return { matchId, formation: lineup.formation, markers, notes: '' };
 }
