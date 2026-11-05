@@ -10,12 +10,14 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
-import { displayScore, record, scoreResult } from "../../model";
+import { record } from "../../model";
 import { opponentFor, opponentName, seasonName } from "../../clubView";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
 import moment from "moment";
 import { splitMatchLocation } from "../../matchLocation";
+import WhiteKitImage from "../../img/white-front.png";
+import BlackKitImage from "../../img/black-front.png";
 
 const Panel = styled(Card)({
   borderRadius: 0,
@@ -276,88 +278,105 @@ export default function MatchBanner({
               reverse={match.homeAway === "away"}
             />
           </Box>
-          <Typography
-            textAlign="center"
-            sx={{
-              mt: 2,
-              fontSize: 20,
-              fontWeight: 700,
-              textShadow: "0 0 3px rgba(0,0,0,0.3)",
-            }}
-          >
-            {moment(match.date).format("MMMM Do YYYY")}{" "}
-            <span style={{ color: "#db6337" }}>
-              {match.kickoff || "Time TBD"}
-            </span>
-          </Typography>
 
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 0.5,
               justifyContent: "center",
-              textShadow: "0 0 3px rgba(0,0,0,0.3)",
+              mt: 2,
             }}
           >
-            <Typography textAlign="center">
-              {match.venue || "Venue TBD"}
-            </Typography>
+            {match.kit === "White" && (
+              <img style={{ width: 50 }} src={WhiteKitImage} alt="White kit" />
+            )}
 
-            {match.pitch && (
+            {match.kit === "Black" && (
+              <img style={{ width: 50 }} src={BlackKitImage} alt="Black kit" />
+            )}
+
+            <Box sx={{ marginLeft: 1 }}>
+              <Typography
+                sx={{
+                  fontSize: 20,
+                  fontWeight: 700,
+                  textShadow: "0 0 3px rgba(0,0,0,0.3)",
+                }}
+              >
+                {moment(match.date).format("MMMM Do YYYY")}{" "}
+                <span style={{ color: "#db6337" }}>
+                  {match.kickoff || "Time TBD"}
+                </span>
+              </Typography>
+
               <Box
                 sx={{
                   display: "flex",
                   alignItems: "center",
                   gap: 0.5,
+                  textShadow: "0 0 3px rgba(0,0,0,0.3)",
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    gap: 0.5,
-                    marginInline: 1,
-                  }}
-                >
+                <Typography textAlign="center">
+                  {match.venue || "Venue TBD"}
+                </Typography>
+
+                {match.pitch && (
                   <Box
                     sx={{
-                      height: 20,
-                      width: 10,
-                      transform: "skewX(-10deg)",
-                      backgroundColor:
-                        match.pitch === "1" ? "#db6337" : "#b6b6b6",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 0.5,
                     }}
-                  ></Box>
-                  <Box
-                    sx={{
-                      height: 20,
-                      width: 10,
-                      transform: "skewX(-10deg)",
-                      border:
-                        match.pitch === "2"
-                          ? "1px solid rgba(255,255,255,0.2)"
-                          : "1px solid #b6b6b6",
-                      backgroundColor:
-                        match.pitch === "2" ? "#db6337" : "#b6b6b6",
-                    }}
-                  ></Box>
-                  <Box
-                    sx={{
-                      height: 20,
-                      width: 10,
-                      transform: "skewX(-10deg)",
-                      border:
-                        match.pitch === "3"
-                          ? "1px solid #fff"
-                          : "1px solid #b6b6b6",
-                      backgroundColor:
-                        match.pitch === "3" ? "#db6337" : "#b6b6b6",
-                    }}
-                  ></Box>
-                </Box>
-                <Typography>Pitch {match.pitch}</Typography>
+                  >
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 0.5,
+                        marginInline: 1,
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          height: 20,
+                          width: 10,
+                          transform: "skewX(-10deg)",
+                          backgroundColor:
+                            match.pitch === "1" ? "#db6337" : "#b6b6b6",
+                        }}
+                      ></Box>
+                      <Box
+                        sx={{
+                          height: 20,
+                          width: 10,
+                          transform: "skewX(-10deg)",
+                          border:
+                            match.pitch === "2"
+                              ? "1px solid rgba(255,255,255,0.2)"
+                              : "1px solid #b6b6b6",
+                          backgroundColor:
+                            match.pitch === "2" ? "#db6337" : "#b6b6b6",
+                        }}
+                      ></Box>
+                      <Box
+                        sx={{
+                          height: 20,
+                          width: 10,
+                          transform: "skewX(-10deg)",
+                          border:
+                            match.pitch === "3"
+                              ? "1px solid #fff"
+                              : "1px solid #b6b6b6",
+                          backgroundColor:
+                            match.pitch === "3" ? "#db6337" : "#b6b6b6",
+                        }}
+                      ></Box>
+                    </Box>
+                    <Typography>Pitch {match.pitch}</Typography>
+                  </Box>
+                )}
               </Box>
-            )}
+            </Box>
           </Box>
         </CardContent>
       </Panel>

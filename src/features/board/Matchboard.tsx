@@ -25,6 +25,7 @@ export default function Matchboard({
           formation: lineup.formation,
           markers: saved.markers.map((marker) => ({
             ...marker,
+            playerNumber: base.markers.find((m) => m.id === marker.id)?.playerNumber,
             label:
               base.markers.find((m) => m.id === marker.id)?.label ??
               marker.label,

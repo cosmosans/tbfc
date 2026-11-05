@@ -1,5 +1,6 @@
 import {
   Alert,
+  Box,
   Card,
   CardContent,
   Chip,
@@ -30,6 +31,12 @@ export default function LineupEditor({
   function save(next: typeof lineup) {
     const normalized = {
       ...next,
+      benchPositions: Object.fromEntries(
+        Object.entries(next.benchPositions ?? {}).filter(([id, position]) =>
+          next.bench.includes(id) && !next.starters.includes(id) &&
+          formationSlots[next.formation].includes(position),
+        ),
+      ),
       bench: [...new Set(next.bench)].filter(
         (id) => !next.starters.includes(id),
       ),
@@ -86,7 +93,6 @@ export default function LineupEditor({
       missingStarters = true;
     }
   });
-  console.log(missingStarters && "23");
   const slots = formationSlots[lineup.formation];
   const candidatesFor = (position: Position) =>
     [...data.players].sort((a, b) => {
@@ -111,7 +117,8 @@ export default function LineupEditor({
           A player occupies more than one starting slot.
         </Alert>
       )}
-      <LineupPitch data={data} lineup={lineup} />
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(320px, 2fr) minmax(0, 3fr)" }, gap: 2, alignItems: "start" }}>
+      <Stack gap={2} sx={{ minWidth: 0 }}>
       <Card>
         <CardContent>
           <Stack
@@ -174,10 +181,11 @@ export default function LineupEditor({
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
             Tap a player to move them to Unavailable.
           </Typography>
-          <Stack direction="row" gap={1} flexWrap="wrap">
+          <Stack gap={2}>
             {benchPlayers.map((player) => (
+              <Stack key={player.id} gap={1}>
               <Chip
-                key={player.id}
+                sx={{ alignSelf: "flex-start" }}
                 label={`#${player.number} ${player.name}`}
                 color="primary"
                 onClick={() =>
@@ -187,6 +195,29 @@ export default function LineupEditor({
                   })
                 }
               />
+              <FormControl size="small" fullWidth>
+                <InputLabel id={`bench-position-${player.id}`}>Substitute for</InputLabel>
+                <Select
+                  labelId={`bench-position-${player.id}`}
+                  label="Substitute for"
+                  value={lineup.benchPositions?.[player.id] ?? ""}
+                  onChange={(event) => {
+                    const benchPositions = { ...lineup.benchPositions };
+                    if (event.target.value) benchPositions[player.id] = event.target.value as Position;
+                    else delete benchPositions[player.id];
+                    save({ ...lineup, benchPositions });
+                  }}
+                >
+                  <MenuItem value="">Unassigned</MenuItem>
+                  {slots.map((position, index) => {
+                    const starter = data.players.find((p) => p.id === lineup.starters[index]);
+                    return <MenuItem key={position} value={position}>
+                      {position} · {starter ? `#${starter.number} ${starter.name}` : "Empty"}
+                    </MenuItem>;
+                  })}
+                </Select>
+              </FormControl>
+              </Stack>
             ))}
             {benchPlayers.length === 0 && (
               <Typography color="text.secondary">
@@ -196,6 +227,9 @@ export default function LineupEditor({
           </Stack>
         </CardContent>
       </Card>
+      </Stack>
+      <LineupPitch data={data} lineup={lineup} />
+      </Box>
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>

@@ -184,6 +184,7 @@ export function defaultBoard(matchId: string, lineup: Lineup, data: ClubData): B
   const markers: Marker[] = lineup.starters.map((playerId, index) => ({
     id: `slot-${index}`,
     label: data.players.find(p => p.id === playerId)?.name.split(' ')[0] || `${index + 1}`,
+    playerNumber: data.players.find(p => p.id === playerId)?.number,
     team: 'tbfc',
     point: { x: positions[index][0], y: positions[index][1] },
   }));

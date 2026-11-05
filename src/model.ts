@@ -104,6 +104,7 @@ export type Point = { x: number; y: number };
 export type Marker = {
   id: string;
   label: string;
+  playerNumber?: string;
   team: "tbfc" | "opponent" | "ball";
   point: Point;
 };
@@ -119,6 +120,7 @@ export type Lineup = {
   formation: Formation;
   starters: string[];
   bench: string[];
+  benchPositions?: Record<string, Position>;
 };
 export type ClubData = {
   matches: Match[];

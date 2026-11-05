@@ -240,8 +240,6 @@ export default function StandingsWidget({
                       return (
                         <TableRow
                           key={`${row.rank}-${row.team}`}
-                          component={Link}
-                          to={`/team/${encodeURIComponent(opponent?.id)}`}
                           sx={{
                             bgcolor: tbfc
                               ? "#CA51262b"
@@ -267,6 +265,8 @@ export default function StandingsWidget({
                           <TableCell>
                             {opponent ? (
                               <Stack
+                                component={Link}
+                                to={`/team/${encodeURIComponent(opponent.id)}`}
                                 direction="row"
                                 alignItems="center"
                                 gap={1.25}
@@ -279,6 +279,10 @@ export default function StandingsWidget({
                                   py: 0.25,
                                   mx: -0.5,
                                   transition: "background-color 150ms ease",
+                                  "&:hover": {
+                                    bgcolor: "#ffffff14",
+                                    textDecoration: "underline",
+                                  },
 
                                   "&:focus-visible": {
                                     outline: "2px solid #f47730",
