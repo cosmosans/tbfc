@@ -59,6 +59,7 @@ export default function LineupPitch({
             inset: 0,
             width: "100%",
             height: "100%",
+            filter: "grayscale(100%)",
             pointerEvents: "none",
             zIndex: 2,
             opacity: 0.3,
