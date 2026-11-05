@@ -63,6 +63,8 @@ export const PitchMarker = styled("button", {
       : "700 12px/1.1 Oxanium, sans-serif",
   cursor: "grab",
   touchAction: "none",
+  userSelect: "none",
+  WebkitTouchCallout: "none",
   boxShadow: "0 3px 8px #0008",
   color: team === "ball" ? "inherit" : "#171717",
   background:

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { Box, Button, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Dialog, Stack, TextField, Typography } from "@mui/material";
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
 import { Pitch, CenterLine, CenterCircle, TopBox, BottomBox, PitchMarker } from "./Matchboard.styles";
@@ -36,19 +36,19 @@ export default function Matchboard({
       : { ...base, notes: saved?.notes ?? '' },
   );
   const boardRef = useRef(board);
-  const [dragId, setDragId] = useState<string | null>(null);
+  const drag = useRef<{ id: string; pointerId: number } | null>(null);
+  const [fullScreen, setFullScreen] = useState(false);
   function persist(next: Board) {
-    if (!canEditClub) return;
     boardRef.current = next;
     setBoard(next);
+    if (!canEditClub) return;
     update({
       ...data,
       boards: [...data.boards.filter((b) => b.matchId !== match.id), next],
     });
   }
   function move(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!canEditClub) return;
-    if (!dragId) return;
+    if (!drag.current || drag.current.pointerId !== event.pointerId) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = Math.max(
       4,
@@ -61,25 +61,27 @@ export default function Matchboard({
     const next = {
       ...boardRef.current,
       markers: boardRef.current.markers.map((m) =>
-        m.id === dragId ? { ...m, point: { x, y } } : m,
+        m.id === drag.current?.id ? { ...m, point: { x, y } } : m,
       ),
     };
     boardRef.current = next;
     setBoard(next);
   }
-  return (
-    <Stack direction={{ xs: "column", lg: "row" }} gap={2}>
-      <Box sx={{ flexGrow: 1 }}>
+  const pitch = (
         <Pitch
+          sx={fullScreen ? { flex: 1, minHeight: '0 !important', touchAction: 'none', overflow: 'hidden' } : undefined}
           onPointerMove={move}
           onPointerUp={(e) => {
-            if (dragId) {
+            if (drag.current?.pointerId !== e.pointerId) return;
+            move(e);
+            drag.current = null;
+            if (e.currentTarget.hasPointerCapture(e.pointerId)) {
               e.currentTarget.releasePointerCapture(e.pointerId);
-              persist(boardRef.current);
-              setDragId(null);
             }
+            persist(boardRef.current);
           }}
-          onPointerCancel={() => setDragId(null)}
+          onPointerCancel={() => { drag.current = null; }}
+          onLostPointerCapture={() => { drag.current = null; }}
         >
           <CenterLine />
           <CenterCircle />
@@ -92,11 +94,12 @@ export default function Matchboard({
               kit={match.kit}
               style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
               onPointerDown={(e) => {
-                if (!canEditClub) return;
+                if (drag.current || !e.isPrimary || e.button !== 0) return;
                 e.preventDefault();
                 e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
-                setDragId(marker.id);
+                drag.current = { id: marker.id, pointerId: e.pointerId };
               }}
+              type="button"
               aria-label={`Move ${marker.label}`}
             >
               {marker.team === "tbfc" ? (
@@ -105,17 +108,39 @@ export default function Matchboard({
             </PitchMarker>
           ))}
         </Pitch>
+  );
+  return (
+    <Stack direction={{ xs: "column", lg: "row" }} gap={2}>
+      <Box sx={{ flexGrow: 1 }}>
+        <Button variant="outlined" sx={{ mb: 1 }} onClick={() => setFullScreen(true)}>
+          Full screen
+        </Button>
+        {!fullScreen && pitch}
+        <Dialog fullScreen open={fullScreen} onClose={() => setFullScreen(false)}
+          slotProps={{ paper: { sx: {
+            height: '100dvh', overflow: 'hidden', overscrollBehavior: 'none',
+            paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)',
+            paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)',
+          } } }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 2, py: 1, flexShrink: 0 }}>
+            <Typography variant="h6">Matchboard</Typography>
+            <Button onClick={() => setFullScreen(false)}>Exit full screen</Button>
+          </Stack>
+          {fullScreen && pitch}
+        </Dialog>
       </Box>
       <Stack gap={2} sx={{ width: { lg: 280 } }}>
         <Card>
           <CardContent>
             <Typography variant="h6">Coaching board</Typography>
-            {canEditClub && <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
-              Drag markers on the pitch. Positions save when released.
-            </Typography>}
-            {canEditClub && <Button variant="outlined" fullWidth onClick={() => persist({ ...base, notes: boardRef.current.notes })}>
+            <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
+              {canEditClub
+                ? 'Drag markers on the pitch. Positions save when released.'
+                : 'Drag markers to try a setup. Changes stay on this board until you leave.'}
+            </Typography>
+            <Button variant="outlined" fullWidth onClick={() => persist({ ...base, notes: boardRef.current.notes })}>
               Reset to lineup
-            </Button>}
+            </Button>
           </CardContent>
         </Card>
         <Card>

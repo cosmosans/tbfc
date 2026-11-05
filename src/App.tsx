@@ -385,7 +385,7 @@ export default function App() {
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab label="Match history" />
+                <Tab label="Match History" />
                 <Tab label="Events" />
                 <Tab label="Lineup" />
                 <Tab label="Matchboard" />

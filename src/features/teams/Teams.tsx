@@ -76,36 +76,38 @@ export default function Teams({
   }
   return (
     <Stack gap={2}>
-      {canEditClub && <Stack direction="row" gap={2}>
-        <TextField
-          label="Team name"
-          size="small"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          sx={{ flexGrow: 1 }}
-        />
-        <Button
-          variant="contained"
-          disabled={
-            !name.trim() ||
-            data.opponents.some(
-              (o) => o.name.toLowerCase() === name.trim().toLowerCase(),
-            )
-          }
-          onClick={() => {
-            saveOpponent({
-              id: crypto.randomUUID(),
-              name: name.trim(),
-              crestUrl: "",
-              color: "",
-              notes: "",
-            });
-            setName("");
-          }}
-        >
-          Add team
-        </Button>
-      </Stack>}
+      {canEditClub && (
+        <Stack direction="row" gap={2}>
+          <TextField
+            label="Team name"
+            size="small"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            sx={{ flexGrow: 1 }}
+          />
+          <Button
+            variant="contained"
+            disabled={
+              !name.trim() ||
+              data.opponents.some(
+                (o) => o.name.toLowerCase() === name.trim().toLowerCase(),
+              )
+            }
+            onClick={() => {
+              saveOpponent({
+                id: crypto.randomUUID(),
+                name: name.trim(),
+                crestUrl: "",
+                color: "",
+                notes: "",
+              });
+              setName("");
+            }}
+          >
+            Add team
+          </Button>
+        </Stack>
+      )}
       <FourColumnGrid>
         {sorted.map((opponent) => {
           const games = data.matches.filter(
@@ -206,21 +208,36 @@ export default function Teams({
                     {opponent.notes}
                   </Typography>
                 )}
-                <Stack direction="row" gap={1} sx={{ mt: 1 }}>
-                  <Button onClick={() => onOpen(opponent)}>View team</Button>
-                  {canEditClub && <Button onClick={() => setEditing({ ...opponent })}>Edit team</Button>}
+                <Stack
+                  direction="row"
+                  gap={1}
+                  sx={{ justifyContent: "space-between", mt: 3, mb: -1 }}
+                >
+                  {canEditClub && (
+                    <Button
+                      variant="outlined"
+                      onClick={() => setEditing({ ...opponent })}
+                    >
+                      Edit
+                    </Button>
+                  )}
+                  <Button variant="contained" onClick={() => onOpen(opponent)}>
+                    View Team
+                  </Button>
                 </Stack>
               </CardContent>
             </Card>
           );
         })}
       </FourColumnGrid>
-      {canEditClub && <OpponentDialog
-        key={editing?.id ?? "closed"}
-        opponent={editing}
-        onClose={() => setEditing(null)}
-        onSave={saveOpponent}
-      />}
+      {canEditClub && (
+        <OpponentDialog
+          key={editing?.id ?? "closed"}
+          opponent={editing}
+          onClose={() => setEditing(null)}
+          onSave={saveOpponent}
+        />
+      )}
     </Stack>
   );
 }

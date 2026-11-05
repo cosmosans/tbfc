@@ -91,34 +91,7 @@ export default function SchedulePage({
           </Stack>
         )}
       </Stack>
-      <Stack
-        direction={{ xs: "column", sm: "row" }}
-        gap={2}
-        sx={{ bgcolor: "#111", p: 2 }}
-      >
-        <TextField
-          label="Search matches"
-          size="small"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          sx={{ flexGrow: 1 }}
-        />
-        <FormControl size="small" sx={{ minWidth: 180 }}>
-          <InputLabel>Season</InputLabel>
-          <Select
-            label="Season"
-            value={season}
-            onChange={(event) => setSeason(event.target.value)}
-          >
-            <MenuItem value="All seasons">All Seasons</MenuItem>
-            {seasons.map((item) => (
-              <MenuItem key={item.id} value={item.id}>
-                {item.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Stack>
+
       {canEditClub && (
         <ScheduleImporter
           data={data}
@@ -148,6 +121,7 @@ export default function SchedulePage({
           <Alert severity="info">No upcoming fixtures for this filter.</Alert>
         )}
       </section>
+
       <section>
         <Typography
           variant="h5"
@@ -163,6 +137,34 @@ export default function SchedulePage({
         >
           Past Results
         </Typography>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          gap={2}
+          sx={{ bgcolor: "#111", mb: 2, mt: -1 }}
+        >
+          <TextField
+            label="Search matches"
+            size="small"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            sx={{ flexGrow: 1 }}
+          />
+          <FormControl size="small" sx={{ minWidth: 180 }}>
+            <InputLabel>Season</InputLabel>
+            <Select
+              label="Season"
+              value={season}
+              onChange={(event) => setSeason(event.target.value)}
+            >
+              <MenuItem value="All seasons">All Seasons</MenuItem>
+              {seasons.map((item) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
         {history.length ? (
           <MatchTable data={data} matches={history} onOpen={onOpen} />
         ) : (

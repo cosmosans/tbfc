@@ -112,7 +112,7 @@ export default function Roster({
               disabled={!name.trim()}
               onClick={addPlayer}
             >
-              Add player
+              Add Player
             </Button>
           </DialogActions>
         </Dialog>
