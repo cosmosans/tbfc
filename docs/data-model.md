@@ -1,6 +1,6 @@
 # TBFC data model — initial setup
 
-The current app runs with browser-local data. The SQL migration in `supabase/migrations/20261104000000_initial.sql` prepares the same structure for PostgreSQL/Supabase; no live database has been created or connected yet.
+The live app stores shared club records in Cloudflare D1. `migrations/0001_club_records.sql` creates `club_records`, keyed by collection and record ID, and `club_meta`, which tracks the revision. Each row holds one typed JSON record. The earlier `supabase/migrations/` files describe an unused alternative design.
 
 ```mermaid
 erDiagram
@@ -11,7 +11,6 @@ erDiagram
   MATCHES ||--o| LINEUPS : has
   MATCHES ||--o| BOARDS : has
   SEASONS ||--o| STANDINGS_SNAPSHOTS : has
-  MEMBERSHIPS }o--|| AUTH_USERS : grants_access
 ```
 
 | Record | What it stores | Important fields |
@@ -25,7 +24,6 @@ erDiagram
 | `lineups` | Official saved starters and bench | match, formation, player IDs |
 | `boards` | Coaching positions and notes | match, marker positions, board notes |
 | `standings_snapshots` | Latest uploaded league table per season | update date, ranked team rows with W/L/D, scored, allowed, PI and ranking points |
-| `memberships` | Access to shared club data | user, admin/editor/viewer role |
 
 ## Derived views
 
@@ -41,8 +39,8 @@ The seed contains 52 accepted completed matches, 8 season names, and 17 opponent
 
 The aggregate goals-and-assists CSV supplied 16 initial player names and numbers. Its totals are not fabricated into match events. Historical scorer text is preserved on matches, and a player event is created only when entered or reviewed explicitly.
 
-Player images currently live in browser-local data after resizing. The `photo_url` column reserves a photo reference for the shared database; production uploads should move to managed media storage rather than storing image data in the table.
+Player images are resized and embedded in the record data. Managed media storage can replace embedded image data later.
 
-## Planned app operations
+## App operations
 
-The initial database interface will need authenticated CRUD for `seasons`, `opponents`, `matches`, `players`, `match_events`, `lineups`, and `boards`, plus read access to the four derived views. Supabase can expose these through its database API with row-level access rules. An import preview should reconcile source rows before writing to the shared database.
+`GET /api/club` returns every collection and its revision. `PUT /api/club` replaces all collection rows atomically when supplied with the current revision and a private write key. Only the localhost Vite proxy holds that key; no sign-in UI is required for public reading. Scores and totals are calculated in app code from match records, preserving the matchlog as the source of truth.

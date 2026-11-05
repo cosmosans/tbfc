@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
   Alert,
@@ -39,6 +39,7 @@ import Seasons from "./features/seasons/Seasons";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub } from "./editAccess";
+import { fetchClubData, publishClubData } from "./remoteData";
 
 type Page =
   | "matches"
@@ -83,6 +84,28 @@ const blankMatch = (): Match => ({
 
 export default function App() {
   const [data, setData] = useState<ClubData>(loadData);
+  const [syncState, setSyncState] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading');
+  const [syncMessage, setSyncMessage] = useState('');
+  const revision = useRef(0);
+  const saveQueue = useRef(Promise.resolve());
+  useEffect(() => {
+    let active = true;
+    fetchClubData().then(remote => {
+      if (!active) return;
+      revision.current = remote.revision;
+      if (remote.data) {
+        setData(remote.data);
+        setSyncState('ready');
+      } else {
+        setSyncState('empty');
+      }
+    }).catch(error => {
+      if (!active) return;
+      setSyncMessage(error instanceof Error ? error.message : 'Could not connect to the shared database.');
+      setSyncState('error');
+    });
+    return () => { active = false; };
+  }, []);
   const navigate = useNavigate();
   const location = useLocation();
   const matchRoute = matchPath("/match/:id", location.pathname);
@@ -119,6 +142,23 @@ export default function App() {
     if (!canEditClub) return;
     setData(next);
     saveData(next);
+    if (syncState === 'ready') {
+      saveQueue.current = saveQueue.current.catch(() => undefined).then(async () => {
+        revision.current = await publishClubData(next, revision.current);
+        setSyncMessage('');
+      }).catch(error => {
+        setSyncMessage(error instanceof Error ? error.message : 'Could not save to the shared database.');
+      });
+    }
+  }
+  async function publishCurrentData() {
+    try {
+      revision.current = await publishClubData(data, revision.current);
+      setSyncState('ready');
+      setSyncMessage('');
+    } catch (error) {
+      setSyncMessage(error instanceof Error ? error.message : 'Could not publish club data.');
+    }
   }
   const upcoming = useMemo(
     () =>
@@ -213,6 +253,12 @@ export default function App() {
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: 4 }}>
+        {syncState === 'loading' && <Alert severity="info" sx={{ mb: 2 }}>Loading shared club data…</Alert>}
+        {syncState === 'empty' && <Alert severity="warning" sx={{ mb: 2 }} action={canEditClub ? <Button onClick={() => void publishCurrentData()}>Publish this browser’s data</Button> : undefined}>
+          The shared database is empty. {canEditClub ? 'Review this browser’s records, then publish them for the team.' : 'Club records will appear after the first import.'}
+        </Alert>}
+        {syncState === 'error' && <Alert severity="error" sx={{ mb: 2 }}>Shared database unavailable. Showing bundled data. {syncMessage}</Alert>}
+        {syncState !== 'error' && syncMessage && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setSyncMessage('')}>{syncMessage}</Alert>}
         {backupMessage && (
           <Alert
             severity="success"
@@ -488,10 +534,11 @@ export default function App() {
         onRestore={(backup) => {
           saveData(backup);
           const restored = loadData();
-          saveData(restored);
-          setData(restored);
+          update(restored);
           navigate("/");
-          setBackupMessage("Backup restored in this browser.");
+          setBackupMessage(syncState === 'ready'
+            ? 'Backup restored. Syncing it to the shared database…'
+            : 'Backup restored in this browser. Publish it when the shared database is ready.');
         }}
       />}
     </>

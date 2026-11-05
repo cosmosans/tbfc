@@ -48,7 +48,7 @@ export default function DataTransferDialog({
     <DialogContent>
       <Stack gap={2} sx={{ pt: 1 }}>
         <Typography color="text.secondary">
-          Your edits are stored in this browser. Download a backup here, then open this app in Chrome and restore that file there.
+          Download a backup of the records shown here. Restoring a backup on localhost also replaces the shared club data once connected.
         </Typography>
         <Button variant="contained" onClick={onDownload} sx={{ alignSelf: 'flex-start' }}>Download backup JSON</Button>
         <Button variant="outlined" component="label" sx={{ alignSelf: 'flex-start' }}>
@@ -60,7 +60,7 @@ export default function DataTransferDialog({
         </Button>
         {fileName && <Typography variant="body2">{fileName}</Typography>}
         {backup && <Alert severity="warning">
-          Ready to restore {backup.matches.length} matches, {backup.players.length} players, and {backup.opponents.length} teams. This replaces edits currently stored in this browser.
+          Ready to restore {backup.matches.length} matches, {backup.players.length} players, and {backup.opponents.length} teams. This replaces the records shown here{location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? ' and publishes them to the shared database when connected' : ''}.
         </Alert>}
         {error && <Alert severity="error">{error}</Alert>}
       </Stack>
