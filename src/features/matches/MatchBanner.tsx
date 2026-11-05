@@ -150,7 +150,10 @@ export default function MatchBanner({
           }
         }}
       >
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        <CardContent
+          className="match-banner-content"
+          sx={{ p: { xs: 2, sm: 3 } }}
+        >
           {detail && (
             <Stack
               direction="row"
@@ -280,19 +283,21 @@ export default function MatchBanner({
           </Box>
 
           <Box
+            className="match-banner-info"
             sx={{
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               mt: 2,
             }}
           >
             {match.kit === "White" && (
-              <img style={{ width: 50 }} src={WhiteKitImage} alt="White kit" />
+              <img style={{ width: 80 }} src={WhiteKitImage} alt="White kit" />
             )}
 
             {match.kit === "Black" && (
-              <img style={{ width: 50 }} src={BlackKitImage} alt="Black kit" />
+              <img style={{ width: 80 }} src={BlackKitImage} alt="Black kit" />
             )}
 
             <Box sx={{ marginLeft: 1 }}>
@@ -301,6 +306,7 @@ export default function MatchBanner({
                   fontSize: 20,
                   fontWeight: 700,
                   textShadow: "0 0 3px rgba(0,0,0,0.3)",
+                  textAlign: "center",
                 }}
               >
                 {moment(match.date).format("MMMM Do YYYY")}{" "}
@@ -313,6 +319,7 @@ export default function MatchBanner({
                 sx={{
                   display: "flex",
                   alignItems: "center",
+                  textAlign: "center",
                   gap: 0.5,
                   textShadow: "0 0 3px rgba(0,0,0,0.3)",
                 }}

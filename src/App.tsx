@@ -418,6 +418,19 @@ export default function App() {
           <>
             {page === "matches" && (
               <Stack gap={3} sx={{ mb: 3 }}>
+                <Box sx={{
+                  display: "grid",
+                  gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: nextLineup ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)" },
+                  gap: 3,
+                  alignItems: "stretch",
+                  gridAutoRows: "1fr",
+                  "& > *": { display: "flex", flexDirection: "column", minWidth: 0 },
+                  "& > * > .MuiCard-root": { flex: 1, display: "flex", flexDirection: "column" },
+                  "& .match-banner-content": { flex: 1, display: "flex", flexDirection: "column" },
+                  "& .match-banner-info": { mt: "auto", pt: 4 },
+                  "& .lineup-pitch": { flex: 1, display: "flex", flexDirection: "column" },
+                  "& .lineup-pitch > div": { flex: 1 },
+                }}>
                 {nextMatch && (
                   <MatchBanner
                     data={data}
@@ -460,6 +473,7 @@ export default function App() {
                     />
                   </Box>
                 )}
+                </Box>
                 <StandingsWidget
                   data={data}
                   update={update}
