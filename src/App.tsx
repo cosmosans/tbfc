@@ -32,7 +32,7 @@ import LineupPitch from "./features/lineup/LineupPitch";
 import StandingsWidget from "./features/standings/StandingsWidget";
 import Matchboard from "./features/board/Matchboard";
 import Stats from "./features/stats/Stats";
-import Squad from "./features/squad/Squad";
+import Roster from "./features/roster/Roster";
 import Teams from "./features/teams/Teams";
 import TeamDetail from "./features/teams/TeamDetail";
 import Seasons from "./features/seasons/Seasons";
@@ -45,7 +45,7 @@ type Page =
   | "matches"
   | "schedule"
   | "stats"
-  | "squad"
+  | "roster"
   | "tactics"
   | "teams"
   | "locations"
@@ -54,7 +54,7 @@ const pagePaths: Record<Page, string> = {
   matches: "/",
   schedule: "/schedule",
   stats: "/stats",
-  squad: "/squad",
+  roster: "/roster",
   tactics: "/tactics",
   teams: "/teams",
   locations: "/locations",
@@ -84,27 +84,37 @@ const blankMatch = (): Match => ({
 
 export default function App() {
   const [data, setData] = useState<ClubData>(loadData);
-  const [syncState, setSyncState] = useState<'loading' | 'ready' | 'empty' | 'error'>('loading');
-  const [syncMessage, setSyncMessage] = useState('');
+  const [syncState, setSyncState] = useState<
+    "loading" | "ready" | "empty" | "error"
+  >("loading");
+  const [syncMessage, setSyncMessage] = useState("");
   const revision = useRef(0);
   const saveQueue = useRef(Promise.resolve());
   useEffect(() => {
     let active = true;
-    fetchClubData().then(remote => {
-      if (!active) return;
-      revision.current = remote.revision;
-      if (remote.data) {
-        setData(remote.data);
-        setSyncState('ready');
-      } else {
-        setSyncState('empty');
-      }
-    }).catch(error => {
-      if (!active) return;
-      setSyncMessage(error instanceof Error ? error.message : 'Could not connect to the shared database.');
-      setSyncState('error');
-    });
-    return () => { active = false; };
+    fetchClubData()
+      .then((remote) => {
+        if (!active) return;
+        revision.current = remote.revision;
+        if (remote.data) {
+          setData(remote.data);
+          setSyncState("ready");
+        } else {
+          setSyncState("empty");
+        }
+      })
+      .catch((error) => {
+        if (!active) return;
+        setSyncMessage(
+          error instanceof Error
+            ? error.message
+            : "Could not connect to the shared database.",
+        );
+        setSyncState("error");
+      });
+    return () => {
+      active = false;
+    };
   }, []);
   const navigate = useNavigate();
   const location = useLocation();
@@ -142,22 +152,31 @@ export default function App() {
     if (!canEditClub) return;
     setData(next);
     saveData(next);
-    if (syncState === 'ready') {
-      saveQueue.current = saveQueue.current.catch(() => undefined).then(async () => {
-        revision.current = await publishClubData(next, revision.current);
-        setSyncMessage('');
-      }).catch(error => {
-        setSyncMessage(error instanceof Error ? error.message : 'Could not save to the shared database.');
-      });
+    if (syncState === "ready") {
+      saveQueue.current = saveQueue.current
+        .catch(() => undefined)
+        .then(async () => {
+          revision.current = await publishClubData(next, revision.current);
+          setSyncMessage("");
+        })
+        .catch((error) => {
+          setSyncMessage(
+            error instanceof Error
+              ? error.message
+              : "Could not save to the shared database.",
+          );
+        });
     }
   }
   async function publishCurrentData() {
     try {
       revision.current = await publishClubData(data, revision.current);
-      setSyncState('ready');
-      setSyncMessage('');
+      setSyncState("ready");
+      setSyncMessage("");
     } catch (error) {
-      setSyncMessage(error instanceof Error ? error.message : 'Could not publish club data.');
+      setSyncMessage(
+        error instanceof Error ? error.message : "Could not publish club data.",
+      );
     }
   }
   const upcoming = useMemo(
@@ -253,12 +272,43 @@ export default function App() {
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        {syncState === 'loading' && <Alert severity="info" sx={{ mb: 2 }}>Loading shared club data…</Alert>}
-        {syncState === 'empty' && <Alert severity="warning" sx={{ mb: 2 }} action={canEditClub ? <Button onClick={() => void publishCurrentData()}>Publish this browser’s data</Button> : undefined}>
-          The shared database is empty. {canEditClub ? 'Review this browser’s records, then publish them for the team.' : 'Club records will appear after the first import.'}
-        </Alert>}
-        {syncState === 'error' && <Alert severity="error" sx={{ mb: 2 }}>Shared database unavailable. Showing bundled data. {syncMessage}</Alert>}
-        {syncState !== 'error' && syncMessage && <Alert severity="error" sx={{ mb: 2 }} onClose={() => setSyncMessage('')}>{syncMessage}</Alert>}
+        {syncState === "loading" && (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            Loading shared club data…
+          </Alert>
+        )}
+        {syncState === "empty" && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 2 }}
+            action={
+              canEditClub ? (
+                <Button onClick={() => void publishCurrentData()}>
+                  Publish this browser’s data
+                </Button>
+              ) : undefined
+            }
+          >
+            The shared database is empty.{" "}
+            {canEditClub
+              ? "Review this browser’s records, then publish them for the team."
+              : "Club records will appear after the first import."}
+          </Alert>
+        )}
+        {syncState === "error" && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Shared database unavailable. Showing bundled data. {syncMessage}
+          </Alert>
+        )}
+        {syncState !== "error" && syncMessage && (
+          <Alert
+            severity="error"
+            sx={{ mb: 2 }}
+            onClose={() => setSyncMessage("")}
+          >
+            {syncMessage}
+          </Alert>
+        )}
         {backupMessage && (
           <Alert
             severity="success"
@@ -295,7 +345,9 @@ export default function App() {
               match={selected}
               update={update}
               onBack={() => navigate("/schedule")}
-              onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
+              onEdit={
+                canEditClub ? () => setEditing({ ...selected }) : undefined
+              }
             />
           ) : (
             <>
@@ -310,7 +362,9 @@ export default function App() {
                 data={data}
                 match={selected}
                 detail
-                onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
+                onEdit={
+                  canEditClub ? () => setEditing({ ...selected }) : undefined
+                }
               />
               {opponentFor(data, selected)?.notes && (
                 <Alert severity="info" sx={{ mt: 2 }}>
@@ -339,7 +393,9 @@ export default function App() {
               {activeDetailTab === 0 && (
                 <MatchHistory
                   match={selected}
-                  onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
+                  onEdit={
+                    canEditClub ? () => setEditing({ ...selected }) : undefined
+                  }
                 />
               )}
               {activeDetailTab === 1 && (
@@ -465,17 +521,19 @@ export default function App() {
                         ))}
                       </Select>
                     </FormControl>
-                    {canEditClub && <Button
-                      variant="outlined"
-                      sx={{ alignSelf: "flex-start" }}
-                      onClick={() => {
-                        navigate(
-                          `/match/${encodeURIComponent(tacticsMatch.id)}?tab=lineup`,
-                        );
-                      }}
-                    >
-                      Edit lineup
-                    </Button>}
+                    {canEditClub && (
+                      <Button
+                        variant="outlined"
+                        sx={{ alignSelf: "flex-start" }}
+                        onClick={() => {
+                          navigate(
+                            `/match/${encodeURIComponent(tacticsMatch.id)}?tab=lineup`,
+                          );
+                        }}
+                      >
+                        Edit lineup
+                      </Button>
+                    )}
                     <Matchboard
                       key={tacticsMatch.id}
                       data={data}
@@ -491,7 +549,7 @@ export default function App() {
               </Stack>
             )}
             {page === "stats" && <Stats data={data} />}
-            {page === "squad" && <Squad data={data} update={update} />}
+            {page === "roster" && <Roster data={data} update={update} />}
             {page === "teams" && (
               <Teams
                 data={data}
@@ -515,32 +573,38 @@ export default function App() {
           </>
         )}
       </Container>
-      {canEditClub && <MatchDialog
-        open={!!editing || showNew}
-        match={editing ?? newMatch}
-        teams={data.opponents}
-        seasons={data.seasons}
-        locations={data.locations}
-        onClose={() => {
-          setEditing(null);
-          setShowNew(false);
-        }}
-        onSave={saveMatch}
-      />}
-      {canEditClub && <DataTransferDialog
-        open={backupOpen}
-        onClose={() => setBackupOpen(false)}
-        onDownload={() => exportData(data)}
-        onRestore={(backup) => {
-          saveData(backup);
-          const restored = loadData();
-          update(restored);
-          navigate("/");
-          setBackupMessage(syncState === 'ready'
-            ? 'Backup restored. Syncing it to the shared database…'
-            : 'Backup restored in this browser. Publish it when the shared database is ready.');
-        }}
-      />}
+      {canEditClub && (
+        <MatchDialog
+          open={!!editing || showNew}
+          match={editing ?? newMatch}
+          teams={data.opponents}
+          seasons={data.seasons}
+          locations={data.locations}
+          onClose={() => {
+            setEditing(null);
+            setShowNew(false);
+          }}
+          onSave={saveMatch}
+        />
+      )}
+      {canEditClub && (
+        <DataTransferDialog
+          open={backupOpen}
+          onClose={() => setBackupOpen(false)}
+          onDownload={() => exportData(data)}
+          onRestore={(backup) => {
+            saveData(backup);
+            const restored = loadData();
+            update(restored);
+            navigate("/");
+            setBackupMessage(
+              syncState === "ready"
+                ? "Backup restored. Syncing it to the shared database…"
+                : "Backup restored in this browser. Publish it when the shared database is ready.",
+            );
+          }}
+        />
+      )}
     </>
   );
 }

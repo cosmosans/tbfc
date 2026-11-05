@@ -4,6 +4,7 @@ import { Box, Button, Card, CardContent, Stack, TextField, Typography } from "@m
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
 import { Pitch, CenterLine, CenterCircle, TopBox, BottomBox, PitchMarker } from "./Matchboard.styles";
+import { NameplateText } from "../../components/LineupNameplate";
 import { canEditClub } from "../../editAccess";
 
 export default function Matchboard({
@@ -88,6 +89,7 @@ export default function Matchboard({
             <PitchMarker
               key={marker.id}
               team={marker.team}
+              kit={match.kit}
               style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
               onPointerDown={(e) => {
                 if (!canEditClub) return;
@@ -97,7 +99,9 @@ export default function Matchboard({
               }}
               aria-label={`Move ${marker.label}`}
             >
-              {marker.label}
+              {marker.team === "tbfc" ? (
+                <NameplateText number={marker.playerNumber} name={marker.label} />
+              ) : marker.label}
             </PitchMarker>
           ))}
         </Pitch>

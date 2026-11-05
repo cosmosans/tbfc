@@ -1,17 +1,11 @@
 import { styled } from "@mui/material/styles";
+import { nameplateStyles } from "../../components/LineupNameplate";
 import type { Marker } from "../../model";
 
 export const Pitch = styled("div")({
   position: "relative",
   width: "100%",
   minHeight: 620,
-  backgroundImage: 'url("/pitch-grass-dark.png")',
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-  borderRadius: 0,
-  overflow: "hidden",
-  touchAction: "none",
-  userSelect: "none",
   "&::before": {
     content: '""',
     position: "absolute",
@@ -55,15 +49,14 @@ export const BottomBox = styled("div")({
   borderBottom: 0,
 });
 export const PitchMarker = styled("button", {
-  shouldForwardProp: (prop) => prop !== "team",
-})<{ team: Marker["team"] }>(({ team }) => ({
+  shouldForwardProp: (prop) => prop !== "team" && prop !== "kit",
+})<{ team: Marker["team"]; kit?: string }>(({ team, kit }) => ({
   position: "absolute",
   transform: "translate(-50%,-50%)",
   minWidth: 54,
-  minHeight: 54,
+  height: 45,
   border: "2px solid white",
   borderRadius: "50%",
-  padding: 4,
   font:
     team === "ball"
       ? "700 22px/1.1 Oxanium, sans-serif"
@@ -76,4 +69,37 @@ export const PitchMarker = styled("button", {
     team === "tbfc" ? "#f47730" : team === "opponent" ? "#e6e6e6" : "#fff",
   "&:active": { cursor: "grabbing" },
   "@media (max-width: 600px)": { minWidth: 48, minHeight: 48 },
+  ...(team === "ball"
+    ? {
+        width: 54,
+        height: "auto",
+        minWidth: 0,
+        minHeight: 0,
+        aspectRatio: "1 / 1",
+        padding: 0,
+        border: 0,
+        background: "transparent",
+        boxShadow: "none",
+        filter: "drop-shadow(0 3px 5px #0008)",
+        display: "grid",
+        placeItems: "center",
+        fontFamily: '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+        fontSize: 48,
+        lineHeight: 1,
+        "@media (max-width: 600px)": {
+          width: 48,
+          minWidth: 0,
+          minHeight: 0,
+          fontSize: 42,
+        },
+      }
+    : {}),
+  ...(team === "tbfc"
+    ? {
+        ...nameplateStyles(kit),
+        width: "22%",
+        maxWidth: 160,
+        padding: "5px 18px",
+      }
+    : {}),
 }));

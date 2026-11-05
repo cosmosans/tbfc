@@ -111,12 +111,7 @@ export default function StandingsWidget({
           sx={{ mb: 2 }}
         >
           <Box>
-            <Typography
-              variant="h4"
-              sx={{ fontWeight: 900, textTransform: "uppercase" }}
-            >
-              Standings
-            </Typography>
+            <Typography variant="h4">Standings</Typography>
             {snapshot && (
               <Typography variant="body2" color="text.secondary">
                 {selectedSeason?.name} · Updated {snapshot.updatedOn}
@@ -148,26 +143,30 @@ export default function StandingsWidget({
                 ))}
               </Select>
             </FormControl>
-            {canEditClub && <Button
-              component="a"
-              href="/templates/tbfc-standings-template.csv"
-              download="tbfc-standings-template.csv"
-              variant="outlined"
-            >
-              CSV template
-            </Button>}
-            {canEditClub && <Button component="label" variant="contained">
-              Upload standings CSV
-              <input
-                hidden
-                type="file"
-                accept=".csv,text/csv"
-                onChange={(event) => {
-                  void chooseFile(event.target.files?.[0]);
-                  event.target.value = "";
-                }}
-              />
-            </Button>}
+            {canEditClub && (
+              <Button
+                component="a"
+                href="/templates/tbfc-standings-template.csv"
+                download="tbfc-standings-template.csv"
+                variant="outlined"
+              >
+                CSV template
+              </Button>
+            )}
+            {canEditClub && (
+              <Button component="label" variant="contained">
+                Upload standings CSV
+                <input
+                  hidden
+                  type="file"
+                  accept=".csv,text/csv"
+                  onChange={(event) => {
+                    void chooseFile(event.target.files?.[0]);
+                    event.target.value = "";
+                  }}
+                />
+              </Button>
+            )}
           </Stack>
         </Stack>
         {error && (

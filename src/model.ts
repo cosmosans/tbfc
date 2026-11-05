@@ -164,7 +164,7 @@ export function record(matches: Match[]) {
 export function displayScore(match: Match): string {
   const regular = `${match.goalsFor} – ${match.goalsAgainst}`;
   return match.shootoutFor != null && match.shootoutAgainst != null
-    ? `${regular} (${match.shootoutFor}–${match.shootoutAgainst} pens)`
+    ? `${regular} (${match.shootoutFor}–${match.shootoutAgainst})`
     : regular;
 }
 

@@ -15,7 +15,7 @@ npm run dev
 - `src/components/` holds reusable UI pieces such as the opponent crest.
 - Reusable visual styles use Material UI's `styled` API. The app no longer imports a standalone stylesheet.
 - `src/features/matches/` holds match summary and upcoming cards, match history, the editor, and events.
-- Other `src/features/` folders own schedule import, squad and player cards, Teams, Seasons, stats, lineups, and the matchboard.
+- Other `src/features/` folders own schedule import, roster and player cards, Teams, Seasons, stats, lineups, and the matchboard.
 - `src/model.ts`, `src/store.ts`, and `src/clubView.ts` hold data types, browser backups, and shared record selectors.
 - `functions/api/club.ts` serves public reads and authorized writes from Cloudflare D1.
 
@@ -27,7 +27,7 @@ For a new season, create it under **Schedule → Manage seasons**, then use **Up
 
 ## Shareable routes
 
-The main pages use `/schedule`, `/squad`, `/tactics`, `/teams`, `/locations`, and `/stats`; Matchday is `/`. Individual records use `/match/:id` and `/team/:id`. Match tabs are linkable with `?tab=history`, `?tab=events`, `?tab=lineup`, or `?tab=board` as applicable. Direct URLs and reloads work in Vite and Cloudflare Pages. Once D1 is populated, links on every device show the same records.
+The main pages use `/schedule`, `/roster`, `/tactics`, `/teams`, `/locations`, and `/stats`; Matchday is `/`. Individual records use `/match/:id` and `/team/:id`. Match tabs are linkable with `?tab=history`, `?tab=events`, `?tab=lineup`, or `?tab=board` as applicable. Direct URLs and reloads work in Vite and Cloudflare Pages. Once D1 is populated, links on every device show the same records.
 
 The initial Fall 2026 schedule includes the November 5 Peachy Puffs, November 12 Peach Passers, and November 19 Whiff City FC fixtures from the supplied league screenshot. The October 29 result in that screenshot was already completed and is not part of the upcoming schedule. Browser edits to those fixtures take precedence over the defaults.
 
@@ -68,7 +68,7 @@ The older `supabase/migrations/` directory remains as an unused relational desig
 
 ## Current scope
 
-Available now: match archive and filtering, score-derived record and season charts, season records, editable Teams with crests, hex colors, and scouting notes, schedule CSV preview and upload, match editing and reports, optional-minute events, squad entry with preferred positions and flip cards, seven-player lineup selection, and a touch marker board. Player photos and uploaded crests are resized and stored in the shared record data after publishing.
+Available now: match archive and filtering, score-derived record and season charts, season records, editable Teams with crests, hex colors, and scouting notes, schedule CSV preview and upload, match editing and reports, optional-minute events, roster entry with preferred positions and flip cards, seven-player lineup selection, and a touch marker board. Player photos and uploaded crests are resized and stored in the shared record data after publishing.
 
 Head-to-head record bars use the opposing Team's saved color on the left and TBFC orange on the right. Peachy Puffs starts with `#2d5337`; other Teams can set their own color in the editor.
 

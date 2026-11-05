@@ -1,0 +1,58 @@
+import { styled } from "@mui/material/styles";
+import WhiteLabel from "../img/lineup-label-white.png";
+import BlackLabel from "../img/lineup-label-black.png";
+
+export const nameplateStyles = (kit?: string) => ({
+  minWidth: 0,
+  minHeight: 36,
+  height: "auto",
+  aspectRatio: "552 / 120",
+  boxSizing: "border-box" as const,
+  border: 0,
+  borderRadius: 0,
+  padding: "5px 13%",
+  backgroundColor: "transparent",
+  backgroundImage: `url(${kit === "White" ? WhiteLabel : BlackLabel})`,
+  backgroundSize: "100% 100%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  color: kit === "White" ? "#FD6340" : "#f47730",
+  boxShadow: "none",
+  filter: "drop-shadow(0 3px 4px #0008)",
+  textAlign: "center" as const,
+  "@media (max-width: 600px)": { minWidth: 0, minHeight: 36 },
+});
+
+export const LineupNameplate = styled("div", {
+  shouldForwardProp: (prop) => prop !== "kit",
+})<{ kit?: string }>(({ kit }) => nameplateStyles(kit));
+
+const Label = styled("span")({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 3,
+  fontFamily: "Oxanium, sans-serif",
+  fontSize: "clamp(10px, 1.2vw, 16px)",
+  fontWeight: 700,
+  lineHeight: 1.25,
+  textTransform: "uppercase",
+  overflowWrap: "anywhere",
+  "& strong": { fontSize: "1.5em", flexShrink: 0 },
+  "& span": { minWidth: 0, letterSpacing: "-.04em" },
+});
+
+export function NameplateText({
+  number,
+  name,
+}: {
+  number?: string;
+  name: string;
+}) {
+  return (
+    <Label>
+      {number && <strong>{number}</strong>}
+      <span>{name}</span>
+    </Label>
+  );
+}

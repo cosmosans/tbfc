@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  ButtonBase,
   Card,
   CardContent,
   Chip,
@@ -14,6 +15,7 @@ import {
 import type { ClubData, Formation, Match, Player, Position } from "../../model";
 import { defaultLineup } from "../../store";
 import { LineupGrid } from "../../components/layout";
+import { LineupNameplate, NameplateText } from "../../components/LineupNameplate";
 import { formationSlots } from "./formations";
 import LineupPitch from "./LineupPitch";
 import { canEditClub } from "../../editAccess";
@@ -179,70 +181,82 @@ export default function LineupEditor({
                 Bench ({benchPlayers.length})
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                {canEditClub ? 'Tap a player to move them to Unavailable.' : 'Selected substitutes.'}
+                {canEditClub
+                  ? "Tap a player to move them to Unavailable."
+                  : "Selected substitutes."}
               </Typography>
               <Stack gap={2}>
-                {benchPlayers.map((player) => (
-                  <Box
-                    key={player.id}
-                    sx={{
-                      display: "flex",
-                      gap: 1,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box sx={{ flex: 1 }}>
-                      <Chip
-                        sx={{ alignSelf: "flex-start", height: 40 }}
-                        label={`#${player.number} ${player.name}`}
-                        color="primary"
-                        onClick={canEditClub ? () =>
-                          save({
-                            ...lineup,
-                            bench: lineup.bench.filter(
-                              (id) => id !== player.id,
-                            ),
-                          })
-                        : undefined}
-                      />
-                    </Box>
-
-                    <FormControl size="small" sx={{ minWidth: 220 }}>
-                      <InputLabel id={`bench-position-${player.id}`}>
-                        Substitute For
-                      </InputLabel>
-                      <Select
-                        labelId={`bench-position-${player.id}`}
-                        label="Substitute For"
-                        value={lineup.benchPositions?.[player.id] ?? "Floater"}
+                {benchPlayers.map((player) => {
+                  return (
+                    <Box
+                      key={player.id}
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                        flexWrap: "wrap",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <ButtonBase
+                        type="button"
                         disabled={!canEditClub}
-                        onChange={(event) => {
-                          const benchPositions = { ...lineup.benchPositions };
-                          if (event.target.value)
-                            benchPositions[player.id] = event.target
-                              .value as Position;
-                          else delete benchPositions[player.id];
-                          save({ ...lineup, benchPositions });
+                        aria-label={`Move #${player.number} ${player.name} to Unavailable`}
+                        title={`#${player.number} ${player.name}`}
+                        sx={{
+                          width: 180,
+                          flexShrink: 0,
+                          cursor: canEditClub ? "pointer" : "default",
+                          "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
                         }}
+                        onClick={canEditClub ? () => save({
+                          ...lineup,
+                          bench: lineup.bench.filter((id) => id !== player.id),
+                        }) : undefined}
                       >
-                        <MenuItem value="Floater">Floater</MenuItem>
-                        {slots.map((position, index) => {
-                          const starter = data.players.find(
-                            (p) => p.id === lineup.starters[index],
-                          );
-                          return (
-                            <MenuItem key={position} value={position}>
-                              {position} ·{" "}
-                              {starter
-                                ? `#${starter.number} ${starter.name}`
-                                : "Empty"}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                ))}
+                        <LineupNameplate kit={match.kit} sx={{ width: "100%" }}>
+                          <NameplateText number={player.number} name={player.name.split(" ")[0]} />
+                        </LineupNameplate>
+                      </ButtonBase>
+                      <FormControl size="small" sx={{ minWidth: 220 }}>
+                        <InputLabel id={`bench-position-${player.id}`}>
+                          Substitute For
+                        </InputLabel>
+                        <Select
+                          labelId={`bench-position-${player.id}`}
+                          label="Substitute For"
+                          value={
+                            lineup.benchPositions?.[player.id] ?? "Floater"
+                          }
+                          disabled={!canEditClub}
+                          onChange={(event) => {
+                            const benchPositions = { ...lineup.benchPositions };
+                            if (event.target.value)
+                              benchPositions[player.id] = event.target
+                                .value as Position;
+                            else delete benchPositions[player.id];
+                            save({ ...lineup, benchPositions });
+                          }}
+                        >
+                          <MenuItem value="Floater">Floater</MenuItem>
+                          {slots.map((position, index) => {
+                            const starter = data.players.find(
+                              (p) => p.id === lineup.starters[index],
+                            );
+                            return (
+                              <MenuItem key={position} value={position}>
+                                {position} ·{" "}
+                                {starter
+                                  ? `#${starter.number} ${starter.name}`
+                                  : "Empty"}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  );
+                })}
                 {benchPlayers.length === 0 && (
                   <Typography color="text.secondary">
                     No substitutes selected.
@@ -252,35 +266,43 @@ export default function LineupEditor({
             </CardContent>
           </Card>
         </Stack>
-        <LineupPitch
-          data={data}
-          lineup={lineup}
-          onFormationChange={canEditClub ? changeFormation : undefined}
-        />
-      </Box>
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Unavailable ({unavailablePlayers.length})
-          </Typography>
-          <Stack direction="row" gap={1} flexWrap="wrap">
-            {unavailablePlayers.map((player) => (
-              <Chip
-                key={player.id}
-                label={`#${player.number} ${player.name}`}
-                onClick={canEditClub ? () =>
-                  save({ ...lineup, bench: [...lineup.bench, player.id] })
-                : undefined}
-              />
-            ))}
-            {unavailablePlayers.length === 0 && (
-              <Typography color="text.secondary">
-                Everyone is assigned.
+        <Stack gap={2} sx={{ minWidth: 0 }}>
+          <LineupPitch
+            data={data}
+            lineup={lineup}
+            onFormationChange={canEditClub ? changeFormation : undefined}
+          />
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Unavailable ({unavailablePlayers.length})
               </Typography>
-            )}
-          </Stack>
-        </CardContent>
-      </Card>
+              <Stack direction="row" gap={1} flexWrap="wrap">
+                {unavailablePlayers.map((player) => (
+                  <Chip
+                    key={player.id}
+                    label={`#${player.number} ${player.name}`}
+                    onClick={
+                      canEditClub
+                        ? () =>
+                            save({
+                              ...lineup,
+                              bench: [...lineup.bench, player.id],
+                            })
+                        : undefined
+                    }
+                  />
+                ))}
+                {unavailablePlayers.length === 0 && (
+                  <Typography color="text.secondary">
+                    Everyone is assigned.
+                  </Typography>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        </Stack>
+      </Box>
     </Stack>
   );
 }

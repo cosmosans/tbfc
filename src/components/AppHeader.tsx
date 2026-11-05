@@ -12,7 +12,7 @@ import { styled } from "@mui/material/styles";
 export type NavigationPage =
   | "matches"
   | "schedule"
-  | "squad"
+  | "roster"
   | "tactics"
   | "teams"
   | "locations"
@@ -98,26 +98,28 @@ export default function AppHeader({
         >
           <NavigationTab value="matches" label="Matchday" />
           <NavigationTab value="schedule" label="Schedule" />
-          <NavigationTab value="squad" label="Squad" />
+          <NavigationTab value="roster" label="roster" />
           {/* <NavigationTab value="tactics" label="Tactics" /> */}
           <NavigationTab value="stats" label="Stats" />
           <NavigationTab value="teams" label="Teams" />
           {/* <NavigationTab value="locations" label="Locations" />
           <NavigationTab value="seasons" label="Seasons" /> */}
         </Navigation>
-        {onBackup && <Button
-          variant="outlined"
-          onClick={onBackup}
-          sx={{
-            color: "#fff",
-            borderColor: "#ffffff99",
-            whiteSpace: "nowrap",
-            flexShrink: 0,
-            "&:hover": { borderColor: "#fff" },
-          }}
-        >
-          Backup
-        </Button>}
+        {onBackup && (
+          <Button
+            variant="outlined"
+            onClick={onBackup}
+            sx={{
+              color: "#fff",
+              borderColor: "#ffffff99",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+              "&:hover": { borderColor: "#fff" },
+            }}
+          >
+            Backup
+          </Button>
+        )}
       </Toolbar>
     </Header>
   );
