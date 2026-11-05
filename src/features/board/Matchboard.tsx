@@ -4,6 +4,7 @@ import { Box, Button, Card, CardContent, Stack, TextField, Typography } from "@m
 import type { Board, ClubData, Match } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
 import { Pitch, CenterLine, CenterCircle, TopBox, BottomBox, PitchMarker } from "./Matchboard.styles";
+import { canEditClub } from "../../editAccess";
 
 export default function Matchboard({
   data,
@@ -36,6 +37,7 @@ export default function Matchboard({
   const boardRef = useRef(board);
   const [dragId, setDragId] = useState<string | null>(null);
   function persist(next: Board) {
+    if (!canEditClub) return;
     boardRef.current = next;
     setBoard(next);
     update({
@@ -44,6 +46,7 @@ export default function Matchboard({
     });
   }
   function move(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!canEditClub) return;
     if (!dragId) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const x = Math.max(
@@ -87,6 +90,7 @@ export default function Matchboard({
               team={marker.team}
               style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
               onPointerDown={(e) => {
+                if (!canEditClub) return;
                 e.preventDefault();
                 e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
                 setDragId(marker.id);
@@ -102,12 +106,12 @@ export default function Matchboard({
         <Card>
           <CardContent>
             <Typography variant="h6">Coaching board</Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
+            {canEditClub && <Typography variant="body2" color="text.secondary" sx={{ my: 1 }}>
               Drag markers on the pitch. Positions save when released.
-            </Typography>
-            <Button variant="outlined" fullWidth onClick={() => persist({ ...base, notes: boardRef.current.notes })}>
+            </Typography>}
+            {canEditClub && <Button variant="outlined" fullWidth onClick={() => persist({ ...base, notes: boardRef.current.notes })}>
               Reset to lineup
-            </Button>
+            </Button>}
           </CardContent>
         </Card>
         <Card>
@@ -118,6 +122,7 @@ export default function Matchboard({
               minRows={5}
               fullWidth
               value={board.notes}
+              disabled={!canEditClub}
               onChange={(e) => {
                 const next = { ...boardRef.current, notes: e.target.value };
                 boardRef.current = next;

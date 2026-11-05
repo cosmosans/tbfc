@@ -56,7 +56,7 @@ export default function AppHeader({
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
-  onBackup: () => void;
+  onBackup?: () => void;
 }) {
   return (
     <Header position="sticky" elevation={0}>
@@ -99,12 +99,13 @@ export default function AppHeader({
           <NavigationTab value="matches" label="Matchday" />
           <NavigationTab value="schedule" label="Schedule" />
           <NavigationTab value="squad" label="Squad" />
-          <NavigationTab value="tactics" label="Tactics" />
-          <NavigationTab value="teams" label="Teams" />
-          <NavigationTab value="locations" label="Locations" />
+          {/* <NavigationTab value="tactics" label="Tactics" /> */}
           <NavigationTab value="stats" label="Stats" />
+          <NavigationTab value="teams" label="Teams" />
+          {/* <NavigationTab value="locations" label="Locations" />
+          <NavigationTab value="seasons" label="Seasons" /> */}
         </Navigation>
-        <Button
+        {onBackup && <Button
           variant="outlined"
           onClick={onBackup}
           sx={{
@@ -116,7 +117,7 @@ export default function AppHeader({
           }}
         >
           Backup
-        </Button>
+        </Button>}
       </Toolbar>
     </Header>
   );

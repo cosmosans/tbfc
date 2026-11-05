@@ -20,6 +20,7 @@ import { FourColumnGrid } from "../../components/layout";
 import RecordBar from "../../components/RecordBar";
 
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
+import { canEditClub } from "../../editAccess";
 
 async function prepareTeamCrest(file: File): Promise<string> {
   if (!file.type.startsWith("image/")) throw new Error("Choose an image file.");
@@ -75,7 +76,7 @@ export default function Teams({
   }
   return (
     <Stack gap={2}>
-      <Stack direction="row" gap={2}>
+      {canEditClub && <Stack direction="row" gap={2}>
         <TextField
           label="Team name"
           size="small"
@@ -104,7 +105,7 @@ export default function Teams({
         >
           Add team
         </Button>
-      </Stack>
+      </Stack>}
       <FourColumnGrid>
         {sorted.map((opponent) => {
           const games = data.matches.filter(
@@ -207,19 +208,19 @@ export default function Teams({
                 )}
                 <Stack direction="row" gap={1} sx={{ mt: 1 }}>
                   <Button onClick={() => onOpen(opponent)}>View team</Button>
-                  <Button onClick={() => setEditing({ ...opponent })}>Edit team</Button>
+                  {canEditClub && <Button onClick={() => setEditing({ ...opponent })}>Edit team</Button>}
                 </Stack>
               </CardContent>
             </Card>
           );
         })}
       </FourColumnGrid>
-      <OpponentDialog
+      {canEditClub && <OpponentDialog
         key={editing?.id ?? "closed"}
         opponent={editing}
         onClose={() => setEditing(null)}
         onSave={saveOpponent}
-      />
+      />}
     </Stack>
   );
 }

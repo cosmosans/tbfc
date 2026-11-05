@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
 import type { ClubData, Location } from '../../model';
 import { FourColumnGrid } from '../../components/layout';
+import { canEditClub } from '../../editAccess';
 
 async function prepareImage(file: File): Promise<string> {
   if (!file.type.startsWith('image/')) throw new Error('Choose an image file.');
@@ -42,13 +43,13 @@ export default function Locations({ data, update }: { data: ClubData; update: (d
   }
   return <Stack gap={2}>
     <Typography variant="h5" sx={{ bgcolor: '#111', color: '#fff', px: 2, py: 1, alignSelf: 'flex-start' }}>Locations</Typography>
-    <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
+    {canEditClub && <Stack direction={{ xs: 'column', sm: 'row' }} gap={2}>
       <TextField label="Location name" size="small" value={name} onChange={event => setName(event.target.value)} sx={{ flexGrow: 1 }} />
       <Button variant="contained" disabled={!name.trim() || data.locations.some(item => item.name.toLowerCase() === name.trim().toLowerCase())} onClick={() => {
         setEditing({ id: crypto.randomUUID(), name: name.trim(), address: '', imageUrl: '' });
         setName('');
       }}>Add location</Button>
-    </Stack>
+    </Stack>}
     <FourColumnGrid>
       {[...data.locations].sort((a, b) => a.name.localeCompare(b.name)).map(location => <Card key={location.id}>
         {location.imageUrl && <Box component="img" src={location.imageUrl} alt="" sx={{ width: '100%', height: 150, objectFit: 'cover', display: 'block' }} />}
@@ -56,11 +57,11 @@ export default function Locations({ data, update }: { data: ClubData; update: (d
           <Typography variant="h6">{location.name}</Typography>
           <Typography color="text.secondary" variant="body2">{location.address || 'Address not added'}</Typography>
           <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>{data.matches.filter(match => match.locationId === location.id).length} matches</Typography>
-          <Button sx={{ mt: 1 }} onClick={() => { setError(''); setEditing({ ...location }); }}>Edit location</Button>
+          {canEditClub && <Button sx={{ mt: 1 }} onClick={() => { setError(''); setEditing({ ...location }); }}>Edit location</Button>}
         </CardContent>
       </Card>)}
     </FourColumnGrid>
-    <Dialog open={!!editing} onClose={() => setEditing(null)} fullWidth maxWidth="sm">
+    {canEditClub && <Dialog open={!!editing} onClose={() => setEditing(null)} fullWidth maxWidth="sm">
       <DialogTitle>{data.locations.some(item => item.id === editing?.id) ? 'Edit location' : 'Add location'}</DialogTitle>
       {editing && <>
         <DialogContent><Stack gap={2} sx={{ pt: 1 }}>
@@ -73,6 +74,6 @@ export default function Locations({ data, update }: { data: ClubData; update: (d
         </Stack></DialogContent>
         <DialogActions><Button onClick={() => setEditing(null)}>Cancel</Button><Button variant="contained" disabled={!editing.name.trim() || data.locations.some(item => item.id !== editing.id && item.name.toLowerCase() === editing.name.trim().toLowerCase())} onClick={() => save({ ...editing, name: editing.name.trim(), address: editing.address.trim() })}>Save</Button></DialogActions>
       </>}
-    </Dialog>
+    </Dialog>}
   </Stack>;
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { canEditClub } from "../../editAccess";
 import type { ClubData, Player, Position } from "../../model";
 import PlayerCard, { PositionSelect } from "./PlayerCard";
 import { FourColumnGrid } from "../../components/layout";
@@ -49,9 +50,9 @@ export default function Squad({
     <Stack gap={2}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
         <Typography variant="h5" sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1 }}>Squad</Typography>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddOpen(true)}>Add Player</Button>
+        {canEditClub && <Button variant="contained" startIcon={<AddIcon />} onClick={() => setAddOpen(true)}>Add Player</Button>}
       </Stack>
-      <Dialog open={addOpen} onClose={closeAdd} fullWidth maxWidth="sm">
+      {canEditClub && <Dialog open={addOpen} onClose={closeAdd} fullWidth maxWidth="sm">
         <DialogTitle>Add player</DialogTitle>
         <DialogContent>
           <Stack gap={2} sx={{ pt: 1 }}>
@@ -80,7 +81,7 @@ export default function Squad({
           <Button onClick={closeAdd}>Cancel</Button>
           <Button variant="contained" disabled={!name.trim()} onClick={addPlayer}>Add player</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog>}
       <FourColumnGrid>
         {data.players.map((player) => (
           <PlayerCard

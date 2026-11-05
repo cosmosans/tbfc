@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 
 import CleatsIcon from "../../img/cleats.svg";
+import { canEditClub } from "../../editAccess";
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
 import KeeperIcon from "../../img/gloves.svg";
 import CardsIcon from "../../img/cards.svg";
@@ -127,6 +128,7 @@ export default function PlayerCard({
     frame.dataset.tilting = "true";
   }
   function openEdit() {
+    if (!canEditClub) return;
     resetTilt();
     setDraft({ ...player });
     setPhotoError("");
@@ -166,8 +168,9 @@ export default function PlayerCard({
       <PlayerCardInner flipped={flipped}>
         <PlayerCardFront
           type="button"
+          disabled={!canEditClub}
           onClick={openEdit}
-          aria-label={`Edit ${player.name}`}
+          aria-label={canEditClub ? `Edit ${player.name}` : player.name}
           aria-hidden={flipped}
           inert={flipped}
         >

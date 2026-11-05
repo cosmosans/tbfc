@@ -18,7 +18,7 @@ export default function MatchEventPage({
   match: Match;
   update: (data: ClubData) => void;
   onBack: () => void;
-  onEdit: () => void;
+  onEdit?: () => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const view = searchParams.get("tab") === "board" ? "board" : "lineup";

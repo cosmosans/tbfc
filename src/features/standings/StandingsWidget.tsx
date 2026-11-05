@@ -22,6 +22,7 @@ import {
 import type { ClubData, Opponent, StandingRow } from "../../model";
 import { orderedSeasons } from "../../clubView";
 import { parseStandingsCsv } from "../../standingsImport";
+import { canEditClub } from "../../editAccess";
 
 function TeamMark({ opponent, tbfc }: { opponent?: Opponent; tbfc: boolean }) {
   const image = tbfc ? "/crests/tbfc.png" : opponent?.crestUrl;
@@ -147,15 +148,15 @@ export default function StandingsWidget({
                 ))}
               </Select>
             </FormControl>
-            <Button
+            {canEditClub && <Button
               component="a"
               href="/templates/tbfc-standings-template.csv"
               download="tbfc-standings-template.csv"
               variant="outlined"
             >
               CSV template
-            </Button>
-            <Button component="label" variant="contained">
+            </Button>}
+            {canEditClub && <Button component="label" variant="contained">
               Upload standings CSV
               <input
                 hidden
@@ -166,7 +167,7 @@ export default function StandingsWidget({
                   event.target.value = "";
                 }}
               />
-            </Button>
+            </Button>}
           </Stack>
         </Stack>
         {error && (

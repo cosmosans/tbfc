@@ -16,6 +16,7 @@ import { defaultLineup } from "../../store";
 import { LineupGrid } from "../../components/layout";
 import { formationSlots } from "./formations";
 import LineupPitch from "./LineupPitch";
+import { canEditClub } from "../../editAccess";
 
 export default function LineupEditor({
   data,
@@ -32,9 +33,11 @@ export default function LineupEditor({
     const normalized = {
       ...next,
       benchPositions: Object.fromEntries(
-        Object.entries(next.benchPositions ?? {}).filter(([id, position]) =>
-          next.bench.includes(id) && !next.starters.includes(id) &&
-          formationSlots[next.formation].includes(position),
+        Object.entries(next.benchPositions ?? {}).filter(
+          ([id, position]) =>
+            next.bench.includes(id) &&
+            !next.starters.includes(id) &&
+            formationSlots[next.formation].includes(position),
         ),
       ),
       bench: [...new Set(next.bench)].filter(
@@ -117,136 +120,157 @@ export default function LineupEditor({
           A player occupies more than one starting slot.
         </Alert>
       )}
-      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", md: "minmax(320px, 2fr) minmax(0, 3fr)" }, gap: 2, alignItems: "start" }}>
-      <Stack gap={2} sx={{ minWidth: 0 }}>
-      <Card>
-        <CardContent>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography variant="h6">Starting VII</Typography>
-            <FormControl size="small" sx={{ minWidth: 160 }}>
-              <InputLabel>Formation</InputLabel>
-              <Select
-                label="Formation"
-                value={lineup.formation}
-                onChange={(e) => changeFormation(e.target.value as Formation)}
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: {
+            xs: "minmax(0, 1fr)",
+            md: "minmax(320px, 2fr) minmax(0, 3fr)",
+          },
+          gap: 2,
+          alignItems: "start",
+        }}
+      >
+        <Stack gap={2} sx={{ minWidth: 0 }}>
+          <Card>
+            <CardContent>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
               >
-                <MenuItem value="1-2-3-1">1-2-3-1</MenuItem>
-                <MenuItem value="1-3-3">1-3-3</MenuItem>
-              </Select>
-            </FormControl>
-          </Stack>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            Players who prefer a role appear first in that slot’s list. You can
-            still choose anyone.
-          </Typography>
-          <LineupGrid sx={{ mt: 2 }}>
-            {lineup.starters.map((id, index) => {
-              const slot = slots[index];
-              const label = slot;
-              return (
-                <FormControl key={index} size="small" fullWidth>
-                  <InputLabel>{label}</InputLabel>
-                  <Select
-                    label={label}
-                    value={id}
-                    onChange={(e) => assignStarter(index, e.target.value)}
-                  >
-                    <MenuItem value="">Empty</MenuItem>
-                    {candidatesFor(slot).map((p) => (
-                      <MenuItem key={p.id} value={p.id}>
-                        #{p.number} {p.name}
-                        {p.preferredPosition === slot
-                          ? " · preferred"
-                          : p.secondaryPosition === slot
-                            ? " · secondary"
-                            : ""}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              );
-            })}
-          </LineupGrid>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Bench · {benchPlayers.length}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Tap a player to move them to Unavailable.
-          </Typography>
-          <Stack gap={2}>
-            {benchPlayers.map((player) => (
-              <Stack key={player.id} gap={1}>
-              <Chip
-                sx={{ alignSelf: "flex-start" }}
-                label={`#${player.number} ${player.name}`}
-                color="primary"
-                onClick={() =>
-                  save({
-                    ...lineup,
-                    bench: lineup.bench.filter((id) => id !== player.id),
-                  })
-                }
-              />
-              <FormControl size="small" fullWidth>
-                <InputLabel id={`bench-position-${player.id}`}>Substitute for</InputLabel>
-                <Select
-                  labelId={`bench-position-${player.id}`}
-                  label="Substitute for"
-                  value={lineup.benchPositions?.[player.id] ?? ""}
-                  onChange={(event) => {
-                    const benchPositions = { ...lineup.benchPositions };
-                    if (event.target.value) benchPositions[player.id] = event.target.value as Position;
-                    else delete benchPositions[player.id];
-                    save({ ...lineup, benchPositions });
-                  }}
-                >
-                  <MenuItem value="">Unassigned</MenuItem>
-                  {slots.map((position, index) => {
-                    const starter = data.players.find((p) => p.id === lineup.starters[index]);
-                    return <MenuItem key={position} value={position}>
-                      {position} · {starter ? `#${starter.number} ${starter.name}` : "Empty"}
-                    </MenuItem>;
-                  })}
-                </Select>
-              </FormControl>
+                <Typography variant="h6">Starting VII</Typography>
               </Stack>
-            ))}
-            {benchPlayers.length === 0 && (
-              <Typography color="text.secondary">
-                No substitutes selected.
+
+              <LineupGrid sx={{ mt: 2 }}>
+                {lineup.starters.map((id, index) => {
+                  const slot = slots[index];
+                  const label = slot;
+                  return (
+                    <FormControl key={index} size="small" fullWidth>
+                      <InputLabel>{label}</InputLabel>
+                      <Select
+                        label={label}
+                        value={id}
+                        disabled={!canEditClub}
+                        onChange={(e) => assignStarter(index, e.target.value)}
+                      >
+                        <MenuItem value="">Empty</MenuItem>
+                        {candidatesFor(slot).map((p) => (
+                          <MenuItem key={p.id} value={p.id}>
+                            #{p.number} {p.name}
+                            {p.preferredPosition === slot
+                              ? " (Preferred)"
+                              : p.secondaryPosition === slot
+                                ? " (Secondary)"
+                                : ""}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  );
+                })}
+              </LineupGrid>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                Bench ({benchPlayers.length})
               </Typography>
-            )}
-          </Stack>
-        </CardContent>
-      </Card>
-      </Stack>
-      <LineupPitch data={data} lineup={lineup} />
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                {canEditClub ? 'Tap a player to move them to Unavailable.' : 'Selected substitutes.'}
+              </Typography>
+              <Stack gap={2}>
+                {benchPlayers.map((player) => (
+                  <Box
+                    key={player.id}
+                    sx={{
+                      display: "flex",
+                      gap: 1,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box sx={{ flex: 1 }}>
+                      <Chip
+                        sx={{ alignSelf: "flex-start", height: 40 }}
+                        label={`#${player.number} ${player.name}`}
+                        color="primary"
+                        onClick={canEditClub ? () =>
+                          save({
+                            ...lineup,
+                            bench: lineup.bench.filter(
+                              (id) => id !== player.id,
+                            ),
+                          })
+                        : undefined}
+                      />
+                    </Box>
+
+                    <FormControl size="small" sx={{ minWidth: 220 }}>
+                      <InputLabel id={`bench-position-${player.id}`}>
+                        Substitute For
+                      </InputLabel>
+                      <Select
+                        labelId={`bench-position-${player.id}`}
+                        label="Substitute For"
+                        value={lineup.benchPositions?.[player.id] ?? "Floater"}
+                        disabled={!canEditClub}
+                        onChange={(event) => {
+                          const benchPositions = { ...lineup.benchPositions };
+                          if (event.target.value)
+                            benchPositions[player.id] = event.target
+                              .value as Position;
+                          else delete benchPositions[player.id];
+                          save({ ...lineup, benchPositions });
+                        }}
+                      >
+                        <MenuItem value="Floater">Floater</MenuItem>
+                        {slots.map((position, index) => {
+                          const starter = data.players.find(
+                            (p) => p.id === lineup.starters[index],
+                          );
+                          return (
+                            <MenuItem key={position} value={position}>
+                              {position} ·{" "}
+                              {starter
+                                ? `#${starter.number} ${starter.name}`
+                                : "Empty"}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                ))}
+                {benchPlayers.length === 0 && (
+                  <Typography color="text.secondary">
+                    No substitutes selected.
+                  </Typography>
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
+        </Stack>
+        <LineupPitch
+          data={data}
+          lineup={lineup}
+          onFormationChange={canEditClub ? changeFormation : undefined}
+        />
       </Box>
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            Unavailable · {unavailablePlayers.length}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Everyone starts here. Tap a player to add them to the bench, or
-            choose them for a starting slot above.
+            Unavailable ({unavailablePlayers.length})
           </Typography>
           <Stack direction="row" gap={1} flexWrap="wrap">
             {unavailablePlayers.map((player) => (
               <Chip
                 key={player.id}
                 label={`#${player.number} ${player.name}`}
-                onClick={() =>
+                onClick={canEditClub ? () =>
                   save({ ...lineup, bench: [...lineup.bench, player.id] })
-                }
+                : undefined}
               />
             ))}
             {unavailablePlayers.length === 0 && (

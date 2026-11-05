@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Box, Checkbox, FormControlLabel, Stack, Typography } from "@mui/material";
-import type { ClubData, Lineup } from "../../model";
+import { Box, Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Stack, Typography } from "@mui/material";
+import type { ClubData, Formation, Lineup } from "../../model";
 import {
   Pitch,
   CenterLine,
@@ -15,27 +15,47 @@ export default function LineupPitch({
   data,
   lineup,
   showTitle = true,
+  allowStartersOnly = true,
+  onFormationChange,
 }: {
   data: ClubData;
   lineup: Lineup;
   showTitle?: boolean;
+  allowStartersOnly?: boolean;
+  onFormationChange?: (formation: Formation) => void;
 }) {
   const [startersOnly, setStartersOnly] = useState(false);
+  const filterToStarters = allowStartersOnly && startersOnly;
   const points = formationPoints[lineup.formation];
   const slots = formationSlots[lineup.formation];
   return (
     <Box className="lineup-pitch">
+      {(onFormationChange || showTitle || allowStartersOnly) && (
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-      {showTitle && (
+      {onFormationChange ? (
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <InputLabel id="pitch-formation-label">Formation</InputLabel>
+          <Select
+            labelId="pitch-formation-label"
+            label="Formation"
+            value={lineup.formation}
+            onChange={(event) => onFormationChange(event.target.value as Formation)}
+          >
+            <MenuItem value="1-2-3-1">1-2-3-1</MenuItem>
+            <MenuItem value="1-3-3">1-3-3</MenuItem>
+          </Select>
+        </FormControl>
+      ) : showTitle && (
         <Typography variant="h6" sx={{ mb: 1 }}>
           {lineup.formation}
         </Typography>
       )}
-      <FormControlLabel control={<Checkbox checked={startersOnly} onChange={(event) => setStartersOnly(event.target.checked)} />} label="Starters Only" />
+      {allowStartersOnly && <FormControlLabel control={<Checkbox checked={startersOnly} onChange={(event) => setStartersOnly(event.target.checked)} />} label="Starters Only" />}
       </Stack>
+      )}
       <Pitch
         sx={{ minHeight: { xs: 380, sm: 500 }, touchAction: "auto" }}
-        aria-label={`${lineup.formation} ${startersOnly ? "starting formation" : "lineup with substitutes"}`}
+        aria-label={`${lineup.formation} ${filterToStarters ? "starting formation" : "lineup with substitutes"}`}
       >
         <CenterLine />
         <CenterCircle />
@@ -45,7 +65,7 @@ export default function LineupPitch({
           const player = data.players.find(
             (item) => item.id === lineup.starters[index],
           );
-          const substitutes = startersOnly ? [] : data.players.filter((p) =>
+          const substitutes = filterToStarters ? [] : data.players.filter((p) =>
             lineup.bench.includes(p.id) && !lineup.starters.includes(p.id) &&
             lineup.benchPositions?.[p.id] === slots[index],
           );

@@ -38,6 +38,7 @@ import TeamDetail from "./features/teams/TeamDetail";
 import Seasons from "./features/seasons/Seasons";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
+import { canEditClub } from "./editAccess";
 
 type Page =
   | "matches"
@@ -115,6 +116,7 @@ export default function App() {
   const [backupMessage, setBackupMessage] = useState("");
 
   function update(next: ClubData) {
+    if (!canEditClub) return;
     setData(next);
     saveData(next);
   }
@@ -150,6 +152,7 @@ export default function App() {
     tacticsMatches[0];
 
   function saveMatch(match: Match) {
+    if (!canEditClub) return;
     const existing = data.opponents.find(
       (o) =>
         o.id === match.opponentId ||
@@ -206,7 +209,7 @@ export default function App() {
                 ? "schedule"
                 : (page ?? "matches")
         }
-        onBackup={() => setBackupOpen(true)}
+        onBackup={canEditClub ? () => setBackupOpen(true) : undefined}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -246,7 +249,7 @@ export default function App() {
               match={selected}
               update={update}
               onBack={() => navigate("/schedule")}
-              onEdit={() => setEditing({ ...selected })}
+              onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
             />
           ) : (
             <>
@@ -261,7 +264,7 @@ export default function App() {
                 data={data}
                 match={selected}
                 detail
-                onEdit={() => setEditing({ ...selected })}
+                onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
               />
               {opponentFor(data, selected)?.notes && (
                 <Alert severity="info" sx={{ mt: 2 }}>
@@ -290,7 +293,7 @@ export default function App() {
               {activeDetailTab === 0 && (
                 <MatchHistory
                   match={selected}
-                  onEdit={() => setEditing({ ...selected })}
+                  onEdit={canEditClub ? () => setEditing({ ...selected }) : undefined}
                 />
               )}
               {activeDetailTab === 1 && (
@@ -351,6 +354,7 @@ export default function App() {
                       data={data}
                       lineup={nextLineup}
                       showTitle={false}
+                      allowStartersOnly={false}
                     />
                   </Box>
                 )}
@@ -415,7 +419,7 @@ export default function App() {
                         ))}
                       </Select>
                     </FormControl>
-                    <Button
+                    {canEditClub && <Button
                       variant="outlined"
                       sx={{ alignSelf: "flex-start" }}
                       onClick={() => {
@@ -425,7 +429,7 @@ export default function App() {
                       }}
                     >
                       Edit lineup
-                    </Button>
+                    </Button>}
                     <Matchboard
                       key={tacticsMatch.id}
                       data={data}
@@ -465,7 +469,7 @@ export default function App() {
           </>
         )}
       </Container>
-      <MatchDialog
+      {canEditClub && <MatchDialog
         open={!!editing || showNew}
         match={editing ?? newMatch}
         teams={data.opponents}
@@ -476,8 +480,8 @@ export default function App() {
           setShowNew(false);
         }}
         onSave={saveMatch}
-      />
-      <DataTransferDialog
+      />}
+      {canEditClub && <DataTransferDialog
         open={backupOpen}
         onClose={() => setBackupOpen(false)}
         onDownload={() => exportData(data)}
@@ -489,7 +493,7 @@ export default function App() {
           navigate("/");
           setBackupMessage("Backup restored in this browser.");
         }}
-      />
+      />}
     </>
   );
 }

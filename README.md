@@ -18,7 +18,7 @@ npm run dev
 - Other `src/features/` folders own schedule import, squad and player cards, Teams, Seasons, stats, lineups, and the matchboard.
 - `src/model.ts`, `src/store.ts`, and `src/clubView.ts` hold data types, local persistence, and shared record selectors.
 
-The app starts with 52 accepted source rows imported from `TBFC STATS - Matchlog.csv` into `src/data/seedMatches.json`. The erroneous October 15, 2026 Inter Your Mom 1–1 row is excluded by the importer and removed from existing browser data. Changes made in the browser are saved in that browser's local storage. This local mode is for development and review; it is not yet shared across devices.
+The app starts with 52 accepted source rows imported from `TBFC STATS - Matchlog.csv` into `src/data/seedMatches.json`. The erroneous October 15, 2026 Inter Your Mom 1–1 row is excluded by the importer and removed from existing browser data. Changes made on localhost are saved in that browser's local storage. The public site is read only and data is not yet shared across devices.
 
 To move browser data, click **Backup** in the top bar and **Download backup JSON**. In another browser running the app, click **Backup**, choose the downloaded JSON, review the record counts, and click **Restore backup**. Restoring replaces the destination browser's local edits; download its backup first if you need to keep them.
 
@@ -57,7 +57,7 @@ This updates only the checked-in seed file. Existing browser data remains untouc
 
 ## Hosting
 
-Cloudflare Pages is the intended host for `turfburners.soccer`. The build uses Node 22, `npm run build`, and the `dist` output directory. See [the deployment guide](docs/deploy-cloudflare.md) for the GitHub connection, custom domain steps, and current browser-local data behavior.
+Cloudflare Pages is the intended host for `turfburnersfc.soccer`. The build uses Node 22, `npm run build`, and the `dist` output directory. See [the deployment guide](docs/deploy-cloudflare.md) for the GitHub connection, custom domain steps, and current browser-local data behavior.
 
 ## Backend setup
 

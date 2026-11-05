@@ -30,7 +30,7 @@ export const InteractiveCard = styled(Card)({
 });
 
 export const LineupGrid = styled(Box)({
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-  gap: 16,
+  display: "flex",
+  flexDirection: "column",
+  gap: 10,
 });

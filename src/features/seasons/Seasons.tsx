@@ -5,6 +5,7 @@ import { record } from "../../model";
 import { orderedSeasons } from "../../clubView";
 import { CardGrid } from "../../components/layout";
 import RecordBar from "../../components/RecordBar";
+import { canEditClub } from "../../editAccess";
 
 export default function Seasons({
   data,
@@ -30,7 +31,7 @@ export default function Seasons({
   }
   return (
     <Stack gap={2}>
-      <Card>
+      {canEditClub && <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Seasons
@@ -78,7 +79,7 @@ export default function Seasons({
             </Button>
           </Stack>
         </CardContent>
-      </Card>
+      </Card>}
       <CardGrid>
         {sorted.map((season) => {
           const games = data.matches.filter(
@@ -105,21 +106,21 @@ export default function Seasons({
                   <Button onClick={() => openSeason(season.id)}>
                     View matches
                   </Button>
-                  <Button onClick={() => setEditing({ ...season })}>
+                  {canEditClub && <Button onClick={() => setEditing({ ...season })}>
                     Edit
-                  </Button>
+                  </Button>}
                 </Stack>
               </CardContent>
             </Card>
           );
         })}
       </CardGrid>
-      <SeasonDialog
+      {canEditClub && <SeasonDialog
         key={editing?.id ?? "closed"}
         season={editing}
         onClose={() => setEditing(null)}
         onSave={saveSeason}
-      />
+      />}
     </Stack>
   );
 }

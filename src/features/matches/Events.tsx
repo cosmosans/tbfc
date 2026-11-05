@@ -19,6 +19,7 @@ import { getContrastRatio } from "@mui/material/styles";
 import type { ClubData, Match, MatchEvent } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
+import { canEditClub } from "../../editAccess";
 
 export default function Events({
   data,
@@ -73,7 +74,7 @@ export default function Events({
           Older matches may have unknown scorers; the score remains complete.
         </Alert>
       )}
-      <Card>
+      {canEditClub && <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             Add event
@@ -183,7 +184,7 @@ export default function Events({
             </Button>
           </Stack>
         </CardContent>
-      </Card>
+      </Card>}
       {events.map((event) => {
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
         const number = targetPlayer?.number;
@@ -287,7 +288,7 @@ export default function Events({
                     {event.note}
                   </Typography>
                 )}
-                <Button
+                {canEditClub && <Button
                   color="error"
                   sx={{ order: 3, "@media (max-width: 1199px)": { order: 2 } }}
                   onClick={() =>
@@ -298,7 +299,7 @@ export default function Events({
                   }
                 >
                   Remove
-                </Button>
+                </Button>}
               </Stack>
             </CardContent>
           </Card>

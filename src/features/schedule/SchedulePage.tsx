@@ -7,6 +7,7 @@ import { CardGrid } from '../../components/layout';
 import { MatchSummaryCard, UpcomingFixtureCard } from '../matches/MatchCards';
 import ScheduleImporter from './ScheduleImporter';
 import { matchLocation } from '../../matchLocation';
+import { canEditClub } from '../../editAccess';
 
 type Props = {
   data: ClubData;
@@ -30,13 +31,13 @@ export default function SchedulePage({ data, update, season, setSeason, onOpen, 
   return <Stack gap={3}>
     <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ sm: 'center' }} gap={2}>
       <Typography variant="h5" sx={{ bgcolor: '#111', color: '#fff', px: 2, py: 1 }}>Schedule &amp; match history</Typography>
-      <Stack direction="row" gap={1} flexWrap="wrap"><Button variant="outlined" onClick={onManageSeasons}>Manage seasons</Button><Button variant="contained" startIcon={<AddIcon />} onClick={() => setUploadOpen(true)}>Upload Season Schedule</Button><Button variant="contained" startIcon={<AddIcon />} onClick={onAddFixture}>Add fixture</Button></Stack>
+      {canEditClub && <Stack direction="row" gap={1} flexWrap="wrap"><Button variant="outlined" onClick={onManageSeasons}>Manage seasons</Button><Button variant="contained" startIcon={<AddIcon />} onClick={() => setUploadOpen(true)}>Upload Season Schedule</Button><Button variant="contained" startIcon={<AddIcon />} onClick={onAddFixture}>Add fixture</Button></Stack>}
     </Stack>
     <Stack direction={{ xs: 'column', sm: 'row' }} gap={2} sx={{ bgcolor: '#111', p: 2 }}>
       <TextField label="Search matches" size="small" value={search} onChange={event => setSearch(event.target.value)} sx={{ flexGrow: 1 }} />
       <FormControl size="small" sx={{ minWidth: 180 }}><InputLabel>Season</InputLabel><Select label="Season" value={season} onChange={event => setSeason(event.target.value)}><MenuItem value="All seasons">All seasons</MenuItem>{seasons.map(item => <MenuItem key={item.id} value={item.id}>{item.name}</MenuItem>)}</Select></FormControl>
     </Stack>
-    <ScheduleImporter data={data} update={update} open={uploadOpen} onClose={() => setUploadOpen(false)} />
+    {canEditClub && <ScheduleImporter data={data} update={update} open={uploadOpen} onClose={() => setUploadOpen(false)} />}
     <section><Typography variant="h5" sx={{ display: 'inline-block', bgcolor: '#111', color: '#fff', px: 2, py: 1, mb: 2 }}>Upcoming</Typography>
       {upcoming.length ? <CardGrid>{upcoming.map(match => <UpcomingFixtureCard key={match.id} data={data} match={match} onOpen={() => onOpen(match)} />)}</CardGrid> : <Alert severity="info">No upcoming fixtures for this filter.</Alert>}
     </section>

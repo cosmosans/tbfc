@@ -6,7 +6,7 @@ export default function MatchHistory({
   onEdit,
 }: {
   match: Match;
-  onEdit: () => void;
+  onEdit?: () => void;
 }) {
   return (
     <Stack gap={2}>
@@ -21,11 +21,9 @@ export default function MatchHistory({
                 ? "No fixture notes yet."
                 : "No report yet. Add a match report when the story is ready.")}
           </Typography>
-          {!match.report && (
-            <Button onClick={onEdit} sx={{ mt: 2 }}>
-              Add Notes
-            </Button>
-          )}
+          {!match.report && onEdit && <Button onClick={onEdit} sx={{ mt: 2 }}>
+            Add Notes
+          </Button>}
         </CardContent>
       </Card>
     </Stack>
