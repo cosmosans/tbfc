@@ -82,16 +82,20 @@ export default function PlayerCard({
   const counts = {
     goals:
       (player.historicalStats?.goals ?? 0) +
-      events.filter((e) => e.kind === "goal" && !e.ownGoal && e.team !== "opponent").length,
+      events.filter(
+        (e) => e.kind === "goal" && !e.ownGoal && e.team !== "opponent",
+      ).length,
     assists:
       (player.historicalStats?.assists ?? 0) +
       events.filter((e) => e.kind === "assist").length,
     cards:
       (player.historicalStats?.yellowCards ?? 0) +
-      events.filter((e) => e.kind === "yellow_card" && e.team !== "opponent").length,
+      events.filter((e) => e.kind === "yellow_card" && e.team !== "opponent")
+        .length,
     saves:
       (player.historicalStats?.penaltySaves ?? 0) +
-      events.filter((e) => e.kind === "penalty_save" && e.team !== "opponent").length,
+      events.filter((e) => e.kind === "penalty_save" && e.team !== "opponent")
+        .length,
   };
   function resetTilt() {
     const frame = frameRef.current;
@@ -194,7 +198,7 @@ export default function PlayerCard({
                 <PlayerPositions>
                   {[player.preferredPosition, player.secondaryPosition]
                     .filter(Boolean)
-                    .join(" / ") || "POSITION TBD"}
+                    .join(" / ") || ""}
                 </PlayerPositions>
               </Box>
             </PlayerIdentity>

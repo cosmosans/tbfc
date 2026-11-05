@@ -42,9 +42,9 @@ export const CenterCircle = styled("div")({
 });
 const box = {
   position: "absolute" as const,
-  left: "25%",
-  width: "50%",
-  height: "17%",
+  left: "37.5%",
+  width: "25%",
+  height: "8.5%",
   border: "2px solid rgba(255,255,255,.65)",
   pointerEvents: "none" as const,
 };
