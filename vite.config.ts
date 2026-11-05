@@ -11,11 +11,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.TBFC_API_ORIGIN || 'https://turfburnersfc.soccer',
           changeOrigin: true,
-          configure(proxy) {
-            proxy.on('proxyReq', request => {
-              if (env.TBFC_ADMIN_KEY) request.setHeader('x-club-admin-key', env.TBFC_ADMIN_KEY);
-            });
-          },
+          headers: env.TBFC_ADMIN_KEY ? { 'x-club-admin-key': env.TBFC_ADMIN_KEY } : {},
         },
       },
     },
