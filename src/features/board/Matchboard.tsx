@@ -60,7 +60,11 @@ export default function Matchboard({
               const previous = saved.markers.find((m) => m.id === marker.id);
               if (!previous) return marker;
               return marker.team === "tbfc"
-                ? { ...previous, playerNumber: marker.playerNumber, label: marker.label }
+                ? {
+                    ...previous,
+                    playerNumber: marker.playerNumber,
+                    label: marker.label,
+                  }
                 : { ...marker, ...previous };
             }),
           }
@@ -70,7 +74,11 @@ export default function Matchboard({
               if (marker.team !== "opponent") return marker;
               const previous = saved?.markers.find((m) => m.id === marker.id);
               return previous
-                ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
+                ? {
+                    ...marker,
+                    label: previous.label,
+                    playerNumber: previous.playerNumber,
+                  }
                 : marker;
             }),
             notes: saved?.notes ?? "",
@@ -80,12 +88,19 @@ export default function Matchboard({
   );
   const [board, setBoard] = useState<Board>(lineupBoard);
   const boardRef = useRef(board);
-  const drag = useRef<{ id: string; pointerId: number; x: number; y: number } | null>(null);
+  const drag = useRef<{
+    id: string;
+    pointerId: number;
+    x: number;
+    y: number;
+  } | null>(null);
   const drawing = useRef<{ pointerId: number; points: Point[] } | null>(null);
   const [draftStroke, setDraftStroke] = useState<Point[]>([]);
   const [annotateMode, setAnnotateMode] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
-  const [editingOpponentId, setEditingOpponentId] = useState<string | null>(null);
+  const [editingOpponentId, setEditingOpponentId] = useState<string | null>(
+    null,
+  );
   const [opponentNumber, setOpponentNumber] = useState("");
   const [opponentName, setOpponentName] = useState("");
   function editOpponent(marker: Marker) {
@@ -99,7 +114,11 @@ export default function Matchboard({
       ...boardRef.current,
       markers: boardRef.current.markers.map((marker) =>
         marker.id === editingOpponentId
-          ? { ...marker, playerNumber: opponentNumber.trim(), label: opponentName.trim() }
+          ? {
+              ...marker,
+              playerNumber: opponentNumber.trim(),
+              label: opponentName.trim(),
+            }
           : marker,
       ),
     });
@@ -129,23 +148,41 @@ export default function Matchboard({
       annotations: clearAnnotations ? [] : boardRef.current.annotations,
       markers: base.markers.map((marker) => {
         if (marker.team !== "opponent") return marker;
-        const previous = boardRef.current.markers.find((m) => m.id === marker.id);
+        const previous = boardRef.current.markers.find(
+          (m) => m.id === marker.id,
+        );
         return previous
-          ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
+          ? {
+              ...marker,
+              label: previous.label,
+              playerNumber: previous.playerNumber,
+            }
           : marker;
       }),
     });
   }
-  function pointOnPitch(event: { clientX: number; clientY: number }, pitch: HTMLDivElement): Point {
+  function pointOnPitch(
+    event: { clientX: number; clientY: number },
+    pitch: HTMLDivElement,
+  ): Point {
     const rect = pitch.getBoundingClientRect();
     return {
-      x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
-      y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+      x: Math.max(
+        0,
+        Math.min(100, ((event.clientX - rect.left) / rect.width) * 100),
+      ),
+      y: Math.max(
+        0,
+        Math.min(100, ((event.clientY - rect.top) / rect.height) * 100),
+      ),
     };
   }
   function addDrawingPoints(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!drawing.current || drawing.current.pointerId !== event.pointerId) return;
-    const samples = event.nativeEvent.getCoalescedEvents?.() ?? [event.nativeEvent];
+    if (!drawing.current || drawing.current.pointerId !== event.pointerId)
+      return;
+    const samples = event.nativeEvent.getCoalescedEvents?.() ?? [
+      event.nativeEvent,
+    ];
     for (const sample of samples) {
       const next = pointOnPitch(sample, event.currentTarget);
       const last = drawing.current.points.at(-1);
@@ -175,7 +212,12 @@ export default function Matchboard({
       <Button
         variant="outlined"
         disabled={!board.annotations?.length}
-        onClick={() => persist({ ...boardRef.current, annotations: boardRef.current.annotations?.slice(0, -1) ?? [] })}
+        onClick={() =>
+          persist({
+            ...boardRef.current,
+            annotations: boardRef.current.annotations?.slice(0, -1) ?? [],
+          })
+        }
       >
         Undo
       </Button>
@@ -184,7 +226,7 @@ export default function Matchboard({
         disabled={!board.annotations?.length}
         onClick={() => persist({ ...boardRef.current, annotations: [] })}
       >
-        Clear drawings
+        Clear Drawings
       </Button>
     </Stack>
   );
@@ -196,8 +238,12 @@ export default function Matchboard({
     if (!drag.current || drag.current.pointerId !== event.pointerId) return;
     if (
       drag.current.id.startsWith("opponent-") &&
-      Math.hypot(event.clientX - drag.current.x, event.clientY - drag.current.y) < 8
-    ) return;
+      Math.hypot(
+        event.clientX - drag.current.x,
+        event.clientY - drag.current.y,
+      ) < 8
+    )
+      return;
     if (drag.current.id === "ball")
       ballMotion.sample(event.clientX, event.clientY);
     const rect = event.currentTarget.getBoundingClientRect();
@@ -229,10 +275,18 @@ export default function Matchboard({
               touchAction: "none",
               overflow: "hidden",
             }
-          : annotateMode ? { touchAction: "none" } : undefined
+          : annotateMode
+            ? { touchAction: "none" }
+            : undefined
       }
       onPointerDown={(event) => {
-        if (!annotateMode || !event.isPrimary || event.button !== 0 || drag.current) return;
+        if (
+          !annotateMode ||
+          !event.isPrimary ||
+          event.button !== 0 ||
+          drag.current
+        )
+          return;
         if ((event.target as HTMLElement).closest("button")) return;
         event.preventDefault();
         const points = [pointOnPitch(event, event.currentTarget)];
@@ -249,7 +303,10 @@ export default function Matchboard({
           if (e.currentTarget.hasPointerCapture(e.pointerId)) {
             e.currentTarget.releasePointerCapture(e.pointerId);
           }
-          persist({ ...boardRef.current, annotations: [...(boardRef.current.annotations ?? []), points] });
+          persist({
+            ...boardRef.current,
+            annotations: [...(boardRef.current.annotations ?? []), points],
+          });
           return;
         }
         if (drag.current?.pointerId !== e.pointerId) return;
@@ -262,7 +319,9 @@ export default function Matchboard({
           if (e.currentTarget.hasPointerCapture(e.pointerId)) {
             e.currentTarget.releasePointerCapture(e.pointerId);
           }
-          const marker = boardRef.current.markers.find((m) => m.id === pressed.id);
+          const marker = boardRef.current.markers.find(
+            (m) => m.id === pressed.id,
+          );
           if (marker) editOpponent(marker);
           return;
         }
@@ -289,12 +348,27 @@ export default function Matchboard({
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         aria-hidden="true"
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 6, pointerEvents: "none" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 6,
+          pointerEvents: "none",
+        }}
       >
-        {[...(board.annotations ?? []), ...(draftStroke.length ? [draftStroke] : [])].map((points, index) => (
+        {[
+          ...(board.annotations ?? []),
+          ...(draftStroke.length ? [draftStroke] : []),
+        ].map((points, index) => (
           <path
             key={index}
-            d={`M ${points[0].x} ${points[0].y} ${points.slice(1).map((point) => `L ${point.x} ${point.y}`).join(" ")} ${points.length === 1 ? `L ${points[0].x + 0.001} ${points[0].y}` : ""}`}
+            d={`M ${points[0].x} ${points[0].y} ${points
+              .slice(1)
+              .map((point) => `L ${point.x} ${point.y}`)
+              .join(
+                " ",
+              )} ${points.length === 1 ? `L ${points[0].x + 0.001} ${points[0].y}` : ""}`}
             fill="none"
             stroke="#ffdf26"
             strokeWidth="10"
@@ -325,7 +399,12 @@ export default function Matchboard({
             e.preventDefault();
             if (marker.team === "ball") ballMotion.begin(e.clientX, e.clientY);
             e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
-            drag.current = { id: marker.id, pointerId: e.pointerId, x: e.clientX, y: e.clientY };
+            drag.current = {
+              id: marker.id,
+              pointerId: e.pointerId,
+              x: e.clientX,
+              y: e.clientY,
+            };
           }}
           type="button"
           aria-label={
@@ -333,7 +412,7 @@ export default function Matchboard({
               ? "Drag or flick soccer ball"
               : marker.team === "opponent"
                 ? `Edit opponent ${marker.playerNumber || marker.label || marker.id}`
-              : `Move ${marker.label}`
+                : `Move ${marker.label}`
           }
         >
           {marker.team === "tbfc" ? (
@@ -350,7 +429,13 @@ export default function Matchboard({
   return (
     <Stack direction={{ xs: "column", lg: "row" }} gap={2}>
       <Box sx={{ flexGrow: 1 }}>
-        <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
+        <Stack
+          direction="row"
+          gap={1}
+          alignItems="center"
+          flexWrap="wrap"
+          sx={{ mb: 1 }}
+        >
           <Button
             variant="outlined"
             onClick={() => {
@@ -416,11 +501,24 @@ export default function Matchboard({
         >
           <Stack gap={2} sx={{ p: 3 }}>
             <Typography variant="h6">Opponent player</Typography>
-            <TextField label="Number" value={opponentNumber} onChange={(e) => setOpponentNumber(e.target.value)} fullWidth autoFocus />
-            <TextField label="Name" value={opponentName} onChange={(e) => setOpponentName(e.target.value)} fullWidth />
+            <TextField
+              label="Number"
+              value={opponentNumber}
+              onChange={(e) => setOpponentNumber(e.target.value)}
+              fullWidth
+              autoFocus
+            />
+            <TextField
+              label="Name"
+              value={opponentName}
+              onChange={(e) => setOpponentName(e.target.value)}
+              fullWidth
+            />
             <Stack direction="row" justifyContent="flex-end" gap={1}>
               <Button onClick={() => setEditingOpponentId(null)}>Cancel</Button>
-              <Button variant="contained" onClick={saveOpponent}>Save</Button>
+              <Button variant="contained" onClick={saveOpponent}>
+                Save
+              </Button>
             </Stack>
           </Stack>
         </Dialog>

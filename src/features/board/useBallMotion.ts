@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import type { Board } from "../../model";
+import KickSound from "../../audio/soccer-ball-kick.mp3";
 
 const MAX_SPEED = 750; // Pixels per second, independent of pitch size.
 
@@ -14,13 +15,31 @@ export function useBallMotion(
   const samples = useRef<{ x: number; y: number; time: number }[]>([]);
   const ignored = useRef<string | null>(null);
   const saveRef = useRef(save);
+  const kickAudio = useRef<HTMLAudioElement | null>(null);
   saveRef.current = save;
+
+  function playKick() {
+    const audio = kickAudio.current;
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
+    void audio.play().catch(() => {});
+  }
 
   function stop() {
     cancelAnimationFrame(frame.current);
     frame.current = 0;
   }
-  useEffect(() => () => cancelAnimationFrame(frame.current), []);
+  useEffect(() => {
+    const audio = new Audio(KickSound);
+    audio.preload = "auto";
+    kickAudio.current = audio;
+    return () => {
+      cancelAnimationFrame(frame.current);
+      audio.pause();
+      kickAudio.current = null;
+    };
+  }, []);
 
   function sample(x: number, y: number) {
     const time = performance.now();
@@ -51,6 +70,7 @@ export function useBallMotion(
       vy = (last.y - first.y) / (last.time - first.time) * 1000;
     }
     const speed = Math.hypot(vx, vy);
+    if (speed >= 18) playKick();
     const scale = Math.min(1, MAX_SPEED / (speed || 1));
     vx *= scale; vy *= scale;
     let previous = performance.now();
@@ -97,6 +117,7 @@ export function useBallMotion(
       current.current = next;
       render(next);
       if (hit) {
+        playKick();
         const player = next.markers.find(m => m.id === hit!.dataset.playerMarker)!;
         attached.current = { id: player.id, x: point.x - player.point.x, y: point.y - player.point.y };
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

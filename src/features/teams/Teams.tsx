@@ -104,7 +104,7 @@ export default function Teams({
               setName("");
             }}
           >
-            Add team
+            Add Team
           </Button>
         </Stack>
       )}
@@ -135,21 +135,6 @@ export default function Teams({
                   />
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography variant="h6">{opponent.name}</Typography>
-                    {opponent.color && (
-                      <Stack direction="row" gap={0.75} alignItems="center">
-                        <Box
-                          sx={{
-                            width: 13,
-                            height: 13,
-                            bgcolor: opponent.color,
-                            border: "1px solid #ffffff55",
-                          }}
-                        />
-                        <Typography variant="caption" color="text.secondary">
-                          {opponent.color}
-                        </Typography>
-                      </Stack>
-                    )}
                   </Box>
                 </Stack>
 
