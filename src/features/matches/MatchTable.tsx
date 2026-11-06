@@ -11,10 +11,11 @@ import OpponentCrest from "../../components/OpponentCrest";
 import WhiteKitImage from "../../img/white-front.png";
 import BlackKitImage from "../../img/black-front.png";
 
-export default function MatchTable({ data, matches, upcoming = false, onOpen }: {
+export default function MatchTable({ data, matches, upcoming = false, showSeasonDividers = false, onOpen }: {
   data: ClubData;
   matches: Match[];
   upcoming?: boolean;
+  showSeasonDividers?: boolean;
   onOpen: (match: Match) => void;
 }) {
   return (
@@ -32,11 +33,13 @@ export default function MatchTable({ data, matches, upcoming = false, onOpen }: 
           </TableRow>
         </TableHead>
         <TableBody>
-          {matches.map((match) => {
+          {matches.map((match, index) => {
+            const next = matches[index + 1];
+            const endsSeason = showSeasonDividers && (!next || seasonName(data, match) !== seasonName(data, next));
             const opponent = opponentFor(data, match);
             const result = scoreResult(match);
             return (
-              <TableRow key={match.id} hover onClick={() => onOpen(match)} sx={{ cursor: "pointer", "&:last-child td, &:last-child th": { borderBottom: 0 } }}>
+              <TableRow key={match.id} hover onClick={() => onOpen(match)} sx={{ cursor: "pointer", ...(endsSeason ? { "& > td, & > th": { borderBottom: "4px solid", borderBottomColor: "primary.main" } } : { "&:last-child td, &:last-child th": { borderBottom: 0 } }) }}>
                 <TableCell sx={{ color: "text.secondary", whiteSpace: "nowrap" }}>{seasonName(data, match)}</TableCell>
                 <TableCell sx={{ whiteSpace: "nowrap" }}>
                   {match.date && moment(match.date).isValid() ? moment(match.date).format("MMM D, YYYY") : "Date TBD"}

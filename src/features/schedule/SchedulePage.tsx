@@ -100,7 +100,7 @@ export default function SchedulePage({
           onClose={() => setUploadOpen(false)}
         />
       )}
-      <section>
+      {upcoming.length > 0 && <section>
         <Typography
           variant="h5"
           sx={{
@@ -115,12 +115,8 @@ export default function SchedulePage({
         >
           Upcoming
         </Typography>
-        {upcoming.length ? (
-          <MatchTable data={data} matches={upcoming} upcoming onOpen={onOpen} />
-        ) : (
-          <Alert severity="info">No upcoming fixtures for this filter.</Alert>
-        )}
-      </section>
+        <MatchTable data={data} matches={upcoming} upcoming showSeasonDividers={season === "All seasons" && search === ""} onOpen={onOpen} />
+      </section>}
 
       <section>
         <Typography
@@ -146,7 +142,10 @@ export default function SchedulePage({
             label="Search matches"
             size="small"
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              if (event.target.value) setSeason("All seasons");
+            }}
             sx={{ flexGrow: 1 }}
           />
           <FormControl size="small" sx={{ minWidth: 180 }}>
@@ -166,7 +165,7 @@ export default function SchedulePage({
           </FormControl>
         </Stack>
         {history.length ? (
-          <MatchTable data={data} matches={history} onOpen={onOpen} />
+          <MatchTable data={data} matches={history} showSeasonDividers={season === "All seasons" && search === ""} onOpen={onOpen} />
         ) : (
           <Alert severity="info">No completed matches for this filter.</Alert>
         )}
