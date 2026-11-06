@@ -30,7 +30,7 @@ export default function PitchSurface() {
       <Artwork
         src={PitchImage}
         alt=""
-        sx={{ filter: "grayscale(35%)", opacity: 0.3, zIndex: 2 }}
+        sx={{ filter: "grayscale(35%)", opacity: 0.5, zIndex: 1 }}
       />
       <Markings>
         <CenterLine />

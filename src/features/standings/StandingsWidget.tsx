@@ -248,9 +248,10 @@ export default function StandingsWidget({
                                 : "#151515",
                             transition: "background-color 150ms ease",
                             "& td": {
-                              borderWidth: index === 3 ? 5 : 1,
-                              borderStyle: "solid",
-                              borderColor: index === 3 ? "orange" : "#343434",
+                              borderBottomWidth: index === 3 ? 4 : 1,
+                              borderBottomStyle: "solid",
+                              borderBottomColor:
+                                index === 3 ? "#CA5126" : "#343434",
                               py: 1.2,
                             },
                             "&:hover": {
