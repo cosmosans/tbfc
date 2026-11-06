@@ -271,7 +271,7 @@ export default function App() {
         onBackup={canEditClub ? () => setBackupOpen(true) : undefined}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
-      <Container maxWidth="xl" sx={{ py: 4 }}>
+      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
         {syncState === "loading" && (
           <Alert severity="info" sx={{ mb: 2 }}>
             Loading shared club data…
@@ -427,7 +427,7 @@ export default function App() {
                   "& > *": { display: "flex", flexDirection: "column", minWidth: 0 },
                   "& > * > .MuiCard-root": { flex: 1, display: "flex", flexDirection: "column" },
                   "& .match-banner-content": { flex: 1, display: "flex", flexDirection: "column" },
-                  "& .match-banner-info": { mt: "auto", pt: 4 },
+                  "& .match-banner-info": { mt: "auto", pt: { xs: 2, sm: 4 } },
                   "& .lineup-pitch": { flex: 1, width: "100%", minWidth: 0, display: "flex", flexDirection: "column" },
                   "& .lineup-pitch > div": { flex: 1 },
                 }}>

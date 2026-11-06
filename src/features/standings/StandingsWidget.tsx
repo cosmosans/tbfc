@@ -227,7 +227,7 @@ export default function StandingsWidget({
                 <TableBody>
                   {[...snapshot.rows]
                     .sort((a, b) => a.rank - b.rank)
-                    .map((row) => {
+                    .map((row, index) => {
                       const tbfc = ["turf burners fc", "tbfc"].includes(
                         row.team.trim().toLowerCase(),
                       );
@@ -248,7 +248,9 @@ export default function StandingsWidget({
                                 : "#151515",
                             transition: "background-color 150ms ease",
                             "& td": {
-                              borderBottom: "1px solid #343434",
+                              borderWidth: index === 3 ? 5 : 1,
+                              borderStyle: "solid",
+                              borderColor: index === 3 ? "orange" : "#343434",
                               py: 1.2,
                             },
                             "&:hover": {

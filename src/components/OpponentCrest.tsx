@@ -4,8 +4,8 @@ import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import { Link } from "react-router-dom";
 
 const CrestFrame = styled("span", {
-  shouldForwardProp: (prop) => prop !== "compact" && prop !== "size",
-})<{ compact: boolean; size?: number }>(({ compact, size }) => ({
+  shouldForwardProp: (prop) => prop !== "compact" && prop !== "size" && prop !== "mobileSize",
+})<{ compact: boolean; size?: number; mobileSize?: number }>(({ compact, size, mobileSize }) => ({
   width: size ?? (compact ? 42 : 58),
   height: size ?? (compact ? 42 : 58),
   position: "relative",
@@ -13,14 +13,15 @@ const CrestFrame = styled("span", {
   placeItems: "center",
   flex: "0 0 auto",
   overflow: "hidden",
+  ...(mobileSize ? { "@media (max-width: 599.95px)": { width: mobileSize, height: mobileSize } } : {}),
 }));
 
 const CrestImage = styled("img")({
   display: "block",
   position: "absolute",
   inset: 0,
-  width: "min(30vw, 165px)",
-  height: "min(30vw, 165px)",
+  width: "100%",
+  height: "100%",
   maxWidth: "100%",
   maxHeight: "100%",
   objectFit: "contain",
@@ -31,18 +32,20 @@ export default function OpponentCrest({
   url,
   compact = false,
   size,
+  mobileSize,
   teamId,
   teamName,
 }: {
   url?: string;
   compact?: boolean;
   size?: number;
+  mobileSize?: number;
   teamId?: string;
   teamName?: string;
 }) {
   const [imageFailed, setImageFailed] = useState(false);
   const crest = (
-    <CrestFrame compact={compact} size={size} aria-hidden="true">
+    <CrestFrame compact={compact} size={size} mobileSize={mobileSize} aria-hidden="true">
       {url && !imageFailed ? (
         <CrestImage src={url} alt="" onError={() => setImageFailed(true)} />
       ) : (

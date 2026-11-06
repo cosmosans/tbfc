@@ -8,7 +8,7 @@ export const theme = createTheme({
     background: { default: '#0d1012', paper: '#171a1c' },
   },
   shape: { borderRadius: 0 },
-  typography: { fontFamily: 'Oxanium, ui-sans-serif, system-ui, sans-serif', h4: { fontWeight: 800 }, h5: { fontWeight: 750 }, h6: { fontWeight: 700 } },
+  typography: { fontFamily: 'Oxanium, ui-sans-serif, system-ui, sans-serif', h4: { fontWeight: 800, "@media (max-width: 599.95px)": { fontSize: "1.5rem" } }, h5: { fontWeight: 750, "@media (max-width: 599.95px)": { fontSize: "1.25rem" } }, h6: { fontWeight: 700, "@media (max-width: 599.95px)": { fontSize: "1.05rem" } } },
   components: {
     MuiButton: { styleOverrides: { root: { textTransform: 'none', fontWeight: 700 } } },
     MuiChip: { styleOverrides: { root: { borderRadius: 0 } } },

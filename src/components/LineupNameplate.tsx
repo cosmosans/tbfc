@@ -34,6 +34,8 @@ export const nameplateStyles = (
   kit?: string,
   goalkeeper?: GoalkeeperPlate,
 ) => ({
+  display: "grid",
+  placeItems: "center",
   minWidth: 0,
   minHeight: 36,
   height: "auto",
@@ -57,7 +59,7 @@ export const nameplateStyles = (
   boxShadow: "none",
   filter: "drop-shadow(0 3px 4px #0008)",
   textAlign: "center" as const,
-  "@media (max-width: 600px)": { minWidth: 0, minHeight: 36 },
+  "@media (max-width: 600px)": { minWidth: 0, minHeight: 36, padding: "4px 10%" },
 });
 
 export const LineupNameplate = styled("div", {
@@ -79,6 +81,13 @@ const Label = styled("span")({
   overflowWrap: "anywhere",
   "& strong": { fontSize: "1.5em", flexShrink: 0 },
   "& span": { minWidth: 0, letterSpacing: "-.04em" },
+  "@media (max-width: 600px)": {
+    width: "100%",
+    fontSize: 9,
+    gap: 2,
+    "& strong": { fontSize: "1.35em" },
+    "& span": { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+  },
 });
 
 export function NameplateText({

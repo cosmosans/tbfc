@@ -29,6 +29,7 @@ const Versus = styled(Typography)({
   fontSize: "2rem",
   textTransform: "uppercase",
   width: 135,
+  "@media (max-width: 599.95px)": { width: "auto", fontSize: "1.4rem" },
   textAlign: "center",
 });
 
@@ -36,6 +37,7 @@ const HomeCrest = styled("img")({
   width: "min(30vw, 165px)",
   height: "min(30vw, 165px)",
   objectFit: "contain",
+  "@media (max-width: 599.95px)": { width: 64, height: 64 },
   filter: "drop-shadow(0 3px 5px #0009)",
 });
 export function ResultLabel({ result }: { result: string }) {
@@ -153,7 +155,7 @@ export default function MatchBanner({
       >
         <CardContent
           className="match-banner-content"
-          sx={{ p: { xs: 2, sm: 3 } }}
+          sx={{ p: { xs: 1.5, sm: 3 }, "&:last-child": { pb: { xs: 1.5, sm: 3 } } }}
         >
           {detail && (
             <Stack
@@ -161,7 +163,7 @@ export default function MatchBanner({
               justifyContent="space-between"
               alignItems="center"
               gap={2}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, flexWrap: "wrap" }}
             >
               <Typography
                 variant="overline"
@@ -206,7 +208,7 @@ export default function MatchBanner({
                         size="small"
                         label="Upcoming"
                         color="info"
-                        sx={{ textTransform: "uppercase" }}
+                        sx={{ textTransform: "uppercase", fontSize: { xs: 9, sm: 12 }, height: { xs: 20, sm: 24 }, "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } } }}
                       />
                     </Box>
                   )}
@@ -215,7 +217,8 @@ export default function MatchBanner({
                       <Typography
                         sx={{
                           fontWeight: 900,
-                          fontSize: "4rem",
+                          fontSize: { xs: "1.8rem", sm: "4rem" },
+                          whiteSpace: "nowrap",
                           display: "flex",
                           alignItems: "center",
                         }}
@@ -238,19 +241,20 @@ export default function MatchBanner({
                       )}
                     </Box>
                   )}
-                  <Stack alignItems="center" gap={1} sx={{ minWidth: 0 }}>
+                  <Stack alignItems="center" gap={1} sx={{ minWidth: 0, flex: { xs: "1 1 0", sm: "initial" } }}>
                     {isOpponent ? (
                       <OpponentCrest
                         key={opponent?.crestUrl ?? ""}
                         url={opponent?.crestUrl}
                         size={165}
+                        mobileSize={64}
                         teamId={opponent?.id}
                         teamName={opponent?.name}
                       />
                     ) : (
                       <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
                     )}
-                    <Typography fontWeight={800} textAlign="center">
+                    <Typography fontWeight={800} textAlign="center" sx={{ fontSize: { xs: 12, sm: 16 }, lineHeight: 1.3, overflowWrap: "anywhere" }}>
                       {isOpponent
                         ? opponentName(data, match)
                         : "Turf Burners FC"}
@@ -287,24 +291,26 @@ export default function MatchBanner({
             className="match-banner-info"
             sx={{
               display: "flex",
-              flexDirection: "column",
+              flexDirection: { xs: "row", sm: "column" },
+              gap: 1,
+              "& > img": { width: { xs: 38, sm: 80 }, flexShrink: 0 },
               alignItems: "center",
               justifyContent: "center",
               mt: 2,
             }}
           >
             {match.kit === "White" && (
-              <img style={{ width: 80 }} src={WhiteKitImage} alt="White kit" />
+              <Box component="img" sx={{ width: { xs: 38, sm: 80 } }} src={WhiteKitImage} alt="White kit" />
             )}
 
             {match.kit === "Black" && (
-              <img style={{ width: 80 }} src={BlackKitImage} alt="Black kit" />
+              <Box component="img" sx={{ width: { xs: 38, sm: 80 } }} src={BlackKitImage} alt="Black kit" />
             )}
 
-            <Box sx={{ marginLeft: 1 }}>
+            <Box sx={{ minWidth: 0, marginLeft: { xs: 0, sm: 1 } }}>
               <Typography
                 sx={{
-                  fontSize: 20,
+                  fontSize: { xs: 14, sm: 20 },
                   fontWeight: 700,
                   textShadow: "0 0 3px rgba(0,0,0,0.3)",
                   textAlign: "center",
@@ -322,6 +328,9 @@ export default function MatchBanner({
                   alignItems: "center",
                   textAlign: "center",
                   gap: 0.5,
+                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  "& .MuiTypography-root": { fontSize: { xs: 12, sm: 16 } },
                   textShadow: "0 0 3px rgba(0,0,0,0.3)",
                 }}
               >
@@ -346,8 +355,8 @@ export default function MatchBanner({
                     >
                       <Box
                         sx={{
-                          height: 20,
-                          width: 10,
+                          height: { xs: 12, sm: 20 },
+                          width: { xs: 6, sm: 10 },
                           transform: "skewX(-10deg)",
                           backgroundColor:
                             match.pitch === "1" ? "#db6337" : "#b6b6b6",
@@ -355,8 +364,8 @@ export default function MatchBanner({
                       ></Box>
                       <Box
                         sx={{
-                          height: 20,
-                          width: 10,
+                          height: { xs: 12, sm: 20 },
+                          width: { xs: 6, sm: 10 },
                           transform: "skewX(-10deg)",
                           border:
                             match.pitch === "2"
@@ -368,8 +377,8 @@ export default function MatchBanner({
                       ></Box>
                       <Box
                         sx={{
-                          height: 20,
-                          width: 10,
+                          height: { xs: 12, sm: 20 },
+                          width: { xs: 6, sm: 10 },
                           transform: "skewX(-10deg)",
                           border:
                             match.pitch === "3"

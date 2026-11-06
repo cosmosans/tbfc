@@ -113,6 +113,7 @@ export type Board = {
   formation?: Formation;
   markers: Marker[];
   notes: string;
+  annotations?: Point[][];
 };
 export type Formation = "1-2-3-1" | "1-3-3";
 export type Lineup = {
