@@ -403,8 +403,16 @@ export default function App() {
               {activeDetailTab === 0 && (
                 <MatchHistory
                   match={selected}
-                  onEdit={
-                    canEditClub ? () => setEditing({ ...selected }) : undefined
+                  onSaveReport={
+                    canEditClub
+                      ? (report) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id ? { ...match, report } : match,
+                            ),
+                          })
+                      : undefined
                   }
                 />
               )}
