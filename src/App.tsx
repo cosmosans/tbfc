@@ -1,3 +1,4 @@
+import ClubDataSkeleton from "./components/ClubDataSkeleton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
@@ -282,11 +283,6 @@ export default function App() {
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
-        {syncState === "loading" && (
-          <Alert severity="info" sx={{ mb: 2 }}>
-            Loading shared club data…
-          </Alert>
-        )}
         {syncState === "empty" && (
           <Alert
             severity="warning"
@@ -328,7 +324,9 @@ export default function App() {
             {backupMessage}
           </Alert>
         )}
-        {matchRoute && !selected ? (
+        {syncState === "loading" ? (
+          <ClubDataSkeleton view={matchRoute ? "match" : teamRoute ? "team" : page ?? "matches"} />
+        ) : matchRoute && !selected ? (
           <Alert severity="warning">
             Match not found.{" "}
             <Button onClick={() => navigate("/schedule")}>Open schedule</Button>

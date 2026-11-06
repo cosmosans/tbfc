@@ -35,7 +35,9 @@ export default function MatchTable({ data, matches, upcoming = false, showSeason
         <TableBody>
           {matches.map((match, index) => {
             const next = matches[index + 1];
-            const endsSeason = showSeasonDividers && (!next || seasonName(data, match) !== seasonName(data, next));
+            const endsSeason = showSeasonDividers && (next
+              ? seasonName(data, match) !== seasonName(data, next)
+              : !upcoming);
             const opponent = opponentFor(data, match);
             const result = scoreResult(match);
             return (

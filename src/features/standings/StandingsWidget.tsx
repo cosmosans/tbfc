@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -56,6 +56,7 @@ export default function StandingsWidget({
   update: (data: ClubData) => void;
   initialSeasonId?: string;
 }) {
+  const navigate = useNavigate();
   const seasons = orderedSeasons(data, true).filter(
     (season) => season.name.trim().toLowerCase() === "fall 2026",
   );
@@ -239,11 +240,27 @@ export default function StandingsWidget({
                           item.name.trim().toLowerCase() ===
                           row.team.trim().toLowerCase(),
                       );
+                      const teamUrl = opponent ? `/team/${encodeURIComponent(opponent.id)}` : tbfc ? "/stats" : undefined;
                       const diff = row.pointsScored - row.pointsAllowed;
                       return (
                         <TableRow
                           key={`${row.rank}-${row.team}`}
+                          tabIndex={teamUrl ? 0 : undefined}
+                          aria-label={teamUrl ? `View ${row.team} stats` : undefined}
+                          onClick={(event) => {
+                            if ((event.target as HTMLElement).closest("a")) return;
+                            if (teamUrl) navigate(teamUrl);
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.target !== event.currentTarget || !teamUrl) return;
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              navigate(teamUrl);
+                            }
+                          }}
                           sx={{
+                            cursor: teamUrl ? "pointer" : "default",
+                            "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: -2 },
                             bgcolor: tbfc
                               ? "#CA51262b"
                               : row.rank % 2
