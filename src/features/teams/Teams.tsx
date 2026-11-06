@@ -79,7 +79,7 @@ export default function Teams({
       {canEditClub && (
         <Stack direction="row" gap={2}>
           <TextField
-            label="Team name"
+            label="Team Name"
             size="small"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -254,11 +254,11 @@ function OpponentDialog({
   }
   return (
     <Dialog open={!!opponent} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit team</DialogTitle>
+      <DialogTitle>Edit Team</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
           <TextField
-            label="Team name"
+            label="Team Name"
             value={draft?.name ?? ""}
             onChange={(e) =>
               draft && setDraft({ ...draft, name: e.target.value })
@@ -267,7 +267,7 @@ function OpponentDialog({
           <Stack direction="row" gap={2} alignItems="center">
             <OpponentCrest key={draft?.crestUrl ?? ""} url={draft?.crestUrl} />
             <Button component="label" variant="outlined">
-              Upload crest
+              Upload Crest
               <input
                 hidden
                 type="file"
@@ -280,7 +280,7 @@ function OpponentDialog({
             </Button>
           </Stack>
           <TextField
-            label="Crest image URL"
+            label="Crest Image URL"
             value={draft?.crestUrl ?? ""}
             onChange={(e) =>
               draft && setDraft({ ...draft, crestUrl: e.target.value })
@@ -290,7 +290,7 @@ function OpponentDialog({
           {crestError && <Alert severity="error">{crestError}</Alert>}
           <Stack direction="row" gap={2} alignItems="center">
             <TextField
-              label="Team color (hex)"
+              label="Team Color (Hex)"
               value={draft?.color ?? ""}
               onChange={(e) =>
                 draft && setDraft({ ...draft, color: e.target.value.trim() })
@@ -317,7 +317,7 @@ function OpponentDialog({
             />
           </Stack>
           <TextField
-            label="Scouting notes / team intel"
+            label="Scouting Notes / Team Intel"
             multiline
             minRows={5}
             value={draft?.notes ?? ""}

@@ -1,3 +1,4 @@
+import MatchNavigation from "./MatchNavigation";
 import { useSearchParams } from "react-router-dom";
 import { Alert, Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -35,6 +36,7 @@ export default function MatchEventPage({
         Back
       </Button>
       <MatchBanner data={data} match={match} detail onEdit={onEdit} />
+      <MatchNavigation matches={data.matches} match={match} />
       {match.report && (
         <Box
           sx={{ "& p": { my: 0, mb: 2 }, "& p:last-child": { mb: 0 } }}

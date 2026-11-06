@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { goalTotals, updateMatchEvents } from "./eventScore";
 import {
   Alert,
   Button,
@@ -18,6 +19,7 @@ import {
   Stack,
   TextField,
   Typography,
+  Box,
 } from "@mui/material";
 import { getContrastRatio } from "@mui/material/styles";
 import type { ClubData, Match, MatchEvent } from "../../model";
@@ -57,9 +59,7 @@ export default function Events({
   const events = data.events
     .filter((e) => e.matchId === match.id)
     .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
-  const loggedGoals = events.filter(
-    (e) => e.kind === "goal" && e.team !== "opponent",
-  ).length;
+  const logged = goalTotals(events, match.id);
   function addEvent() {
     const event: MatchEvent = {
       id: crypto.randomUUID(),
@@ -72,7 +72,7 @@ export default function Events({
       minute: minute ? Number(minute) : undefined,
       note: note || undefined,
     };
-    update({ ...data, events: [...data.events, event] });
+    update(updateMatchEvents(data, match.id, [...data.events, event]));
     setMinute("");
     setNote("");
   }
@@ -87,7 +87,7 @@ export default function Events({
           maxWidth="md"
           aria-labelledby="event-note-title"
         >
-          <DialogTitle id="event-note-title">Event note</DialogTitle>
+          <DialogTitle id="event-note-title">Event Note</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
@@ -110,15 +110,15 @@ export default function Events({
                 setNoteOpen(false);
               }}
             >
-              Use note
+              Use Note
             </Button>
           </DialogActions>
         </Dialog>
       )}
-      {loggedGoals !== match.goalsFor && (
+      {(logged.for < match.goalsFor || logged.against < match.goalsAgainst) && (
         <Alert severity="info">
-          {loggedGoals} of {match.goalsFor} TBFC goals have an event record.
-          Older matches may have unknown scorers; the score remains complete.
+          {logged.for} of {match.goalsFor} TBFC goals and {logged.against} of {match.goalsAgainst} opponent goals have event records.
+          Historical totals are preserved while missing goals are added. Once accounted for, goal events control the score.
         </Alert>
       )}
       {canEditClub && (
@@ -165,17 +165,17 @@ export default function Events({
                 <FormControl size="small" sx={{ minWidth: 180 }}>
                   <InputLabel>
                     {kind === "goal"
-                      ? "Goal for"
+                      ? "Goal For"
                       : kind === "penalty_kick"
-                        ? "Awarded to"
+                        ? "Awarded To"
                         : "Team"}
                   </InputLabel>
                   <Select
                     label={
                       kind === "goal"
-                        ? "Goal for"
+                        ? "Goal For"
                         : kind === "penalty_kick"
-                          ? "Awarded to"
+                          ? "Awarded To"
                           : "Team"
                     }
                     value={eventTeam}
@@ -221,7 +221,7 @@ export default function Events({
                       }}
                     />
                   }
-                  label="Own goal"
+                  label="Own Goal"
                 />
               )}
               <TextField
@@ -303,13 +303,13 @@ export default function Events({
             <CardContent>
               <Stack
                 direction="row"
-                alignItems="center"
+                alignItems="flex-start"
                 gap={2}
                 flexWrap="wrap"
               >
                 <Chip
                   label={
-                    event.minute == null ? "Time unknown" : `${event.minute}′`
+                    event.minute == null ? "Time Unknown" : `${event.minute}′`
                   }
                 />
                 <Typography sx={{ minWidth: 0, display: "flex", gap: 2 }}>
@@ -343,6 +343,7 @@ export default function Events({
                               ? teamColor
                               : teamLabelBackground,
                           fontWeight: 700,
+
                           px: 1,
                           py: 0.25,
                           borderRadius: 0,
@@ -351,7 +352,7 @@ export default function Events({
                       >
                         {teamName}
                       </Typography>
-                      {`${actor}`}
+                      <Box sx={{ mt: "2px" }}>{`${actor}`}</Box>
                     </>
                   ) : name ? (
                     actor
@@ -367,8 +368,7 @@ export default function Events({
                       minWidth: 0,
                       order: 2,
                       lineHeight: 1.2,
-                      whiteSpace: "pre-wrap",
-                      overflowWrap: "anywhere",
+                      mt: "5px",
                       "@media (max-width: 1199px)": {
                         flexBasis: "100%",
                         order: 3,
@@ -395,10 +395,7 @@ export default function Events({
                       "@media (max-width: 1199px)": { order: 2 },
                     }}
                     onClick={() =>
-                      update({
-                        ...data,
-                        events: data.events.filter((e) => e.id !== event.id),
-                      })
+                      update(updateMatchEvents(data, match.id, data.events.filter((e) => e.id !== event.id)))
                     }
                   >
                     Remove

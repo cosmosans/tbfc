@@ -86,12 +86,11 @@ export default function AppHeader({
             variant="h6"
             sx={{ fontWeight: 800, letterSpacing: "-.04em", fontSize: { xs: "1rem", sm: "1.25rem" } }}
           >
-            TURF BURNERS FC
+            Turf Burners FC
           </Typography>
         </Brand>
         <Navigation
           value={page}
-          onChange={(_, value: NavigationPage) => onNavigate(value)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
@@ -102,12 +101,12 @@ export default function AppHeader({
             width: { xs: "100%", sm: "auto" },
           }}
         >
-          <NavigationTab value="matches" label="Matchday" />
-          <NavigationTab value="schedule" label="Schedule" />
-          <NavigationTab value="roster" label="roster" />
+          <NavigationTab value="matches" label="Matchday" onClick={() => onNavigate("matches")} />
+          <NavigationTab value="schedule" label="Schedule" onClick={() => onNavigate("schedule")} />
+          <NavigationTab value="roster" label="Roster" onClick={() => onNavigate("roster")} />
           {/* <NavigationTab value="tactics" label="Tactics" /> */}
-          <NavigationTab value="stats" label="Stats" />
-          <NavigationTab value="teams" label="Teams" />
+          <NavigationTab value="stats" label="Stats" onClick={() => onNavigate("stats")} />
+          <NavigationTab value="teams" label="Teams" onClick={() => onNavigate("teams")} />
           {/* <NavigationTab value="locations" label="Locations" />
           <NavigationTab value="seasons" label="Seasons" /> */}
         </Navigation>

@@ -12,17 +12,22 @@ import {
   Typography,
 } from "@mui/material";
 import { EditorContent, useEditor } from "@tiptap/react";
+import MatchChat from "./MatchChat";
 import MatchGallery from "./MatchGallery";
 import StarterKit from "@tiptap/starter-kit";
-import type { Match, MatchPhoto } from "../../model";
+import type { Match, MatchPhoto, MatchChatMessage, Player } from "../../model";
 import { saveStoryHtml, storyToHtml } from "./matchStory";
 
 export default function MatchHistory({
   match,
   onSaveReport,
   onSavePhotos,
+  players,
+  onSaveChat,
 }: {
   match: Match;
+  players: Player[];
+  onSaveChat?: (messages: MatchChatMessage[]) => void;
   onSaveReport?: (report: string) => void;
   onSavePhotos?: (photos: MatchPhoto[]) => void;
 }) {
@@ -85,6 +90,7 @@ export default function MatchHistory({
           )}
         </CardContent>
       </Card>
+      <MatchChat messages={match.chat ?? []} players={players} onSave={onSaveChat} />
       <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}

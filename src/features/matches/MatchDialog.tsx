@@ -11,7 +11,6 @@ import {
   Select,
   Stack,
   TextField,
-  Typography,
 } from "@mui/material";
 import type { Location, Match, Opponent, Season } from "../../model";
 import { scoreResult } from "../../model";
@@ -51,10 +50,10 @@ export default function MatchDialog({
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
         {match.sourceRow
-          ? "Edit imported match"
+          ? "Edit Imported Match"
           : match.status === "scheduled"
-            ? "Fixture details"
-            : "Match details"}
+            ? "Fixture Details"
+            : "Match Details"}
       </DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
@@ -93,6 +92,7 @@ export default function MatchDialog({
               }
             >
               <MenuItem value="scheduled">Upcoming</MenuItem>
+              <MenuItem value="in_progress">In Progress</MenuItem>
               <MenuItem value="completed">Completed</MenuItem>
             </Select>
           </FormControl>
@@ -195,9 +195,9 @@ export default function MatchDialog({
             </FormControl>
           </Stack>
           <FormControl fullWidth>
-            <InputLabel>Home or away</InputLabel>
+            <InputLabel>Home or Away</InputLabel>
             <Select
-              label="Home or away"
+              label="Home or Away"
               value={draft.homeAway ?? ""}
               onChange={(e) =>
                 setDraft({
@@ -215,7 +215,7 @@ export default function MatchDialog({
             <>
               <Stack direction="row" gap={2}>
                 <TextField
-                  label="TBFC goals"
+                  label="TBFC Goals"
                   type="number"
                   inputProps={{ min: 0 }}
                   value={draft.goalsFor}
@@ -225,7 +225,7 @@ export default function MatchDialog({
                   fullWidth
                 />
                 <TextField
-                  label="Opponent goals"
+                  label="Opponent Goals"
                   type="number"
                   inputProps={{ min: 0 }}
                   value={draft.goalsAgainst}
@@ -251,7 +251,7 @@ export default function MatchDialog({
                   fullWidth
                 />
                 <TextField
-                  label="Shootout: opponent"
+                  label="Shootout: Opponent"
                   type="number"
                   inputProps={{ min: 0 }}
                   value={draft.shootoutAgainst ?? ""}
@@ -286,28 +286,14 @@ export default function MatchDialog({
             <MenuItem value="Black">Black</MenuItem>
             <MenuItem value="White">White</MenuItem>
           </TextField>
-          {draft.status !== "scheduled" && (
+          {draft.status === "scheduled" && (
             <TextField
-              label="Historical scorer notes"
-              value={draft.scorerNotes}
-              onChange={(e) =>
-                setDraft({ ...draft, scorerNotes: e.target.value })
-              }
-              helperText="Source text is preserved; use Events for new match details."
-            />
-          )}
-          {draft.status === "scheduled" ? (
-            <TextField
-              label="Fixture notes"
+              label="Fixture Notes"
               value={draft.report}
               onChange={(e) => setDraft({ ...draft, report: e.target.value })}
               multiline
               minRows={4}
             />
-          ) : (
-            <Typography color="text.secondary">
-              Edit the match narrative from its Report tab.
-            </Typography>
           )}
         </Stack>
       </DialogContent>
@@ -320,7 +306,7 @@ export default function MatchDialog({
             onSave({
               ...draft,
               resultLabel:
-                draft.status === "scheduled"
+                draft.status === "scheduled" || draft.status === "in_progress"
                   ? ""
                   : draft.sourceRow
                     ? draft.resultLabel

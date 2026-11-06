@@ -189,7 +189,7 @@ export default function StandingsWidget({
             sx={{ mb: 2 }}
             action={
               <Button color="inherit" size="small" onClick={apply}>
-                Update table
+                Update Table
               </Button>
             }
           >

@@ -120,7 +120,7 @@ export default function ScheduleImporter({
   }
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Upload season schedule</DialogTitle>
+      <DialogTitle>Upload Season Schedule</DialogTitle>
       <DialogContent>
         <Stack gap={2}>
           <Box>
@@ -135,7 +135,7 @@ export default function ScheduleImporter({
               download="tbfc-schedule-example.csv"
               sx={{ mt: 1, px: 0 }}
             >
-              Download example CSV
+              Download Example CSV
             </Button>
             <Button
               component="a"
@@ -143,7 +143,7 @@ export default function ScheduleImporter({
               download="tbfc-schedule-example.xlsx"
               sx={{ mt: 1, ml: 2, px: 0 }}
             >
-              Download Excel version
+              Download Excel Version
             </Button>
             <Typography variant="caption" color="text.secondary" display="block">
               The examples contain fictional fixtures. Edit the rows before importing;
@@ -239,8 +239,8 @@ export default function ScheduleImporter({
                 disabled={!seasonId || ready.length === 0}
                 onClick={importRows}
               >
-                Add {ready.length} upcoming fixture
-                {ready.length === 1 ? "" : "s"}
+                Add {ready.length} Upcoming Fixture
+                {ready.length === 1 ? "" : "S"}
               </Button>
             </>
           )}

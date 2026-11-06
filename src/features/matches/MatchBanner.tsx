@@ -179,7 +179,7 @@ export default function MatchBanner({
 
               {onEdit && (
                 <Button variant="outlined" onClick={onEdit}>
-                  EDIT MATCH
+                  Edit Match
                 </Button>
               )}
             </Stack>
@@ -221,7 +221,7 @@ export default function MatchBanner({
                       />
                     </Box>
                   )}
-                  {side === "right" && match.status === "completed" && (
+                  {side === "right" && match.status !== "scheduled" && (
                     <Box sx={{}}>
                       <Typography
                         sx={{
@@ -245,7 +245,15 @@ export default function MatchBanner({
                             alignItems: "center",
                           }}
                         >
-                          <ResultLabel result={match.resultLabel} />
+                          {match.status === "in_progress" ? (
+                            <Chip
+                              size="small"
+                              label="In Progress"
+                              color="warning"
+                            />
+                          ) : (
+                            <ResultLabel result={match.resultLabel} />
+                          )}
                         </Box>
                       )}
                     </Box>

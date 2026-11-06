@@ -1,9 +1,15 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { playerStats } from "./playerStats";
+import GoalIcon from "../../img/soccer-ball-variant.svg";
+import AssistIcon from "../../img/cleats.svg";
+import SaveIcon from "../../img/gloves.svg";
+import CardIcon from "../../img/cards.svg";
+import PlayerTypeSelect from "./PlayerTypeSelect";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   Alert,
   Box,
   Button,
-  Divider,
   FormControl,
   InputLabel,
   MenuItem,
@@ -13,11 +19,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import CleatsIcon from "../../img/cleats.svg";
 import { canEditClub } from "../../editAccess";
-import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
-import KeeperIcon from "../../img/gloves.svg";
-import CardsIcon from "../../img/cards.svg";
 
 import {
   PlayerCardFrame,
@@ -34,7 +36,7 @@ import {
   PlayerPositions,
   PlayerStatus,
 } from "./PlayerCard.styles";
-import type { MatchEvent, Player, Position } from "../../model";
+import type { Player, Position, MatchEvent } from "../../model";
 import { positions } from "../../model";
 
 async function preparePlayerPhoto(file: File): Promise<string> {
@@ -75,73 +77,15 @@ export default function PlayerCard({
   events: MatchEvent[];
   onSave: (player: Player) => void;
 }) {
+  const navigate = useNavigate();
   const [flipped, setFlipped] = useState(false);
-  const frameRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState<Player>({ ...player });
   const [photoError, setPhotoError] = useState("");
-  const counts = {
-    goals:
-      (player.historicalStats?.goals ?? 0) +
-      events.filter(
-        (e) => e.kind === "goal" && !e.ownGoal && e.team !== "opponent",
-      ).length,
-    assists:
-      (player.historicalStats?.assists ?? 0) +
-      events.filter((e) => e.kind === "assist").length,
-    cards:
-      (player.historicalStats?.yellowCards ?? 0) +
-      events.filter((e) => e.kind === "yellow_card" && e.team !== "opponent")
-        .length,
-    saves:
-      (player.historicalStats?.penaltySaves ?? 0) +
-      events.filter((e) => e.kind === "penalty_save" && e.team !== "opponent")
-        .length,
-  };
-  function resetTilt() {
-    const frame = frameRef.current;
-    if (!frame) return;
-    frame.style.setProperty("--tilt-x", "0deg");
-    frame.style.setProperty("--tilt-y", "0deg");
-    frame.style.setProperty("--sheen-opacity", "0");
-    delete frame.dataset.tilting;
-  }
-  function updateTilt(event: PointerEvent<HTMLDivElement>) {
-    if (
-      flipped ||
-      event.pointerType !== "mouse" ||
-      !window.matchMedia("(hover: hover) and (pointer: fine)").matches ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
-    // Measure the stationary frame so the tilt cannot feed back into cursor position.
-    const frame = event.currentTarget;
-    const bounds = frame.getBoundingClientRect();
-    const x = Math.max(
-      0,
-      Math.min(1, (event.clientX - bounds.left) / bounds.width),
-    );
-    const y = Math.max(
-      0,
-      Math.min(1, (event.clientY - bounds.top) / bounds.height),
-    );
-    frame.style.setProperty("--tilt-x", `${(0.5 - y) * 16}deg`);
-    frame.style.setProperty("--tilt-y", `${(x - 0.5) * 16}deg`);
-    frame.style.setProperty("--sheen-x", `${x * 100}%`);
-    frame.style.setProperty("--sheen-y", `${y * 100}%`);
-    frame.style.setProperty("--sheen-opacity", "1");
-    frame.dataset.tilting = "true";
-  }
   function openEdit() {
-    if (!canEditClub) return;
-    resetTilt();
+    if (!canEditClub) { navigate(`/player/${encodeURIComponent(player.id)}`); return; }
     setDraft({ ...player });
     setPhotoError("");
     setFlipped(true);
-  }
-  function cancel() {
-    setDraft({ ...player });
-    setPhotoError("");
-    setFlipped(false);
   }
   function save() {
     if (!draft.name.trim()) return;
@@ -162,19 +106,13 @@ export default function PlayerCard({
   }
   return (
     <PlayerCardFrame
-      ref={frameRef}
-      onPointerEnter={updateTilt}
-      onPointerMove={updateTilt}
-      onPointerLeave={resetTilt}
-      onPointerCancel={resetTilt}
-      onBlur={resetTilt}
+      data-editing={flipped}
     >
       <PlayerCardInner flipped={flipped}>
         <PlayerCardFront
           type="button"
-          disabled={!canEditClub}
           onClick={openEdit}
-          aria-label={canEditClub ? `Edit ${player.name}` : player.name}
+          aria-label={canEditClub ? `Edit ${player.name}` : `View ${player.name}`}
           aria-hidden={flipped}
           inert={flipped}
         >
@@ -190,10 +128,10 @@ export default function PlayerCard({
             <PlayerIdentity>
               <PlayerName>{player.name}</PlayerName>
 
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography variant="body2" color="white">
-                  FORWARD
-                </Typography>
+              <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+                {player.playerType && <Typography variant="body2" color="white" >
+                  {player.playerType}
+                </Typography>}
 
                 <PlayerPositions>
                   {[player.preferredPosition, player.secondaryPosition]
@@ -202,8 +140,21 @@ export default function PlayerCard({
                 </PlayerPositions>
               </Box>
             </PlayerIdentity>
+            <Box component="span" sx={{
+              display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+              gap: { xs: 1, md: 2 }, gridArea: "stats",
+            }}>
+              {playerStats(player, events).map(([label, count], index) => (
+                <Box component="span" key={label} title={label} aria-label={`${count} ${label}`}
+                  sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: .75 }}>
+                  <Box component="img" src={[GoalIcon, AssistIcon, SaveIcon, CardIcon][index]} alt=""
+                    sx={{ width: { xs: 16, md: 22 }, height: { xs: 16, md: 22 }, objectFit: "contain" }} />
+                  <Box component="span" sx={{ fontSize: { xs: 16, md: 24 }, fontWeight: 800 }}>{count}</Box>
+                </Box>
+              ))}
+            </Box>
             <PlayerStatus active={player.active}>
-              {player.active ? "ACTIVE" : "INACTIVE"}
+              {player.active ? "Active" : "Inactive"}
             </PlayerStatus>
           </PlayerInformation>
         </PlayerCardFront>
@@ -212,7 +163,12 @@ export default function PlayerCard({
             <Typography variant="h6" sx={{ mb: 1 }}>
               Edit Player
             </Typography>
-            <Stack gap={1.4}>
+            <Box sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "repeat(2, minmax(0, 1fr))", lg: "repeat(3, minmax(0, 1fr))" },
+              gap: 1.5,
+              alignItems: "center",
+            }}>
               <Box
                 sx={{
                   display: "flex",
@@ -239,28 +195,7 @@ export default function PlayerCard({
                 />
               </Box>
 
-              <PositionSelect
-                label="Preferred position"
-                value={draft.preferredPosition ?? ""}
-                onChange={(position) =>
-                  setDraft({
-                    ...draft,
-                    preferredPosition: position,
-                    secondaryPosition:
-                      draft.secondaryPosition === position
-                        ? ""
-                        : draft.secondaryPosition,
-                  })
-                }
-              />
-              <PositionSelect
-                label="Secondary position"
-                value={draft.secondaryPosition ?? ""}
-                onChange={(position) =>
-                  setDraft({ ...draft, secondaryPosition: position })
-                }
-                exclude={draft.preferredPosition || undefined}
-              />
+              <PlayerTypeSelect value={draft.playerType ?? ""} onChange={(playerType) => setDraft({ ...draft, playerType })} />
               <FormControl size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
@@ -274,6 +209,28 @@ export default function PlayerCard({
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
+              <PositionSelect
+                label="Primary Position"
+                value={draft.preferredPosition ?? ""}
+                onChange={(position) =>
+                  setDraft({
+                    ...draft,
+                    preferredPosition: position,
+                    secondaryPosition:
+                      draft.secondaryPosition === position
+                        ? ""
+                        : draft.secondaryPosition,
+                  })
+                }
+              />
+              <PositionSelect
+                label="Secondary Position"
+                value={draft.secondaryPosition ?? ""}
+                onChange={(position) =>
+                  setDraft({ ...draft, secondaryPosition: position })
+                }
+                exclude={draft.preferredPosition || undefined}
+              />
               {!draft.photoUrl && (
                 <Button component="label" variant="outlined" size="small">
                   Add Image
@@ -293,134 +250,14 @@ export default function PlayerCard({
                   size="small"
                   onClick={() => setDraft({ ...draft, photoUrl: "" })}
                 >
-                  Remove image
+                  Remove Image
                 </Button>
               )}
-              {photoError && <Alert severity="error">{photoError}</Alert>}
-            </Stack>
-            <Divider sx={{ my: 1.5 }} />
-
-            <Box sx={{}}>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    fontSize: 12,
-                    flex: 1,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    src={SoccerBallIcon}
-                    alt="Goals"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      marginRight: 5,
-                      position: "relative",
-                      top: -1,
-                    }}
-                  />
-                  <strong
-                    style={{ fontSize: 20, paddingRight: 2.5, color: "white" }}
-                  >
-                    {counts.goals}
-                  </strong>{" "}
-                  Goal{counts.goals !== 1 ? "s" : ""}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    flex: 1,
-                    fontSize: 12,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <img
-                    src={CleatsIcon}
-                    alt="Assists"
-                    style={{ width: 16, height: 16, marginRight: 4 }}
-                  />
-                  <strong
-                    style={{ fontSize: 20, paddingRight: 2.5, color: "white" }}
-                  >
-                    {counts.assists}
-                  </strong>{" "}
-                  Assist{counts.assists !== 1 ? "s" : ""}
-                </Typography>
-              </Box>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    flex: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 12,
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={KeeperIcon}
-                    alt="Penalty Saves"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      marginRight: 5,
-                      position: "relative",
-                      top: -1,
-                    }}
-                  />
-                  <strong
-                    style={{ fontSize: 20, paddingRight: 2.5, color: "white" }}
-                  >
-                    {counts.saves}
-                  </strong>{" "}
-                  PK Save{counts.saves !== 1 ? "s" : ""}
-                </Typography>
-
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    fontSize: 12,
-                    flex: 1,
-                    justifyContent: "center",
-                  }}
-                >
-                  <img
-                    src={CardsIcon}
-                    alt="Yellow Cards"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      marginRight: 5,
-                      position: "relative",
-                      top: -1,
-                    }}
-                  />
-                  <strong
-                    style={{ fontSize: 20, paddingRight: 2.5, color: "white" }}
-                  >
-                    {counts.cards}
-                  </strong>{" "}
-                  Yellow Card{counts.cards !== 1 ? "s" : ""}
-                </Typography>
-              </Box>
+              {photoError && <Alert severity="error" sx={{ gridColumn: "1 / -1" }}>{photoError}</Alert>}
             </Box>
-
-            <Stack direction="row" gap={1} sx={{ mt: 2 }}>
-              <Button variant="outlined" fullWidth onClick={cancel}>
-                Cancel
+            <Stack direction="row" gap={1} sx={{ mt: 2, ml: "auto", maxWidth: { sm: 400 } }}>
+              <Button variant="outlined" fullWidth onClick={() => navigate(`/player/${encodeURIComponent(player.id)}`)}>
+                View Player
               </Button>
               <Button
                 variant="contained"

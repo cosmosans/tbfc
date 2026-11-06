@@ -4,7 +4,6 @@ import {
   ButtonBase,
   Card,
   CardContent,
-  Chip,
   FormControl,
   InputLabel,
   MenuItem,
@@ -173,7 +172,7 @@ export default function LineupEditor({
                           <MenuItem key={p.id} value={p.id}>
                             #{p.number} {p.name}
                             {p.preferredPosition === slot
-                              ? " (Preferred)"
+                              ? " (Primary)"
                               : p.secondaryPosition === slot
                                 ? " (Secondary)"
                                 : ""}
@@ -310,9 +309,23 @@ export default function LineupEditor({
               </Typography>
               <Stack direction="row" gap={1} flexWrap="wrap">
                 {unavailablePlayers.map((player) => (
-                  <Chip
+                  <ButtonBase
                     key={player.id}
-                    label={`#${player.number} ${player.name}`}
+                    type="button"
+                    disabled={!canEditClub}
+                    aria-label={`Move #${player.number} ${player.name} to Bench`}
+                    title={`#${player.number} ${player.name}`}
+                    sx={{
+                      width: 180,
+                      maxWidth: "100%",
+                      flexShrink: 0,
+                      cursor: canEditClub ? "pointer" : "default",
+                      "&:focus-visible": {
+                        outline: "2px solid",
+                        outlineColor: "primary.main",
+                        outlineOffset: 2,
+                      },
+                    }}
                     onClick={
                       canEditClub
                         ? () =>
@@ -322,7 +335,14 @@ export default function LineupEditor({
                             })
                         : undefined
                     }
-                  />
+                  >
+                    <LineupNameplate kit={match.kit} sx={{ width: "100%" }}>
+                      <NameplateText
+                        number={player.number}
+                        name={player.name.split(" ")[0]}
+                      />
+                    </LineupNameplate>
+                  </ButtonBase>
                 ))}
                 {unavailablePlayers.length === 0 && (
                   <Typography color="text.secondary">

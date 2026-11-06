@@ -157,7 +157,7 @@ export default function Seasons({
                 )}
                 <Stack direction="row" gap={1} sx={{ mt: 1 }}>
                   <Button onClick={() => openSeason(season.id)}>
-                    View matches
+                    View Matches
                   </Button>
                   {canEditClub && (
                     <Button onClick={() => setEditing({ ...season })}>
@@ -199,11 +199,11 @@ function SeasonDialog({
   const duplicateName = seasons.some((item) => item.id !== draft?.id && item.name.trim().toLowerCase() === draft?.name.trim().toLowerCase());
   return (
     <Dialog open={!!season} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{isNew ? "Add Season" : "Edit season"}</DialogTitle>
+      <DialogTitle>{isNew ? "Add Season" : "Edit Season"}</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
           <TextField
-            label="Season name"
+            label="Season Name"
             autoFocus
             required
             error={duplicateName}
@@ -214,7 +214,7 @@ function SeasonDialog({
             }
           />
           <TextField
-            label="Start date"
+            label="Start Date"
             type="date"
             InputLabelProps={{ shrink: true }}
             value={draft?.startsOn ?? ""}

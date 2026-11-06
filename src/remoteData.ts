@@ -1,6 +1,7 @@
+import { eventOnlyPlayerData } from "./playerData";
 import type { ClubData } from './model';
 
-export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string };
+export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string; supportsIncremental?: boolean };
 
 async function readResponse(response: Response) {
   const body = await response.json();
@@ -8,15 +9,38 @@ async function readResponse(response: Response) {
   return body;
 }
 
+let baseline: RemoteClub | undefined;
+const keyFor = (collection: string, item: Record<string, unknown>) =>
+  String(item[collection === 'lineups' || collection === 'boards' ? 'matchId' : collection === 'standings' ? 'seasonId' : 'id']);
+
 export async function fetchClubData(): Promise<RemoteClub> {
-  return readResponse(await fetch('/api/club', { cache: 'no-store' })) as Promise<RemoteClub>;
+  baseline = await readResponse(await fetch('/api/club', { cache: 'no-store' })) as RemoteClub;
+  return { ...baseline, data: baseline.data ? eventOnlyPlayerData(baseline.data) : null };
 }
 
 export async function publishClubData(data: ClubData, revision: number): Promise<number> {
+  data = eventOnlyPlayerData(data);
+  // Only use a baseline from the exact revision this draft was based on.
+  const changes: Array<{ collection: string; id: string; item: unknown }> = [];
+  if (baseline?.data && baseline.revision === revision) {
+    for (const [collection, rows] of Object.entries(data)) {
+      const oldRows = (baseline.data as unknown as Record<string, Record<string, unknown>[]>)[collection] ?? [];
+      const previous = new Map(oldRows.map(item => [keyFor(collection, item), JSON.stringify(item)]));
+      for (const item of rows as Record<string, unknown>[]) {
+        const id = keyFor(collection, item);
+        if (previous.get(id) !== JSON.stringify(item)) changes.push({ collection, id, item });
+        previous.delete(id);
+      }
+      for (const id of previous.keys()) changes.push({ collection, id, item: null });
+    }
+  }
+  const incremental = baseline?.supportsIncremental === true && baseline.data && baseline.revision === revision;
+  if (incremental && !changes.length) return revision;
   const result = await readResponse(await fetch('/api/club', {
     method: 'PUT',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ data, revision }),
+    body: JSON.stringify(incremental ? { changes, revision } : { data, revision }),
   }));
+  baseline = { data: structuredClone(data), revision: result.revision, supportsIncremental: baseline?.supportsIncremental };
   return result.revision as number;
 }

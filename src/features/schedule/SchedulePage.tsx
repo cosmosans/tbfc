@@ -11,7 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import type { ClubData, Match } from "../../model";
+import { isMatchCompleted, type ClubData, type Match } from "../../model";
 import { opponentName, orderedSeasons } from "../../clubView";
 import MatchTable from "../matches/MatchTable";
 import ScheduleImporter from "./ScheduleImporter";
@@ -51,8 +51,11 @@ export default function SchedulePage({
   const upcoming = data.matches
     .filter((match) => match.status === "scheduled" && includes(match))
     .sort((a, b) => a.date.localeCompare(b.date));
+  const inProgress = data.matches
+    .filter((match) => match.status === "in_progress" && includes(match))
+    .sort((a, b) => a.date.localeCompare(b.date));
   const history = data.matches
-    .filter((match) => match.status !== "scheduled" && includes(match))
+    .filter((match) => isMatchCompleted(match) && includes(match))
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
   return (
     <Stack gap={3}>
@@ -64,7 +67,6 @@ export default function SchedulePage({
       >
         <Typography
           variant="h4"
-          textTransform="uppercase"
           sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1 }}
         >
           Schedule
@@ -100,23 +102,39 @@ export default function SchedulePage({
           onClose={() => setUploadOpen(false)}
         />
       )}
-      {upcoming.length > 0 && <section>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 300,
-            display: "inline-block",
-            bgcolor: "#111",
-            color: "#fff",
-            px: 2,
-            py: 1,
-            mb: 2,
-          }}
-        >
-          Upcoming
-        </Typography>
-        <MatchTable data={data} matches={upcoming} upcoming showSeasonDividers={season === "All seasons" && search === ""} onOpen={onOpen} />
-      </section>}
+      {inProgress.length > 0 && (
+        <section>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            In Progress
+          </Typography>
+          <MatchTable data={data} matches={inProgress} onOpen={onOpen} />
+        </section>
+      )}
+      {upcoming.length > 0 && (
+        <section>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 300,
+              display: "inline-block",
+              bgcolor: "#111",
+              color: "#fff",
+              px: 2,
+              py: 1,
+              mb: 2,
+            }}
+          >
+            Upcoming
+          </Typography>
+          <MatchTable
+            data={data}
+            matches={upcoming}
+            upcoming
+            showSeasonDividers={season === "All seasons" && search === ""}
+            onOpen={onOpen}
+          />
+        </section>
+      )}
 
       <section>
         <Typography
@@ -139,7 +157,7 @@ export default function SchedulePage({
           sx={{ bgcolor: "#111", mb: 2, mt: -1 }}
         >
           <TextField
-            label="Search matches"
+            label="Search Matches"
             size="small"
             value={search}
             onChange={(event) => {
@@ -165,7 +183,12 @@ export default function SchedulePage({
           </FormControl>
         </Stack>
         {history.length ? (
-          <MatchTable data={data} matches={history} showSeasonDividers={season === "All seasons" && search === ""} onOpen={onOpen} />
+          <MatchTable
+            data={data}
+            matches={history}
+            showSeasonDividers={season === "All seasons" && search === ""}
+            onOpen={onOpen}
+          />
         ) : (
           <Alert severity="info">No completed matches for this filter.</Alert>
         )}

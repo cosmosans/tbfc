@@ -48,15 +48,15 @@ export default function DataTransferDialog({
     } finally { setRestoring(false); }
   }
   return <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
-    <DialogTitle>Move your TBFC data</DialogTitle>
+    <DialogTitle>Move Your TBFC Data</DialogTitle>
     <DialogContent>
       <Stack gap={2} sx={{ pt: 1 }}>
         <Typography color="text.secondary">
-          Download a backup of the records shown here. Restoring a backup on localhost also replaces the shared club data once connected.
+          Download a backup of the records shown here. Restoring saves a local draft. Publish to live separately when ready.
         </Typography>
-        <Button variant="contained" onClick={onDownload} sx={{ alignSelf: 'flex-start' }}>Download backup JSON</Button>
+        <Button variant="contained" onClick={onDownload} sx={{ alignSelf: 'flex-start' }}>Download Backup JSON</Button>
         <Button variant="outlined" component="label" disabled={restoring} sx={{ alignSelf: 'flex-start' }}>
-          Choose backup to restore
+          Choose Backup to Restore
           <input hidden disabled={restoring} type="file" accept=".json,application/json" onChange={event => {
             void chooseFile(event.target.files?.[0]);
             event.target.value = '';
@@ -64,14 +64,14 @@ export default function DataTransferDialog({
         </Button>
         {fileName && <Typography variant="body2">{fileName}</Typography>}
         {backup && <Alert severity="warning">
-          Ready to restore {backup.matches.length} matches, {backup.players.length} players, and {backup.opponents.length} teams. This replaces the records shown here{location.hostname === 'localhost' || location.hostname === '127.0.0.1' ? ' and publishes them to the shared database when connected' : ''}.
+          Ready to restore {backup.matches.length} matches, {backup.players.length} players, and {backup.opponents.length} teams. This replaces the records shown here locally; it does not change the live site.
         </Alert>}
         {error && <Alert severity="error">{error}</Alert>}
       </Stack>
     </DialogContent>
     <DialogActions>
       <Button disabled={restoring} onClick={close}>Close</Button>
-      <Button variant="contained" disabled={!backup || restoring} onClick={() => void restore()}>{restoring ? "Restoring…" : "Restore backup"}</Button>
+      <Button variant="contained" disabled={!backup || restoring} onClick={() => void restore()}>{restoring ? "Restoring…" : "Restore Backup"}</Button>
     </DialogActions>
   </Dialog>;
 }

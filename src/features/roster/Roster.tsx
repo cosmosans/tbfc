@@ -1,5 +1,9 @@
+import { playerStats } from "./playerStats";
+import { PlayerInformation } from "./PlayerCard.styles";
+import PlayerTypeSelect from "./PlayerTypeSelect";
 import { useState } from "react";
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -12,9 +16,13 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { canEditClub } from "../../editAccess";
 import { byPlayerNumber } from "../../playerOrder";
-import type { ClubData, Player, Position } from "../../model";
+import type { ClubData, Player, PlayerType, Position } from "../../model";
 import PlayerCard, { PositionSelect } from "./PlayerCard";
-import { FourColumnGrid } from "../../components/layout";
+
+type SortKey = "number" | "name" | "goals" | "assists" | "saves" | "cards" | "status";
+const statColumns = [
+  ["goals", "Goals"], ["assists", "Assists"], ["saves", "PK Saves"], ["cards", "Yellow Cards"],
+] as const;
 
 export default function Roster({
   data,
@@ -23,10 +31,38 @@ export default function Roster({
   data: ClubData;
   update: (data: ClubData) => void;
 }) {
+  const [playerType, setPlayerType] = useState<PlayerType | "">("");
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [preferredPosition, setPreferredPosition] = useState<Position | "">("");
   const [addOpen, setAddOpen] = useState(false);
+  const [sortKey, setSortKey] = useState<SortKey>("number");
+  const [descending, setDescending] = useState(false);
+  const rows = data.players.map(player => {
+    const events = data.events.filter(event => event.playerId === player.id);
+    return { player, events, stats: playerStats(player, events) };
+  }).sort((a, b) => {
+    let comparison: number;
+    if (sortKey === "number") comparison = byPlayerNumber(a.player, b.player);
+    else if (sortKey === "name") comparison = a.player.name.localeCompare(b.player.name);
+    else if (sortKey === "status") comparison = Number(b.player.active) - Number(a.player.active);
+    else {
+      const index = statColumns.findIndex(([key]) => key === sortKey);
+      comparison = a.stats[index][1] - b.stats[index][1];
+    }
+    return (descending ? -comparison : comparison) || byPlayerNumber(a.player, b.player);
+  });
+  function sortHeader(key: SortKey, label: string) {
+    const active = sortKey === key;
+    return <Button size="small" onClick={() => {
+      if (active) setDescending(!descending);
+      else { setSortKey(key); setDescending(statColumns.some(([value]) => value === key)); }
+    }} aria-label={`Sort by ${label}${active ? descending ? ", descending" : ", ascending" : ""}`}
+      sx={{ minWidth: 0, px: .25, fontSize: { xs: ".65rem", md: ".75rem" }, color: active ? "primary.main" : "text.secondary" }}>
+      {label}{active ? descending ? " ↓" : " ↑" : ""}
+    </Button>;
+  }
+
   const savePlayer = (saved: Player) =>
     update({
       ...data,
@@ -37,6 +73,7 @@ export default function Roster({
     setName("");
     setNumber("");
     setPreferredPosition("");
+    setPlayerType("");
   }
   function addPlayer() {
     if (!name.trim()) return;
@@ -49,6 +86,7 @@ export default function Roster({
           name: name.trim(),
           number: number.trim(),
           active: true,
+          playerType,
           preferredPosition,
           secondaryPosition: "",
         },
@@ -68,7 +106,7 @@ export default function Roster({
           variant="h4"
           sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1 }}
         >
-          ROSTER
+          Roster
         </Typography>
         {canEditClub && (
           <Button
@@ -94,13 +132,14 @@ export default function Roster({
                 onChange={(e) => setName(e.target.value)}
               />
               <TextField
-                label="Shirt number"
+                label="Shirt Number"
                 fullWidth
                 value={number}
                 onChange={(e) => setNumber(e.target.value)}
               />
+              <PlayerTypeSelect value={playerType} onChange={setPlayerType} />
               <PositionSelect
-                label="Preferred position"
+                label="Primary Position"
                 value={preferredPosition}
                 onChange={setPreferredPosition}
               />
@@ -118,16 +157,32 @@ export default function Roster({
           </DialogActions>
         </Dialog>
       )}
-      <FourColumnGrid>
-        {[...data.players].sort(byPlayerNumber).map((player) => (
+      <Button variant="outlined" sx={{ alignSelf: "flex-end" }} onClick={() => setDescending(value => !value)}>
+        Reverse Sort
+      </Button>
+      <Box sx={{ bgcolor: "background.paper", overflow: "hidden" }}>
+      <Box sx={{ display: "flex", alignItems: "center", bgcolor: "rgba(255,255,255,.09)", borderBottom: "1px solid rgba(255,255,255,.2)" }}>
+        <Box sx={{ flex: { xs: "0 0 100px", sm: "0 0 180px" }, color: "text.secondary", textAlign: "center", fontSize: ".75rem" }}>Photo</Box>
+        <PlayerInformation as="div" style={{ background: "transparent" }}>
+          <Box sx={{ gridArea: "number" }}>{sortHeader("number", "Number")}</Box>
+          <Box sx={{ gridArea: "identity" }}>{sortHeader("name", "Name")}</Box>
+          <Box sx={{ gridArea: "stats", display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: { xs: 1, md: 2 } }}>
+            {statColumns.map(([key, label]) => <Box key={key} sx={{ textAlign: "center" }}>{sortHeader(key, label)}</Box>)}
+          </Box>
+          <Box sx={{ gridArea: "status", textAlign: "right" }}>{sortHeader("status", "Status")}</Box>
+        </PlayerInformation>
+      </Box>
+      <Stack gap={0}>
+        {rows.map(({ player, events }) => (
           <PlayerCard
             key={player.id}
             player={player}
-            events={data.events.filter((event) => event.playerId === player.id)}
+            events={events}
             onSave={savePlayer}
           />
         ))}
-      </FourColumnGrid>
+      </Stack>
+      </Box>
     </Stack>
   );
 }

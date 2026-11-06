@@ -1,10 +1,13 @@
 export type MatchPhoto = { id: string; src: string; name: string };
 
+export type MatchChatReply = { id: string; playerId: string; text: string };
+export type MatchChatMessage = MatchChatReply & { replies?: MatchChatReply[] };
+
 export type Pitch = "1" | "2" | "3";
 
 export type Match = {
   id: string;
-  status?: "scheduled" | "completed";
+  status?: "scheduled" | "in_progress" | "completed";
   seasonId?: string;
   opponentId?: string;
   season: string;
@@ -26,6 +29,7 @@ export type Match = {
   scorerNotes: string;
   report: string;
   photos?: MatchPhoto[];
+  chat?: MatchChatMessage[];
   sourceRow?: number;
 };
 
@@ -40,20 +44,19 @@ export const positions = [
   "GK",
 ] as const;
 export type Position = (typeof positions)[number];
+export const playerTypes = ["Forward", "Midfielder", "Defender", "Winger", "Goal Keeper"] as const;
+export type PlayerType = (typeof playerTypes)[number];
+
 export type Player = {
   id: string;
   name: string;
   number: string;
   active: boolean;
+  playerType?: PlayerType | "";
   photoUrl?: string;
+  bio?: string;
   preferredPosition?: Position | "";
   secondaryPosition?: Position | "";
-  historicalStats?: {
-    goals: number;
-    assists: number;
-    penaltySaves: number;
-    yellowCards: number;
-  };
 };
 export type Opponent = {
   id: string;
@@ -151,10 +154,14 @@ export function scoreResult(match: Match): "W" | "L" | "D" {
   return "D";
 }
 
+export function isMatchCompleted(match: Match): boolean {
+  return match.status == null || match.status === "completed";
+}
+
 export function record(matches: Match[]) {
   return matches.reduce(
     (acc, match) => {
-      if (match.status === "scheduled") return acc;
+      if (!isMatchCompleted(match)) return acc;
       acc.played += 1;
       acc[scoreResult(match)] += 1;
       acc.for += match.goalsFor;
@@ -174,7 +181,7 @@ export function displayScore(match: Match): string {
 
 export function issues(match: Match): string[] {
   const result: string[] = [];
-  if (match.status === "scheduled") return result;
+  if (!isMatchCompleted(match)) return result;
   if (match.resultLabel && match.resultLabel !== scoreResult(match))
     result.push("Result label differs from score");
   if (match.scoreRaw.includes("(") && match.shootoutFor == null)

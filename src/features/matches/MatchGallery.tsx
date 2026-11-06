@@ -62,7 +62,7 @@ export default function MatchGallery({ photos, onSave }: { photos: MatchPhoto[];
         <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2} sx={{ mb: 2 }}>
           <Typography variant="h6">Photos</Typography>
           {onSave && <Button component="label" variant="outlined" disabled={busy}>
-            {busy ? "Adding photos…" : "+ Add Photos"}
+            {busy ? "Adding Photos…" : "+ Add Photos"}
             <input hidden type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif" disabled={busy} onChange={(event) => {
               void upload(Array.from(event.target.files ?? []));
               event.target.value = "";

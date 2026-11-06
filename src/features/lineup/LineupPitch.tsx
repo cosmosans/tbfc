@@ -29,12 +29,15 @@ export default function LineupPitch({
 }) {
   const points = formationPoints[lineup.formation];
   const slots = formationSlots[lineup.formation];
+  // Reserve vertical space for a starter and two substitutes in each central role.
+  const centralRoleY: Partial<Record<string, number>> =
+    lineup.formation === "1-2-3-1" ? { ST: 22, CAM: 53, GK: 84 } : {};
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 
   return (
     <Box className="lineup-pitch">
       <Pitch
-        sx={{ minHeight: { xs: 380, sm: 500 }, touchAction: "auto" }}
+        sx={{ minHeight: lineup.formation === "1-2-3-1" ? 560 : { xs: 380, sm: 500 }, touchAction: "auto" }}
         aria-label={`${lineup.formation} lineup with substitutes`}
       >
         <PitchSurface />
@@ -63,7 +66,7 @@ export default function LineupPitch({
                 sx={{
                   position: "absolute",
                   left: `${x}%`,
-                  top: `${y}%`,
+                  top: `${centralRoleY[slots[index]] ?? y}%`,
                   transform: "translate(-50%, -50%)",
                   width: "22%",
                   maxWidth: 160,

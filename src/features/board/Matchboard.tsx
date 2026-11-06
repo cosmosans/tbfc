@@ -107,7 +107,7 @@ export default function Matchboard({
   const [annotateMode, setAnnotateMode] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [teamView, setTeamView] = useState<"tbfc" | "opponent" | "both">(
-    "both",
+    "tbfc",
   );
   const [editingOpponentId, setEditingOpponentId] = useState<string | null>(
     null,
@@ -614,7 +614,7 @@ export default function Matchboard({
           maxWidth="xs"
         >
           <Stack gap={2} sx={{ p: 3 }}>
-            <Typography variant="h6">Opponent player</Typography>
+            <Typography variant="h6">Opponent Player</Typography>
             <TextField
               label="Number"
               value={opponentNumber}
@@ -655,14 +655,14 @@ export default function Matchboard({
               fullWidth
               onClick={() => resetToLineup(false)}
             >
-              Reset to lineup
+              Reset to Lineup
             </Button>
           </CardContent>
         </Card>
         <Card>
           <CardContent>
             <TextField
-              label="Board notes"
+              label="Board Notes"
               multiline
               minRows={5}
               fullWidth

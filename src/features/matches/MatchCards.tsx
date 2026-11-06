@@ -24,9 +24,15 @@ export function MatchSummaryCard({ data, match, onOpen }: Props) {
 
           <Chip
             size="small"
-            label={result}
+            label={match.status === "in_progress" ? "In Progress" : result}
             color={
-              result === "W" ? "success" : result === "L" ? "error" : "default"
+              match.status === "in_progress"
+                ? "warning"
+                : result === "W"
+                  ? "success"
+                  : result === "L"
+                    ? "error"
+                    : "default"
             }
           />
         </Stack>
@@ -59,7 +65,7 @@ export function MatchSummaryCard({ data, match, onOpen }: Props) {
           <Chip
             size="small"
             color="warning"
-            label="Review source"
+            label="Review Source"
             sx={{ mt: 1 }}
           />
         )}

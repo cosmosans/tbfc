@@ -14,68 +14,51 @@ const face = {
 };
 
 export const PlayerCardFrame = styled("div")({
-  height: 480,
-  perspective: 1100,
-  filter: "drop-shadow(0 7px 7px rgba(0,0,0,.28))",
+  height: 180,
+  "@media (max-width: 599.95px)": { height: 120 },
+  "&[data-editing='true']": {
+    height: "auto",
+    "& > div": { height: "auto" },
+    "& .MuiCard-root": { position: "relative", height: "auto" },
+  },
+  borderBottom: "1px solid rgba(255,255,255,.2)",
 });
 export const PlayerCardInner = styled("div", {
   shouldForwardProp: (prop) => prop !== "flipped",
-})<{ flipped: boolean }>(({ flipped }) => ({
+})<{ flipped: boolean }>({
   position: "relative",
   width: "100%",
   height: "100%",
-  transformStyle: "preserve-3d",
-  transition: "transform .65s cubic-bezier(.2,.75,.2,1)",
-  transform: flipped
-    ? "rotateY(180deg)"
-    : "rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg))",
-  "[data-tilting='true'] > &": {
-    transitionDuration: flipped ? ".65s" : ".12s",
-  },
-  "@media (prefers-reduced-motion: reduce)": {
-    transitionDuration: ".01ms",
-    transform: flipped ? "rotateY(180deg)" : "none",
-  },
-}));
+  "& [aria-hidden='true']": { display: "none" },
+});
 export const PlayerCardFront = styled("button")({
   ...face,
   display: "flex",
-  flexDirection: "column",
+  flexDirection: "row",
+  alignItems: "stretch",
   padding: 0,
   border: 0,
-  background: "#000",
+  background: "#171a1c",
   color: "#fff",
   textAlign: "left",
   cursor: "pointer",
-  "&::after": {
-    content: '""',
-    position: "absolute",
-    inset: 0,
-    pointerEvents: "none",
-    background:
-      "radial-gradient(ellipse at var(--sheen-x, 50%) var(--sheen-y, 50%), rgba(255,255,255,.32) 0%, rgba(255,255,255,.10) 32%, transparent 70%), linear-gradient(125deg, rgba(255,255,255,.10), transparent 45%, rgba(255,255,255,.04))",
-    opacity: "calc(var(--sheen-opacity, 0) * .64)",
-    transition: "opacity .3s ease",
-    boxShadow: "inset 0 0 0 1px rgba(255,255,255,.18)",
-  },
-  "&[aria-hidden='true']::after": { opacity: 0 },
-  "@media (prefers-reduced-motion: reduce)": {
-    "&::after": { display: "none" },
-  },
+  "&:hover": { background: "rgba(255,255,255,.04)" },
   "&:focus-visible": { outline: "3px solid #f47730", outlineOffset: 3 },
 });
 export const PlayerCardBack = styled(Card)({
   ...face,
-  transform: "rotateY(180deg)",
+
 });
 export const PlayerCardBackContent = styled(CardContent)({
-  height: "100%",
+  height: "auto",
   overflowY: "auto",
 });
 export const PlayerPhoto = styled("div")({
   display: "grid",
   placeItems: "center",
-  flex: 1,
+  flex: "0 0 180px",
+  width: 180,
+  "@media (max-width: 599.95px)": { flexBasis: 100, width: 100 },
   minHeight: 0,
   background: "#252c2e",
   overflow: "hidden",
@@ -91,15 +74,24 @@ export const PlayerPlaceholder = styled(PersonOutlineIcon)({
   color: "#707b7d",
 });
 export const PlayerInformation = styled("span")({
-  minHeight: 116,
-  display: "flex",
+  flex: 1,
+  minWidth: 0,
+  display: "grid",
   alignItems: "center",
+  gridTemplateColumns: "90px minmax(0, 1fr) minmax(280px, 36%) 80px",
+  gridTemplateAreas: '"number identity stats status"',
   gap: 12,
-  padding: "10px 12px",
-  background: "#000",
+  "@media (max-width: 899.95px)": {
+    gridTemplateColumns: "55px minmax(0, 1fr) 65px",
+    gridTemplateAreas: '"number identity status" "stats stats stats"',
+  },
+  padding: "16px 24px",
+  "@media (max-width: 599.95px)": { padding: "10px", gap: 8,  },
+  background: "transparent",
   fontFamily: "Oxanium, ui-sans-serif, system-ui, sans-serif",
 });
 export const PlayerNumber = styled("span")({
+  gridArea: "number",
   color: "#d44f25",
   fontSize: "clamp(2rem, 4vw, 5.5rem)",
   lineHeight: 1,
@@ -107,6 +99,7 @@ export const PlayerNumber = styled("span")({
   fontWeight: 900,
 });
 export const PlayerIdentity = styled("span")({
+  gridArea: "identity",
   display: "flex",
   flexDirection: "column",
   minWidth: 0,
@@ -116,8 +109,7 @@ export const PlayerName = styled("span")({
   display: "block",
   fontSize: "clamp(1.1rem, 1.2vw, 2rem)",
   fontWeight: 900,
-  lineHeight: 1,
-  textTransform: "uppercase",
+  lineHeight: 1.2,
   letterSpacing: "-.045em",
   overflowWrap: "anywhere",
 });
@@ -130,7 +122,9 @@ export const PlayerPositions = styled("span")({
 export const PlayerStatus = styled("span", {
   shouldForwardProp: (prop) => prop !== "active",
 })<{ active: boolean }>(({ active }) => ({
-  alignSelf: "flex-end",
+  gridArea: "status",
+  alignSelf: "center",
+  marginLeft: "auto",
   color: active ? "#20d262" : "#888",
   fontSize: ".85rem",
   fontWeight: 900,
