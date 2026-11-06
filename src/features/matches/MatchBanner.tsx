@@ -31,6 +31,7 @@ const Versus = styled(Typography)({
   width: 135,
   textAlign: "center",
 });
+
 const HomeCrest = styled("img")({
   width: "min(30vw, 165px)",
   height: "min(30vw, 165px)",

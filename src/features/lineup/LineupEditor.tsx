@@ -15,7 +15,11 @@ import {
 import type { ClubData, Formation, Match, Player, Position } from "../../model";
 import { defaultLineup } from "../../store";
 import { LineupGrid } from "../../components/layout";
-import { LineupNameplate, NameplateText, goalkeeperPlate } from "../../components/LineupNameplate";
+import {
+  LineupNameplate,
+  NameplateText,
+  goalkeeperPlate,
+} from "../../components/LineupNameplate";
 import { formationSlots } from "./formations";
 import LineupPitch from "./LineupPitch";
 import { canEditClub } from "../../editAccess";
@@ -82,14 +86,20 @@ export default function LineupEditor({
       bench: [...lineup.bench, ...displaced],
     });
   }
-  const benchPlayers = data.players.filter(
-    (player) =>
-      lineup.bench.includes(player.id) && !lineup.starters.includes(player.id),
-  ).sort(byPlayerNumber);
-  const unavailablePlayers = data.players.filter(
-    (player) =>
-      !lineup.starters.includes(player.id) && !lineup.bench.includes(player.id),
-  ).sort(byPlayerNumber);
+  const benchPlayers = data.players
+    .filter(
+      (player) =>
+        lineup.bench.includes(player.id) &&
+        !lineup.starters.includes(player.id),
+    )
+    .sort(byPlayerNumber);
+  const unavailablePlayers = data.players
+    .filter(
+      (player) =>
+        !lineup.starters.includes(player.id) &&
+        !lineup.bench.includes(player.id),
+    )
+    .sort(byPlayerNumber);
   const duplicated = lineup.starters.filter(
     (id, index) => id && lineup.starters.indexOf(id) !== index,
   );
@@ -181,11 +191,11 @@ export default function LineupEditor({
               <Typography variant="h6" gutterBottom>
                 Bench ({benchPlayers.length})
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                {canEditClub
-                  ? "Tap a player to move them to Unavailable."
-                  : "Selected substitutes."}
-              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 3 }}
+              ></Typography>
               <Stack gap={2}>
                 {benchPlayers.map((player) => {
                   return (
@@ -208,15 +218,36 @@ export default function LineupEditor({
                           width: 180,
                           flexShrink: 0,
                           cursor: canEditClub ? "pointer" : "default",
-                          "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: 2 },
+                          "&:focus-visible": {
+                            outline: "2px solid",
+                            outlineColor: "primary.main",
+                            outlineOffset: 2,
+                          },
                         }}
-                        onClick={canEditClub ? () => save({
-                          ...lineup,
-                          bench: lineup.bench.filter((id) => id !== player.id),
-                        }) : undefined}
+                        onClick={
+                          canEditClub
+                            ? () =>
+                                save({
+                                  ...lineup,
+                                  bench: lineup.bench.filter(
+                                    (id) => id !== player.id,
+                                  ),
+                                })
+                            : undefined
+                        }
                       >
-                        <LineupNameplate kit={match.kit} goalkeeper={goalkeeperPlate(player.id, lineup.benchPositions?.[player.id])} sx={{ width: "100%" }}>
-                          <NameplateText number={player.number} name={player.name.split(" ")[0]} />
+                        <LineupNameplate
+                          kit={match.kit}
+                          goalkeeper={goalkeeperPlate(
+                            player.id,
+                            lineup.benchPositions?.[player.id],
+                          )}
+                          sx={{ width: "100%" }}
+                        >
+                          <NameplateText
+                            number={player.number}
+                            name={player.name.split(" ")[0]}
+                          />
                         </LineupNameplate>
                       </ButtonBase>
                       <FormControl size="small" sx={{ minWidth: 220 }}>

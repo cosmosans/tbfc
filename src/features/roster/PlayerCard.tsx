@@ -210,7 +210,7 @@ export default function PlayerCard({
         <PlayerCardBack aria-hidden={!flipped} inert={!flipped}>
           <PlayerCardBackContent>
             <Typography variant="h6" sx={{ mb: 1 }}>
-              Edit player
+              Edit Player
             </Typography>
             <Stack gap={1.4}>
               <Box

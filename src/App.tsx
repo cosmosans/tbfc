@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { matchPath, useLocation, useNavigate } from "react-router-dom";
+import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -428,7 +428,7 @@ export default function App() {
                   "& > * > .MuiCard-root": { flex: 1, display: "flex", flexDirection: "column" },
                   "& .match-banner-content": { flex: 1, display: "flex", flexDirection: "column" },
                   "& .match-banner-info": { mt: "auto", pt: 4 },
-                  "& .lineup-pitch": { flex: 1, display: "flex", flexDirection: "column" },
+                  "& .lineup-pitch": { flex: 1, width: "100%", minWidth: 0, display: "flex", flexDirection: "column" },
                   "& .lineup-pitch > div": { flex: 1 },
                 }}>
                 {nextMatch && (
@@ -442,17 +442,16 @@ export default function App() {
                 )}
                 {nextMatch && nextLineup && (
                   <Box
-                    component="button"
-                    type="button"
+                    component={Link}
+                    to={`/match/${encodeURIComponent(nextMatch.id)}?tab=lineup`}
                     aria-label={`Open lineup for ${opponentName(data, nextMatch)}`}
-                    onClick={() =>
-                      navigate(
-                        `/match/${encodeURIComponent(nextMatch.id)}?tab=lineup`,
-                      )
-                    }
                     sx={{
-                      display: "block",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "stretch",
                       width: "100%",
+                      minWidth: 0,
+                      textDecoration: "none",
                       p: 0,
                       border: 0,
                       bgcolor: "transparent",

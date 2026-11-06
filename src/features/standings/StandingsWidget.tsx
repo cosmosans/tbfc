@@ -150,12 +150,12 @@ export default function StandingsWidget({
                 download="tbfc-standings-template.csv"
                 variant="outlined"
               >
-                CSV template
+                CSV Template
               </Button>
             )}
             {canEditClub && (
               <Button component="label" variant="contained">
-                Upload standings CSV
+                Upload Standings CSV
                 <input
                   hidden
                   type="file"
