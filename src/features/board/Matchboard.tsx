@@ -106,7 +106,9 @@ export default function Matchboard({
   const [draftStroke, setDraftStroke] = useState<Point[]>([]);
   const [annotateMode, setAnnotateMode] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
-  const [teamView, setTeamView] = useState<"tbfc" | "opponent" | "both">("both");
+  const [teamView, setTeamView] = useState<"tbfc" | "opponent" | "both">(
+    "both",
+  );
   const [editingOpponentId, setEditingOpponentId] = useState<string | null>(
     null,
   );
@@ -209,56 +211,113 @@ export default function Matchboard({
   const annotationTools = (
     <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
       <Tooltip title="Annotate">
-      <IconButton
-        aria-label="Annotate"
-        sx={{ width: 44, height: 36, borderRadius: 0, bgcolor: annotateMode ? "primary.main" : "transparent", "&:hover": { bgcolor: annotateMode ? "primary.dark" : "action.hover" } }}
-        aria-pressed={annotateMode}
-        onClick={() => {
-          cancelDrawing();
-          setAnnotateMode((current) => !current);
-        }}
-      >
-        <Box component="img" src={annotateMode ? AnnotatePencilActive : AnnotatePencil} alt="" sx={{ width: 24, height: 24, objectFit: "contain" }} />
-      </IconButton>
+        <IconButton
+          aria-label="Annotate"
+          sx={{
+            width: 44,
+            height: 36,
+            borderRadius: 0,
+            bgcolor: annotateMode ? "primary.main" : "transparent",
+            "&:hover": {
+              bgcolor: annotateMode ? "primary.dark" : "action.hover",
+            },
+          }}
+          aria-pressed={annotateMode}
+          onClick={() => {
+            cancelDrawing();
+            setAnnotateMode((current) => !current);
+          }}
+        >
+          <Box
+            component="img"
+            src={annotateMode ? AnnotatePencilActive : AnnotatePencil}
+            alt=""
+            sx={{ width: 15, height: 15, objectFit: "contain" }}
+          />
+        </IconButton>
       </Tooltip>
       <Tooltip title="Undo">
-      <span>
-      <IconButton
-        aria-label="Undo"
-        disabled={!board.annotations?.length}
-        onClick={() =>
-          persist({
-            ...boardRef.current,
-            annotations: boardRef.current.annotations?.slice(0, -1) ?? [],
-          })
-        }
-      >
-        <Box component="img" src={UndoArrow} alt="" sx={{ width: 22, height: 22, objectFit: "contain", ".Mui-disabled &": { opacity: 0.3 } }} />
-      </IconButton>
-      </span>
+        <span>
+          <IconButton
+            aria-label="Undo"
+            disabled={!board.annotations?.length}
+            onClick={() =>
+              persist({
+                ...boardRef.current,
+                annotations: boardRef.current.annotations?.slice(0, -1) ?? [],
+              })
+            }
+          >
+            <Box
+              component="img"
+              src={UndoArrow}
+              alt=""
+              sx={{
+                width: 15,
+                height: 15,
+                objectFit: "contain",
+                ".Mui-disabled &": { opacity: 0.3 },
+              }}
+            />
+          </IconButton>
+        </span>
       </Tooltip>
       <Tooltip title="Clear Drawings">
-      <span>
-      <IconButton
-        aria-label="Clear Drawings"
-        disabled={!board.annotations?.length}
-        onClick={() => persist({ ...boardRef.current, annotations: [] })}
-      >
-        <Box component="img" src={TrashBin} alt="" sx={{ width: 22, height: 22, objectFit: "contain", ".Mui-disabled &": { opacity: 0.3 } }} />
-      </IconButton>
-      </span>
+        <span>
+          <IconButton
+            aria-label="Clear Drawings"
+            disabled={!board.annotations?.length}
+            onClick={() => persist({ ...boardRef.current, annotations: [] })}
+          >
+            <Box
+              component="img"
+              src={TrashBin}
+              alt=""
+              sx={{
+                width: 15,
+                height: 15,
+                objectFit: "contain",
+                ".Mui-disabled &": { opacity: 0.3 },
+              }}
+            />
+          </IconButton>
+        </span>
       </Tooltip>
       {fullScreen && (
-        <Tooltip title={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}. Click for ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}.`}>
+        <Tooltip
+          title={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}. Click for ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}.`}
+        >
           <IconButton
             aria-label={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}; switch to ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}`}
             onClick={() => {
               ballMotion.stop();
-              setTeamView((current) => current === "both" ? "tbfc" : current === "tbfc" ? "opponent" : "both");
+              setTeamView((current) =>
+                current === "both"
+                  ? "tbfc"
+                  : current === "tbfc"
+                    ? "opponent"
+                    : "both",
+              );
             }}
-            sx={{ width: 44, height: 36, borderRadius: 0, border: "1px solid", borderColor: "primary.main", bgcolor: "rgba(244,119,48,.18)", "&:hover": { bgcolor: "rgba(244,119,48,.28)" } }}
+            sx={{
+              width: 44,
+              borderRadius: 0,
+              bgcolor: "transparent",
+              "&:hover": { bgcolor: "rgba(244,119,48,.28)" },
+            }}
           >
-            <Box component="img" src={teamView === "tbfc" ? TeamViewTbfc : teamView === "opponent" ? TeamViewOpponent : TeamViewBoth} alt="" sx={{ width: 30, height: 20, objectFit: "contain" }} />
+            <Box
+              component="img"
+              src={
+                teamView === "tbfc"
+                  ? TeamViewTbfc
+                  : teamView === "opponent"
+                    ? TeamViewOpponent
+                    : TeamViewBoth
+              }
+              alt=""
+              sx={{ width: 25, height: 15, objectFit: "contain" }}
+            />
           </IconButton>
         </Tooltip>
       )}
@@ -412,52 +471,61 @@ export default function Matchboard({
           />
         ))}
       </svg>
-      {board.markers.filter((marker) => !fullScreen || teamView === "both" || marker.team === "ball" || marker.team === teamView).map((marker) => (
-        <PitchMarker
-          key={marker.id}
-          team={marker.team}
-          data-ball={marker.team === "ball" ? "true" : undefined}
-          data-player-marker={marker.team !== "ball" ? marker.id : undefined}
-          sx={{ zIndex: marker.team === "ball" ? 5 : 4 }}
-          kit={match.kit}
-          opponentColor={opponentColor}
-          goalkeeper={goalkeeperPlate(
-            lineup.starters[Number(marker.id.replace("slot-", ""))],
-            formationSlots[lineup.formation][
-              Number(marker.id.replace("slot-", ""))
-            ],
-          )}
-          style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
-          onPointerDown={(e) => {
-            if (drag.current || !e.isPrimary || e.button !== 0) return;
-            e.preventDefault();
-            if (marker.team === "ball") ballMotion.begin(e.clientX, e.clientY);
-            e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
-            drag.current = {
-              id: marker.id,
-              pointerId: e.pointerId,
-              x: e.clientX,
-              y: e.clientY,
-            };
-          }}
-          type="button"
-          aria-label={
-            marker.team === "ball"
-              ? "Drag or flick soccer ball"
-              : marker.team === "opponent"
-                ? `Edit opponent ${marker.playerNumber || marker.label || marker.id}`
-                : `Move ${marker.label}`
-          }
-        >
-          {marker.team === "tbfc" ? (
-            <NameplateText number={marker.playerNumber} name={marker.label} />
-          ) : marker.team === "ball" ? (
-            <SoccerBall point={marker.point} />
-          ) : (
-            <NameplateText number={marker.playerNumber} name={marker.label} />
-          )}
-        </PitchMarker>
-      ))}
+      {board.markers
+        .filter(
+          (marker) =>
+            !fullScreen ||
+            teamView === "both" ||
+            marker.team === "ball" ||
+            marker.team === teamView,
+        )
+        .map((marker) => (
+          <PitchMarker
+            key={marker.id}
+            team={marker.team}
+            data-ball={marker.team === "ball" ? "true" : undefined}
+            data-player-marker={marker.team !== "ball" ? marker.id : undefined}
+            sx={{ zIndex: marker.team === "ball" ? 5 : 4 }}
+            kit={match.kit}
+            opponentColor={opponentColor}
+            goalkeeper={goalkeeperPlate(
+              lineup.starters[Number(marker.id.replace("slot-", ""))],
+              formationSlots[lineup.formation][
+                Number(marker.id.replace("slot-", ""))
+              ],
+            )}
+            style={{ left: `${marker.point.x}%`, top: `${marker.point.y}%` }}
+            onPointerDown={(e) => {
+              if (drag.current || !e.isPrimary || e.button !== 0) return;
+              e.preventDefault();
+              if (marker.team === "ball")
+                ballMotion.begin(e.clientX, e.clientY);
+              e.currentTarget.parentElement?.setPointerCapture(e.pointerId);
+              drag.current = {
+                id: marker.id,
+                pointerId: e.pointerId,
+                x: e.clientX,
+                y: e.clientY,
+              };
+            }}
+            type="button"
+            aria-label={
+              marker.team === "ball"
+                ? "Drag or flick soccer ball"
+                : marker.team === "opponent"
+                  ? `Edit opponent ${marker.playerNumber || marker.label || marker.id}`
+                  : `Move ${marker.label}`
+            }
+          >
+            {marker.team === "tbfc" ? (
+              <NameplateText number={marker.playerNumber} name={marker.label} />
+            ) : marker.team === "ball" ? (
+              <SoccerBall point={marker.point} />
+            ) : (
+              <NameplateText number={marker.playerNumber} name={marker.label} />
+            )}
+          </PitchMarker>
+        ))}
     </Pitch>
   );
   return (
@@ -507,12 +575,24 @@ export default function Matchboard({
           <Stack
             direction="row"
             alignItems="center"
-            justifyContent="space-between"
-            sx={{ px: { xs: 1, sm: 2 }, py: 1, flexShrink: 0, flexWrap: "wrap", gap: 1 }}
+            justifyContent="flex-end"
+            sx={{
+              px: { xs: 1, sm: 2 },
+              py: 1,
+              flexShrink: 0,
+              flexWrap: "wrap",
+              gap: 1,
+            }}
           >
-            <Typography variant="h6">Matchboard</Typography>
+            <Typography sx={{ flex: 1 }} variant="h6">
+              Matchboard
+            </Typography>
             {annotationTools}
-            <Button variant="outlined" onClick={() => resetToLineup(true)}>
+            <Button
+              sx={{ marginLeft: 2 }}
+              variant="outlined"
+              onClick={() => resetToLineup(true)}
+            >
               Reset
             </Button>
             <IconButton
