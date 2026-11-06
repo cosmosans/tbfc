@@ -120,6 +120,22 @@ export default function Matchboard({
     });
   }
   const ballMotion = useBallMotion(boardRef, setBoard, persist);
+  function resetToLineup(clearAnnotations: boolean) {
+    cancelDrawing();
+    ballMotion.reset();
+    persist({
+      ...base,
+      notes: boardRef.current.notes,
+      annotations: clearAnnotations ? [] : boardRef.current.annotations,
+      markers: base.markers.map((marker) => {
+        if (marker.team !== "opponent") return marker;
+        const previous = boardRef.current.markers.find((m) => m.id === marker.id);
+        return previous
+          ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
+          : marker;
+      }),
+    });
+  }
   function pointOnPitch(event: { clientX: number; clientY: number }, pitch: HTMLDivElement): Point {
     const rect = pitch.getBoundingClientRect();
     return {
@@ -376,6 +392,9 @@ export default function Matchboard({
           >
             <Typography variant="h6">Matchboard</Typography>
             {annotationTools}
+            <Button variant="outlined" onClick={() => resetToLineup(true)}>
+              Reset
+            </Button>
             <IconButton
               aria-label="Exit Full Screen"
               onClick={() => {
@@ -422,21 +441,7 @@ export default function Matchboard({
             <Button
               variant="outlined"
               fullWidth
-              onClick={() => {
-                ballMotion.reset();
-                persist({
-                  ...base,
-                  notes: boardRef.current.notes,
-                  annotations: boardRef.current.annotations,
-                  markers: base.markers.map((marker) => {
-                    if (marker.team !== "opponent") return marker;
-                    const previous = boardRef.current.markers.find((m) => m.id === marker.id);
-                    return previous
-                      ? { ...marker, label: previous.label, playerNumber: previous.playerNumber }
-                      : marker;
-                  }),
-                });
-              }}
+              onClick={() => resetToLineup(false)}
             >
               Reset to lineup
             </Button>
