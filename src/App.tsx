@@ -1,5 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Navigate, Link, matchPath, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Link,
+  matchPath,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   Alert,
   Box,
@@ -380,7 +386,12 @@ export default function App() {
               <Tabs
                 value={activeDetailTab}
                 onChange={(_, value) => setActiveDetailTab(value)}
-                sx={{ mt: 3, mb: 2, bgcolor: "#111", px: 2 }}
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  bgcolor: "#111",
+                  px: 2,
+                }}
                 variant="scrollable"
                 scrollButtons="auto"
               >
@@ -417,59 +428,87 @@ export default function App() {
           <>
             {page === "matches" && (
               <Stack gap={3} sx={{ mb: 3 }}>
-                <Box sx={{
-                  display: "grid",
-                  gridTemplateColumns: { xs: "minmax(0, 1fr)", lg: nextLineup ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)" },
-                  gap: 3,
-                  alignItems: "stretch",
-                  gridAutoRows: "1fr",
-                  "& > *": { display: "flex", flexDirection: "column", minWidth: 0 },
-                  "& > * > .MuiCard-root": { flex: 1, display: "flex", flexDirection: "column" },
-                  "& .match-banner-content": { flex: 1, display: "flex", flexDirection: "column" },
-                  "& .match-banner-info": { mt: "auto", pt: { xs: 2, sm: 4 } },
-                  "& .lineup-pitch": { flex: 1, width: "100%", minWidth: 0, display: "flex", flexDirection: "column" },
-                  "& .lineup-pitch > div": { flex: 1 },
-                }}>
-                {nextMatch && (
-                  <MatchBanner
-                    data={data}
-                    match={nextMatch}
-                    onOpen={() =>
-                      navigate(`/match/${encodeURIComponent(nextMatch.id)}`)
-                    }
-                  />
-                )}
-                {nextMatch && nextLineup && (
-                  <Box
-                    component={Link}
-                    to={`/match/${encodeURIComponent(nextMatch.id)}?tab=lineup`}
-                    aria-label={`Open lineup for ${opponentName(data, nextMatch)}`}
-                    sx={{
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "minmax(0, 1fr)",
+                      lg: nextLineup
+                        ? "repeat(2, minmax(0, 1fr))"
+                        : "minmax(0, 1fr)",
+                    },
+                    gap: 3,
+                    alignItems: "stretch",
+                    gridAutoRows: "1fr",
+                    "& > *": {
                       display: "flex",
                       flexDirection: "column",
-                      alignItems: "stretch",
+                      minWidth: 0,
+                    },
+                    "& > * > .MuiCard-root": {
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    },
+                    "& .match-banner-content": {
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                    },
+                    "& .match-banner-info": {
+                      mt: "auto",
+                      pt: { xs: 2, sm: 4 },
+                    },
+                    "& .lineup-pitch": {
+                      flex: 1,
                       width: "100%",
                       minWidth: 0,
-                      textDecoration: "none",
-                      p: 0,
-                      border: 0,
-                      bgcolor: "transparent",
-                      color: "inherit",
-                      cursor: "pointer",
-                      textAlign: "left",
-                      "&:focus-visible": {
-                        outline: "3px solid #f47730",
-                        outlineOffset: 3,
-                      },
-                    }}
-                  >
-                    <LineupPitch
+                      display: "flex",
+                      flexDirection: "column",
+                    },
+                    "& .lineup-pitch > div": { flex: 1 },
+                  }}
+                >
+                  {nextMatch && (
+                    <MatchBanner
                       data={data}
-                      lineup={nextLineup}
-                      showTitle={false}
+                      match={nextMatch}
+                      onOpen={() =>
+                        navigate(`/match/${encodeURIComponent(nextMatch.id)}`)
+                      }
                     />
-                  </Box>
-                )}
+                  )}
+                  {nextMatch && nextLineup && (
+                    <Box
+                      component={Link}
+                      to={`/match/${encodeURIComponent(nextMatch.id)}?tab=lineup`}
+                      aria-label={`Open lineup for ${opponentName(data, nextMatch)}`}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "stretch",
+                        width: "100%",
+                        minWidth: 0,
+                        textDecoration: "none",
+                        p: 0,
+                        border: 0,
+                        bgcolor: "transparent",
+                        color: "inherit",
+                        cursor: "pointer",
+                        textAlign: "left",
+                        "&:focus-visible": {
+                          outline: "3px solid #f47730",
+                          outlineOffset: 3,
+                        },
+                      }}
+                    >
+                      <LineupPitch
+                        data={data}
+                        lineup={nextLineup}
+                        showTitle={false}
+                      />
+                    </Box>
+                  )}
                 </Box>
                 <StandingsWidget
                   data={data}
@@ -559,10 +598,16 @@ export default function App() {
                 )}
               </Stack>
             )}
-            {page === "stats" && <Stats data={data} update={update} openSeason={(id) => {
-              setSeason(id);
-              navigate("/schedule");
-            }} />}
+            {page === "stats" && (
+              <Stats
+                data={data}
+                update={update}
+                openSeason={(id) => {
+                  setSeason(id);
+                  navigate("/schedule");
+                }}
+              />
+            )}
             {page === "roster" && <Roster data={data} update={update} />}
             {page === "teams" && (
               <Teams
