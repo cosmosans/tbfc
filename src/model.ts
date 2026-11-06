@@ -1,3 +1,5 @@
+export type MatchPhoto = { id: string; src: string; name: string };
+
 export type Pitch = "1" | "2" | "3";
 
 export type Match = {
@@ -23,6 +25,7 @@ export type Match = {
   kit: string;
   scorerNotes: string;
   report: string;
+  photos?: MatchPhoto[];
   sourceRow?: number;
 };
 

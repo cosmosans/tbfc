@@ -6,6 +6,10 @@ import {
   CardContent,
   Checkbox,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -38,6 +42,8 @@ export default function Events({
   const [ownGoal, setOwnGoal] = useState(false);
   const [minute, setMinute] = useState("");
   const [note, setNote] = useState("");
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteDraft, setNoteDraft] = useState("");
   const hasTeam =
     kind === "goal" ||
     kind === "yellow_card" ||
@@ -59,7 +65,7 @@ export default function Events({
       id: crypto.randomUUID(),
       matchId: match.id,
       kind,
-      team: hasTeam ? eventTeam : undefined,
+      team: kind === "assist" ? "tbfc" : hasTeam ? eventTeam : undefined,
       ownGoal: kind === "goal" ? ownGoal : undefined,
       teamGoal: kind === "goal" && playerId === "team" ? true : undefined,
       playerId: playerId && playerId !== "team" ? playerId : undefined,
@@ -73,6 +79,26 @@ export default function Events({
 
   return (
     <Stack gap={2}>
+      {canEditClub && <Dialog open={noteOpen} onClose={() => setNoteOpen(false)} fullWidth maxWidth="md" aria-labelledby="event-note-title">
+        <DialogTitle id="event-note-title">Event note</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            fullWidth
+            multiline
+            minRows={8}
+            maxRows={18}
+            label="Note"
+            value={noteDraft}
+            onChange={(event) => setNoteDraft(event.target.value)}
+            sx={{ mt: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNoteOpen(false)}>Cancel</Button>
+          <Button variant="contained" onClick={() => { setNote(noteDraft); setNoteOpen(false); }}>Use note</Button>
+        </DialogActions>
+      </Dialog>}
       {loggedGoals !== match.goalsFor && (
         <Alert severity="info">
           {loggedGoals} of {match.goalsFor} TBFC goals have an event record.
@@ -191,13 +217,14 @@ export default function Events({
                 onChange={(e) => setMinute(e.target.value)}
                 sx={{ width: 100 }}
               />
-              <TextField
-                size="small"
-                label="Note"
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                sx={{ flexGrow: 1 }}
-              />
+              <Button
+                variant="outlined"
+                aria-label={note ? "Edit event note" : "Add event note"}
+                onClick={() => { setNoteDraft(note); setNoteOpen(true); }}
+                sx={{ flexGrow: 1, minWidth: 160, maxWidth: { md: 320 }, justifyContent: "flex-start" }}
+              >
+                <Typography component="span" noWrap sx={{ fontSize: "inherit" }}>{note || "Add note"}</Typography>
+              </Button>
               <Button variant="contained" onClick={addEvent}>
                 Add
               </Button>
@@ -221,6 +248,7 @@ export default function Events({
         const number = targetPlayer?.number;
         const name = targetPlayer?.name;
         const eventHasTeam =
+          event.kind === "assist" ||
           event.kind === "goal" ||
           event.kind === "yellow_card" ||
           event.kind === "penalty_save" ||
@@ -309,6 +337,8 @@ export default function Events({
                       minWidth: 0,
                       order: 2,
                       lineHeight: 1.2,
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "anywhere",
                       "@media (max-width: 1199px)": {
                         flexBasis: "100%",
                         order: 3,

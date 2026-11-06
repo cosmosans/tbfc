@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -12,20 +12,23 @@ import {
   Typography,
 } from "@mui/material";
 import { EditorContent, useEditor } from "@tiptap/react";
+import MatchGallery from "./MatchGallery";
 import StarterKit from "@tiptap/starter-kit";
-import type { Match } from "../../model";
+import type { Match, MatchPhoto } from "../../model";
 import { saveStoryHtml, storyToHtml } from "./matchStory";
 
 export default function MatchHistory({
   match,
   onSaveReport,
+  onSavePhotos,
 }: {
   match: Match;
   onSaveReport?: (report: string) => void;
+  onSavePhotos?: (photos: MatchPhoto[]) => void;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [, refreshToolbar] = useState(0);
-  const isFixture = match.status === "scheduled";
+  const reportHtml = useMemo(() => storyToHtml(match.report ?? ""), [match.report]);
   const editor = useEditor({
     extensions: [StarterKit],
     content: storyToHtml(match.report ?? ""),
@@ -57,13 +60,14 @@ export default function MatchHistory({
             <Typography variant="h6">{"Match Report"}</Typography>
             {onSaveReport && (
               <Button variant="outlined" onClick={openDialog}>
-                {match.report ? "Edit Story" : "Add Story"}
+                {match.report ? "Edit Report" : "Add Report"}
               </Button>
             )}
           </Stack>
-          {match.report ? (
+          {reportHtml.trim() ? (
             <Box
               sx={{
+                overflowWrap: "anywhere",
                 "& p": { my: 0, mb: 2 },
                 "& p:last-child": { mb: 0 },
                 "& ul, & ol": { pl: 3 },
@@ -74,17 +78,14 @@ export default function MatchHistory({
                   ml: 0,
                 },
               }}
-              dangerouslySetInnerHTML={{ __html: storyToHtml(match.report) }}
+              dangerouslySetInnerHTML={{ __html: reportHtml }}
             />
           ) : (
-            <Typography>
-              {isFixture
-                ? "No fixture notes yet."
-                : "No report yet. Add a match report when the story is ready."}
-            </Typography>
+            <Typography>No report yet.</Typography>
           )}
         </CardContent>
       </Card>
+      <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -192,7 +193,7 @@ export default function MatchHistory({
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={save}>
-            Save Story
+            Save Report
           </Button>
         </DialogActions>
       </Dialog>

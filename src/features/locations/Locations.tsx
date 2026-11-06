@@ -30,6 +30,7 @@ async function prepareImage(file: File): Promise<string> {
 
 export default function Locations({ data, update }: { data: ClubData; update: (data: ClubData) => void }) {
   const [editing, setEditing] = useState<Location | null>(null);
+  const [preparingImage, setPreparingImage] = useState(false);
   const [error, setError] = useState('');
   const [name, setName] = useState('');
   function save(location: Location) {
@@ -68,11 +69,11 @@ export default function Locations({ data, update }: { data: ClubData; update: (d
           <TextField label="Name" value={editing.name} onChange={event => setEditing({ ...editing, name: event.target.value })} required />
           <TextField label="Address" value={editing.address} onChange={event => setEditing({ ...editing, address: event.target.value })} />
           {editing.imageUrl && <Box component="img" src={editing.imageUrl} alt="" sx={{ maxWidth: '100%', maxHeight: 220, objectFit: 'contain', alignSelf: 'flex-start' }} />}
-          <Button component="label" variant="outlined">{editing.imageUrl ? 'Change image' : 'Add image'}<input hidden type="file" accept="image/*" onChange={event => { const file = event.target.files?.[0]; if (file) void prepareImage(file).then(imageUrl => setEditing(current => current ? { ...current, imageUrl } : current)).catch(cause => setError(cause instanceof Error ? cause.message : 'Could not add image.')); event.target.value = ''; }} /></Button>
+          <Button component="label" variant="outlined" disabled={preparingImage}>{preparingImage ? 'Preparing image…' : editing.imageUrl ? 'Change image' : 'Add image'}<input hidden type="file" accept="image/*" onChange={event => { const file = event.target.files?.[0]; if (file) { const locationId = editing.id; setPreparingImage(true); setError(''); void prepareImage(file).then(imageUrl => setEditing(current => current?.id === locationId ? { ...current, imageUrl } : current)).catch(cause => setError(cause instanceof Error ? cause.message : 'Could not add image.')).finally(() => setPreparingImage(false)); } event.target.value = ''; }} /></Button>
           {editing.imageUrl && <Button onClick={() => setEditing({ ...editing, imageUrl: '' })}>Remove image</Button>}
           {error && <Alert severity="error">{error}</Alert>}
         </Stack></DialogContent>
-        <DialogActions><Button onClick={() => setEditing(null)}>Cancel</Button><Button variant="contained" disabled={!editing.name.trim() || data.locations.some(item => item.id !== editing.id && item.name.toLowerCase() === editing.name.trim().toLowerCase())} onClick={() => save({ ...editing, name: editing.name.trim(), address: editing.address.trim() })}>Save</Button></DialogActions>
+        <DialogActions><Button onClick={() => setEditing(null)}>Cancel</Button><Button variant="contained" disabled={preparingImage || !editing.name.trim() || data.locations.some(item => item.id !== editing.id && item.name.toLowerCase() === editing.name.trim().toLowerCase())} onClick={() => save({ ...editing, name: editing.name.trim(), address: editing.address.trim() })}>Save</Button></DialogActions>
       </>}
     </Dialog>}
   </Stack>;

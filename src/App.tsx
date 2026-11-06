@@ -25,7 +25,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { ClubData, Match } from "./model";
 import { issues } from "./model";
 import { defaultLineup, exportData, loadData, saveData } from "./store";
-import { opponentFor, opponentName, orderedSeasons } from "./clubView";
+import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
 import DataTransferDialog from "./components/DataTransferDialog";
 import MatchBanner from "./features/matches/MatchBanner";
@@ -131,9 +131,7 @@ export default function App() {
     (Object.keys(pagePaths) as Page[]).find(
       (key) => pagePaths[key] === location.pathname,
     ) ?? null;
-  const [season, setSeason] = useState(
-    () => orderedSeasons(data, true)[0]?.id ?? "All seasons",
-  );
+  const [season, setSeason] = useState("All seasons");
   const [editing, setEditing] = useState<Match | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [newMatch, setNewMatch] = useState<Match>(blankMatch);
@@ -154,7 +152,12 @@ export default function App() {
   function update(next: ClubData) {
     if (!canEditClub) return;
     setData(next);
-    saveData(next);
+    let localSaveError = "";
+    try {
+      saveData(next);
+    } catch {
+      localSaveError = "Browser storage is full or unavailable. This edit could not be saved on this device.";
+    }
     if (syncState === "ready") {
       saveQueue.current = saveQueue.current
         .catch(() => undefined)
@@ -163,12 +166,11 @@ export default function App() {
           setSyncMessage("");
         })
         .catch((error) => {
-          setSyncMessage(
-            error instanceof Error
-              ? error.message
-              : "Could not save to the shared database.",
-          );
+          const reason = error instanceof Error ? error.message : "Could not save to the shared database.";
+          setSyncMessage(`${reason} ${localSaveError || "Your edits are saved in this browser only."} Keep this page open and export a backup before refreshing.`);
         });
+    } else if (localSaveError) {
+      setSyncMessage(localSaveError + " Keep this page open and export a backup before refreshing.");
     }
   }
   async function publishCurrentData() {
@@ -194,7 +196,10 @@ export default function App() {
   const selected = data.matches.find((m) => m.id === matchRoute?.params.id);
   useEffect(() => {
     if (!selected || !requestedTab) return;
-    const canonical = normalizeMatchTab(requestedTab, selected.status === "scheduled");
+    const canonical = normalizeMatchTab(
+      requestedTab,
+      selected.status === "scheduled",
+    );
     if (requestedTab === canonical) return;
     const params = new URLSearchParams(location.search);
     params.set("tab", canonical);
@@ -325,7 +330,11 @@ export default function App() {
           </Alert>
         )}
         {syncState === "loading" ? (
-          <ClubDataSkeleton view={matchRoute ? "match" : teamRoute ? "team" : page ?? "matches"} />
+          <ClubDataSkeleton
+            view={
+              matchRoute ? "match" : teamRoute ? "team" : (page ?? "matches")
+            }
+          />
         ) : matchRoute && !selected ? (
           <Alert severity="warning">
             Match not found.{" "}
@@ -400,12 +409,16 @@ export default function App() {
               >
                 <Tab label="Lineup" />
                 <Tab label="Events" />
-                <Tab label="Story" />
+                <Tab label="Report" />
                 <Tab label="Matchboard" />
               </Tabs>
               {activeDetailTab === 2 && (
                 <MatchHistory
                   match={selected}
+                  onSavePhotos={canEditClub ? (photos) => update({
+                    ...data,
+                    matches: data.matches.map((match) => match.id === selected.id ? { ...match, photos } : match),
+                  }) : undefined}
                   onSaveReport={
                     canEditClub
                       ? (report) =>
