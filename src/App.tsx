@@ -395,12 +395,12 @@ export default function App() {
                 variant="scrollable"
                 scrollButtons="auto"
               >
-                <Tab label="Match History" />
-                <Tab label="Events" />
                 <Tab label="Lineup" />
+                <Tab label="Events" />
+                <Tab label="Story" />
                 <Tab label="Matchboard" />
               </Tabs>
-              {activeDetailTab === 0 && (
+              {activeDetailTab === 2 && (
                 <MatchHistory
                   match={selected}
                   onSaveReport={
@@ -409,7 +409,9 @@ export default function App() {
                           update({
                             ...data,
                             matches: data.matches.map((match) =>
-                              match.id === selected.id ? { ...match, report } : match,
+                              match.id === selected.id
+                                ? { ...match, report }
+                                : match,
                             ),
                           })
                       : undefined
@@ -419,7 +421,7 @@ export default function App() {
               {activeDetailTab === 1 && (
                 <Events data={data} match={selected} update={update} />
               )}
-              {activeDetailTab === 2 && (
+              {activeDetailTab === 0 && (
                 <LineupEditor data={data} match={selected} update={update} />
               )}
               {activeDetailTab === 3 && (

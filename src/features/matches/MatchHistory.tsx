@@ -38,12 +38,18 @@ export default function MatchHistory({
     <Stack gap={2}>
       <Card>
         <CardContent>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2} sx={{ mb: 1 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={2}
+            sx={{ mb: 1 }}
+          >
             <Typography variant="h6">
               {isFixture ? "Fixture Notes" : "Match Story"}
             </Typography>
             {onSaveReport && (
-              <Button onClick={openDialog}>
+              <Button variant="outlined" onClick={openDialog}>
                 {match.report ? "Edit Story" : "Add Story"}
               </Button>
             )}
@@ -56,8 +62,15 @@ export default function MatchHistory({
           </Typography>
         </CardContent>
       </Card>
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} fullWidth maxWidth="md">
-        <DialogTitle>{isFixture ? "Edit Fixture Notes" : "Edit Match Story"}</DialogTitle>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>
+          {isFixture ? "Edit Fixture Notes" : "Edit Match Story"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -72,7 +85,9 @@ export default function MatchHistory({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={save}>Save Story</Button>
+          <Button variant="contained" onClick={save}>
+            Save Story
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>

@@ -285,8 +285,7 @@ export default function Matchboard({
           </IconButton>
         </span>
       </Tooltip>
-      {fullScreen && (
-        <Tooltip
+      <Tooltip
           title={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}. Click for ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}.`}
         >
           <IconButton
@@ -321,8 +320,7 @@ export default function Matchboard({
               sx={{ width: 25, height: 15, objectFit: "contain" }}
             />
           </IconButton>
-        </Tooltip>
-      )}
+      </Tooltip>
     </Stack>
   );
   function move(event: ReactPointerEvent<HTMLDivElement>) {
@@ -476,7 +474,6 @@ export default function Matchboard({
       {board.markers
         .filter(
           (marker) =>
-            !fullScreen ||
             teamView === "both" ||
             marker.team === "ball" ||
             marker.team === teamView,

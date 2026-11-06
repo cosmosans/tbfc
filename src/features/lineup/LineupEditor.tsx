@@ -204,7 +204,6 @@ export default function LineupEditor({
                       sx={{
                         display: "flex",
                         gap: 1,
-                        flexWrap: "wrap",
                         justifyContent: "space-between",
                         alignItems: "center",
                       }}
@@ -250,7 +249,7 @@ export default function LineupEditor({
                           />
                         </LineupNameplate>
                       </ButtonBase>
-                      <FormControl size="small" sx={{ minWidth: 220 }}>
+                      <FormControl size="small" sx={{}}>
                         <InputLabel id={`bench-position-${player.id}`}>
                           Substitute For
                         </InputLabel>
