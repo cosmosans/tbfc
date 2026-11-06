@@ -1,11 +1,12 @@
 import { useSearchParams } from "react-router-dom";
-import { Alert, Button, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Alert, Box, Button, Stack, Tab, Tabs } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { ClubData, Match } from "../../model";
 import { opponentFor } from "../../clubView";
 import LineupEditor from "../lineup/LineupEditor";
 import Matchboard from "../board/Matchboard";
 import MatchBanner from "./MatchBanner";
+import { storyToHtml } from "./matchStory";
 
 export default function MatchEventPage({
   data,
@@ -34,7 +35,10 @@ export default function MatchEventPage({
       </Button>
       <MatchBanner data={data} match={match} detail onEdit={onEdit} />
       {match.report && (
-        <Typography sx={{ whiteSpace: "pre-wrap" }}>{match.report}</Typography>
+        <Box
+          sx={{ "& p": { my: 0, mb: 2 }, "& p:last-child": { mb: 0 } }}
+          dangerouslySetInnerHTML={{ __html: storyToHtml(match.report) }}
+        />
       )}
       {opponent?.notes && (
         <Alert severity="info">

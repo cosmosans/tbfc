@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
 import type { Location, Match, Opponent, Season } from "../../model";
 import { scoreResult } from "../../model";
 import { splitMatchLocation } from "../../matchLocation";
@@ -248,15 +248,19 @@ export default function MatchDialog({
               helperText="Source text is preserved; use Events for new match details."
             />
           )}
-          <TextField
-            label={
-              draft.status === "scheduled" ? "Fixture notes" : "Match report"
-            }
-            value={draft.report}
-            onChange={(e) => setDraft({ ...draft, report: e.target.value })}
-            multiline
-            minRows={4}
-          />
+          {draft.status === "scheduled" ? (
+            <TextField
+              label="Fixture notes"
+              value={draft.report}
+              onChange={(e) => setDraft({ ...draft, report: e.target.value })}
+              multiline
+              minRows={4}
+            />
+          ) : (
+            <Typography color="text.secondary">
+              Edit the match narrative from its Match Story tab.
+            </Typography>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>
