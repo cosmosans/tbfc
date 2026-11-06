@@ -31,6 +31,7 @@ import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
+import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import LineupEditor from "./features/lineup/LineupEditor";
@@ -135,12 +136,8 @@ export default function App() {
   const [editing, setEditing] = useState<Match | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [newMatch, setNewMatch] = useState<Match>(blankMatch);
-  const matchTabs = ["history", "events", "lineup", "board"];
   const requestedTab = new URLSearchParams(location.search).get("tab");
-  const activeDetailTab = Math.max(
-    0,
-    matchTabs.indexOf(requestedTab ?? "history"),
-  );
+  const activeDetailTab = matchTabs.indexOf(normalizeMatchTab(requestedTab));
   function setActiveDetailTab(index: number) {
     navigate(
       index === 0
@@ -194,6 +191,14 @@ export default function App() {
     [data.matches],
   );
   const selected = data.matches.find((m) => m.id === matchRoute?.params.id);
+  useEffect(() => {
+    if (!selected || !requestedTab) return;
+    const canonical = normalizeMatchTab(requestedTab, selected.status === "scheduled");
+    if (requestedTab === canonical) return;
+    const params = new URLSearchParams(location.search);
+    params.set("tab", canonical);
+    navigate(`${location.pathname}?${params.toString()}`, { replace: true });
+  }, [selected, requestedTab, location.pathname, location.search, navigate]);
   const selectedTeam = data.opponents.find(
     (team) => team.id === teamRoute?.params.id,
   );

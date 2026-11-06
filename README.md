@@ -27,7 +27,7 @@ For a new season, create it under **Schedule → Manage seasons**, then use **Up
 
 ## Shareable routes
 
-The main pages use `/schedule`, `/roster`, `/tactics`, `/teams`, `/locations`, and `/stats`; Matchday is `/`. Individual records use `/match/:id` and `/team/:id`. Match tabs are linkable with `?tab=history`, `?tab=events`, `?tab=lineup`, or `?tab=board` as applicable. Direct URLs and reloads work in Vite and Cloudflare Pages. Once D1 is populated, links on every device show the same records.
+The main pages use `/schedule`, `/roster`, `/tactics`, `/teams`, `/locations`, and `/stats`; Matchday is `/`. Individual records use `/match/:id` and `/team/:id`. Match tabs are linkable with `?tab=lineup`, `?tab=events`, `?tab=story`, or `?tab=matchboard` as applicable. Older `history` and `board` tab links redirect to their current names. Direct URLs and reloads work in Vite and Cloudflare Pages. Once D1 is populated, links on every device show the same records.
 
 The initial Fall 2026 schedule includes the November 5 Peachy Puffs, November 12 Peach Passers, and November 19 Whiff City FC fixtures from the supplied league screenshot. The October 29 result in that screenshot was already completed and is not part of the upcoming schedule. Browser edits to those fixtures take precedence over the defaults.
 

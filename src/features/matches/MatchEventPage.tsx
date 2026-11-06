@@ -7,6 +7,7 @@ import LineupEditor from "../lineup/LineupEditor";
 import Matchboard from "../board/Matchboard";
 import MatchBanner from "./MatchBanner";
 import { storyToHtml } from "./matchStory";
+import { normalizeMatchTab } from "./matchTabs";
 
 export default function MatchEventPage({
   data,
@@ -22,7 +23,7 @@ export default function MatchEventPage({
   onEdit?: () => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const view = searchParams.get("tab") === "board" ? "board" : "lineup";
+  const view = normalizeMatchTab(searchParams.get("tab"), true);
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={2}>
@@ -49,14 +50,14 @@ export default function MatchEventPage({
         centered
         value={view}
         onChange={(_, next) =>
-          setSearchParams(next === "board" ? { tab: "board" } : {}, {
+          setSearchParams(next === "matchboard" ? { tab: "matchboard" } : {}, {
             replace: true,
           })
         }
         sx={{ bgcolor: "#111", px: 2 }}
       >
         <Tab value="lineup" label="Lineup" />
-        <Tab value="board" label="Matchboard" />
+        <Tab value="matchboard" label="Matchboard" />
       </Tabs>
       {view === "lineup" ? (
         <LineupEditor data={data} match={match} update={update} />
