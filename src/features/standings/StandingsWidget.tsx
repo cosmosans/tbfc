@@ -58,7 +58,7 @@ export default function StandingsWidget({
 }) {
   const navigate = useNavigate();
   const seasons = orderedSeasons(data, true).filter(
-    (season) => season.name.trim().toLowerCase() === "fall 2026",
+    (season) => season.id === "season-fall-2026",
   );
   const [requestedSeasonId, setSeasonId] = useState(initialSeasonId ?? "");
   const seasonId = seasons.some((season) => season.id === requestedSeasonId)
