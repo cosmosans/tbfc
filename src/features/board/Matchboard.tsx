@@ -240,6 +240,7 @@ export default function Matchboard({
         <span>
           <IconButton
             aria-label="Undo"
+            sx={{ borderRadius: 0 }}
             disabled={!board.annotations?.length}
             onClick={() =>
               persist({
@@ -266,6 +267,7 @@ export default function Matchboard({
         <span>
           <IconButton
             aria-label="Clear Drawings"
+            sx={{ borderRadius: 0 }}
             disabled={!board.annotations?.length}
             onClick={() => persist({ ...boardRef.current, annotations: [] })}
           >
