@@ -19,6 +19,7 @@ import { CardGrid } from "../../components/layout";
 import RecordBar from "../../components/RecordBar";
 import { canEditClub } from "../../editAccess";
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
+import GoalsAllowedIcon from "../../img/goal.svg";
 
 export default function Seasons({
   data,
@@ -110,6 +111,7 @@ export default function Seasons({
                 <Typography color="text.secondary" variant="body2">
                   {r.played} match{r.played === 1 ? "" : "es"}
                 </Typography>
+
                 <Box sx={{ mt: 2, mb: 1 }}>
                   <RecordBar
                     variant="results"
@@ -119,7 +121,13 @@ export default function Seasons({
                   />
                 </Box>
                 <Typography color="text.secondary">
-                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
                     <Typography
                       variant="body2"
                       color="text.secondary"
@@ -151,7 +159,41 @@ export default function Seasons({
                       >
                         {r.for}
                       </strong>{" "}
-                      {r.for !== 1 ? "s" : ""} Scored
+                      Scored
+                    </Typography>
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        fontSize: 12,
+                        flex: 1,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <img
+                        src={GoalsAllowedIcon}
+                        alt="Goals"
+                        style={{
+                          width: 16,
+                          height: 16,
+                          marginRight: 5,
+                          position: "relative",
+                          top: -1,
+                        }}
+                      />
+                      <strong
+                        style={{
+                          fontSize: 20,
+                          paddingRight: 2.5,
+                          color: "white",
+                        }}
+                      >
+                        {r.against}
+                      </strong>{" "}
+                      Allowed
                     </Typography>
                   </Box>
                 </Typography>
