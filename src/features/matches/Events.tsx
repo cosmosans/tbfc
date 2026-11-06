@@ -37,7 +37,7 @@ export default function Events({
   const [minute, setMinute] = useState("");
   const [note, setNote] = useState("");
   const hasTeam =
-    kind === "goal" || kind === "yellow_card" || kind === "penalty_save";
+    kind === "goal" || kind === "yellow_card" || kind === "penalty_kick" || kind === "penalty_save";
   const canSelectTbfcPlayer =
     kind === "goal"
       ? (eventTeam === "tbfc" && !ownGoal) ||
@@ -100,6 +100,7 @@ export default function Events({
                     "goal",
                     "assist",
                     "yellow_card",
+                    "penalty_kick",
                     "penalty_save",
                     "note",
                   ] as const
@@ -114,9 +115,9 @@ export default function Events({
             </FormControl>
             {hasTeam && (
               <FormControl size="small" sx={{ minWidth: 180 }}>
-                <InputLabel>{kind === "goal" ? "Goal for" : "Team"}</InputLabel>
+                <InputLabel>{kind === "goal" ? "Goal for" : kind === "penalty_kick" ? "Awarded to" : "Team"}</InputLabel>
                 <Select
-                  label={kind === "goal" ? "Goal for" : "Team"}
+                  label={kind === "goal" ? "Goal for" : kind === "penalty_kick" ? "Awarded to" : "Team"}
                   value={eventTeam}
                   onChange={(e) => {
                     setEventTeam(e.target.value as "tbfc" | "opponent");
@@ -183,6 +184,12 @@ export default function Events({
               Add
             </Button>
           </Stack>
+          {kind === "penalty_kick" && (
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
+              Record a penalty awarded during the match and describe the foul in the note.
+              Add a separate Goal, Penalty Save, or Note for the outcome. This event does not change goal totals.
+            </Typography>
+          )}
         </CardContent>
       </Card>}
       {events.map((event) => {
@@ -192,14 +199,15 @@ export default function Events({
         const eventHasTeam =
           event.kind === "goal" ||
           event.kind === "yellow_card" ||
-          event.kind === "penalty_save";
+          event.kind === "penalty_save" ||
+          event.kind === "penalty_kick";
         const teamName =
           event.team === "opponent"
             ? opponentName(data, match)
             : "Turf Burners FC";
         const teamColor =
           event.team === "opponent"
-            ? opponentFor(data, match)?.color || "#fff"
+            ? opponentFor(data, match)?.color || "#555"
             : "#f47730";
         const teamLabelBackground =
           getContrastRatio(teamColor, "#000") >= getContrastRatio(teamColor, "#fff")
@@ -246,15 +254,15 @@ export default function Events({
                     style={{ textTransform: "uppercase", fontWeight: "bold" }}
                   >
                     {" "}
-                    {event.kind.replaceAll("_", " ")}{" "}
+                    {event.kind === "penalty_kick" ? "PENALTY!" : event.kind === "goal" ? "GOAL!" : event.kind.replaceAll("_", " ")}{" "}
                   </span>
                   {eventHasTeam ? (
                     <>
                       <Typography
                         component="span"
                         sx={{
-                          color: teamColor,
-                          bgcolor: teamLabelBackground,
+                          color: event.team === "opponent" ? "#fff" : teamColor,
+                          bgcolor: event.team === "opponent" ? teamColor : teamLabelBackground,
                           fontWeight: 700,
                           px: 1,
                           py: 0.25,

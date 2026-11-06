@@ -90,7 +90,7 @@ export type StandingsSnapshot = {
 export type MatchEvent = {
   id: string;
   matchId: string;
-  kind: "goal" | "assist" | "yellow_card" | "penalty_save" | "note";
+  kind: "goal" | "assist" | "yellow_card" | "penalty_kick" | "penalty_save" | "note";
   /** Team credited with a goal, or assigned to a card or penalty save. Older events belong to TBFC. */
   team?: "tbfc" | "opponent";
   ownGoal?: boolean;

@@ -30,8 +30,6 @@ export default function Seasons({
   update: (data: ClubData) => void;
   openSeason: (id: string) => void;
 }) {
-  const [name, setName] = useState("");
-  const [startsOn, setStartsOn] = useState("");
   const [editing, setEditing] = useState<Season | null>(null);
   const sorted = orderedSeasons(data, true);
   function saveSeason(season: Season) {
@@ -45,57 +43,14 @@ export default function Seasons({
   }
   return (
     <Stack gap={2}>
-      {canEditClub && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Seasons
-            </Typography>
-            <Typography color="text.secondary" sx={{ mb: 2 }}>
-              Each match belongs to a season. Records and goal totals are
-              calculated from its games.
-            </Typography>
-            <Stack direction={{ xs: "column", sm: "row" }} gap={2}>
-              <TextField
-                label="Season name"
-                size="small"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                sx={{ flexGrow: 1 }}
-              />
-              <TextField
-                label="Start date"
-                type="date"
-                size="small"
-                InputLabelProps={{ shrink: true }}
-                value={startsOn}
-                onChange={(e) => setStartsOn(e.target.value)}
-              />
-              <Button
-                variant="contained"
-                disabled={
-                  !name.trim() ||
-                  data.seasons.some(
-                    (s) => s.name.toLowerCase() === name.trim().toLowerCase(),
-                  )
-                }
-                onClick={() => {
-                  saveSeason({
-                    id: crypto.randomUUID(),
-                    name: name.trim(),
-                    notes: "",
-                    startsOn,
-                  });
-                  setName("");
-                  setStartsOn("");
-                }}
-              >
-                Add season
-              </Button>
-            </Stack>
-          </CardContent>
-        </Card>
-      )}
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6">Seasons</Typography>
+        {canEditClub && (
+          <Button variant="outlined" onClick={() => setEditing({ id: crypto.randomUUID(), name: "", notes: "", startsOn: "" })}>
+            + Add Season
+          </Button>
+        )}
+      </Stack>
       <CardGrid>
         {sorted.map((season) => {
           const games = data.matches.filter(
@@ -120,7 +75,7 @@ export default function Seasons({
                     losses={r.L}
                   />
                 </Box>
-                <Typography color="text.secondary">
+                <Box sx={{ color: "text.secondary" }}>
                   <Box
                     sx={{
                       display: "flex",
@@ -196,7 +151,7 @@ export default function Seasons({
                       Allowed
                     </Typography>
                   </Box>
-                </Typography>
+                </Box>
                 {season.notes && (
                   <Typography sx={{ mt: 1 }}>{season.notes}</Typography>
                 )}
@@ -219,6 +174,7 @@ export default function Seasons({
         <SeasonDialog
           key={editing?.id ?? "closed"}
           season={editing}
+          seasons={data.seasons}
           onClose={() => setEditing(null)}
           onSave={saveSeason}
         />
@@ -229,21 +185,29 @@ export default function Seasons({
 
 function SeasonDialog({
   season,
+  seasons,
   onClose,
   onSave,
 }: {
   season: Season | null;
+  seasons: Season[];
   onClose: () => void;
   onSave: (season: Season) => void;
 }) {
   const [draft, setDraft] = useState<Season | null>(season);
+  const isNew = !seasons.some((item) => item.id === season?.id);
+  const duplicateName = seasons.some((item) => item.id !== draft?.id && item.name.trim().toLowerCase() === draft?.name.trim().toLowerCase());
   return (
     <Dialog open={!!season} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Edit season</DialogTitle>
+      <DialogTitle>{isNew ? "Add Season" : "Edit season"}</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
           <TextField
             label="Season name"
+            autoFocus
+            required
+            error={duplicateName}
+            helperText={duplicateName ? "A season with this name already exists." : undefined}
             value={draft?.name ?? ""}
             onChange={(e) =>
               draft && setDraft({ ...draft, name: e.target.value })
@@ -273,10 +237,10 @@ function SeasonDialog({
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
-          disabled={!draft?.name.trim()}
+          disabled={!draft?.name.trim() || duplicateName}
           onClick={() => draft && onSave({ ...draft, name: draft.name.trim() })}
         >
-          Save Season
+          {isNew ? "Add Season" : "Save Season"}
         </Button>
       </DialogActions>
     </Dialog>

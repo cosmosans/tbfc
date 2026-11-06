@@ -1,9 +1,6 @@
-import { useState } from "react";
 import {
   Box,
-  Checkbox,
   FormControl,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
@@ -23,17 +20,13 @@ export default function LineupPitch({
   data,
   lineup,
   showTitle = true,
-  allowStartersOnly = true,
   onFormationChange,
 }: {
   data: ClubData;
   lineup: Lineup;
   showTitle?: boolean;
-  allowStartersOnly?: boolean;
   onFormationChange?: (formation: Formation) => void;
 }) {
-  const [startersOnly, setStartersOnly] = useState(false);
-  const filterToStarters = allowStartersOnly && startersOnly;
   const points = formationPoints[lineup.formation];
   const slots = formationSlots[lineup.formation];
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
@@ -42,7 +35,7 @@ export default function LineupPitch({
     <Box className="lineup-pitch">
       <Pitch
         sx={{ minHeight: { xs: 380, sm: 500 }, touchAction: "auto" }}
-        aria-label={`${lineup.formation} ${filterToStarters ? "starting formation" : "lineup with substitutes"}`}
+        aria-label={`${lineup.formation} lineup with substitutes`}
       >
         <PitchSurface />
 
@@ -57,9 +50,7 @@ export default function LineupPitch({
             const player = data.players.find(
               (item) => item.id === lineup.starters[index],
             );
-            const substitutes = filterToStarters
-              ? []
-              : data.players.filter(
+            const substitutes = data.players.filter(
                   (p) =>
                     lineup.bench.includes(p.id) &&
                     !lineup.starters.includes(p.id) &&
@@ -118,15 +109,15 @@ export default function LineupPitch({
           })}
         </Box>
       </Pitch>
-      {(onFormationChange || showTitle || allowStartersOnly) && (
+      {(onFormationChange || showTitle) && (
         <Stack
           direction="row"
-          justifyContent="space-between"
+          justifyContent="center"
           alignItems="center"
           sx={{ mt: 2 }}
         >
           {onFormationChange ? (
-            <FormControl size="small" sx={{ minWidth: 160 }} fullWidth>
+            <FormControl size="small" sx={{ width: "100%", maxWidth: 175 }}>
               <InputLabel id="pitch-formation-label">Formation</InputLabel>
               <Select
                 labelId="pitch-formation-label"
@@ -147,18 +138,7 @@ export default function LineupPitch({
               </Typography>
             )
           )}
-          {allowStartersOnly && (
-            <FormControlLabel
-              sx={{ flexShrink: 0, marginLeft: 2 }}
-              control={
-                <Checkbox
-                  checked={startersOnly}
-                  onChange={(event) => setStartersOnly(event.target.checked)}
-                />
-              }
-              label="Starters Only"
-            />
-          )}
+
         </Stack>
       )}
     </Box>

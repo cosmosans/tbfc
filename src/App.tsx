@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import {
   Alert,
   Box,
@@ -35,7 +35,6 @@ import Stats from "./features/stats/Stats";
 import Roster from "./features/roster/Roster";
 import Teams from "./features/teams/Teams";
 import TeamDetail from "./features/teams/TeamDetail";
-import Seasons from "./features/seasons/Seasons";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub } from "./editAccess";
@@ -261,7 +260,7 @@ export default function App() {
       <AppHeader
         page={
           page === "seasons"
-            ? "schedule"
+            ? "stats"
             : teamRoute
               ? "teams"
               : matchRoute
@@ -468,7 +467,6 @@ export default function App() {
                       data={data}
                       lineup={nextLineup}
                       showTitle={false}
-                      allowStartersOnly={false}
                     />
                   </Box>
                 )}
@@ -493,7 +491,7 @@ export default function App() {
                   setNewMatch(blankMatch());
                   setShowNew(true);
                 }}
-                onManageSeasons={() => navigate("/seasons")}
+                onManageSeasons={() => navigate("/stats")}
               />
             )}
             {page === "tactics" && (
@@ -561,7 +559,10 @@ export default function App() {
                 )}
               </Stack>
             )}
-            {page === "stats" && <Stats data={data} />}
+            {page === "stats" && <Stats data={data} update={update} openSeason={(id) => {
+              setSeason(id);
+              navigate("/schedule");
+            }} />}
             {page === "roster" && <Roster data={data} update={update} />}
             {page === "teams" && (
               <Teams
@@ -573,16 +574,7 @@ export default function App() {
               />
             )}
             {page === "locations" && <Locations data={data} update={update} />}
-            {page === "seasons" && (
-              <Seasons
-                data={data}
-                update={update}
-                openSeason={(id) => {
-                  setSeason(id);
-                  navigate("/schedule");
-                }}
-              />
-            )}
+            {page === "seasons" && <Navigate to="/stats" replace />}
           </>
         )}
       </Container>

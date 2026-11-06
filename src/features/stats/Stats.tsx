@@ -1,5 +1,4 @@
 import {
-  Alert,
   Box,
   Card,
   CardContent,
@@ -18,10 +17,13 @@ import {
 import type { ClubData } from "../../model";
 import { record } from "../../model";
 import { orderedSeasons } from "../../clubView";
-import { CardGrid } from "../../components/layout";
-import RecordBar from "../../components/RecordBar";
+import Seasons from "../seasons/Seasons";
 
-export default function Stats({ data }: { data: ClubData }) {
+export default function Stats({ data, update, openSeason }: {
+  data: ClubData;
+  update: (data: ClubData) => void;
+  openSeason: (id: string) => void;
+}) {
   const seasons = orderedSeasons(data, false).map((s) => ({
     season: s.name,
     ...record(
@@ -37,7 +39,8 @@ export default function Stats({ data }: { data: ClubData }) {
           <Typography variant="h6" gutterBottom>
             Goals by Season
           </Typography>
-          <Box sx={{ width: "100%", height: 320 }}>
+          <Box sx={{ width: "100%", overflowX: "auto" }}>
+          <Box sx={{ minWidth: 600, height: 320 }}>
             <ResponsiveContainer>
               <BarChart
                 data={seasons}
@@ -64,33 +67,10 @@ export default function Stats({ data }: { data: ClubData }) {
               </BarChart>
             </ResponsiveContainer>
           </Box>
+          </Box>
         </CardContent>
       </Card>
-      <CardGrid>
-        {seasons.map((s) => (
-          <Card key={s.season}>
-            <CardContent>
-              <Typography variant="h6">{s.season}</Typography>
-              <Box sx={{ my: 1.5 }}>
-                <RecordBar
-                  variant="results"
-                  wins={s.W}
-                  draws={s.D}
-                  losses={s.L}
-                />
-              </Box>
-              <Typography color="text.secondary">
-                {s.for} Scored · {s.against} Allowed
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </CardGrid>
-      <Alert severity="info">
-        Player career totals include the historical player sheet and new
-        recorded match events. Historical totals are not assigned to individual
-        matches.
-      </Alert>
+      <Seasons data={data} update={update} openSeason={openSeason} />
     </Stack>
   );
 }
