@@ -668,16 +668,24 @@ export default function App() {
           open={backupOpen}
           onClose={() => setBackupOpen(false)}
           onDownload={() => exportData(data)}
-          onRestore={(backup) => {
-            saveData(backup);
-            const restored = loadData();
-            update(restored);
+          onRestore={async (backup) => {
+            const restored = { ...backup, locations: backup.locations ?? [], standings: backup.standings ?? [] };
+            if (syncState === "ready" || syncState === "empty") {
+              // Restore directly: seed migration would reintroduce deleted records.
+              await saveQueue.current;
+              revision.current = await publishClubData(restored, revision.current);
+              setData(restored);
+              setSyncState("ready");
+              setSyncMessage("");
+              try { saveData(restored); } catch { /* Shared data is already safely saved. */ }
+              setBackupMessage("Backup restored and saved to the shared database.");
+            } else {
+              // Offline restores must actually fit locally before reporting success.
+              saveData(restored);
+              setData(restored);
+              setBackupMessage("Backup restored in this browser. Publish it when the shared database is ready.");
+            }
             navigate("/");
-            setBackupMessage(
-              syncState === "ready"
-                ? "Backup restored. Syncing it to the shared database…"
-                : "Backup restored in this browser. Publish it when the shared database is ready.",
-            );
           }}
         />
       )}

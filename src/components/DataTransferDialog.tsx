@@ -12,12 +12,14 @@ export default function DataTransferDialog({
   open: boolean;
   onClose: () => void;
   onDownload: () => void;
-  onRestore: (backup: ClubData) => void;
+  onRestore: (backup: ClubData) => void | Promise<void>;
 }) {
+  const [restoring, setRestoring] = useState(false);
   const [backup, setBackup] = useState<ClubData | null>(null);
   const [fileName, setFileName] = useState('');
   const [error, setError] = useState('');
   function close() {
+    if (restoring) return;
     setBackup(null);
     setFileName('');
     setError('');
@@ -34,14 +36,16 @@ export default function DataTransferDialog({
       setError(cause instanceof Error ? cause.message : 'Could not read this backup.');
     }
   }
-  function restore() {
-    if (!backup) return;
+  async function restore() {
+    if (!backup || restoring) return;
+    setRestoring(true);
+    setError('');
     try {
-      onRestore(backup);
+      await onRestore(backup);
       close();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not restore this backup.');
-    }
+    } finally { setRestoring(false); }
   }
   return <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
     <DialogTitle>Move your TBFC data</DialogTitle>
@@ -51,9 +55,9 @@ export default function DataTransferDialog({
           Download a backup of the records shown here. Restoring a backup on localhost also replaces the shared club data once connected.
         </Typography>
         <Button variant="contained" onClick={onDownload} sx={{ alignSelf: 'flex-start' }}>Download backup JSON</Button>
-        <Button variant="outlined" component="label" sx={{ alignSelf: 'flex-start' }}>
+        <Button variant="outlined" component="label" disabled={restoring} sx={{ alignSelf: 'flex-start' }}>
           Choose backup to restore
-          <input hidden type="file" accept=".json,application/json" onChange={event => {
+          <input hidden disabled={restoring} type="file" accept=".json,application/json" onChange={event => {
             void chooseFile(event.target.files?.[0]);
             event.target.value = '';
           }} />
@@ -66,8 +70,8 @@ export default function DataTransferDialog({
       </Stack>
     </DialogContent>
     <DialogActions>
-      <Button onClick={close}>Close</Button>
-      <Button variant="contained" disabled={!backup} onClick={restore}>Restore backup</Button>
+      <Button disabled={restoring} onClick={close}>Close</Button>
+      <Button variant="contained" disabled={!backup || restoring} onClick={() => void restore()}>{restoring ? "Restoring…" : "Restore backup"}</Button>
     </DialogActions>
   </Dialog>;
 }

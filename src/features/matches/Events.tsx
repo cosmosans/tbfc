@@ -79,26 +79,42 @@ export default function Events({
 
   return (
     <Stack gap={2}>
-      {canEditClub && <Dialog open={noteOpen} onClose={() => setNoteOpen(false)} fullWidth maxWidth="md" aria-labelledby="event-note-title">
-        <DialogTitle id="event-note-title">Event note</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            fullWidth
-            multiline
-            minRows={8}
-            maxRows={18}
-            label="Note"
-            value={noteDraft}
-            onChange={(event) => setNoteDraft(event.target.value)}
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setNoteOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={() => { setNote(noteDraft); setNoteOpen(false); }}>Use note</Button>
-        </DialogActions>
-      </Dialog>}
+      {canEditClub && (
+        <Dialog
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          fullWidth
+          maxWidth="md"
+          aria-labelledby="event-note-title"
+        >
+          <DialogTitle id="event-note-title">Event note</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              fullWidth
+              multiline
+              minRows={8}
+              maxRows={18}
+              label="Note"
+              value={noteDraft}
+              onChange={(event) => setNoteDraft(event.target.value)}
+              sx={{ mt: 1 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNoteOpen(false)}>Cancel</Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setNote(noteDraft);
+                setNoteOpen(false);
+              }}
+            >
+              Use note
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
       {loggedGoals !== match.goalsFor && (
         <Alert severity="info">
           {loggedGoals} of {match.goalsFor} TBFC goals have an event record.
@@ -220,10 +236,24 @@ export default function Events({
               <Button
                 variant="outlined"
                 aria-label={note ? "Edit event note" : "Add event note"}
-                onClick={() => { setNoteDraft(note); setNoteOpen(true); }}
-                sx={{ flexGrow: 1, minWidth: 160, maxWidth: { md: 320 }, justifyContent: "flex-start" }}
+                onClick={() => {
+                  setNoteDraft(note);
+                  setNoteOpen(true);
+                }}
+                sx={{
+                  flexGrow: 1,
+                  minWidth: 160,
+                  maxWidth: { md: 320 },
+                  justifyContent: "flex-start",
+                }}
               >
-                <Typography component="span" noWrap sx={{ fontSize: "inherit" }}>{note || "Add note"}</Typography>
+                <Typography
+                  component="span"
+                  noWrap
+                  sx={{ fontSize: "inherit" }}
+                >
+                  {note || "Add note"}
+                </Typography>
               </Button>
               <Button variant="contained" onClick={addEvent}>
                 Add
@@ -345,11 +375,9 @@ export default function Events({
                       },
                     }}
                   >
-                    {" "}
                     <span
                       style={{ textTransform: "uppercase", fontWeight: "bold" }}
                     >
-                      {" "}
                       {event.kind === "penalty_kick"
                         ? "PENALTY!"
                         : event.kind === "goal"

@@ -40,6 +40,7 @@ const HomeCrest = styled("img")({
   "@media (max-width: 599.95px)": { width: 64, height: 64 },
   filter: "drop-shadow(0 3px 5px #0009)",
 });
+
 export function ResultLabel({ result }: { result: string }) {
   const style = {
     padding: 1,
@@ -120,7 +121,7 @@ export default function MatchBanner({
         sx={{
           ...(location?.imageUrl
             ? {
-                backgroundImage: `linear-gradient(180deg, rgba(12, 14, 16, .58), rgba(12, 14, 16, .88)), url(${JSON.stringify(location.imageUrl)})`,
+                backgroundImage: `linear-gradient(180deg, rgba(12, 14, 16, .6), rgba(12, 14, 16, .98)), url(${JSON.stringify(location.imageUrl)})`,
                 backgroundSize: "cover",
                 backgroundPosition: "bottom",
               }
@@ -155,7 +156,10 @@ export default function MatchBanner({
       >
         <CardContent
           className="match-banner-content"
-          sx={{ p: { xs: 1.5, sm: 3 }, "&:last-child": { pb: { xs: 1.5, sm: 3 } } }}
+          sx={{
+            p: { xs: 1.5, sm: 3 },
+            "&:last-child": { pb: { xs: 1.5, sm: 3 } },
+          }}
         >
           {detail && (
             <Stack
@@ -208,7 +212,12 @@ export default function MatchBanner({
                         size="small"
                         label="Upcoming"
                         color="info"
-                        sx={{ textTransform: "uppercase", fontSize: { xs: 9, sm: 12 }, height: { xs: 20, sm: 24 }, "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } } }}
+                        sx={{
+                          textTransform: "uppercase",
+                          fontSize: { xs: 9, sm: 12 },
+                          height: { xs: 20, sm: 24 },
+                          "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } },
+                        }}
                       />
                     </Box>
                   )}
@@ -241,7 +250,11 @@ export default function MatchBanner({
                       )}
                     </Box>
                   )}
-                  <Stack alignItems="center" gap={1} sx={{ minWidth: 0, flex: { xs: "1 1 0", sm: "initial" } }}>
+                  <Stack
+                    alignItems="center"
+                    gap={1}
+                    sx={{ minWidth: 0, flex: { xs: "1 1 0", sm: "initial" } }}
+                  >
                     {isOpponent ? (
                       <OpponentCrest
                         key={opponent?.crestUrl ?? ""}
@@ -254,7 +267,15 @@ export default function MatchBanner({
                     ) : (
                       <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
                     )}
-                    <Typography fontWeight={800} textAlign="center" sx={{ fontSize: { xs: 12, sm: 16 }, lineHeight: 1.3, overflowWrap: "anywhere" }}>
+                    <Typography
+                      fontWeight={800}
+                      textAlign="center"
+                      sx={{
+                        fontSize: { xs: 12, sm: 16 },
+                        lineHeight: 1.3,
+                        overflowWrap: "anywhere",
+                      }}
+                    >
                       {isOpponent
                         ? opponentName(data, match)
                         : "Turf Burners FC"}
@@ -300,11 +321,21 @@ export default function MatchBanner({
             }}
           >
             {match.kit === "White" && (
-              <Box component="img" sx={{ width: { xs: 38, sm: 80 } }} src={WhiteKitImage} alt="White kit" />
+              <Box
+                component="img"
+                sx={{ width: { xs: 38, sm: 80 } }}
+                src={WhiteKitImage}
+                alt="White kit"
+              />
             )}
 
             {match.kit === "Black" && (
-              <Box component="img" sx={{ width: { xs: 38, sm: 80 } }} src={BlackKitImage} alt="Black kit" />
+              <Box
+                component="img"
+                sx={{ width: { xs: 38, sm: 80 } }}
+                src={BlackKitImage}
+                alt="Black kit"
+              />
             )}
 
             <Box sx={{ minWidth: 0, marginLeft: { xs: 0, sm: 1 } }}>
