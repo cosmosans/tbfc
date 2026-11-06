@@ -54,9 +54,7 @@ export default function MatchHistory({
             gap={2}
             sx={{ mb: 1 }}
           >
-            <Typography variant="h6">
-              {isFixture ? "Fixture Notes" : "Match Story"}
-            </Typography>
+            <Typography variant="h6">{"Match Report"}</Typography>
             {onSaveReport && (
               <Button variant="outlined" onClick={openDialog}>
                 {match.report ? "Edit Story" : "Add Story"}
@@ -69,7 +67,12 @@ export default function MatchHistory({
                 "& p": { my: 0, mb: 2 },
                 "& p:last-child": { mb: 0 },
                 "& ul, & ol": { pl: 3 },
-                "& blockquote": { borderLeft: "3px solid", borderColor: "primary.main", pl: 2, ml: 0 },
+                "& blockquote": {
+                  borderLeft: "3px solid",
+                  borderColor: "primary.main",
+                  pl: 2,
+                  ml: 0,
+                },
               }}
               dangerouslySetInnerHTML={{ __html: storyToHtml(match.report) }}
             />
@@ -88,19 +91,83 @@ export default function MatchHistory({
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>
-          {isFixture ? "Edit Fixture Notes" : "Edit Match Story"}
-        </DialogTitle>
+        <DialogTitle>{"Edit Match Report"}</DialogTitle>
         <DialogContent>
           <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1, mb: 1 }}>
-            <Button size="small" variant={editor?.isActive("bold") ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleBold().run()} aria-label="Bold">Bold</Button>
-            <Button size="small" variant={editor?.isActive("italic") ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleItalic().run()} aria-label="Italic">Italic</Button>
-            <Button size="small" variant={editor?.isActive("heading", { level: 2 }) ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()} aria-label="Heading">Heading</Button>
-            <Button size="small" variant={editor?.isActive("bulletList") ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleBulletList().run()} aria-label="Bulleted list">Bullets</Button>
-            <Button size="small" variant={editor?.isActive("orderedList") ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleOrderedList().run()} aria-label="Numbered list">Numbers</Button>
-            <Button size="small" variant={editor?.isActive("blockquote") ? "contained" : "outlined"} onClick={() => editor?.chain().focus().toggleBlockquote().run()} aria-label="Quote">Quote</Button>
-            <Button size="small" onClick={() => editor?.chain().focus().undo().run()} disabled={!editor?.can().undo()}>Undo</Button>
-            <Button size="small" onClick={() => editor?.chain().focus().redo().run()} disabled={!editor?.can().redo()}>Redo</Button>
+            <Button
+              size="small"
+              variant={editor?.isActive("bold") ? "contained" : "outlined"}
+              onClick={() => editor?.chain().focus().toggleBold().run()}
+              aria-label="Bold"
+            >
+              Bold
+            </Button>
+            <Button
+              size="small"
+              variant={editor?.isActive("italic") ? "contained" : "outlined"}
+              onClick={() => editor?.chain().focus().toggleItalic().run()}
+              aria-label="Italic"
+            >
+              Italic
+            </Button>
+            <Button
+              size="small"
+              variant={
+                editor?.isActive("heading", { level: 2 })
+                  ? "contained"
+                  : "outlined"
+              }
+              onClick={() =>
+                editor?.chain().focus().toggleHeading({ level: 2 }).run()
+              }
+              aria-label="Heading"
+            >
+              Heading
+            </Button>
+            <Button
+              size="small"
+              variant={
+                editor?.isActive("bulletList") ? "contained" : "outlined"
+              }
+              onClick={() => editor?.chain().focus().toggleBulletList().run()}
+              aria-label="Bulleted list"
+            >
+              Bullets
+            </Button>
+            <Button
+              size="small"
+              variant={
+                editor?.isActive("orderedList") ? "contained" : "outlined"
+              }
+              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+              aria-label="Numbered list"
+            >
+              Numbers
+            </Button>
+            <Button
+              size="small"
+              variant={
+                editor?.isActive("blockquote") ? "contained" : "outlined"
+              }
+              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
+              aria-label="Quote"
+            >
+              Quote
+            </Button>
+            <Button
+              size="small"
+              onClick={() => editor?.chain().focus().undo().run()}
+              disabled={!editor?.can().undo()}
+            >
+              Undo
+            </Button>
+            <Button
+              size="small"
+              onClick={() => editor?.chain().focus().redo().run()}
+              disabled={!editor?.can().redo()}
+            >
+              Redo
+            </Button>
           </Stack>
           <Box
             sx={{
@@ -111,10 +178,15 @@ export default function MatchHistory({
               "& .tiptap": { minHeight: 240, p: 2, outline: "none" },
               "& .tiptap p": { my: 0, mb: 1.5 },
               "& .tiptap ul, & .tiptap ol": { pl: 3 },
-              "& .tiptap blockquote": { borderLeft: "3px solid", borderColor: "primary.main", pl: 2, ml: 0 },
+              "& .tiptap blockquote": {
+                borderLeft: "3px solid",
+                borderColor: "primary.main",
+                pl: 2,
+                ml: 0,
+              },
             }}
           >
-            <EditorContent editor={editor} aria-label={isFixture ? "Fixture notes" : "Match story"} />
+            <EditorContent editor={editor} aria-label={"Match Report"} />
           </Box>
         </DialogContent>
         <DialogActions>

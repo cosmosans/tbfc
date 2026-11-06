@@ -56,10 +56,13 @@ export default function StandingsWidget({
   update: (data: ClubData) => void;
   initialSeasonId?: string;
 }) {
-  const seasons = orderedSeasons(data, true);
-  const [seasonId, setSeasonId] = useState(
-    initialSeasonId ?? seasons[0]?.id ?? "",
+  const seasons = orderedSeasons(data, true).filter(
+    (season) => season.name.trim().toLowerCase() === "fall 2026",
   );
+  const [requestedSeasonId, setSeasonId] = useState(initialSeasonId ?? "");
+  const seasonId = seasons.some((season) => season.id === requestedSeasonId)
+    ? requestedSeasonId
+    : seasons[0]?.id ?? "";
   const [pending, setPending] = useState<StandingRow[] | null>(null);
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");

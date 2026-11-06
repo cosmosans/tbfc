@@ -1,5 +1,18 @@
 import { useEffect, useState } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import type { Location, Match, Opponent, Season } from "../../model";
 import { scoreResult } from "../../model";
 import { splitMatchLocation } from "../../matchLocation";
@@ -23,7 +36,8 @@ export default function MatchDialog({
 }) {
   const [draft, setDraft] = useState(match);
   useEffect(() => {
-    if (open) setDraft({ ...match, ...splitMatchLocation(match.venue, match.pitch) });
+    if (open)
+      setDraft({ ...match, ...splitMatchLocation(match.venue, match.pitch) });
   }, [open, match.id]);
   const selectedTeamId =
     draft.opponentId ??
@@ -137,14 +151,28 @@ export default function MatchDialog({
               <InputLabel>Location</InputLabel>
               <Select
                 label="Location"
-                value={draft.locationId ?? locations.find(item => item.name === draft.venue)?.id ?? ""}
+                value={
+                  draft.locationId ??
+                  locations.find((item) => item.name === draft.venue)?.id ??
+                  ""
+                }
                 onChange={(e) => {
-                  const location = locations.find(item => item.id === e.target.value);
-                  setDraft({ ...draft, locationId: location?.id, venue: location?.name ?? "" });
+                  const location = locations.find(
+                    (item) => item.id === e.target.value,
+                  );
+                  setDraft({
+                    ...draft,
+                    locationId: location?.id,
+                    venue: location?.name ?? "",
+                  });
                 }}
               >
                 <MenuItem value="">Not recorded</MenuItem>
-                {locations.map(location => <MenuItem key={location.id} value={location.id}>{location.name}</MenuItem>)}
+                {locations.map((location) => (
+                  <MenuItem key={location.id} value={location.id}>
+                    {location.name}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <FormControl fullWidth>
@@ -152,7 +180,12 @@ export default function MatchDialog({
               <Select
                 label="Pitch"
                 value={draft.pitch ?? ""}
-                onChange={(e) => setDraft({ ...draft, pitch: (e.target.value || undefined) as Match['pitch'] })}
+                onChange={(e) =>
+                  setDraft({
+                    ...draft,
+                    pitch: (e.target.value || undefined) as Match["pitch"],
+                  })
+                }
               >
                 <MenuItem value="">Not recorded</MenuItem>
                 <MenuItem value="1">Pitch 1</MenuItem>
@@ -163,7 +196,16 @@ export default function MatchDialog({
           </Stack>
           <FormControl fullWidth>
             <InputLabel>Home or away</InputLabel>
-            <Select label="Home or away" value={draft.homeAway ?? ""} onChange={(e) => setDraft({ ...draft, homeAway: (e.target.value || undefined) as Match['homeAway'] })}>
+            <Select
+              label="Home or away"
+              value={draft.homeAway ?? ""}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  homeAway: (e.target.value || undefined) as Match["homeAway"],
+                })
+              }
+            >
               <MenuItem value="">Not recorded</MenuItem>
               <MenuItem value="home">Home</MenuItem>
               <MenuItem value="away">Away</MenuItem>
@@ -231,9 +273,15 @@ export default function MatchDialog({
             value={draft.kit}
             onChange={(e) => setDraft({ ...draft, kit: e.target.value })}
           >
-            {!draft.kit && <MenuItem value="" disabled>Choose a kit</MenuItem>}
-            {draft.kit && draft.kit !== 'Black' && draft.kit !== 'White' && (
-              <MenuItem value={draft.kit} disabled>{draft.kit} (historical)</MenuItem>
+            {!draft.kit && (
+              <MenuItem value="" disabled>
+                Choose a kit
+              </MenuItem>
+            )}
+            {draft.kit && draft.kit !== "Black" && draft.kit !== "White" && (
+              <MenuItem value={draft.kit} disabled>
+                {draft.kit} (historical)
+              </MenuItem>
             )}
             <MenuItem value="Black">Black</MenuItem>
             <MenuItem value="White">White</MenuItem>
@@ -258,7 +306,7 @@ export default function MatchDialog({
             />
           ) : (
             <Typography color="text.secondary">
-              Edit the match narrative from its Match Story tab.
+              Edit the match narrative from its Report tab.
             </Typography>
           )}
         </Stack>
@@ -286,4 +334,3 @@ export default function MatchDialog({
     </Dialog>
   );
 }
-
