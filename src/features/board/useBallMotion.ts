@@ -114,12 +114,16 @@ export function useBallMotion(
       const steps = Math.max(1, Math.ceil(Math.hypot(vx, vy) * dt / 6));
       for (let i = 0; i < steps; i++) {
         x += vx * dt / steps; y += vy * dt / steps;
+        let hitWall = false;
         if (x < minX || x > bounds.width - minX) {
           x = Math.max(minX, Math.min(bounds.width - minX, x)); vx *= -.75;
+          hitWall = true;
         }
         if (y < minY || y > bounds.height - minY) {
           y = Math.max(minY, Math.min(bounds.height - minY, y)); vy *= -.75;
+          hitWall = true;
         }
+        if (hitWall) playKick();
         for (const player of el.querySelectorAll<HTMLElement>('[data-player-marker]')) {
           const rect = player.getBoundingClientRect();
           const nearX = Math.max(rect.left - bounds.left, Math.min(rect.right - bounds.left, x));
