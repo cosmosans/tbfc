@@ -118,6 +118,7 @@ export default function AppHeader({
             sx={{
               color: "#fff",
               borderColor: "#ffffff99",
+              display: { xs: "none", lg: "inline-flex" },
               whiteSpace: "nowrap",
               flexShrink: 0,
               mx: { xs: "auto", sm: 0 },

@@ -10,7 +10,15 @@ import {
   Stack,
   TextField,
   Typography,
+  Tooltip,
 } from "@mui/material";
+import AnnotatePencil from "../../img/annotate-pencil.png";
+import AnnotatePencilActive from "../../img/annotate-pencil-active.png";
+import UndoArrow from "../../img/undo-arrow.png";
+import TrashBin from "../../img/trash-bin.png";
+import TeamViewTbfc from "../../img/team-view-tbfc.png";
+import TeamViewOpponent from "../../img/team-view-opponent.png";
+import TeamViewBoth from "../../img/team-view-both.png";
 import CloseIcon from "@mui/icons-material/Close";
 import type { Board, ClubData, Marker, Match, Point } from "../../model";
 import { defaultBoard, defaultLineup } from "../../store";
@@ -98,6 +106,7 @@ export default function Matchboard({
   const [draftStroke, setDraftStroke] = useState<Point[]>([]);
   const [annotateMode, setAnnotateMode] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
+  const [teamView, setTeamView] = useState<"tbfc" | "opponent" | "both">("both");
   const [editingOpponentId, setEditingOpponentId] = useState<string | null>(
     null,
   );
@@ -199,18 +208,23 @@ export default function Matchboard({
   }
   const annotationTools = (
     <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-      <Button
-        variant={annotateMode ? "contained" : "outlined"}
+      <Tooltip title="Annotate">
+      <IconButton
+        aria-label="Annotate"
+        sx={{ width: 44, height: 36, borderRadius: 0, bgcolor: annotateMode ? "primary.main" : "transparent", "&:hover": { bgcolor: annotateMode ? "primary.dark" : "action.hover" } }}
         aria-pressed={annotateMode}
         onClick={() => {
           cancelDrawing();
           setAnnotateMode((current) => !current);
         }}
       >
-        Annotate
-      </Button>
-      <Button
-        variant="outlined"
+        <Box component="img" src={annotateMode ? AnnotatePencilActive : AnnotatePencil} alt="" sx={{ width: 24, height: 24, objectFit: "contain" }} />
+      </IconButton>
+      </Tooltip>
+      <Tooltip title="Undo">
+      <span>
+      <IconButton
+        aria-label="Undo"
         disabled={!board.annotations?.length}
         onClick={() =>
           persist({
@@ -219,15 +233,35 @@ export default function Matchboard({
           })
         }
       >
-        Undo
-      </Button>
-      <Button
-        variant="outlined"
+        <Box component="img" src={UndoArrow} alt="" sx={{ width: 22, height: 22, objectFit: "contain", ".Mui-disabled &": { opacity: 0.3 } }} />
+      </IconButton>
+      </span>
+      </Tooltip>
+      <Tooltip title="Clear Drawings">
+      <span>
+      <IconButton
+        aria-label="Clear Drawings"
         disabled={!board.annotations?.length}
         onClick={() => persist({ ...boardRef.current, annotations: [] })}
       >
-        Clear Drawings
-      </Button>
+        <Box component="img" src={TrashBin} alt="" sx={{ width: 22, height: 22, objectFit: "contain", ".Mui-disabled &": { opacity: 0.3 } }} />
+      </IconButton>
+      </span>
+      </Tooltip>
+      {fullScreen && (
+        <Tooltip title={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}. Click for ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}.`}>
+          <IconButton
+            aria-label={`Showing ${teamView === "tbfc" ? "TBFC only" : teamView === "opponent" ? "opponents only" : "both teams"}; switch to ${teamView === "both" ? "TBFC only" : teamView === "tbfc" ? "opponents only" : "both teams"}`}
+            onClick={() => {
+              ballMotion.stop();
+              setTeamView((current) => current === "both" ? "tbfc" : current === "tbfc" ? "opponent" : "both");
+            }}
+            sx={{ width: 44, height: 36, borderRadius: 0, border: "1px solid", borderColor: "primary.main", bgcolor: "rgba(244,119,48,.18)", "&:hover": { bgcolor: "rgba(244,119,48,.28)" } }}
+          >
+            <Box component="img" src={teamView === "tbfc" ? TeamViewTbfc : teamView === "opponent" ? TeamViewOpponent : TeamViewBoth} alt="" sx={{ width: 30, height: 20, objectFit: "contain" }} />
+          </IconButton>
+        </Tooltip>
+      )}
     </Stack>
   );
   function move(event: ReactPointerEvent<HTMLDivElement>) {
@@ -378,7 +412,7 @@ export default function Matchboard({
           />
         ))}
       </svg>
-      {board.markers.map((marker) => (
+      {board.markers.filter((marker) => !fullScreen || teamView === "both" || marker.team === "ball" || marker.team === teamView).map((marker) => (
         <PitchMarker
           key={marker.id}
           team={marker.team}
@@ -438,6 +472,7 @@ export default function Matchboard({
         >
           <Button
             variant="outlined"
+            sx={{ height: 36 }}
             onClick={() => {
               ballMotion.stop();
               setFullScreen(true);
@@ -473,7 +508,7 @@ export default function Matchboard({
             direction="row"
             alignItems="center"
             justifyContent="space-between"
-            sx={{ px: 2, py: 1, flexShrink: 0 }}
+            sx={{ px: { xs: 1, sm: 2 }, py: 1, flexShrink: 0, flexWrap: "wrap", gap: 1 }}
           >
             <Typography variant="h6">Matchboard</Typography>
             {annotationTools}
