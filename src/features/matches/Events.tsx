@@ -20,6 +20,7 @@ import type { ClubData, Match, MatchEvent } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import WhistleIcon from "../../img/penalty-kick.svg";
+import OwnGoalIcon from "../../img/bomb.svg";
 import { canEditClub } from "../../editAccess";
 
 export default function Events({
@@ -237,11 +238,7 @@ export default function Events({
           getContrastRatio(teamColor, "#fff")
             ? "#000"
             : "#fff";
-        const actor = event.ownGoal
-          ? "OG"
-          : name
-            ? `${number ? `#${number} ` : ""}${name}`
-            : "";
+        const actor = name ? `${number ? `#${number} ` : ""}${name}` : "";
 
         return (
           <Card key={event.id}>
@@ -257,45 +254,26 @@ export default function Events({
                     event.minute == null ? "Time unknown" : `${event.minute}′`
                   }
                 />
-                <Typography
-                  sx={{ flex: 1, minWidth: 0, display: "flex", gap: 2 }}
-                >
-                  {event.kind === "goal" && (
-                    <img
-                      src={GoalIcon}
-                      alt="Goal"
-                      style={{
-                        width: 16,
-                        height: 16,
-                        position: "relative",
-                        marginRight: -8,
-                        top: 2,
-                      }}
-                    />
-                  )}
-                  {event.kind === "penalty_kick" && (
-                    <img
-                      src={WhistleIcon}
-                      alt="Penalty Kick"
-                      style={{
-                        width: 16,
-                        height: 16,
-                        position: "relative",
-                        marginRight: -8,
-                        top: 2,
-                      }}
-                    />
-                  )}{" "}
-                  <span
-                    style={{ textTransform: "uppercase", fontWeight: "bold" }}
-                  >
-                    {" "}
-                    {event.kind === "penalty_kick"
-                      ? "PENALTY!"
-                      : event.kind === "goal"
-                        ? "GOAL!"
-                        : event.kind.replaceAll("_", " ")}{" "}
-                  </span>
+                <Typography sx={{ minWidth: 0, display: "flex", gap: 2 }}>
+                  <img
+                    src={
+                      event.kind === "penalty_kick"
+                        ? WhistleIcon
+                        : event.ownGoal
+                          ? OwnGoalIcon
+                          : GoalIcon
+                    }
+                    alt="Goal"
+                    style={{
+                      width: 16,
+                      height: 16,
+                      position: "relative",
+                      marginRight: -3,
+                      top: 5,
+                      marginLeft: 10,
+                    }}
+                  />
+
                   {eventHasTeam ? (
                     <>
                       <Typography
@@ -330,12 +308,24 @@ export default function Events({
                       flex: 1,
                       minWidth: 0,
                       order: 2,
+                      lineHeight: 1.2,
                       "@media (max-width: 1199px)": {
                         flexBasis: "100%",
                         order: 3,
                       },
                     }}
                   >
+                    {" "}
+                    <span
+                      style={{ textTransform: "uppercase", fontWeight: "bold" }}
+                    >
+                      {" "}
+                      {event.kind === "penalty_kick"
+                        ? "PENALTY!"
+                        : event.kind === "goal"
+                          ? "GOAL!"
+                          : event.kind.replaceAll("_", " ")}{" "}
+                    </span>
                     {event.note}
                   </Typography>
                 )}
