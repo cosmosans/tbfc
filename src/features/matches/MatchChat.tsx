@@ -59,8 +59,9 @@ export default function MatchChat({ messages, players, onSave }: {
     </Stack>;
   }
   return <Card><CardContent>
-    <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2} mb={2}>
+    <Stack gap={0.5} mb={2}>
       <Typography variant="h6">Chat</Typography>
+      <Typography variant="body2" color="text.secondary">WhatsApp messages sent between final whistle and 12AM EST.</Typography>
     </Stack>
     {!messages.length && <Typography color="text.secondary">No messages yet. Save messages from the team about this match here.</Typography>}
     <Stack component="ol" gap={2} sx={{ m: 0, p: 0, listStyle: 'none' }}>

@@ -1,4 +1,3 @@
-import PrivateScrapbook from "./PrivateScrapbook";
 import { useMemo, useState } from "react";
 import {
   Box,
@@ -13,11 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { EditorContent, useEditor } from "@tiptap/react";
-import MatchChat from "./MatchChat";
-import { canEditClub } from "../../editAccess";
 import MatchGallery from "./MatchGallery";
 import StarterKit from "@tiptap/starter-kit";
-import type { Match, MatchPhoto, MatchChatMessage, Player } from "../../model";
+import type { Match, MatchPhoto } from "../../model";
 import { saveStoryHtml, storyToHtml } from "./matchStory";
 import { isTurfbotReport } from "./reportAttribution";
 
@@ -25,12 +22,8 @@ export default function MatchHistory({
   match,
   onSaveReport,
   onSavePhotos,
-  players,
-  onSaveChat,
 }: {
   match: Match;
-  players: Player[];
-  onSaveChat?: (messages: MatchChatMessage[]) => void;
   onSaveReport?: (report: string) => void;
   onSavePhotos?: (photos: MatchPhoto[]) => void;
 }) {
@@ -116,13 +109,6 @@ export default function MatchHistory({
           )}
         </CardContent>
       </Card>
-      {canEditClub ? (
-        <MatchChat
-          messages={match.chat ?? []}
-          players={players}
-          onSave={onSaveChat}
-        />
-      ) : <PrivateScrapbook key={match.id} matchId={match.id} players={players} />}
       <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}

@@ -37,6 +37,8 @@ import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
+import MatchChat from "./features/matches/MatchChat";
+import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
@@ -432,17 +434,13 @@ export default function App() {
                 <Tab label="Lineup" />
                 <Tab label="Events" />
                 <Tab label="Report" />
+                <Tab label="Chat" />
                 <Tab label="Matchboard" />
               </Tabs>
               {activeDetailTab === 2 && (
                 <MatchHistory
                   key={selected.id}
                   match={selected}
-                  players={data.players}
-                  onSaveChat={canEditClub ? (chat) => update({
-                    ...data,
-                    matches: data.matches.map((match) => match.id === selected.id ? { ...match, chat } : match),
-                  }) : undefined}
                   onSavePhotos={canEditClub ? (photos) => update({
                     ...data,
                     matches: data.matches.map((match) => match.id === selected.id ? { ...match, photos } : match),
@@ -469,6 +467,20 @@ export default function App() {
                 <LineupEditor data={data} match={selected} update={update} />
               )}
               {activeDetailTab === 3 && (
+                canEditClub ? (
+                  <MatchChat
+                    messages={selected.chat ?? []}
+                    players={data.players}
+                    onSave={(chat) => update({
+                      ...data,
+                      matches: data.matches.map((match) => match.id === selected.id ? { ...match, chat } : match),
+                    })}
+                  />
+                ) : (
+                  <PrivateScrapbook key={selected.id} matchId={selected.id} players={data.players} />
+                )
+              )}
+              {activeDetailTab === 4 && (
                 <Matchboard data={data} match={selected} update={update} />
               )}
             </>

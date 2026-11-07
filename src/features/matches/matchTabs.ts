@@ -1,4 +1,4 @@
-export const matchTabs = ["lineup", "events", "story", "matchboard"] as const;
+export const matchTabs = ["lineup", "events", "story", "chat", "matchboard"] as const;
 export type MatchTab = (typeof matchTabs)[number];
 
 /** Keep older shared links working while using the visible tab names in new URLs. */
