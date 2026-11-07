@@ -38,6 +38,7 @@ export default function Events({
   match: Match;
   update: (data: ClubData) => void;
 }) {
+  const [editingEvent, setEditingEvent] = useState<MatchEvent | null>(null);
   const [kind, setKind] = useState<MatchEvent["kind"]>("goal");
   const [playerId, setPlayerId] = useState("");
   const [eventTeam, setEventTeam] = useState<"tbfc" | "opponent">("tbfc");
@@ -60,9 +61,30 @@ export default function Events({
     .filter((e) => e.matchId === match.id)
     .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
   const logged = goalTotals(events, match.id);
+  function editEvent(event: MatchEvent) {
+    setEditingEvent(event);
+    setKind(event.kind);
+    setPlayerId(event.teamGoal ? "team" : event.playerId ?? "");
+    setEventTeam(event.team ?? "tbfc");
+    setOwnGoal(event.ownGoal ?? false);
+    setMinute(event.minute == null ? "" : String(event.minute));
+    setNote(event.note ?? "");
+  }
+  function closeEditor() {
+    setEditingEvent(null);
+    setKind("goal");
+    setPlayerId("");
+    setEventTeam("tbfc");
+    setOwnGoal(false);
+    setMinute("");
+    setNote("");
+    setNoteOpen(false);
+  }
   function addEvent() {
+    if (!canEditClub || (minute !== "" && (!Number.isFinite(Number(minute)) || Number(minute) < 0))) return;
     const event: MatchEvent = {
-      id: crypto.randomUUID(),
+      ...editingEvent,
+      id: editingEvent?.id ?? crypto.randomUUID(),
       matchId: match.id,
       kind,
       team: kind === "assist" ? "tbfc" : hasTeam ? eventTeam : undefined,
@@ -72,60 +94,19 @@ export default function Events({
       minute: minute ? Number(minute) : undefined,
       note: note || undefined,
     };
-    update(updateMatchEvents(data, match.id, [...data.events, event]));
+    update(updateMatchEvents(data, match.id, editingEvent
+      ? data.events.map(existing => existing.id === editingEvent.id ? event : existing)
+      : [...data.events, event]));
+    if (editingEvent) closeEditor();
     setMinute("");
     setNote("");
   }
 
-  return (
-    <Stack gap={2}>
-      {canEditClub && (
-        <Dialog
-          open={noteOpen}
-          onClose={() => setNoteOpen(false)}
-          fullWidth
-          maxWidth="md"
-          aria-labelledby="event-note-title"
-        >
-          <DialogTitle id="event-note-title">Event Note</DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              fullWidth
-              multiline
-              minRows={8}
-              maxRows={18}
-              label="Note"
-              value={noteDraft}
-              onChange={(event) => setNoteDraft(event.target.value)}
-              sx={{ mt: 1 }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setNoteOpen(false)}>Cancel</Button>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setNote(noteDraft);
-                setNoteOpen(false);
-              }}
-            >
-              Use Note
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
-      {(logged.for < match.goalsFor || logged.against < match.goalsAgainst) && (
-        <Alert severity="info">
-          {logged.for} of {match.goalsFor} TBFC goals and {logged.against} of {match.goalsAgainst} opponent goals have event records.
-          Historical totals are preserved while missing goals are added. Once accounted for, goal events control the score.
-        </Alert>
-      )}
-      {canEditClub && (
+  const eventForm = (
         <Card>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Add Event
+              {editingEvent ? "Edit Event" : "Add Event"}
             </Typography>
             <Stack
               direction={{ xs: "column", md: "row" }}
@@ -255,8 +236,10 @@ export default function Events({
                   {note || "Add note"}
                 </Typography>
               </Button>
-              <Button variant="contained" onClick={addEvent}>
-                Add
+              {editingEvent && <Button onClick={closeEditor}>Cancel</Button>}
+              <Button variant="contained" onClick={addEvent}
+                disabled={minute !== "" && (!Number.isFinite(Number(minute)) || Number(minute) < 0)}>
+                {editingEvent ? "Save changes" : "Add"}
               </Button>
             </Stack>
             {kind === "penalty_kick" && (
@@ -272,6 +255,58 @@ export default function Events({
             )}
           </CardContent>
         </Card>
+  );
+
+  return (
+    <Stack gap={2}>
+      {canEditClub && (
+        <Dialog
+          open={noteOpen}
+          onClose={() => setNoteOpen(false)}
+          fullWidth
+          maxWidth="md"
+          aria-labelledby="event-note-title"
+        >
+          <DialogTitle id="event-note-title">Event Note</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              fullWidth
+              multiline
+              minRows={8}
+              maxRows={18}
+              label="Note"
+              value={noteDraft}
+              onChange={(event) => setNoteDraft(event.target.value)}
+              sx={{ mt: 1 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNoteOpen(false)}>Cancel</Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setNote(noteDraft);
+                setNoteOpen(false);
+              }}
+            >
+              Use Note
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {(logged.for < match.goalsFor || logged.against < match.goalsAgainst) && (
+        <Alert severity="info">
+          {logged.for} of {match.goalsFor} TBFC goals and {logged.against} of {match.goalsAgainst} opponent goals have event records.
+          Historical totals are preserved while missing goals are added. Once accounted for, goal events control the score.
+        </Alert>
+      )}
+      {canEditClub && (
+        editingEvent ? (
+          <Dialog open onClose={closeEditor} fullWidth maxWidth="md" aria-label="Edit match event">
+            {eventForm}
+          </Dialog>
+        ) : eventForm
       )}
       {events.map((event) => {
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
@@ -361,8 +396,7 @@ export default function Events({
                   )}
                 </Typography>
 
-                {event.note && (
-                  <Typography
+                <Typography
                     sx={{
                       flex: 1,
                       minWidth: 0,
@@ -386,8 +420,9 @@ export default function Events({
                     </span>
                     {event.note}
                   </Typography>
-                )}
                 {canEditClub && (
+                  <Stack direction="row" sx={{ order: 3, "@media (max-width: 1199px)": { order: 2 } }}>
+                  <Button onClick={() => editEvent(event)}>Edit</Button>
                   <Button
                     color="error"
                     sx={{
@@ -400,6 +435,7 @@ export default function Events({
                   >
                     Remove
                   </Button>
+                  </Stack>
                 )}
               </Stack>
             </CardContent>
