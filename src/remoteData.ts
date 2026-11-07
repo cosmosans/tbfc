@@ -1,6 +1,22 @@
 import { eventOnlyPlayerData } from "./playerData";
 import type { ClubData } from './model';
 
+const collections = ['matches', 'players', 'opponents', 'seasons', 'locations', 'events', 'lineups', 'boards', 'standings'] as const;
+
+function withFirstChoice(data: ClubData): ClubData {
+  return { ...data, firstChoice: Object.fromEntries(data.players.filter(player => player.firstChoicePosition).map(player => [player.firstChoicePosition, player.id])) };
+}
+
+function forRemote(data: ClubData): ClubData {
+  const players = data.players.map(player => {
+    const firstChoicePosition = Object.entries(data.firstChoice ?? {}).find(([, id]) => id === player.id)?.[0] as typeof player.firstChoicePosition;
+    const { firstChoicePosition: _old, ...rest } = player;
+    return firstChoicePosition ? { ...rest, firstChoicePosition } : rest;
+  });
+  return { ...data, players };
+}
+
+
 export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string; supportsIncremental?: boolean };
 
 async function readResponse(response: Response) {
@@ -15,15 +31,16 @@ const keyFor = (collection: string, item: Record<string, unknown>) =>
 
 export async function fetchClubData(): Promise<RemoteClub> {
   baseline = await readResponse(await fetch('/api/club', { cache: 'no-store' })) as RemoteClub;
-  return { ...baseline, data: baseline.data ? eventOnlyPlayerData(baseline.data) : null };
+  return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }
 
 export async function publishClubData(data: ClubData, revision: number): Promise<number> {
-  data = eventOnlyPlayerData(data);
+  data = eventOnlyPlayerData(forRemote(data));
   // Only use a baseline from the exact revision this draft was based on.
   const changes: Array<{ collection: string; id: string; item: unknown }> = [];
   if (baseline?.data && baseline.revision === revision) {
-    for (const [collection, rows] of Object.entries(data)) {
+    for (const collection of collections) {
+      const rows = data[collection];
       const oldRows = (baseline.data as unknown as Record<string, Record<string, unknown>[]>)[collection] ?? [];
       const previous = new Map(oldRows.map(item => [keyFor(collection, item), JSON.stringify(item)]));
       for (const item of rows as Record<string, unknown>[]) {

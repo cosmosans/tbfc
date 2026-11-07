@@ -57,6 +57,7 @@ export type Player = {
   playerType?: PlayerType | "";
   photoUrl?: string;
   bio?: string;
+  firstChoicePosition?: Position;
   preferredPosition?: Position | "";
   secondaryPosition?: Position | "";
 };
