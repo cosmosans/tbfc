@@ -1,6 +1,7 @@
 import {
   Alert,
   Box,
+  Button,
   ButtonBase,
   Card,
   CardContent,
@@ -85,6 +86,16 @@ export default function LineupEditor({
       bench: [...lineup.bench, ...displaced],
     });
   }
+  function loadFirstChoice() {
+    const used = new Set<string>();
+    const starters = slots.map(position => {
+      const id = data.firstChoice?.[position] ?? "";
+      if (!id || used.has(id) || !data.players.some(player => player.id === id && player.active)) return "";
+      used.add(id);
+      return id;
+    });
+    save({ ...lineup, starters, bench: lineup.bench.filter(id => !used.has(id)) });
+  }
   const benchPlayers = data.players
     .filter(
       (player) =>
@@ -152,6 +163,7 @@ export default function LineupEditor({
                 alignItems="center"
               >
                 <Typography variant="h6">Starting VII</Typography>
+                <Button size="small" variant="contained" disabled={!canEditClub || !data.firstChoice || !Object.values(data.firstChoice).some(Boolean)} onClick={loadFirstChoice}>Load First Choice VII</Button>
               </Stack>
 
               <LineupGrid sx={{ mt: 2 }}>

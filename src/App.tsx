@@ -76,6 +76,7 @@ const blankMatch = (): Match => ({
   id: crypto.randomUUID(),
   status: "scheduled",
   season: "",
+  league: "",
   competition: "",
   date: new Date().toISOString().slice(0, 10),
   opponent: "",
@@ -135,6 +136,9 @@ export default function App() {
   }, []);
   const navigate = useNavigate();
   const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   const matchRoute = matchPath("/match/:id", location.pathname);
   const playerRoute = matchPath("/player/:id", location.pathname);
   const selectedPlayer = data.players.find((player) => player.id === playerRoute?.params.id);
@@ -677,6 +681,7 @@ export default function App() {
         <MatchDialog
           open={!!editing || showNew}
           match={editing ?? newMatch}
+          matches={data.matches}
           teams={data.opponents}
           seasons={data.seasons}
           locations={data.locations}

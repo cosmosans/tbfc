@@ -17,7 +17,7 @@ export default function MatchChat({ messages, players, onSave }: {
   const editing = siblings.some(item => item.id === draft?.id);
   function openDraft(message: MatchChatReply, parent: string | null = null) {
     setParentId(parent);
-    setDraft({ id: message.id, playerId: message.playerId, text: message.text });
+    setDraft({ ...message });
   }
   function changeList(next: MatchChatReply[], parent: string | null) {
     if (parent) onSave?.(messages.map(item => item.id === parent ? { ...item, replies: next } : item));
@@ -41,11 +41,12 @@ export default function MatchChat({ messages, players, onSave }: {
   }
   function renderMessage(message: MatchChatReply, index: number, list: MatchChatReply[], parent: string | null) {
     const player = players.find(item => item.id === message.playerId);
+    const sender = player?.name || message.senderName || 'Former player';
     const label = parent ? `reply ${index + 1}` : `message ${index + 1}`;
     return <Stack direction="row" gap={1.5} alignItems="flex-start">
-      <Avatar src={player?.photoUrl} alt={player?.name ?? 'Former player'} sx={{ width: parent ? 36 : 48, height: parent ? 36 : 48 }}>{player?.name.charAt(0) ?? '?'}</Avatar>
+      <Avatar src={player?.photoUrl} alt={sender} sx={{ width: parent ? 36 : 48, height: parent ? 36 : 48 }}>{sender.charAt(0)}</Avatar>
       <Box sx={{ flex: 1, minWidth: 0, bgcolor: 'background.default', borderRadius: 2, p: 1.5 }}>
-        <Typography fontWeight={700}>{player?.name ?? 'Former player'}</Typography>
+        <Typography fontWeight={700}>{sender}</Typography>
         <Typography sx={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{message.text}</Typography>
         {onSave && <Stack direction="row" justifyContent="flex-end" flexWrap="wrap" mt={1}>
           {!parent && <Button size="small" disabled={!players.length} onClick={() => openDraft({ id: crypto.randomUUID(), playerId: '', text: '' }, message.id)}>Reply</Button>}

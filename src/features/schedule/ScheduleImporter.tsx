@@ -95,6 +95,7 @@ export default function ScheduleImporter({
         kickoff: row.kickoff,
         homeAway: row.homeAway,
         competition: row.competition,
+        league: row.league,
         kit: row.kit,
         resultLabel: "",
         goalsFor: 0,

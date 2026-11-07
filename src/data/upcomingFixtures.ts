@@ -2,7 +2,7 @@ import type { Match } from '../model';
 
 // Fixtures transcribed from the league schedule screenshot supplied on 2026-11-05.
 // Stable IDs allow edits made in the browser to override these defaults.
-const fallSeason = { seasonId: 'season-fall-2026', season: 'FALL 2026', competition: 'D6 - Regular Season' };
+const fallSeason = { seasonId: 'season-fall-2026', season: 'FALL 2026', league: 'D6' as const, competition: 'Regular Season' };
 const base = {
   status: 'scheduled' as const,
   resultLabel: '', goalsFor: 0, goalsAgainst: 0,

@@ -7,10 +7,11 @@ import type { Board, ClubData, Lineup, Location, Marker, Match, Opponent, Positi
 import { positions } from './model';
 import { formationPoints } from './features/lineup/formations';
 import { splitMatchLocation } from './matchLocation';
+import { splitCompetition } from './matchCompetition';
 
 const STORAGE_KEY = 'tbfc-club-data-v1';
 const excludedMatchIds = new Set(['import-52']);
-const importedMatches = seedMatches as Match[];
+const importedMatches = (seedMatches as Match[]).map(splitCompetition);
 const crestByName: Record<string, string> = {
   'Whiff City FC': '/crests/whiff-city-fc.png',
   'Peachy Puffs': '/crests/peachy-puffs.png',
@@ -101,7 +102,8 @@ export function loadData(): ClubData {
       const savedMatches = (data.matches ?? importedMatches).filter(match => !excludedMatchIds.has(match.id));
       const sameFixture = (a: Match, b: Match) => a.season === b.season && a.date === b.date && a.opponent.trim().toLowerCase() === b.opponent.trim().toLowerCase();
       const newFixtures = upcomingFixtures.filter(fixture => !savedMatches.some(match => match.id === fixture.id || sameFixture(match, fixture)));
-      const matches = [...savedMatches, ...newFixtures].map(match => {
+      const matches = [...savedMatches, ...newFixtures].map(rawMatch => {
+        const match = splitCompetition(rawMatch);
         const source = sourceById.get(match.id);
         const withSource = source ? { ...source, ...match } : match;
         const location = splitMatchLocation(withSource.venue, withSource.pitch);
@@ -123,6 +125,7 @@ export function loadData(): ClubData {
         seasons,
         locations,
         events: (data.events ?? []).filter(event => !excludedMatchIds.has(event.matchId)),
+        firstChoice: data.firstChoice ?? {},
         lineups: (data.lineups ?? []).filter(lineup => !excludedMatchIds.has(lineup.matchId)).map(lineup => ({
           ...lineup,
           formation: lineup.formation === '1-3-3' ? '1-3-3' : '1-2-3-1',

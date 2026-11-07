@@ -1,4 +1,5 @@
 import type { ClubData, Player } from "./model";
+import { splitCompetition } from "./matchCompetition";
 
 // Discard obsolete aggregates from old drafts, backups, and server records.
 export function withoutLegacyStats(player: Player): Player {
@@ -8,5 +9,5 @@ export function withoutLegacyStats(player: Player): Player {
 }
 
 export function eventOnlyPlayerData(data: ClubData): ClubData {
-  return { ...data, players: data.players.map(withoutLegacyStats) };
+  return { ...data, players: data.players.map(withoutLegacyStats), matches: data.matches.map(splitCompetition) };
 }

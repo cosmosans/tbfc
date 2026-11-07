@@ -174,7 +174,7 @@ export default function MatchBanner({
                 color="primary"
                 sx={{ background: "black", paddingInline: 1 }}
               >
-                {seasonName(data, match)} · {match.competition}
+                {[seasonName(data, match), match.league, match.competition].filter(Boolean).join(" · ")}
               </Typography>
 
               {onEdit && (

@@ -20,13 +20,16 @@ with source.open(encoding='utf-8-sig', newline='') as handle:
             continue
         shootout_for = re.search(r'\((\d+)\)', row['Goals Scored'])
         shootout_against = re.search(r'\((\d+)\)', row['Goals Allowed'])
+        competition_value = row['League/Type'].strip()
+        league_match = re.match(r'^(D[56])\s*[-–—]\s*(.*)$', competition_value, re.I)
         matches.append({
             'id': f'import-{row_number}',
             'status': 'completed',
             'seasonId': 'season-' + re.sub(r'[^a-z0-9]+', '-', row['Season'].strip().casefold()).strip('-'),
             'opponentId': 'opponent-' + re.sub(r'[^a-z0-9]+', '-', row['Opponent'].strip().casefold()).strip('-'),
             'season': row['Season'].strip(),
-            'competition': row['League/Type'].strip(),
+            'league': league_match.group(1).upper() if league_match else '',
+            'competition': league_match.group(2).strip() if league_match else competition_value,
             'date': date,
             'opponent': row['Opponent'].strip(),
             'venue': row['Location'].strip(),

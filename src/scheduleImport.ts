@@ -1,6 +1,7 @@
 import type { Pitch } from './model';
 import { splitMatchLocation } from './matchLocation';
 import { csvRows } from './csv';
+import { parseCompetition } from './matchCompetition';
 
 export type FixtureRow = {
   row: number;
@@ -11,6 +12,7 @@ export type FixtureRow = {
   kickoff: string;
   homeAway?: 'home' | 'away';
   competition: string;
+  league: 'D5' | 'D6' | '';
   kit: string;
   error?: string;
 };
@@ -41,7 +43,8 @@ export function parseScheduleCsv(input: string): FixtureRow[] {
   const venueIndex = column('location', 'venue', 'field');
   const pitchIndex = column('pitch');
   const kickoffIndex = column('time', 'kickoff', 'kickofftime');
-  const competitionIndex = column('leaguetype', 'competition', 'league');
+  const competitionIndex = column('leaguetype', 'competition');
+  const leagueIndex = column('league');
   const kitIndex = column('kitcolor', 'kit');
   const homeAwayIndex = column('homeaway', 'homevisitor');
   const get = (row: string[], index: number) => index < 0 ? '' : (row[index] ?? '').trim();
@@ -52,11 +55,12 @@ export function parseScheduleCsv(input: string): FixtureRow[] {
     const pitchText = get(row, pitchIndex).replace(/^pitch\s*/i, '');
     const pitchValid = !pitchText || ['1', '2', '3'].includes(pitchText);
     const location = splitMatchLocation(get(row, venueIndex), pitchValid && pitchText ? pitchText as Pitch : undefined);
+    const parsed = parseCompetition(get(row, competitionIndex), get(row, leagueIndex));
     return {
       row: index + 2, date: date ?? rawDate, opponent,
       venue: location.venue, pitch: location.pitch, kickoff: get(row, kickoffIndex),
       homeAway: side === 'home' ? 'home' : side === 'away' || side === 'visitor' ? 'away' : undefined,
-      competition: get(row, competitionIndex), kit: get(row, kitIndex),
+      competition: parsed.competition, league: parsed.league ?? '', kit: get(row, kitIndex),
       error: !date ? 'Invalid date' : !opponent ? 'Missing opponent' : !pitchValid ? 'Pitch must be 1, 2, or 3' : undefined,
     };
   });

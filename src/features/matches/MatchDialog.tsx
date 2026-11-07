@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -16,10 +17,12 @@ import type { Location, Match, Opponent, Season } from "../../model";
 import { scoreResult } from "../../model";
 import { splitMatchLocation } from "../../matchLocation";
 import { isTurfbotReport } from "./reportAttribution";
+import { splitCompetition } from "../../matchCompetition";
 
 export default function MatchDialog({
   open,
   match,
+  matches,
   teams,
   seasons,
   locations,
@@ -28,6 +31,7 @@ export default function MatchDialog({
 }: {
   open: boolean;
   match: Match;
+  matches: Match[];
   teams: Opponent[];
   seasons: Season[];
   locations: Location[];
@@ -37,7 +41,7 @@ export default function MatchDialog({
   const [draft, setDraft] = useState(match);
   useEffect(() => {
     if (open)
-      setDraft({ ...match, ...splitMatchLocation(match.venue, match.pitch) });
+      setDraft({ ...splitCompetition(match), ...splitMatchLocation(match.venue, match.pitch) });
   }, [open, match.id]);
   const selectedTeamId =
     draft.opponentId ??
@@ -47,6 +51,7 @@ export default function MatchDialog({
     draft.seasonId ??
     seasons.find((season) => season.name === draft.season)?.id ??
     "";
+  const competitionOptions = [...new Set(matches.map(item => splitCompetition(item).competition).filter(Boolean))].sort();
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
@@ -138,15 +143,24 @@ export default function MatchDialog({
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              label="Competition"
-              value={draft.competition}
-              onChange={(e) =>
-                setDraft({ ...draft, competition: e.target.value })
-              }
-              fullWidth
-            />
+            <FormControl fullWidth>
+              <InputLabel>League</InputLabel>
+              <Select label="League" value={draft.league ?? ""} onChange={(e) => setDraft({ ...draft, league: e.target.value as Match["league"] })}>
+                <MenuItem value="">Not recorded</MenuItem>
+                <MenuItem value="D5">D5</MenuItem>
+                <MenuItem value="D6">D6</MenuItem>
+              </Select>
+            </FormControl>
           </Stack>
+          <Autocomplete
+            freeSolo
+            options={competitionOptions}
+            value={draft.competition}
+            inputValue={draft.competition}
+            onInputChange={(_, value) => setDraft(current => ({ ...current, competition: value }))}
+            onChange={(_, value) => setDraft(current => ({ ...current, competition: value ?? "" }))}
+            renderInput={(params) => <TextField {...params} label="Competition" helperText="Choose an existing competition or type a new one" />}
+          />
           <Stack direction={{ xs: "column", sm: "row" }} gap={2}>
             <FormControl fullWidth>
               <InputLabel>Location</InputLabel>

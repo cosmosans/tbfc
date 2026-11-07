@@ -5,7 +5,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-peachtree-press-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-10-23",
     "opponent": "Peachtree Press FC",
     "venue": "DOUGLASS HS",
@@ -19,7 +19,8 @@
     "kit": "N/A",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 2
+    "sourceRow": 2,
+    "league": "D5"
   },
   {
     "id": "import-3",
@@ -27,7 +28,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-rudy-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-11-13",
     "opponent": "Rudy FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -41,7 +42,8 @@
     "kit": "N/A",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 3
+    "sourceRow": 3,
+    "league": "D5"
   },
   {
     "id": "import-4",
@@ -63,7 +65,8 @@
     "kit": "N/A",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 4
+    "sourceRow": 4,
+    "league": ""
   },
   {
     "id": "import-5",
@@ -71,7 +74,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-fleet-feet-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-08-27",
     "opponent": "Fleet Feet FC",
     "venue": "DOUGLASS HS",
@@ -85,7 +88,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 5
+    "sourceRow": 5,
+    "league": "D5"
   },
   {
     "id": "import-6",
@@ -93,7 +97,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-peach-passers",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-09-11",
     "opponent": "Peach Passers",
     "venue": "DOUGLASS HS",
@@ -107,7 +111,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 6
+    "sourceRow": 6,
+    "league": "D5"
   },
   {
     "id": "import-7",
@@ -115,7 +120,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-barely-united",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-09-18",
     "opponent": "Barely United",
     "venue": "DOUGLASS HS",
@@ -129,7 +134,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 7
+    "sourceRow": 7,
+    "league": "D5"
   },
   {
     "id": "import-8",
@@ -137,7 +143,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-whiff-city-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-10-09",
     "opponent": "Whiff City FC",
     "venue": "B.E.S.T. ACADEMY",
@@ -151,7 +157,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 8
+    "sourceRow": 8,
+    "league": "D5"
   },
   {
     "id": "import-9",
@@ -159,7 +166,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-shooting-stars-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-10-30",
     "opponent": "Shooting Stars FC",
     "venue": "MAYNARD JACKSON HS",
@@ -173,7 +180,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 9
+    "sourceRow": 9,
+    "league": "D5"
   },
   {
     "id": "import-10",
@@ -181,7 +189,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-one-kick-wonders",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-11-06",
     "opponent": "One Kick Wonders",
     "venue": "DOUGLASS HS",
@@ -195,7 +203,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 10
+    "sourceRow": 10,
+    "league": "D5"
   },
   {
     "id": "import-11",
@@ -203,7 +212,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-goal-dancers-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-11-20",
     "opponent": "Goal Dancers FC",
     "venue": "WASHINGTON HS",
@@ -217,7 +226,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 11
+    "sourceRow": 11,
+    "league": "D5"
   },
   {
     "id": "import-12",
@@ -239,7 +249,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 12
+    "sourceRow": 12,
+    "league": ""
   },
   {
     "id": "import-13",
@@ -261,7 +272,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 13
+    "sourceRow": 13,
+    "league": ""
   },
   {
     "id": "import-14",
@@ -269,7 +281,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-shooting-stars-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-08-07",
     "opponent": "Shooting Stars FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -283,7 +295,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 14
+    "sourceRow": 14,
+    "league": "D5"
   },
   {
     "id": "import-15",
@@ -291,7 +304,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-peachtree-press-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-09-04",
     "opponent": "Peachtree Press FC",
     "venue": "MAYNARD JACKSON HS",
@@ -305,7 +318,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 15
+    "sourceRow": 15,
+    "league": "D5"
   },
   {
     "id": "import-16",
@@ -313,7 +327,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-peachtree-press-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Consolation",
+    "competition": "Consolation",
     "date": "2025-09-25",
     "opponent": "Peachtree Press FC",
     "venue": "MAYNARD JACKSON HS",
@@ -327,7 +341,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 16
+    "sourceRow": 16,
+    "league": "D5"
   },
   {
     "id": "import-17",
@@ -335,7 +350,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-goal-dancers-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-08-14",
     "opponent": "Goal Dancers FC",
     "venue": "B.E.S.T. ACADEMY",
@@ -349,7 +364,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 17
+    "sourceRow": 17,
+    "league": "D5"
   },
   {
     "id": "import-18",
@@ -357,7 +373,7 @@
     "seasonId": "season-summer-2025",
     "opponentId": "opponent-whiff-city-fc",
     "season": "SUMMER 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-08-21",
     "opponent": "Whiff City FC",
     "venue": "WASHINGTON HS",
@@ -371,7 +387,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 18
+    "sourceRow": 18,
+    "league": "D5"
   },
   {
     "id": "import-19",
@@ -379,7 +396,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-peach-pit-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2025-10-16",
     "opponent": "Peach Pit FC",
     "venue": "DOUGLASS HS",
@@ -393,7 +410,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 19
+    "sourceRow": 19,
+    "league": "D5"
   },
   {
     "id": "import-20",
@@ -401,7 +419,7 @@
     "seasonId": "season-fall-2025",
     "opponentId": "opponent-peachtree-press-fc",
     "season": "FALL 2025",
-    "competition": "D5 - Consolation",
+    "competition": "Consolation",
     "date": "2025-12-04",
     "opponent": "Peachtree Press FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -415,7 +433,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 20
+    "sourceRow": 20,
+    "league": "D5"
   },
   {
     "id": "import-21",
@@ -423,7 +442,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-one-kick-wonders",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-01-08",
     "opponent": "One Kick Wonders",
     "venue": "WASHINGTON HS",
@@ -437,7 +456,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 21
+    "sourceRow": 21,
+    "league": "D5"
   },
   {
     "id": "import-22",
@@ -445,7 +465,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-goal-dancers-fc",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-01-15",
     "opponent": "Goal Dancers FC",
     "venue": "B.E.S.T. ACADEMY",
@@ -459,7 +479,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 22
+    "sourceRow": 22,
+    "league": "D5"
   },
   {
     "id": "import-23",
@@ -467,7 +488,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-fleet-feet-fc",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-01-22",
     "opponent": "Fleet Feet FC",
     "venue": "DOUGLASS HS",
@@ -481,7 +502,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 23
+    "sourceRow": 23,
+    "league": "D5"
   },
   {
     "id": "import-24",
@@ -489,7 +511,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-peach-pit-fc",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-01-29",
     "opponent": "Peach Pit FC",
     "venue": "WASHINGTON HS",
@@ -503,7 +525,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 24
+    "sourceRow": 24,
+    "league": "D5"
   },
   {
     "id": "import-25",
@@ -511,7 +534,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-peachy-puffs",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-02-05",
     "opponent": "Peachy Puffs",
     "venue": "B.E.S.T. ACADEMY",
@@ -525,7 +548,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 25
+    "sourceRow": 25,
+    "league": "D5"
   },
   {
     "id": "import-26",
@@ -533,7 +557,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-barely-united",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-02-12",
     "opponent": "Barely United",
     "venue": "WASHINGTON HS",
@@ -547,7 +571,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 26
+    "sourceRow": 26,
+    "league": "D5"
   },
   {
     "id": "import-27",
@@ -555,7 +580,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-peach-passers",
     "season": "WINTER 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-02-19",
     "opponent": "Peach Passers",
     "venue": "DOUGLASS HS",
@@ -569,7 +594,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 27
+    "sourceRow": 27,
+    "league": "D5"
   },
   {
     "id": "import-28",
@@ -577,7 +603,7 @@
     "seasonId": "season-winter-2026",
     "opponentId": "opponent-goal-dancers-fc",
     "season": "WINTER 2026",
-    "competition": "D5 - Playoff Semifinal",
+    "competition": "Playoff Semifinal",
     "date": "2026-02-26",
     "opponent": "Goal Dancers FC",
     "venue": "CARVER HS",
@@ -591,7 +617,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 28
+    "sourceRow": 28,
+    "league": "D5"
   },
   {
     "id": "import-29",
@@ -599,7 +626,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-peach-passers",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-03-19",
     "opponent": "Peach Passers",
     "venue": "B.E.S.T. ACADEMY",
@@ -613,7 +640,8 @@
     "kit": "White",
     "scorerNotes": "Stubbs, Steven (x2)",
     "report": "",
-    "sourceRow": 29
+    "sourceRow": 29,
+    "league": "D5"
   },
   {
     "id": "import-30",
@@ -621,7 +649,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-shooting-stars-fc",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-03-26",
     "opponent": "Shooting Stars FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -635,7 +663,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 30
+    "sourceRow": 30,
+    "league": "D5"
   },
   {
     "id": "import-31",
@@ -643,7 +672,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-goal-dancers-fc",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-04-02",
     "opponent": "Goal Dancers FC",
     "venue": "THERRELL HS",
@@ -657,7 +686,8 @@
     "kit": "White",
     "scorerNotes": "Matt",
     "report": "",
-    "sourceRow": 31
+    "sourceRow": 31,
+    "league": "D5"
   },
   {
     "id": "import-32",
@@ -665,7 +695,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-barely-united",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-04-09",
     "opponent": "Barely United",
     "venue": "WASHINGTON HS",
@@ -679,7 +709,8 @@
     "kit": "White",
     "scorerNotes": "Stubbs",
     "report": "",
-    "sourceRow": 32
+    "sourceRow": 32,
+    "league": "D5"
   },
   {
     "id": "import-33",
@@ -687,7 +718,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-peach-pit-fc",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-04-16",
     "opponent": "Peach Pit FC",
     "venue": "DOUGLASS HS",
@@ -701,7 +732,8 @@
     "kit": "Black",
     "scorerNotes": "King (x2)",
     "report": "",
-    "sourceRow": 33
+    "sourceRow": 33,
+    "league": "D5"
   },
   {
     "id": "import-34",
@@ -709,7 +741,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-afc-atl",
     "season": "SPRING 2026",
-    "competition": "D5 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-04-23",
     "opponent": "AFC ATL",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -723,7 +755,8 @@
     "kit": "Black",
     "scorerNotes": "Meghan",
     "report": "",
-    "sourceRow": 34
+    "sourceRow": 34,
+    "league": "D5"
   },
   {
     "id": "import-35",
@@ -731,7 +764,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-onsider-trading-fc",
     "season": "SPRING 2026",
-    "competition": "D5 - Best of the Rest Semifinal",
+    "competition": "Best of the Rest Semifinal",
     "date": "2026-04-30",
     "opponent": "Onsider Trading FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -745,7 +778,8 @@
     "kit": "White",
     "scorerNotes": "Nelson, Steven",
     "report": "",
-    "sourceRow": 35
+    "sourceRow": 35,
+    "league": "D5"
   },
   {
     "id": "import-36",
@@ -753,7 +787,7 @@
     "seasonId": "season-spring-2026",
     "opponentId": "opponent-peach-passers",
     "season": "SPRING 2026",
-    "competition": "D5 - Best of the Rest Final",
+    "competition": "Best of the Rest Final",
     "date": "2026-05-07",
     "opponent": "Peach Passers",
     "venue": "DOUGLASS HS",
@@ -767,7 +801,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 36
+    "sourceRow": 36,
+    "league": "D5"
   },
   {
     "id": "import-37",
@@ -775,7 +810,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-chippington-towne",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-05-21",
     "opponent": "Chippington Towne",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -789,7 +824,8 @@
     "kit": "Black",
     "scorerNotes": "José, Daniel",
     "report": "",
-    "sourceRow": 37
+    "sourceRow": 37,
+    "league": "D6"
   },
   {
     "id": "import-38",
@@ -797,7 +833,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-peach-passers",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-05-28",
     "opponent": "Peach Passers",
     "venue": "WASHINGTON HS",
@@ -811,7 +847,8 @@
     "kit": "White",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 38
+    "sourceRow": 38,
+    "league": "D6"
   },
   {
     "id": "import-39",
@@ -819,7 +856,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-peachy-puffs",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-06-04",
     "opponent": "Peachy Puffs",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -833,7 +870,8 @@
     "kit": "White",
     "scorerNotes": "Daniel",
     "report": "",
-    "sourceRow": 39
+    "sourceRow": 39,
+    "league": "D6"
   },
   {
     "id": "import-40",
@@ -841,7 +879,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-shooting-stars-fc",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-06-11",
     "opponent": "Shooting Stars FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -855,7 +893,8 @@
     "kit": "Black",
     "scorerNotes": "Nelson",
     "report": "",
-    "sourceRow": 40
+    "sourceRow": 40,
+    "league": "D6"
   },
   {
     "id": "import-41",
@@ -863,7 +902,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-whiff-city-fc",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-06-25",
     "opponent": "Whiff City FC",
     "venue": "MAYNARD JACKSON HS",
@@ -877,7 +916,8 @@
     "kit": "Black",
     "scorerNotes": "Spencer",
     "report": "",
-    "sourceRow": 41
+    "sourceRow": 41,
+    "league": "D6"
   },
   {
     "id": "import-42",
@@ -885,7 +925,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-onsider-trading-fc",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-07-09",
     "opponent": "Onsider Trading FC",
     "venue": "CARVER HS",
@@ -899,7 +939,8 @@
     "kit": "Black",
     "scorerNotes": "Daniel",
     "report": "",
-    "sourceRow": 42
+    "sourceRow": 42,
+    "league": "D6"
   },
   {
     "id": "import-43",
@@ -907,7 +948,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-orange-slices",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Best of the Rest Semifinal",
+    "competition": "Best of the Rest Semifinal",
     "date": "2026-07-16",
     "opponent": "Orange Slices",
     "venue": "THERRELL HS",
@@ -921,7 +962,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 43
+    "sourceRow": 43,
+    "league": "D6"
   },
   {
     "id": "import-44",
@@ -929,7 +971,7 @@
     "seasonId": "season-late-spring-2026",
     "opponentId": "opponent-onsider-trading-fc",
     "season": "LATE SPRING 2026",
-    "competition": "D6 - Best of the Rest Final",
+    "competition": "Best of the Rest Final",
     "date": "2026-07-23",
     "opponent": "Onsider Trading FC",
     "venue": "B.E.S.T. ACADEMY",
@@ -943,7 +985,8 @@
     "kit": "Black",
     "scorerNotes": "Pam, Bjorn, Stubbs",
     "report": "",
-    "sourceRow": 44
+    "sourceRow": 44,
+    "league": "D6"
   },
   {
     "id": "import-45",
@@ -951,7 +994,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-onsider-trading-fc",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-07-30",
     "opponent": "Onsider Trading FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -965,7 +1008,8 @@
     "kit": "Black",
     "scorerNotes": "José",
     "report": "",
-    "sourceRow": 45
+    "sourceRow": 45,
+    "league": "D6"
   },
   {
     "id": "import-46",
@@ -973,7 +1017,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-whiff-city-fc",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-08-13",
     "opponent": "Whiff City FC",
     "venue": "WALDEN ATHLETIC COMPLEX",
@@ -987,7 +1031,8 @@
     "kit": "White",
     "scorerNotes": "Daniel",
     "report": "",
-    "sourceRow": 46
+    "sourceRow": 46,
+    "league": "D6"
   },
   {
     "id": "import-47",
@@ -995,7 +1040,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-peach-passers",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-08-20",
     "opponent": "Peach Passers",
     "venue": "THERRELL HS",
@@ -1009,7 +1054,8 @@
     "kit": "White",
     "scorerNotes": "Owen Goal",
     "report": "",
-    "sourceRow": 47
+    "sourceRow": 47,
+    "league": "D6"
   },
   {
     "id": "import-48",
@@ -1017,7 +1063,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-orange-slices",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-08-27",
     "opponent": "Orange Slices",
     "venue": "THERRELL HS",
@@ -1031,7 +1077,8 @@
     "kit": "Black",
     "scorerNotes": "José",
     "report": "",
-    "sourceRow": 48
+    "sourceRow": 48,
+    "league": "D6"
   },
   {
     "id": "import-49",
@@ -1039,7 +1086,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-inter-your-mom",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-09-10",
     "opponent": "Inter Your Mom",
     "venue": "B.E.S.T. ACADEMY",
@@ -1053,7 +1100,8 @@
     "kit": "White",
     "scorerNotes": "José (3) Steven (2)",
     "report": "",
-    "sourceRow": 49
+    "sourceRow": 49,
+    "league": "D6"
   },
   {
     "id": "import-50",
@@ -1061,7 +1109,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-inter-your-mom",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-09-10",
     "opponent": "Inter Your Mom",
     "venue": "B.E.S.T. ACADEMY",
@@ -1075,7 +1123,8 @@
     "kit": "White",
     "scorerNotes": "Pam",
     "report": "",
-    "sourceRow": 50
+    "sourceRow": 50,
+    "league": "D6"
   },
   {
     "id": "import-51",
@@ -1083,7 +1132,7 @@
     "seasonId": "season-summer-2026",
     "opponentId": "opponent-chippington-towne",
     "season": "SUMMER 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-09-17",
     "opponent": "Chippington Towne",
     "venue": "WASHINGTON HS",
@@ -1097,7 +1146,8 @@
     "kit": "Black",
     "scorerNotes": "",
     "report": "",
-    "sourceRow": 51
+    "sourceRow": 51,
+    "league": "D6"
   },
   {
     "id": "import-53",
@@ -1105,7 +1155,7 @@
     "seasonId": "season-fall-2026",
     "opponentId": "opponent-inter-your-mom",
     "season": "FALL 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-10-15",
     "opponent": "Inter Your Mom",
     "venue": "MAYNARD JACKSON HS",
@@ -1119,7 +1169,8 @@
     "kit": "Black",
     "scorerNotes": "José (2)",
     "report": "",
-    "sourceRow": 53
+    "sourceRow": 53,
+    "league": "D6"
   },
   {
     "id": "import-54",
@@ -1127,7 +1178,7 @@
     "seasonId": "season-fall-2026",
     "opponentId": "opponent-inter-your-mom",
     "season": "FALL 2026",
-    "competition": "D6 - Regular Season",
+    "competition": "Regular Season",
     "date": "2026-10-15",
     "opponent": "Inter Your Mom",
     "venue": "MAYNARD JACKSON HS",
@@ -1141,6 +1192,7 @@
     "kit": "White",
     "scorerNotes": "Daniel",
     "report": "",
-    "sourceRow": 54
+    "sourceRow": 54,
+    "league": "D6"
   }
 ]

@@ -1,6 +1,6 @@
 export type MatchPhoto = { id: string; src: string; name: string };
 
-export type MatchChatReply = { id: string; playerId: string; text: string };
+export type MatchChatReply = { id: string; playerId: string; text: string; senderName?: string; sentAt?: string };
 export type MatchChatMessage = MatchChatReply & { replies?: MatchChatReply[] };
 
 export type Pitch = "1" | "2" | "3";
@@ -11,6 +11,7 @@ export type Match = {
   seasonId?: string;
   opponentId?: string;
   season: string;
+  league?: "D5" | "D6" | "";
   competition: string;
   date: string;
   opponent: string;
@@ -138,6 +139,7 @@ export type ClubData = {
   locations: Location[];
   events: MatchEvent[];
   lineups: Lineup[];
+  firstChoice?: Partial<Record<Position, string>>;
   boards: Board[];
   standings: StandingsSnapshot[];
 };

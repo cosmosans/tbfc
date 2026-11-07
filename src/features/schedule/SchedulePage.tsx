@@ -45,7 +45,7 @@ export default function SchedulePage({
       match.seasonId === season ||
       (!match.seasonId &&
         match.season === seasons.find((item) => item.id === season)?.name)) &&
-    `${opponentName(data, match)} ${matchLocation(match)} ${match.competition}`
+    `${opponentName(data, match)} ${matchLocation(match)} ${match.league ?? ""} ${match.competition}`
       .toLowerCase()
       .includes(search.toLowerCase());
   const upcoming = data.matches
