@@ -102,20 +102,6 @@ export default function MatchHistory({
               gap={1}
               sx={{ mt: 3, color: "primary.main" }}
             >
-              <Box
-                component="img"
-                src="/icons/footbot-ball.svg"
-                alt=""
-                aria-hidden="true"
-                sx={{
-                  width: 28,
-                  height: 28,
-                  objectFit: "contain",
-                  flexShrink: 0,
-                  position: "relative",
-                  top: -3,
-                }}
-              />
               <Typography
                 component="span"
                 sx={{
