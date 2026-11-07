@@ -1,4 +1,5 @@
 import { eventOnlyPlayerData } from "./playerData";
+import { canEditClub } from "./editAccess";
 import type { ClubData } from './model';
 
 const collections = ['matches', 'players', 'opponents', 'seasons', 'locations', 'events', 'lineups', 'boards', 'standings'] as const;
@@ -17,7 +18,7 @@ function forRemote(data: ClubData): ClubData {
 }
 
 
-export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string; supportsIncremental?: boolean };
+export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string; supportsIncremental?: boolean; admin?: boolean };
 
 async function readResponse(response: Response) {
   const body = await response.json();
@@ -31,10 +32,12 @@ const keyFor = (collection: string, item: Record<string, unknown>) =>
 
 export async function fetchClubData(): Promise<RemoteClub> {
   baseline = await readResponse(await fetch('/api/club', { cache: 'no-store' })) as RemoteClub;
+  if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }
 
 export async function publishClubData(data: ClubData, revision: number): Promise<number> {
+  if (canEditClub && baseline?.data && baseline.admin === false) throw new Error("The club admin key is not accepted. Reload after correcting it before publishing.");
   data = eventOnlyPlayerData(forRemote(data));
   // Only use a baseline from the exact revision this draft was based on.
   const changes: Array<{ collection: string; id: string; item: unknown }> = [];
@@ -58,6 +61,6 @@ export async function publishClubData(data: ClubData, revision: number): Promise
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(incremental ? { changes, revision } : { data, revision }),
   }));
-  baseline = { data: structuredClone(data), revision: result.revision, supportsIncremental: baseline?.supportsIncremental };
+  baseline = { data: structuredClone(data), revision: result.revision, supportsIncremental: baseline?.supportsIncremental, admin: baseline?.admin };
   return result.revision as number;
 }

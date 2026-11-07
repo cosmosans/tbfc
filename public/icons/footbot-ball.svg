@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Footbot soccer ball">
+  <defs>
+    <linearGradient id="rainbow" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff477e"/>
+      <stop offset=".2" stop-color="#ff9a3c"/>
+      <stop offset=".4" stop-color="#ffe45e"/>
+      <stop offset=".6" stop-color="#48d998"/>
+      <stop offset=".8" stop-color="#3ba9ff"/>
+      <stop offset="1" stop-color="#a76bff"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#rainbow)" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="32" cy="32" r="28"/>
+    <path d="M22 7 18 17 8 21M42 7 46 17 56 21M5 34l11 3 5 13-4 8M59 34l-11 3-5 13 4 8M25 59l7-8 7 8"/>
+    <path d="m18 17 14 8 14-8M16 37l12-8m20 8L36 29M21 50l8-12m14 12-8-12"/>
+  </g>
+  <text x="32" y="43" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="900" fill="url(#rainbow)" stroke="#101114" stroke-width="2" paint-order="stroke">S</text>
+</svg>

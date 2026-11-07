@@ -104,7 +104,7 @@ export default function MatchHistory({
             >
               <Box
                 component="img"
-                src="/icons/turfbot-orange-ball.png"
+                src="/icons/footbot-ball.svg"
                 alt=""
                 aria-hidden="true"
                 sx={{
@@ -124,7 +124,7 @@ export default function MatchHistory({
                   lineHeight: 1.4,
                 }}
               >
-                WRITTEN BY TURFBOT
+                WRITTEN BY FOOTBOT
               </Typography>
             </Stack>
           )}

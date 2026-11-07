@@ -40,7 +40,7 @@ export async function onRequestGet({ request, env }: Context): Promise<Response>
   if (!env.CLUB_DB) return json({ error: 'Database is not connected.' }, 503);
   try {
     const meta = await current(env.CLUB_DB);
-    if (meta.revision === 0) return json({ revision: 0, data: null, supportsIncremental: true, updatedAt: meta.updated_at });
+    if (meta.revision === 0) return json({ revision: 0, data: null, supportsIncremental: true, admin: isAdmin(request, env), updatedAt: meta.updated_at });
     const rows = await env.CLUB_DB.prepare('SELECT collection, record_id, payload FROM club_records').all<RecordRow>();
     const data: Record<string, unknown[]> = Object.fromEntries(collections.map(name => [name, []]));
     for (const row of rows.results) {
@@ -50,7 +50,7 @@ export async function onRequestGet({ request, env }: Context): Promise<Response>
         data[row.collection].push(item);
       }
     }
-    return json({ revision: meta.revision, data, supportsIncremental: true, updatedAt: meta.updated_at });
+    return json({ revision: meta.revision, data, supportsIncremental: true, admin: isAdmin(request, env), updatedAt: meta.updated_at });
   } catch (error) {
     console.error('Could not read club data', error);
     return json({ error: 'Could not read club data.' }, 500);
