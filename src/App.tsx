@@ -1,5 +1,6 @@
 import { eventOnlyPlayerData } from "./playerData";
 import MatchNavigation from "./features/matches/MatchNavigation";
+import { isTurfbotReport } from "./features/matches/reportAttribution";
 import PlayerDetail from "./features/roster/PlayerDetail";
 import { readDraft, writeDraft } from "./localDraft";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
@@ -449,7 +450,7 @@ export default function App() {
                             ...data,
                             matches: data.matches.map((match) =>
                               match.id === selected.id
-                                ? { ...match, report }
+                                ? { ...match, report, reportAuthor: report && isTurfbotReport(match) ? "turfbot" : undefined }
                                 : match,
                             ),
                           })

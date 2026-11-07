@@ -28,6 +28,7 @@ export type Match = {
   kit: string;
   scorerNotes: string;
   report: string;
+  reportAuthor?: "turfbot";
   photos?: MatchPhoto[];
   chat?: MatchChatMessage[];
   sourceRow?: number;

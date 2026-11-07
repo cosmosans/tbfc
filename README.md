@@ -56,6 +56,25 @@ python3 scripts/import_matchlog.py '/absolute/path/to/TBFC STATS - Matchlog.csv'
 
 This updates only the checked-in seed file. Existing browser data remains untouched until local storage is cleared or a dedicated import is added.
 
+## WhatsApp match stories
+
+`scripts/import_whatsapp.py` prepares an iOS WhatsApp export ZIP for editorial review. It keeps multiline messages and their original timestamps and senders. For the club's first league season, the cutoff is August 5, 2025, two days before the completed Shooting Stars opener.
+
+```sh
+python3 scripts/import_whatsapp.py '/path/to/WhatsApp export.zip' --output outputs/whatsapp-import
+```
+
+Review the resulting `messages.json` and the attached images before creating a plan. Map fixtures by opponent and conversation context as well as date; postponed games, revised graphics, other teams' games and incorrect historical dates require care. A plan contains a `players` mapping from export sender names to existing player IDs, and `matches` entries with `matchId`, `story`, and `quotes`. Each quote is a source message's numeric `id`; an array groups a message and its conversational replies. Optional `photos` entries identify a prepared JPEG (`file`, relative to the plan), its `sourceId`, exact exported `sourceName`, and display `name`. Use the final applicable lineup graphic, not an earlier revision or a canceled fixture's lineup.
+
+```sh
+python3 scripts/import_whatsapp.py '/path/to/WhatsApp export.zip' \
+  --snapshot outputs/whatsapp-import/club-before.json \
+  --plan outputs/whatsapp-import/plan.json \
+  --output outputs/whatsapp-import
+```
+
+The snapshot is the full `/api/club` response, including its revision. This builds `candidate.json`, a revision-checked `changes.json` payload, and a source audit in `provenance.json`; it does not publish. Only existing completed matches' stories, chat and photos may change. Existing stories and photos are preserved, quotes retain their wording, uncertain senders fail validation, and repeating a plan does not duplicate its content. Scores, dates, events, official lineups and every other collection remain unchanged. Generated material is ignored by Git because it contains private chat data. Keep unmatched fixtures and score/date discrepancies separate for review.
+
 ## Hosting
 
 Cloudflare Pages is the intended host for `turfburnersfc.soccer`. The build uses Node 22, `npm run build`, and the `dist` output directory. See [the deployment guide](docs/deploy-cloudflare.md) for the GitHub connection, custom domain steps, and current browser-local data behavior.

@@ -15,6 +15,7 @@ import {
 import type { Location, Match, Opponent, Season } from "../../model";
 import { scoreResult } from "../../model";
 import { splitMatchLocation } from "../../matchLocation";
+import { isTurfbotReport } from "./reportAttribution";
 
 export default function MatchDialog({
   open,
@@ -305,6 +306,7 @@ export default function MatchDialog({
           onClick={() =>
             onSave({
               ...draft,
+              reportAuthor: draft.report && isTurfbotReport(match) ? "turfbot" : undefined,
               resultLabel:
                 draft.status === "scheduled" || draft.status === "in_progress"
                   ? ""

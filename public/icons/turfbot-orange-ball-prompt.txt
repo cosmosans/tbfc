@@ -1,0 +1,3 @@
+Created with the built-in image generation tool.
+
+Edit the supplied orange soccer-ball smiley robot icon: remove the entire top antenna including its circular tip, stem, and raised mounting base. The top edge must now be a smooth uninterrupted circular soccer ball outline. Preserve the happy eyes and smile and soccer panel geometry. No ears, side tabs, or antenna. Single flat TBFC orange #f47730 artwork with true transparent negative space inside all previously transparent panels and outside the ball. No white or black fills, no background, no text. Center the circular icon with small even padding on all sides; designed for 25px display.

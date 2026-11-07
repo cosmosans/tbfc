@@ -1,3 +1,4 @@
+import { eventOnlyPlayerData, withoutLegacyStats } from "./playerData";
 import seedMatches from './data/seedMatches.json';
 import { seedPlayers } from './data/seedPlayers';
 import { upcomingFixtures } from './data/upcomingFixtures';
@@ -93,8 +94,7 @@ export function loadData(): ClubData {
       }));
       const normalizePosition = (value: unknown): Position | '' => value === 'Goalkeeper' ? 'GK' : positions.includes(value as Position) ? value as Position : '';
       const players = (data.players ?? seed.players).map(player => ({
-        ...player,
-        historicalStats: player.historicalStats ?? seed.players.find(item => item.id === player.id)?.historicalStats,
+        ...withoutLegacyStats(player),
         preferredPosition: normalizePosition(player.preferredPosition),
         secondaryPosition: normalizePosition(player.secondaryPosition),
       }));
@@ -135,7 +135,7 @@ export function loadData(): ClubData {
   return structuredClone(seed);
 }
 
-export function saveData(data: ClubData) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+export function saveData(data: ClubData) { localStorage.setItem(STORAGE_KEY, JSON.stringify(eventOnlyPlayerData(data))); }
 export function parseBackup(text: string): ClubData {
   const value: unknown = JSON.parse(text);
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('This is not a TBFC backup.');
@@ -161,10 +161,10 @@ export function parseBackup(text: string): ClubData {
       (data.standings !== undefined && (data.standings as unknown[]).some(row => !row || typeof row !== 'object' || Array.isArray(row) || typeof (row as Record<string, unknown>).seasonId !== 'string' || !Array.isArray((row as Record<string, unknown>).rows)))) {
     throw new Error('This backup contains invalid TBFC records.');
   }
-  return data as ClubData;
+  return eventOnlyPlayerData(data as ClubData);
 }
 export function exportData(data: ClubData) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(eventOnlyPlayerData(data), null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

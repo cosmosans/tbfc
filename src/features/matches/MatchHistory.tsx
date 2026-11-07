@@ -13,10 +13,12 @@ import {
 } from "@mui/material";
 import { EditorContent, useEditor } from "@tiptap/react";
 import MatchChat from "./MatchChat";
+import { canEditClub } from "../../editAccess";
 import MatchGallery from "./MatchGallery";
 import StarterKit from "@tiptap/starter-kit";
 import type { Match, MatchPhoto, MatchChatMessage, Player } from "../../model";
 import { saveStoryHtml, storyToHtml } from "./matchStory";
+import { isTurfbotReport } from "./reportAttribution";
 
 export default function MatchHistory({
   match,
@@ -33,7 +35,10 @@ export default function MatchHistory({
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [, refreshToolbar] = useState(0);
-  const reportHtml = useMemo(() => storyToHtml(match.report ?? ""), [match.report]);
+  const reportHtml = useMemo(
+    () => storyToHtml(match.report ?? ""),
+    [match.report],
+  );
   const editor = useEditor({
     extensions: [StarterKit],
     content: storyToHtml(match.report ?? ""),
@@ -88,9 +93,49 @@ export default function MatchHistory({
           ) : (
             <Typography>No report yet.</Typography>
           )}
+          {isTurfbotReport(match) && (
+            <Stack
+              component="footer"
+              direction="row"
+              alignItems="center"
+              gap={1}
+              sx={{ mt: 3, color: "primary.main" }}
+            >
+              <Box
+                component="img"
+                src="/icons/turfbot-orange-ball.png"
+                alt=""
+                aria-hidden="true"
+                sx={{
+                  width: 28,
+                  height: 28,
+                  objectFit: "contain",
+                  flexShrink: 0,
+                  position: "relative",
+                  top: -3,
+                }}
+              />
+              <Typography
+                component="span"
+                sx={{
+                  fontSize: "12px",
+                  letterSpacing: "0.04em",
+                  lineHeight: 1.4,
+                }}
+              >
+                WRITTEN BY TURFBOT
+              </Typography>
+            </Stack>
+          )}
         </CardContent>
       </Card>
-      <MatchChat messages={match.chat ?? []} players={players} onSave={onSaveChat} />
+      {canEditClub && (
+        <MatchChat
+          messages={match.chat ?? []}
+          players={players}
+          onSave={onSaveChat}
+        />
+      )}
       <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}
