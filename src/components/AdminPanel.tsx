@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Stack, Switch, TextField, Typography } from '@mui/material';
 
-export default function AdminBackupDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [authenticated, setAuthenticated] = useState(false);
+export default function AdminPanel({ open, onClose, authenticated, manageMode, onAuthChange, onManageModeChange }: {
+  open: boolean;
+  onClose: () => void;
+  authenticated: boolean;
+  manageMode: boolean;
+  onAuthChange: (authenticated: boolean) => void;
+  onManageModeChange: (enabled: boolean) => Promise<void>;
+}) {
   const [checking, setChecking] = useState(false);
   const [busy, setBusy] = useState(false);
   const [secret, setSecret] = useState('');
@@ -17,7 +23,7 @@ export default function AdminBackupDialog({ open, onClose }: { open: boolean; on
       .then(async response => {
         if (!response.ok) throw new Error('Could not check admin access.');
         const status = await response.json();
-        if (!controller.signal.aborted) setAuthenticated(status.authenticated === true);
+        if (!controller.signal.aborted) onAuthChange(status.authenticated === true);
       })
       .catch(cause => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : 'Could not check admin access.'); })
       .finally(() => { if (!controller.signal.aborted) setChecking(false); });
@@ -37,10 +43,18 @@ export default function AdminBackupDialog({ open, onClose }: { open: boolean; on
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Could not sign in.');
-      setAuthenticated(true);
+      onAuthChange(true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not sign in.');
     } finally { setBusy(false); }
+  }
+
+  async function changeManageMode(enabled: boolean) {
+    setBusy(true);
+    setError('');
+    try { await onManageModeChange(enabled); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not change Manage Mode.'); }
+    finally { setBusy(false); }
   }
 
   async function download() {
@@ -60,7 +74,7 @@ export default function AdminBackupDialog({ open, onClose }: { open: boolean; on
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Could not download the backup.');
-      if (cause instanceof Error && cause.message.includes('expired')) setAuthenticated(false);
+      if (cause instanceof Error && cause.message.includes('expired')) onAuthChange(false);
     } finally { setBusy(false); }
   }
 
@@ -70,34 +84,38 @@ export default function AdminBackupDialog({ open, onClose }: { open: boolean; on
     try {
       const response = await fetch('/api/admin/session', { method: 'DELETE', credentials: 'same-origin' });
       if (!response.ok) throw new Error('Could not sign out.');
-      setAuthenticated(false);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not sign out.');
-    } finally { setBusy(false); }
+      onAuthChange(false);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not sign out.'); }
+    finally { setBusy(false); }
   }
 
   return <Dialog open={open} onClose={busy ? undefined : onClose} fullWidth maxWidth="xs">
-    <DialogTitle>Admin backup</DialogTitle>
+    <DialogTitle>Admin Panel</DialogTitle>
     <DialogContent>
       <Stack gap={2} sx={{ pt: 1 }}>
-        <Typography variant="body2" color="text.secondary">
-          Download a private copy of the current production records, including scrapbook chats.
-        </Typography>
-        {!authenticated && !checking && <form id="admin-backup-sign-in" onSubmit={event => { event.preventDefault(); void signIn(); }}>
-          <TextField autoFocus fullWidth label="Club admin secret" type="password" autoComplete="off"
-            value={secret} onChange={event => setSecret(event.target.value)} disabled={busy} />
-        </form>}
         {checking && <Typography variant="body2">Checking access…</Typography>}
+        {!checking && !authenticated && <>
+          <Typography variant="body2" color="text.secondary">Enter the club admin secret to manage the live site.</Typography>
+          <form id="admin-panel-sign-in" onSubmit={event => { event.preventDefault(); void signIn(); }}>
+            <TextField autoFocus fullWidth label="Club admin secret" type="password" autoComplete="off"
+              value={secret} onChange={event => setSecret(event.target.value)} disabled={busy} />
+          </form>
+        </>}
+        {!checking && authenticated && <>
+          <FormControlLabel control={<Switch checked={manageMode} disabled={busy} onChange={(_, enabled) => void changeManageMode(enabled)} />}
+            label="Manage Mode" />
+          <Typography variant="body2" color="text.secondary">
+            {manageMode ? 'Live editing is on for this browser.' : 'Turn on Manage Mode to edit the live site.'}
+          </Typography>
+          <Button variant="outlined" disabled={busy} onClick={() => void download()}>Download Production Backup</Button>
+        </>}
         {error && <Alert severity="error">{error}</Alert>}
-        {authenticated && <Button variant="contained" disabled={busy} onClick={() => void download()}>
-          Download Production Backup
-        </Button>}
       </Stack>
     </DialogContent>
     <DialogActions>
       {authenticated && <Button disabled={busy} onClick={() => void signOut()}>Sign out</Button>}
       <Button disabled={busy} onClick={onClose}>Close</Button>
-      {!authenticated && !checking && <Button type="submit" form="admin-backup-sign-in" variant="contained" disabled={busy || !secret}>
+      {!authenticated && !checking && <Button type="submit" form="admin-panel-sign-in" variant="contained" disabled={busy || !secret}>
         {busy ? 'Signing in…' : 'Sign in'}
       </Button>}
     </DialogActions>

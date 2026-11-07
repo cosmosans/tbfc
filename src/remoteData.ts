@@ -33,7 +33,7 @@ const keyFor = (collection: string, item: Record<string, unknown>) =>
   String(item[collection === 'lineups' || collection === 'boards' ? 'matchId' : collection === 'standings' ? 'seasonId' : 'id']);
 
 export async function fetchClubData(): Promise<RemoteClub> {
-  baseline = await readResponse(await fetch('/api/club', { cache: 'no-store' })) as RemoteClub;
+  baseline = await readResponse(await fetch('/api/club', { cache: 'no-store', credentials: 'same-origin' })) as RemoteClub;
   if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }
@@ -63,6 +63,7 @@ export async function publishClubData(data: ClubData, revision: number): Promise
   if (incremental && !changes.length) return revision;
   const result = await readResponse(await fetch('/api/club', {
     method: 'PUT',
+    credentials: 'same-origin',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(incremental ? { changes, revision } : { data, revision }),
   }));

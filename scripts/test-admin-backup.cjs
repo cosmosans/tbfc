@@ -52,6 +52,9 @@ const request = (method = 'GET', cookie, body) => new Request(url, {
   const cookie = login.headers.get('set-cookie').split(';')[0];
   for (const flag of ['HttpOnly', 'Secure', 'SameSite=Strict']) assert.ok(login.headers.get('set-cookie').includes(flag));
   assert.equal((await session.onRequestGet({ request: request('GET', cookie), env })).status, 200);
+  const editorView = await (await club.onRequestGet({ request: new Request('https://example.com/api/club', { headers: { cookie } }), env })).json();
+  assert.equal(editorView.admin, true);
+  assert.equal(editorView.data.matches[0].chat, undefined);
   const download = await backup.onRequestGet({ request: request('GET', cookie), env });
   assert.equal(download.status, 200);
   assert.deepEqual((await download.json()).matches[0].chat, match.chat);
@@ -74,5 +77,17 @@ const request = (method = 'GET', cookie, body) => new Request(url, {
   assert.equal((await club.onRequestPut({ request: fullEdit, env })).status, 200);
   assert.equal(match.report, 'Changed again');
   assert.deepEqual(match.chat, [{ id: 'memory', playerId: 'player', text: 'Private memory' }]);
+  const sessionEdit = new Request('https://example.com/api/club', {
+    method: 'PUT', headers: { cookie, origin: 'https://example.com', 'content-type': 'application/json' },
+    body: JSON.stringify({ revision, changes: [{ collection: 'matches', id: 'match', item: { id: 'match', report: 'Managed' } }] }),
+  });
+  assert.equal((await club.onRequestPut({ request: sessionEdit, env })).status, 200);
+  assert.equal(match.report, 'Managed');
+  assert.deepEqual(match.chat, [{ id: 'memory', playerId: 'player', text: 'Private memory' }]);
+  const crossSiteEdit = new Request('https://example.com/api/club', {
+    method: 'PUT', headers: { cookie, origin: 'https://elsewhere.com', 'content-type': 'application/json' },
+    body: JSON.stringify({ revision, changes: [] }),
+  });
+  assert.equal((await club.onRequestPut({ request: crossSiteEdit, env })).status, 403);
   console.log('Admin backup authentication and chat-preserving match save passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

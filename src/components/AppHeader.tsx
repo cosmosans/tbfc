@@ -2,6 +2,7 @@ import {
   AppBar,
   Box,
   Button,
+  IconButton,
   Tab,
   Tabs,
   Toolbar,
@@ -26,7 +27,11 @@ const Brand = styled(Box)({
   gap: 12,
   whiteSpace: "nowrap",
   cursor: "pointer",
-  "@media (max-width: 599.95px)": { width: "100%", justifyContent: "center", gap: 8 },
+  "@media (max-width: 599.95px)": {
+    width: "auto",
+    justifyContent: "flex-start",
+    gap: 8,
+  },
 });
 const BrandCrest = styled("img")({
   width: 48,
@@ -48,7 +53,12 @@ const NavigationTab = styled(Tab)({
   minHeight: 64,
   color: "#fff",
   fontSize: "1.05rem",
-  "@media (max-width: 599.95px)": { minHeight: 44, minWidth: 0, padding: "8px 10px", fontSize: ".75rem" },
+  "@media (max-width: 599.95px)": {
+    minHeight: 44,
+    minWidth: 0,
+    padding: "8px 10px",
+    fontSize: ".75rem",
+  },
   fontWeight: 700,
   "&.Mui-selected": { color: "#fff" },
 });
@@ -86,7 +96,11 @@ export default function AppHeader({
           <BrandCrest src="/crests/tbfc.png" alt="TBFC crest" />
           <Typography
             variant="h6"
-            sx={{ fontWeight: 800, letterSpacing: "-.04em", fontSize: { xs: "1rem", sm: "1.25rem" } }}
+            sx={{
+              fontWeight: 800,
+              letterSpacing: "-.04em",
+              fontSize: { xs: "1rem", sm: "1.25rem" },
+            }}
           >
             Turf Burners FC
           </Typography>
@@ -101,21 +115,43 @@ export default function AppHeader({
             minWidth: 0,
             flexShrink: 1,
             width: { xs: "100%", sm: "auto" },
+            order: { xs: 2, md: 0 },
           }}
         >
-          <NavigationTab value="matches" label="Matchday" onClick={() => onNavigate("matches")} />
-          <NavigationTab value="schedule" label="Schedule" onClick={() => onNavigate("schedule")} />
-          <NavigationTab value="roster" label="Roster" onClick={() => onNavigate("roster")} />
+          <NavigationTab
+            value="matches"
+            label="Matchday"
+            onClick={() => onNavigate("matches")}
+          />
+          <NavigationTab
+            value="schedule"
+            label="Schedule"
+            onClick={() => onNavigate("schedule")}
+          />
+          <NavigationTab
+            value="roster"
+            label="Roster"
+            onClick={() => onNavigate("roster")}
+          />
           {/* <NavigationTab value="tactics" label="Tactics" /> */}
-          <NavigationTab value="stats" label="Stats" onClick={() => onNavigate("stats")} />
-          <NavigationTab value="teams" label="Teams" onClick={() => onNavigate("teams")} />
+          <NavigationTab
+            value="stats"
+            label="Stats"
+            onClick={() => onNavigate("stats")}
+          />
+          <NavigationTab
+            value="teams"
+            label="Teams"
+            onClick={() => onNavigate("teams")}
+          />
           {/* <NavigationTab value="locations" label="Locations" />
           <NavigationTab value="seasons" label="Seasons" /> */}
         </Navigation>
         {onAdmin && (
-          <Button variant="outlined" onClick={onAdmin} sx={{ color: "#fff", borderColor: "#ffffff99", whiteSpace: "nowrap", flexShrink: 0, "&:hover": { borderColor: "#fff" } }}>
-            Admin backup
-          </Button>
+          <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
+            sx={{ color: "#fff", border: "1px solid #ffffff99", borderRadius: 1, width: 44, height: 44, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 }, "&:hover": { borderColor: "#fff" } }}>
+            <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
+          </IconButton>
         )}
         {onBackup && (
           <Button

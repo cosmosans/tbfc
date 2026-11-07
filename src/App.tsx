@@ -33,7 +33,7 @@ import { issues } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
 import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
-import AdminBackupDialog from "./components/AdminBackupDialog";
+import AdminPanel from "./components/AdminPanel";
 import DataTransferDialog from "./components/DataTransferDialog";
 import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
@@ -53,7 +53,7 @@ import Teams from "./features/teams/Teams";
 import TeamDetail from "./features/teams/TeamDetail";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
-import { canEditClub } from "./editAccess";
+import { canEditClub, isLocalEditor, setProductionManageMode } from "./editAccess";
 import { fetchClubData, publishClubData } from "./remoteData";
 
 type Page =
@@ -167,7 +167,56 @@ export default function App() {
   const [tacticsMatchId, setTacticsMatchId] = useState<string | null>(null);
   const [backupOpen, setBackupOpen] = useState(false);
   const [adminBackupOpen, setAdminBackupOpen] = useState(false);
+  const [adminAuthenticated, setAdminAuthenticated] = useState(false);
+  const [manageMode, setManageMode] = useState(false);
   const [backupMessage, setBackupMessage] = useState("");
+
+  async function changeManageMode(enabled: boolean) {
+    if (enabled) {
+      await saveQueue.current.catch(() => undefined);
+      const remote = await fetchClubData();
+      if (!remote.admin || !remote.data) throw new Error("Admin session has expired. Sign in again.");
+      const draft = await readDraft().catch(() => undefined);
+      if (draft?.dirty) {
+        revision.current = draft.revision;
+        setData(eventOnlyPlayerData(draft.data));
+        setDirty(true);
+      } else {
+        revision.current = remote.revision;
+        setData(remote.data);
+        setDirty(false);
+      }
+      setProductionManageMode(true, true);
+      setManageMode(true);
+      setSyncMessage("");
+    } else {
+      setProductionManageMode(false, false);
+      setManageMode(false);
+      setDirty(false);
+      await saveQueue.current.catch(() => undefined);
+      const remote = await fetchClubData();
+      revision.current = remote.revision;
+      if (remote.data) setData(remote.data);
+    }
+  }
+
+  function changeAdminAuthentication(authenticated: boolean) {
+    setAdminAuthenticated(authenticated);
+    if (!authenticated && manageMode) void changeManageMode(false);
+  }
+
+  useEffect(() => {
+    if (isLocalEditor || !manageMode) return;
+    const check = () => {
+      void fetch("/api/admin/session", { credentials: "same-origin", cache: "no-store" })
+        .then(response => response.json())
+        .then(status => { if (!status.authenticated) changeAdminAuthentication(false); })
+        .catch(() => undefined);
+    };
+    const timer = window.setInterval(check, 60_000);
+    window.addEventListener("focus", check);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", check); };
+  }, [manageMode]);
 
   function update(next: ClubData) {
     if (!canEditClub) return;
@@ -298,8 +347,8 @@ export default function App() {
                 ? "schedule"
                 : (page ?? "matches")
         }
-        onBackup={canEditClub ? () => setBackupOpen(true) : undefined}
-        onAdmin={!canEditClub ? () => setAdminBackupOpen(true) : undefined}
+        onBackup={isLocalEditor ? () => setBackupOpen(true) : undefined}
+        onAdmin={!isLocalEditor ? () => setAdminBackupOpen(true) : undefined}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
@@ -696,7 +745,9 @@ export default function App() {
           onSave={saveMatch}
         />
       )}
-      <AdminBackupDialog open={adminBackupOpen} onClose={() => setAdminBackupOpen(false)} />
+      <AdminPanel open={adminBackupOpen} onClose={() => setAdminBackupOpen(false)}
+        authenticated={adminAuthenticated} manageMode={manageMode}
+        onAuthChange={changeAdminAuthentication} onManageModeChange={changeManageMode} />
       {canEditClub && (
         <DataTransferDialog
           open={backupOpen}

@@ -1,4 +1,5 @@
 import { isAdmin } from "../lib/scrapbookAuth";
+import { adminSessionExpiry } from "../lib/adminBackupAuth";
 type Statement = {
   bind(...values: unknown[]): Statement;
   all<T>(): Promise<{ results: T[] }>;
@@ -39,18 +40,20 @@ async function current(db: Database) {
 export async function onRequestGet({ request, env }: Context): Promise<Response> {
   if (!env.CLUB_DB) return json({ error: 'Database is not connected.' }, 503);
   try {
+    const headerAdmin = isAdmin(request, env);
+    const sessionAdmin = !!await adminSessionExpiry(request, env);
     const meta = await current(env.CLUB_DB);
-    if (meta.revision === 0) return json({ revision: 0, data: null, supportsIncremental: true, admin: isAdmin(request, env), updatedAt: meta.updated_at });
+    if (meta.revision === 0) return json({ revision: 0, data: null, supportsIncremental: true, admin: headerAdmin || sessionAdmin, updatedAt: meta.updated_at });
     const rows = await env.CLUB_DB.prepare('SELECT collection, record_id, payload FROM club_records').all<RecordRow>();
     const data: Record<string, unknown[]> = Object.fromEntries(collections.map(name => [name, []]));
     for (const row of rows.results) {
       if (Object.hasOwn(data, row.collection)) {
         const item = JSON.parse(row.payload);
-        if (row.collection === 'matches' && !isAdmin(request, env)) delete item.chat;
+        if (row.collection === 'matches' && !headerAdmin) delete item.chat;
         data[row.collection].push(item);
       }
     }
-    return json({ revision: meta.revision, data, supportsIncremental: true, admin: isAdmin(request, env), updatedAt: meta.updated_at });
+    return json({ revision: meta.revision, data, supportsIncremental: true, admin: headerAdmin || sessionAdmin, updatedAt: meta.updated_at });
   } catch (error) {
     console.error('Could not read club data', error);
     return json({ error: 'Could not read club data.' }, 500);
@@ -59,9 +62,13 @@ export async function onRequestGet({ request, env }: Context): Promise<Response>
 
 export async function onRequestPut({ request, env }: Context): Promise<Response> {
   if (!env.CLUB_DB) return json({ error: 'Database is not connected.' }, 503);
-  if (!env.CLUB_ADMIN_KEY || request.headers.get('x-club-admin-key') !== env.CLUB_ADMIN_KEY) {
-    return json({ error: 'Write access denied.' }, 403);
-  }
+  const headerAdmin = isAdmin(request, env);
+  const sessionAdmin = !headerAdmin && !!await adminSessionExpiry(request, env);
+  if (!headerAdmin && !sessionAdmin) return json({ error: 'Write access denied.' }, 403);
+  if (sessionAdmin && request.headers.get('origin') !== new URL(request.url).origin)
+    return json({ error: 'Request not allowed.' }, 403);
+  if (sessionAdmin && !request.headers.get('content-type')?.includes('application/json'))
+    return json({ error: 'Invalid request.' }, 400);
   try {
     const body = await request.json() as { revision?: unknown; data?: unknown; changes?: Array<{ collection: string; id: string; item: Record<string, unknown> | null }> };
     if (!Number.isSafeInteger(body.revision) || (!validData(body.data) && !Array.isArray(body.changes))) return json({ error: 'Invalid club data.' }, 400);

@@ -2,12 +2,12 @@ import { passwordMatches, privateJson } from './scrapbookAuth';
 
 export { passwordMatches, privateJson };
 export type AdminEnv = { CLUB_ADMIN_KEY?: string };
-const cookieName = '__Host-tbfc-admin-backup';
+const cookieName = '__Host-tbfc-admin';
 const sessionSeconds = 4 * 60 * 60;
 const encoder = new TextEncoder();
 
 async function signingKey(secret: string) {
-  return crypto.subtle.importKey('raw', encoder.encode('tbfc-admin-backup-session:' + secret),
+  return crypto.subtle.importKey('raw', encoder.encode('tbfc-admin-session:' + secret),
     { name: 'HMAC', hash: 'SHA-256' }, false, ['sign', 'verify']);
 }
 
