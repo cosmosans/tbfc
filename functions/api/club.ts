@@ -77,6 +77,14 @@ export async function onRequestPut({ request, env }: Context): Promise<Response>
         if (change.item === null) {
           statements.push(env.CLUB_DB.prepare('DELETE FROM club_records WHERE collection = ? AND record_id = ?').bind(change.collection, change.id));
         } else {
+          if (change.collection === 'matches' && !Object.hasOwn(change.item, 'chat')) {
+            const stored = await env.CLUB_DB.prepare('SELECT payload FROM club_records WHERE collection = ? AND record_id = ?')
+              .bind('matches', change.id).first<{ payload: string }>();
+            if (stored) {
+              const existing = JSON.parse(stored.payload) as Record<string, unknown>;
+              if (Object.hasOwn(existing, 'chat')) change.item = { ...change.item, chat: existing.chat };
+            }
+          }
           statements.push(env.CLUB_DB.prepare('INSERT OR REPLACE INTO club_records (collection, record_id, payload) VALUES (?, ?, ?)')
             .bind(change.collection, change.id, JSON.stringify(change.item)));
         }
@@ -89,7 +97,11 @@ export async function onRequestPut({ request, env }: Context): Promise<Response>
         for (const item of data[collection]) {
           const id = recordId(collection, item);
           const key = JSON.stringify([collection, id]);
-          const payload = JSON.stringify(item);
+          const stored = previous.get(key);
+          const existing = stored && collection === 'matches' ? JSON.parse(stored.payload) as Record<string, unknown> : null;
+          const complete = existing && !Object.hasOwn(item, 'chat') && Object.hasOwn(existing, 'chat')
+            ? { ...item, chat: existing.chat } : item;
+          const payload = JSON.stringify(complete);
           if (previous.get(key)?.payload !== payload) {
             statements.push(env.CLUB_DB.prepare('INSERT OR REPLACE INTO club_records (collection, record_id, payload) VALUES (?, ?, ?)')
               .bind(collection, id, payload));

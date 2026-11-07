@@ -57,10 +57,12 @@ export default function AppHeader({
   page,
   onNavigate,
   onBackup,
+  onAdmin,
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
   onBackup?: () => void;
+  onAdmin?: () => void;
 }) {
   return (
     <Header position="sticky" elevation={0}>
@@ -110,6 +112,11 @@ export default function AppHeader({
           {/* <NavigationTab value="locations" label="Locations" />
           <NavigationTab value="seasons" label="Seasons" /> */}
         </Navigation>
+        {onAdmin && (
+          <Button variant="outlined" onClick={onAdmin} sx={{ color: "#fff", borderColor: "#ffffff99", whiteSpace: "nowrap", flexShrink: 0, "&:hover": { borderColor: "#fff" } }}>
+            Admin backup
+          </Button>
+        )}
         {onBackup && (
           <Button
             variant="outlined"

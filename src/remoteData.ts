@@ -14,7 +14,9 @@ function forRemote(data: ClubData): ClubData {
     const { firstChoicePosition: _old, ...rest } = player;
     return firstChoicePosition ? { ...rest, firstChoicePosition } : rest;
   });
-  return { ...data, players };
+  // Match chats are an archival scrapbook. Ordinary club publishing never writes them.
+  const matches = data.matches.map(({ chat: _chat, ...match }) => match);
+  return { ...data, players, matches };
 }
 
 
@@ -45,7 +47,10 @@ export async function publishClubData(data: ClubData, revision: number): Promise
     for (const collection of collections) {
       const rows = data[collection];
       const oldRows = (baseline.data as unknown as Record<string, Record<string, unknown>[]>)[collection] ?? [];
-      const previous = new Map(oldRows.map(item => [keyFor(collection, item), JSON.stringify(item)]));
+      const comparableRows = collection === 'matches'
+        ? oldRows.map(({ chat: _chat, ...match }) => match)
+        : oldRows;
+      const previous = new Map(comparableRows.map(item => [keyFor(collection, item), JSON.stringify(item)]));
       for (const item of rows as Record<string, unknown>[]) {
         const id = keyFor(collection, item);
         if (previous.get(id) !== JSON.stringify(item)) changes.push({ collection, id, item });

@@ -32,12 +32,12 @@ import { issues } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
 import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
+import AdminBackupDialog from "./components/AdminBackupDialog";
 import DataTransferDialog from "./components/DataTransferDialog";
 import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
-import MatchChat from "./features/matches/MatchChat";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
 import MatchDialog from "./features/matches/MatchDialog";
@@ -165,6 +165,7 @@ export default function App() {
   }
   const [tacticsMatchId, setTacticsMatchId] = useState<string | null>(null);
   const [backupOpen, setBackupOpen] = useState(false);
+  const [adminBackupOpen, setAdminBackupOpen] = useState(false);
   const [backupMessage, setBackupMessage] = useState("");
 
   function update(next: ClubData) {
@@ -297,6 +298,7 @@ export default function App() {
                 : (page ?? "matches")
         }
         onBackup={canEditClub ? () => setBackupOpen(true) : undefined}
+        onAdmin={!canEditClub ? () => setAdminBackupOpen(true) : undefined}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
@@ -467,18 +469,7 @@ export default function App() {
                 <LineupEditor data={data} match={selected} update={update} />
               )}
               {activeDetailTab === 3 && (
-                canEditClub ? (
-                  <MatchChat
-                    messages={selected.chat ?? []}
-                    players={data.players}
-                    onSave={(chat) => update({
-                      ...data,
-                      matches: data.matches.map((match) => match.id === selected.id ? { ...match, chat } : match),
-                    })}
-                  />
-                ) : (
-                  <PrivateScrapbook key={selected.id} matchId={selected.id} players={data.players} />
-                )
+                <PrivateScrapbook key={selected.id} matchId={selected.id} players={data.players} />
               )}
               {activeDetailTab === 4 && (
                 <Matchboard data={data} match={selected} update={update} />
@@ -704,6 +695,7 @@ export default function App() {
           onSave={saveMatch}
         />
       )}
+      <AdminBackupDialog open={adminBackupOpen} onClose={() => setAdminBackupOpen(false)} />
       {canEditClub && (
         <DataTransferDialog
           open={backupOpen}
