@@ -3,6 +3,7 @@ import MatchNavigation from "./features/matches/MatchNavigation";
 import { isTurfbotReport } from "./features/matches/reportAttribution";
 import PlayerDetail from "./features/roster/PlayerDetail";
 import { readDraft, writeDraft } from "./localDraft";
+import { backupMatchesLive } from "./backupCompare";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -704,11 +705,22 @@ export default function App() {
           onRestore={async (backup) => {
             const restored = { ...backup, locations: backup.locations ?? [], standings: backup.standings ?? [] };
             await saveQueue.current.catch(() => undefined);
-            await writeDraft({ data: restored, revision: revision.current, dirty: true });
-            editVersion.current += 1;
-            setData(restored);
-            setDirty(true);
-            setBackupMessage("Backup restored locally. Use Publish to live when ready.");
+            const remote = await fetchClubData();
+            if (remote.data && backupMatchesLive(restored, remote.data)) {
+              await writeDraft({ data: remote.data, revision: remote.revision, dirty: false });
+              revision.current = remote.revision;
+              editVersion.current += 1;
+              setData(remote.data);
+              setDirty(false);
+              setSyncMessage("");
+              setBackupMessage("Backup matches live data. Loaded the latest production copy.");
+            } else {
+              await writeDraft({ data: restored, revision: revision.current, dirty: true });
+              editVersion.current += 1;
+              setData(restored);
+              setDirty(true);
+              setBackupMessage("Backup restored as a local draft. It differs from live data; review before publishing.");
+            }
             navigate("/");
           }}
         />

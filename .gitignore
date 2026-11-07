@@ -4,3 +4,6 @@ dist/
 .env
 .env.local
 .DS_Store
+
+# Private production exports
+outputs/production-backup-*.json
