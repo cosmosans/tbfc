@@ -163,7 +163,14 @@ export default function LineupEditor({
                 alignItems="center"
               >
                 <Typography variant="h6">Starting VII</Typography>
-                <Button size="small" variant="contained" disabled={!canEditClub || !data.firstChoice || !Object.values(data.firstChoice).some(Boolean)} onClick={loadFirstChoice}>Load First Choice VII</Button>
+                <Stack direction="row" spacing={1}>
+                  <Button size="small" variant="outlined" disabled={!canEditClub || !lineup.starters.some(Boolean)} onClick={() => save({ ...lineup, starters: lineup.starters.map(() => "") })}>
+                    Clear
+                  </Button>
+                  <Button size="small" variant="contained" disabled={!canEditClub || !data.firstChoice || !Object.values(data.firstChoice).some(Boolean)} onClick={loadFirstChoice}>
+                    Load First Choice VII
+                  </Button>
+                </Stack>
               </Stack>
 
               <LineupGrid sx={{ mt: 2 }}>
