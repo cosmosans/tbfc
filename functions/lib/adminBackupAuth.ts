@@ -3,7 +3,7 @@ import { passwordMatches, privateJson } from './scrapbookAuth';
 export { passwordMatches, privateJson };
 export type AdminEnv = { CLUB_ADMIN_KEY?: string };
 const cookieName = '__Host-tbfc-admin';
-const sessionSeconds = 4 * 60 * 60;
+const sessionSeconds = 30 * 24 * 60 * 60;
 const encoder = new TextEncoder();
 
 async function signingKey(secret: string) {

@@ -1,7 +1,6 @@
 import {
   AppBar,
   Box,
-  Button,
   IconButton,
   Tab,
   Tabs,
@@ -66,12 +65,10 @@ const NavigationTab = styled(Tab)({
 export default function AppHeader({
   page,
   onNavigate,
-  onBackup,
   onAdmin,
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
-  onBackup?: () => void;
   onAdmin?: () => void;
 }) {
   return (
@@ -152,26 +149,6 @@ export default function AppHeader({
             sx={{ color: "#fff", border: "1px solid #ffffff99", borderRadius: 1, width: 44, height: 44, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 }, "&:hover": { borderColor: "#fff" } }}>
             <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
           </IconButton>
-        )}
-        {onBackup && (
-          <Button
-            variant="outlined"
-            onClick={onBackup}
-            sx={{
-              color: "#fff",
-              borderColor: "#ffffff99",
-              display: { xs: "none", lg: "inline-flex" },
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-              mx: { xs: "auto", sm: 0 },
-              fontSize: { xs: ".75rem", sm: ".875rem" },
-              minHeight: { xs: 36, sm: 0 },
-              py: { xs: 0.5, sm: 0.75 },
-              "&:hover": { borderColor: "#fff" },
-            }}
-          >
-            Backup
-          </Button>
         )}
       </Toolbar>
     </Header>

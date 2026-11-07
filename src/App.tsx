@@ -53,7 +53,7 @@ import Teams from "./features/teams/Teams";
 import TeamDetail from "./features/teams/TeamDetail";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
-import { canEditClub, isLocalEditor, setProductionManageMode } from "./editAccess";
+import { canEditClub, setManageModeAccess } from "./editAccess";
 import { fetchClubData, publishClubData } from "./remoteData";
 
 type Page =
@@ -186,11 +186,11 @@ export default function App() {
         setData(remote.data);
         setDirty(false);
       }
-      setProductionManageMode(true, true);
+      setManageModeAccess(true, true);
       setManageMode(true);
       setSyncMessage("");
     } else {
-      setProductionManageMode(false, false);
+      setManageModeAccess(false, false);
       setManageMode(false);
       setDirty(false);
       await saveQueue.current.catch(() => undefined);
@@ -206,7 +206,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    if (isLocalEditor || !manageMode) return;
+    if (!manageMode) return;
     const check = () => {
       void fetch("/api/admin/session", { credentials: "same-origin", cache: "no-store" })
         .then(response => response.json())
@@ -347,8 +347,7 @@ export default function App() {
                 ? "schedule"
                 : (page ?? "matches")
         }
-        onBackup={isLocalEditor ? () => setBackupOpen(true) : undefined}
-        onAdmin={!isLocalEditor ? () => setAdminBackupOpen(true) : undefined}
+        onAdmin={() => setAdminBackupOpen(true)}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
@@ -747,7 +746,8 @@ export default function App() {
       )}
       <AdminPanel open={adminBackupOpen} onClose={() => setAdminBackupOpen(false)}
         authenticated={adminAuthenticated} manageMode={manageMode}
-        onAuthChange={changeAdminAuthentication} onManageModeChange={changeManageMode} />
+        onAuthChange={changeAdminAuthentication} onManageModeChange={changeManageMode}
+        onBackupTools={() => { setAdminBackupOpen(false); setBackupOpen(true); }} />
       {canEditClub && (
         <DataTransferDialog
           open={backupOpen}

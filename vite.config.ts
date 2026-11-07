@@ -12,7 +12,6 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target,
           changeOrigin: true,
-          headers: env.TBFC_ADMIN_KEY ? { 'x-club-admin-key': env.TBFC_ADMIN_KEY } : {},
           configure(proxy) {
             proxy.on('proxyReq', (proxyRequest, request) => {
               const origin = request.headers.origin;
