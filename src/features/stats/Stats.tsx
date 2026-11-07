@@ -94,8 +94,8 @@ export default function Stats({
     "results",
   );
   const [opponentMetric, setOpponentMetric] = useState<
-    "teams" | "teamGoals" | "goalsFor" | "goalsAgainst"
-  >("teams");
+    "teamGoals" | "goalsFor" | "goalsAgainst"
+  >("teamGoals");
   const seasons = orderedSeasons(data, false).map((s) => ({
     season: s.name,
     ...record(
@@ -182,13 +182,12 @@ export default function Stats({
                 value={opponentMetric}
                 onChange={(event) =>
                   setOpponentMetric(
-                    event.target.value as "teams" | "teamGoals" | "goalsFor" | "goalsAgainst",
+                    event.target.value as "teamGoals" | "goalsFor" | "goalsAgainst",
                   )
                 }
                 inputProps={{ "aria-label": "Opponent chart metric" }}
                 sx={{ minWidth: 145, fontSize: ".875rem" }}
               >
-                <MenuItem value="teams">Most Played</MenuItem>
                 <MenuItem value="teamGoals">Goal Differential</MenuItem>
                 <MenuItem value="goalsFor">Goals Scored</MenuItem>
                 <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
@@ -282,12 +281,12 @@ export default function Stats({
                           dataKey={
                             opponentMetric === "goalsFor"
                               ? "goalsFor"
-                              : opponentMetric === "goalsAgainst" ? "goalsAgainst" : "played"
+                              : "goalsAgainst"
                           }
                           name={
                             opponentMetric === "goalsFor"
                               ? "TBFC Goals Scored"
-                              : opponentMetric === "goalsAgainst" ? "Goals Allowed" : "Matches Played"
+                              : "Goals Allowed"
                           }
                           fill={theme.palette.primary.main}
                           isAnimationActive={false}
@@ -302,7 +301,7 @@ export default function Stats({
                             dataKey={
                               opponentMetric === "goalsFor"
                                 ? "goalsFor"
-                                : opponentMetric === "goalsAgainst" ? "goalsAgainst" : "played"
+                                : "goalsAgainst"
                             }
                             position="top"
                             fill="#fff"

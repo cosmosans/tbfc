@@ -81,7 +81,7 @@ Cloudflare Pages is the intended host for `turfburnersfc.soccer`. The build uses
 
 ## Shared backend
 
-Cloudflare Pages Functions expose `GET /api/club` publicly and `PUT /api/club` with a private write key. The `tbfc-club` D1 database stores one row per match, player, team, season, location, event, lineup, board, and standings snapshot. `migrations/0001_club_records.sql` defines its tables. Reads return a complete club snapshot; writes replace it in one D1 batch. A revision check catches stale edits. The write key stays in Cloudflare's encrypted environment and the ignored local `.env.local` file; the browser never receives it. Vite proxies localhost API calls and adds the key only from the local server. `npm run dev` listens on loopback, so another device cannot use that proxy.
+Cloudflare Pages Functions expose `GET /api/club` publicly and `PUT /api/club` with a private write key. The `tbfc-club` D1 database stores one row per match, player, team, season, location, event, lineup, board, and standings snapshot. `migrations/0001_club_records.sql` defines its tables. Public reads omit private match chats; authenticated local-editor reads return the complete club snapshot; writes replace it in one D1 batch. A revision check catches stale edits. The write key stays in Cloudflare's encrypted environment and the ignored local `.env.local` file; the browser never receives it. Vite proxies localhost API calls and adds the key only from the local server. `npm run dev` listens on loopback, so another device cannot use that proxy.
 
 The older `supabase/migrations/` directory remains as an unused relational design. The active backend is D1. Uploaded photos and crests are currently embedded in record data; managed image storage is a later improvement.
 

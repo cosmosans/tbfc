@@ -1,3 +1,4 @@
+import PrivateScrapbook from "./PrivateScrapbook";
 import { useMemo, useState } from "react";
 import {
   Box,
@@ -129,13 +130,13 @@ export default function MatchHistory({
           )}
         </CardContent>
       </Card>
-      {canEditClub && (
+      {canEditClub ? (
         <MatchChat
           messages={match.chat ?? []}
           players={players}
           onSave={onSaveChat}
         />
-      )}
+      ) : <PrivateScrapbook key={match.id} matchId={match.id} players={players} />}
       <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}

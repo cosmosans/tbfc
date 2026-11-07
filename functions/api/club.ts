@@ -1,3 +1,4 @@
+import { isAdmin } from "../lib/scrapbookAuth";
 type Statement = {
   bind(...values: unknown[]): Statement;
   all<T>(): Promise<{ results: T[] }>;
@@ -35,7 +36,7 @@ async function current(db: Database) {
   return meta ?? { revision: 0, updated_at: '' };
 }
 
-export async function onRequestGet({ env }: Context): Promise<Response> {
+export async function onRequestGet({ request, env }: Context): Promise<Response> {
   if (!env.CLUB_DB) return json({ error: 'Database is not connected.' }, 503);
   try {
     const meta = await current(env.CLUB_DB);
@@ -43,7 +44,11 @@ export async function onRequestGet({ env }: Context): Promise<Response> {
     const rows = await env.CLUB_DB.prepare('SELECT collection, record_id, payload FROM club_records').all<RecordRow>();
     const data: Record<string, unknown[]> = Object.fromEntries(collections.map(name => [name, []]));
     for (const row of rows.results) {
-      if (Object.hasOwn(data, row.collection)) data[row.collection].push(JSON.parse(row.payload));
+      if (Object.hasOwn(data, row.collection)) {
+        const item = JSON.parse(row.payload);
+        if (row.collection === 'matches' && !isAdmin(request, env)) delete item.chat;
+        data[row.collection].push(item);
+      }
     }
     return json({ revision: meta.revision, data, supportsIncremental: true, updatedAt: meta.updated_at });
   } catch (error) {

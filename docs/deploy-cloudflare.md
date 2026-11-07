@@ -19,3 +19,46 @@ The first successful `GET /api/club` returns `data: null` until a localhost brow
 The existing roster names, match archive, and bundled images are public on the deployed site.
 
 The GitHub app installation has access to `cosmosans/tbfc`; pushes to `main` trigger production builds.
+
+## Private Scrapbook
+
+Match chats are now private. Public `GET /api/club` responses omit every match's
+`chat` field, even when a scrapbook session is present. The local editor's
+server-held admin key still permits complete reads and publishing.
+
+Before deploying this version:
+
+1. Apply `migrations/0003_scrapbook_login.sql` to the existing `tbfc-club` D1
+   database (the `CLUB_DB` binding). This adds only a login-attempt table.
+2. In the Pages project's **Settings → Variables and Secrets**, add an encrypted
+   secret named `SCRAPBOOK_PASSWORD` for Production. Use a long, unique password.
+   Set Preview separately if private viewing is wanted there. Never use a
+   `VITE_` variable or commit the password.
+3. Deploy the updated Pages Functions and frontend together. Until this
+   deployment is live, the old public endpoint may still expose published chats.
+4. In a logged-out browser, confirm `/api/club` contains no match chats and
+   `/api/scrapbook?match=...` returns 401. Open a match's Report tab, select
+   **Unlock Scrapbook**, and verify password entry, remembered access, and
+   **Lock Scrapbook**. Confirm that logged-in viewers have no editing controls.
+
+Cloudflare secret setup:
+https://developers.cloudflare.com/pages/functions/bindings/#secrets
+
+The session lasts 30 days in a Secure, HttpOnly, SameSite=Strict cookie. Private
+responses are not cacheable and chats are held only in component memory, never
+written into the public club snapshot or browser storage by the viewer.
+Changing the secret and redeploying invalidates existing sessions on subsequent
+requests. Content already viewed or copied cannot be recalled. Logout clears
+the current browser cookie and clears chats in other open tabs; it does not
+revoke a separately copied session token.
+
+Sign-in is limited to ten attempts per IP per 15-minute window using D1. Missing
+configuration or a missing rate-limit table fails closed. Existing public
+reports, photos, player photos, and stats remain public: this gate protects
+the match-chat field, not private material copied into a report or gallery.
+Current chats contain text and player references, not separately uploaded
+private media. Future private attachments must use authenticated delivery too.
+
+Run `node scripts/test-scrapbook.cjs` for the authentication/privacy regression
+checks. Production access must be verified after deployment; local tests alone
+do not establish that a live site is protected.
