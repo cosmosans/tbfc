@@ -22,6 +22,7 @@ const Segment = styled(Box, {
   placeItems: "center",
   transform: "skewX(-10deg)",
   minWidth: 46,
+  transition: "flex-grow 2s ease",
   background:
     tone === "win"
       ? theme.palette.success.main

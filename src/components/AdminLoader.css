@@ -25,14 +25,14 @@
   bottom: 0;
   width: 86px;
   height: 6px;
-  background: radial-gradient(ellipse, #bf582b 4%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(255, 255, 255, .5) 4%, transparent 70%);
   animation: street-ball-shadow var(--bounce-duration) infinite;
 }
 
 .admin-loader-ball {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 45px;
+  height: 45px;
   transform-origin: center 98%;
   animation: street-ball-bounce var(--bounce-duration) infinite;
 }
@@ -43,15 +43,15 @@
   height: 34px;
   transform-origin: center bottom;
   background:
-    radial-gradient(ellipse at 8% 66%, #ff7624 2px, transparent 3px),
-    radial-gradient(circle at 5% 26%, #ffbf83 1px, transparent 2px),
-    radial-gradient(ellipse at 20% 82%, #ec6222 5px, transparent 6px),
-    radial-gradient(circle at 17% 42%, #ff9741 2px, transparent 3px),
-    radial-gradient(circle at 24% 18%, #ed6225 1px, transparent 2px),
-    radial-gradient(ellipse at 77% 72%, #ff873f 4px, transparent 5px),
-    radial-gradient(circle at 85% 25%, #ffbf83 2px, transparent 3px),
-    radial-gradient(circle at 90% 65%, #ed6225 2px, transparent 3px),
-    radial-gradient(circle at 95% 43%, #ed6225 1px, transparent 2px);
+    radial-gradient(ellipse at 8% 66%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 5% 26%, #fff 1px, transparent 2px),
+    radial-gradient(ellipse at 20% 82%, #fff 5px, transparent 6px),
+    radial-gradient(circle at 17% 42%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 24% 18%, #fff 1px, transparent 2px),
+    radial-gradient(ellipse at 77% 72%, #fff 4px, transparent 5px),
+    radial-gradient(circle at 85% 25%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 90% 65%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 95% 43%, #fff 1px, transparent 2px);
   animation: street-paint-impact var(--bounce-duration) infinite;
 }
 

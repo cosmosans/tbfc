@@ -131,6 +131,14 @@ export default function MatchBanner({
         item.opponentId === opponent?.id || item.opponent === match.opponent,
     ),
   );
+  if (match.status === "in_progress") {
+    const liveResult = match.goalsFor > match.goalsAgainst
+      ? "W"
+      : match.goalsFor < match.goalsAgainst
+        ? "L"
+        : "D";
+    headToHead[liveResult] += 1;
+  }
   const clock = match.status === "in_progress" && (
     <Stack spacing={0.5}>
       {phase?.label === "HALF TIME" && (
