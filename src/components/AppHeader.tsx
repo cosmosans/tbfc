@@ -38,14 +38,14 @@ const Brand = styled(Box)({
   gap: 12,
   whiteSpace: "nowrap",
   cursor: "pointer",
+  position: "absolute",
+  left: "50%",
+  transform: "translateX(-50%)",
   "@media (max-width: 599.95px)": {
     width: "auto",
     justifyContent: "center",
     gap: 8,
-    position: "absolute",
     top: 4,
-    left: "50%",
-    transform: "translateX(-50%)",
   },
 });
 const mobileCrestSize = 36;
@@ -121,27 +121,6 @@ export default function AppHeader({
             Turf Burners FC
           </Typography>
         </Brand>
-        <Tabs
-          value={page}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            display: { xs: "none", sm: "flex" },
-            ml: "auto",
-            minWidth: 0,
-            "& .MuiTabs-indicator": { bgcolor: "#fff", height: 5, transform: "skewX(-25deg)" },
-          }}
-        >
-          {primaryItems.map((item) => (
-            <Tab
-              key={item.page}
-              value={item.page}
-              label={item.label}
-              onClick={() => onNavigate(item.page)}
-              sx={{ color: "#fff", fontWeight: 700, minHeight: 64, "&.Mui-selected": { color: "#fff" } }}
-            />
-          ))}
-        </Tabs>
         {onAdmin && (
           <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
             sx={{ color: "#fff", border: 0, width: 44, height: 44, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: "auto" }}>
@@ -151,12 +130,12 @@ export default function AppHeader({
       </Toolbar>
       {matchTab && matchTabOptions && onMatchTabChange && (
         <Tabs
+          aria-label="Match navigation"
           value={matchTab}
           onChange={(_, value: MatchTab) => onMatchTabChange(value)}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            display: { xs: "flex", sm: "none" },
             minHeight: 48,
             px: 1,
             "& .MuiTabs-indicator": { bgcolor: "#fff", height: 4, transform: "skewX(-25deg)" },
@@ -172,13 +151,14 @@ export default function AppHeader({
       component="nav"
       aria-label="Primary navigation"
       sx={{
-        display: { xs: "grid", sm: "none" },
+        display: "grid",
         position: "fixed",
         left: 0,
         right: 0,
         bottom: 0,
         zIndex: (theme) => theme.zIndex.appBar + 1,
-        gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+        gridTemplateColumns: "repeat(5, minmax(0, 144px))",
+        justifyContent: "center",
         bgcolor: "#111",
         borderTop: "1px solid #333",
         pb: "env(safe-area-inset-bottom, 0px)",

@@ -23,8 +23,6 @@ import {
   MenuItem,
   Select,
   Stack,
-  Tab,
-  Tabs,
   Typography,
 } from "@mui/material";
 import type { ClubData, Match } from "./model";
@@ -581,25 +579,6 @@ export default function App() {
                   for review.
                 </Alert>
               ))}
-              <Tabs
-                value={activeDetailTab}
-                onChange={(_, value) => setActiveDetailTab(value)}
-                sx={{
-                  display: { xs: "none", sm: "flex" },
-                  mt: 3,
-                  mb: 2,
-                  bgcolor: "#111",
-                  px: 2,
-                }}
-                variant="scrollable"
-                scrollButtons="auto"
-              >
-                <Tab label="Lineup" />
-                <Tab label="Events" />
-                <Tab label="Report" />
-                <Tab label="Chat" />
-                <Tab label="Matchboard" />
-              </Tabs>
               {activeDetailTab === 2 && (
                 <MatchHistory
                   key={selected.id}

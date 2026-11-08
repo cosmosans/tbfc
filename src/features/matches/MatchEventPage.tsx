@@ -1,6 +1,6 @@
 import MatchNavigation from "./MatchNavigation";
 import { useSearchParams } from "react-router-dom";
-import { Alert, Box, Stack, Tab, Tabs } from "@mui/material";
+import { Alert, Box, Stack } from "@mui/material";
 import type { ClubData, Match } from "../../model";
 import { opponentFor } from "../../clubView";
 import LineupEditor from "../lineup/LineupEditor";
@@ -20,7 +20,7 @@ export default function MatchEventPage({
   update: (data: ClubData) => void;
   onEdit?: () => void;
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const view = normalizeMatchTab(searchParams.get("tab"), true);
   const opponent = opponentFor(data, match);
   return (
@@ -38,19 +38,6 @@ export default function MatchEventPage({
           <strong>Team intel:</strong> {opponent.notes}
         </Alert>
       )}
-      <Tabs
-        centered
-        value={view}
-        onChange={(_, next) =>
-          setSearchParams(next === "matchboard" ? { tab: "matchboard" } : {}, {
-            replace: true,
-          })
-        }
-        sx={{ display: { xs: "none", sm: "flex" }, bgcolor: "#111", px: 2 }}
-      >
-        <Tab value="lineup" label="Lineup" />
-        <Tab value="matchboard" label="Matchboard" />
-      </Tabs>
       {view === "lineup" ? (
         <LineupEditor data={data} match={match} update={update} />
       ) : (
