@@ -154,8 +154,11 @@ export default function MatchBanner({
         <Chip
           size="small"
           label="HALF TIME"
-          color="primary"
-          sx={{ textShadow: "none" }}
+          sx={{
+            textShadow: "none",
+            background: "transparent",
+            fontSize: 10,
+          }}
         />
       )}
       {phase && phase.label !== "HALF TIME" && (

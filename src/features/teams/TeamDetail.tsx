@@ -1,10 +1,4 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
 import type { ClubData, Match, Opponent } from "../../model";
 import { record } from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
@@ -39,9 +33,6 @@ export default function TeamDetail({
     <Stack gap={3}>
       <Card sx={{ bgcolor: "#171a1c", border: 0 }}>
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Typography variant="overline" color="primary">
-            Head to head · All Seasons
-          </Typography>
           <Stack
             direction="row"
             gap={{ xs: 1, sm: 2 }}
@@ -105,8 +96,17 @@ export default function TeamDetail({
             {results.played} Matches Played
           </Typography>
           {team.kitImageUrl && (
-            <Box component="img" src={team.kitImageUrl} alt={team.name + " kit"}
-              sx={{ display: "block", maxWidth: "100%", maxHeight: 240, objectFit: "contain" }} />
+            <Box
+              component="img"
+              src={team.kitImageUrl}
+              alt={team.name + " kit"}
+              sx={{
+                display: "block",
+                maxWidth: "100%",
+                maxHeight: 240,
+                objectFit: "contain",
+              }}
+            />
           )}
           {team.notes && (
             <Typography sx={{ mt: 2, whiteSpace: "pre-wrap" }}>
