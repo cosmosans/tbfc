@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { styled } from "@mui/material/styles";
-import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import ShieldIcon from "@mui/icons-material/Shield";
 import { Link } from "react-router-dom";
 
 const CrestFrame = styled("span", {
@@ -43,13 +43,13 @@ export default function OpponentCrest({
   teamId?: string;
   teamName?: string;
 }) {
-  const [imageFailed, setImageFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState<string>();
   const crest = (
     <CrestFrame compact={compact} size={size} mobileSize={mobileSize} aria-hidden="true">
-      {url && !imageFailed ? (
-        <CrestImage src={url} alt="" onError={() => setImageFailed(true)} />
+      {url && url !== failedUrl ? (
+        <CrestImage src={url} alt="" onError={() => setFailedUrl(url)} />
       ) : (
-        <SportsSoccerIcon color="disabled" />
+        <ShieldIcon viewBox="2 1 20 22" sx={{ width: "100%", height: "100%", color: "#828892", stroke: "#f2f3f5", strokeWidth: 0.85 }} />
       )}
     </CrestFrame>
   );

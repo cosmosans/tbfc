@@ -36,6 +36,10 @@ export default function LineupEditor({
 }) {
   const lineup =
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
+  if (!canEditClub) {
+    return <LineupPitch data={data} lineup={lineup} showTitle={false} />;
+  }
+
   function save(next: typeof lineup) {
     const normalized = {
       ...next,

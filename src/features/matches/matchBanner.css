@@ -1,0 +1,43 @@
+@media (max-width: 599.95px) {
+  .match-banner-detail {
+    --collapse: 0;
+    position: sticky;
+    top: var(--sticky-top);
+    z-index: 10;
+  }
+
+  .match-banner-detail > .MuiCard-root {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .match-banner-detail > .MuiCard-root::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: #08090a;
+    opacity: var(--collapse);
+  }
+
+  .match-banner-detail [data-banner-move] {
+    position: relative;
+    z-index: 1;
+    transform: translate(calc(var(--move-x, 0px) * var(--collapse)), calc(var(--move-y, 0px) * var(--collapse)))
+      scale(calc(1 - var(--shrink, 0.5) * var(--collapse)));
+  }
+
+  .match-banner-detail [data-banner-move="score"] {
+    --shrink: 0.28;
+  }
+
+  .match-banner-detail .banner-secondary,
+  .match-banner-detail .banner-team > :not([data-banner-move]) {
+    opacity: clamp(0, calc(1 - var(--collapse) / 0.75), 1);
+  }
+
+  .match-banner-detail[data-details-hidden="true"] .banner-secondary,
+  .match-banner-detail[data-details-hidden="true"] .banner-team > :not([data-banner-move]) {
+    visibility: hidden;
+  }
+}

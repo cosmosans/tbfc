@@ -23,7 +23,9 @@ import PageHeading from "../../components/PageHeading";
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
 import { canEditClub } from "../../editAccess";
 
-async function prepareTeamCrest(file: File): Promise<string> {
+const teamCardImageSize = 58;
+
+async function prepareTeamImage(file: File): Promise<string> {
   if (!file.type.startsWith("image/")) throw new Error("Choose an image file.");
   if (file.size > 10_000_000)
     throw new Error("Choose an image smaller than 10 MB.");
@@ -33,7 +35,7 @@ async function prepareTeamCrest(file: File): Promise<string> {
     await new Promise<void>((resolve, reject) => {
       image.onload = () => resolve();
       image.onerror = () =>
-        reject(new Error("This crest could not be opened."));
+        reject(new Error("This image could not be opened."));
       image.src = objectUrl;
     });
     const scale = Math.min(
@@ -44,7 +46,7 @@ async function prepareTeamCrest(file: File): Promise<string> {
     canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
     canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
     const context = canvas.getContext("2d");
-    if (!context) throw new Error("This crest could not be prepared.");
+    if (!context) throw new Error("This image could not be prepared.");
     context.drawImage(image, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL("image/png");
   } finally {
@@ -137,14 +139,29 @@ export default function Teams({
                 <CardContent>
                   <Stack direction="row" alignItems="center" gap={2}>
                     <OpponentCrest
+                      size={teamCardImageSize}
                       key={opponent.crestUrl}
                       url={opponent.crestUrl}
                       teamId={opponent.id}
                       teamName={opponent.name}
                     />
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography variant="h6">{opponent.name}</Typography>
-                    </Box>
+                    <Typography variant="h6" sx={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
+                      {opponent.name}
+                    </Typography>
+                    {opponent.kitImageUrl && (
+                      <Box
+                        component="img"
+                        src={opponent.kitImageUrl}
+                        alt={opponent.name + " kit"}
+                        sx={{
+                          width: teamCardImageSize,
+                          height: teamCardImageSize,
+                          flexShrink: 0,
+                          objectFit: "contain",
+                          objectPosition: "right center",
+                        }}
+                      />
+                    )}
                   </Stack>
 
                   <Box
@@ -258,19 +275,23 @@ function OpponentDialog({
   onSave: (opponent: Opponent) => void;
 }) {
   const [draft, setDraft] = useState<Opponent | null>(opponent);
-  const [crestError, setCrestError] = useState("");
+  const [imageError, setImageError] = useState("");
   const colorValid =
     !draft?.color || /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(draft.color);
-  async function uploadCrest(file?: File) {
+  const [uploading, setUploading] = useState(false);
+  async function uploadImage(field: "crestUrl" | "kitImageUrl", file?: File) {
     if (!file) return;
-    setCrestError("");
+    setImageError("");
+    setUploading(true);
     try {
-      const crestUrl = await prepareTeamCrest(file);
-      setDraft((current) => (current ? { ...current, crestUrl } : current));
+      const url = await prepareTeamImage(file);
+      setDraft((current) => (current ? { ...current, [field]: url } : current));
     } catch (error) {
-      setCrestError(
-        error instanceof Error ? error.message : "Could not add this crest.",
+      setImageError(
+        error instanceof Error ? error.message : "Could not add this image.",
       );
+    } finally {
+      setUploading(false);
     }
   }
   return (
@@ -287,14 +308,14 @@ function OpponentDialog({
           />
           <Stack direction="row" gap={2} alignItems="center">
             <OpponentCrest key={draft?.crestUrl ?? ""} url={draft?.crestUrl} />
-            <Button component="label" variant="outlined">
+            <Button component="label" variant="outlined" disabled={uploading}>
               Upload Crest
               <input
                 hidden
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  void uploadCrest(e.target.files?.[0]);
+                  void uploadImage("crestUrl", e.target.files?.[0]);
                   e.target.value = "";
                 }}
               />
@@ -308,7 +329,25 @@ function OpponentDialog({
             }
             helperText="You can also paste a direct image URL."
           />
-          {crestError && <Alert severity="error">{crestError}</Alert>}
+          <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
+            {draft?.kitImageUrl && (
+              <Box component="img" src={draft.kitImageUrl} alt="Kit preview"
+                sx={{ width: 80, height: 80, objectFit: "contain" }} />
+            )}
+            <Button component="label" variant="outlined" disabled={uploading}>
+              Upload Kit Image
+              <input hidden type="file" accept="image/*" onChange={(e) => {
+                void uploadImage("kitImageUrl", e.target.files?.[0]);
+                e.target.value = "";
+              }} />
+            </Button>
+            {draft?.kitImageUrl && (
+              <Button disabled={uploading} onClick={() => setDraft({ ...draft, kitImageUrl: "" })}>
+                Remove Kit Image
+              </Button>
+            )}
+          </Stack>
+          {imageError && <Alert severity="error">{imageError}</Alert>}
           <Stack direction="row" gap={2} alignItems="center">
             <TextField
               label="Team Color (Hex)"
@@ -353,7 +392,7 @@ function OpponentDialog({
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
-          disabled={!draft?.name.trim() || !colorValid}
+          disabled={uploading || !draft?.name.trim() || !colorValid}
           onClick={() =>
             draft &&
             onSave({

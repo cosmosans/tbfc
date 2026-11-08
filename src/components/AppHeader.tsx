@@ -83,7 +83,7 @@ export default function AppHeader({
 }) {
   return (
     <>
-    <Header position="sticky" elevation={0}>
+    <Header id="club-header" position="sticky" elevation={0}>
       <Toolbar
         sx={{
           minHeight: { xs: 44, sm: 76 },
@@ -145,7 +145,7 @@ export default function AppHeader({
         {onAdmin && (
           <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
             sx={{ color: "#fff", border: 0, width: 44, height: 44, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: "auto" }}>
-            <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
+            <Box component="img" src="/icons/soccer-settings.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
           </IconButton>
         )}
       </Toolbar>
@@ -163,7 +163,7 @@ export default function AppHeader({
           }}
         >
           {matchTabOptions.map((tab) => (
-            <Tab key={tab} value={tab} label={tab === "story" ? "Report" : tab} sx={{ color: "#fff", fontWeight: 700, minHeight: 48, "&.Mui-selected": { color: "#fff" } }} />
+            <Tab key={tab} value={tab} label={tab === "story" ? "Report" : tab.charAt(0).toUpperCase() + tab.slice(1)} sx={{ textTransform: "none", color: "#fff", fontWeight: 700, minHeight: 48, "&.Mui-selected": { color: "#fff" } }} />
           ))}
         </Tabs>
       )}

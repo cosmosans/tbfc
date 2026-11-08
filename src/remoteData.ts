@@ -1,6 +1,6 @@
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
-import type { ClubData } from './model';
+import type { ClubData, MatchEvent } from './model';
 
 const collections = ['matches', 'players', 'opponents', 'seasons', 'locations', 'events', 'lineups', 'boards', 'standings'] as const;
 
@@ -36,6 +36,16 @@ export async function fetchClubData(): Promise<RemoteClub> {
   baseline = await readResponse(await fetch('/api/club', { cache: 'no-store', credentials: 'same-origin' })) as RemoteClub;
   if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
+}
+
+export async function fetchMatchEvents(matchId: string): Promise<MatchEvent[]> {
+  const query = new URLSearchParams({ matchId });
+  const response = await fetch(`/api/match-events?${query}`, { cache: 'no-store' });
+  const { events } = await readResponse(response);
+  if (!Array.isArray(events) || !events.every(event => event?.matchId === matchId)) {
+    throw new Error('Invalid match events response.');
+  }
+  return events;
 }
 
 export async function publishClubData(data: ClubData, revision: number): Promise<number> {

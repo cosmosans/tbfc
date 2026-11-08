@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -12,13 +12,18 @@ import {
 import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
-import { opponentFor, opponentName, seasonName } from "../../clubView";
+import { opponentFor, opponentName } from "../../clubView";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
+import PitchIndicator from "../../components/PitchIndicator";
 import moment from "moment";
 import { splitMatchLocation } from "../../matchLocation";
 import WhiteKitImage from "../../img/white-front.png";
 import BlackKitImage from "../../img/black-front.png";
+import { matchPhase } from "./matchClock";
+
+import { useMatchBannerCollapse } from "./useMatchBannerCollapse";
+import "./matchBanner.css";
 
 const Panel = styled(Card)({
   borderRadius: 0,
@@ -101,6 +106,14 @@ export default function MatchBanner({
   onEdit?: () => void;
   detail?: boolean;
 }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    if (match.status !== "in_progress") return;
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [match.status]);
+  const phase = match.status === "in_progress" ? matchPhase(match, now) : null;
   const opponent = opponentFor(data, match);
   const location =
     data.locations.find((item) => item.id === match.locationId) ??
@@ -115,9 +128,29 @@ export default function MatchBanner({
         item.opponentId === opponent?.id || item.opponent === match.opponent,
     ),
   );
-  console.log(data, match, detail);
+  const clock = match.status === "in_progress" && (
+    <Stack spacing={0.5}>
+      {phase && phase.label !== "HALF TIME" && (
+        <Typography variant="caption" textAlign="center" fontWeight={700}>
+          {String(Math.floor(phase.seconds / 60)).padStart(2, "0")}:
+          {String(phase.seconds % 60).padStart(2, "0")}
+        </Typography>
+      )}
+      {detail && phase?.label !== "HALF TIME" && (
+        <LinearProgress
+          variant="indeterminate"
+          color="primary"
+          aria-label="Match in progress"
+          sx={{ transform: "skewX(-15deg)" }}
+        />
+      )}
+    </Stack>
+  );
+  const bannerRef = useMatchBannerCollapse(detail, match.id, match.status);
   return (
     <Box
+      ref={bannerRef}
+      className={detail ? "match-banner-detail" : undefined}
       sx={(theme) => ({
         [theme.breakpoints.down("sm")]: {
           mx: -2,
@@ -169,214 +202,21 @@ export default function MatchBanner({
             "&:last-child": { pb: { xs: 1.5, sm: 3 } },
           }}
         >
-          {detail && (
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              gap={2}
-              sx={{ mb: 2 }}
-            >
-              <Typography
-                variant="overline"
-                color="primary"
-                sx={{ background: "black", paddingInline: 1 }}
-              >
-                {match.season}
-                {[seasonName(data, match), match.league, match.competition]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </Typography>
-
-              {onEdit && (
-                <Button variant="outlined" onClick={onEdit}>
-                  Edit Match
-                </Button>
-              )}
-            </Stack>
+          {detail && onEdit && (
+            <Box className="banner-secondary" sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+              <Button variant="outlined" onClick={onEdit}>
+                Edit Match
+              </Button>
+            </Box>
           )}
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="center"
-            gap={{ xs: 1, sm: 2 }}
-          >
-            {(["left", "right"] as const).map((side) => {
-              const isOpponent =
-                side === "left"
-                  ? match.homeAway !== "away"
-                  : match.homeAway === "away";
 
-              return (
-                <Fragment key={side}>
-                  {side === "right" && match.status === "scheduled" && (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                    >
-                      <Versus>VS</Versus>
-                      <Chip
-                        size="small"
-                        label="Upcoming"
-                        color="info"
-                        sx={{
-                          textTransform: "uppercase",
-                          fontSize: { xs: 9, sm: 12 },
-                          height: { xs: 20, sm: 24 },
-                          "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } },
-                        }}
-                      />
-                    </Box>
-                  )}
-                  {side === "right" && match.status !== "scheduled" && (
-                    <Box sx={{}}>
-                      <Typography
-                        sx={{
-                          fontWeight: 900,
-                          fontSize: { xs: "1.8rem", sm: "4rem" },
-                          whiteSpace: "nowrap",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        {isOpponent ? match.goalsFor : match.goalsAgainst}
-                        {side === "right" && <> - </>}
-                        {isOpponent ? match.goalsAgainst : match.goalsFor}
-                      </Typography>
-
-                      {side === "right" && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                          }}
-                        >
-                          {match.status === "in_progress" ? (
-                            <Stack spacing={0.5}>
-                              <Chip
-                                size="small"
-                                label="IN PROGRESS"
-                                color="warning"
-                              />
-                              {detail && (
-                                <LinearProgress
-                                  variant="indeterminate"
-                                  color="primary"
-                                  aria-label="Match in progress"
-                                />
-                              )}
-                            </Stack>
-                          ) : (
-                            <ResultLabel result={match.resultLabel} />
-                          )}
-                        </Box>
-                      )}
-                    </Box>
-                  )}
-                  <Stack
-                    alignItems="center"
-                    gap={1}
-                    sx={{ minWidth: 0, flex: { xs: "1 1 0", sm: "initial" } }}
-                  >
-                    {isOpponent ? (
-                      <OpponentCrest
-                        key={opponent?.crestUrl ?? ""}
-                        url={opponent?.crestUrl}
-                        size={165}
-                        mobileSize={64}
-                        teamId={opponent?.id}
-                        teamName={opponent?.name}
-                      />
-                    ) : (
-                      <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
-                    )}
-                    <Typography
-                      fontWeight={800}
-                      textAlign="center"
-                      sx={{
-                        fontSize: { xs: 12, sm: 16 },
-                        lineHeight: 1.3,
-                        overflowWrap: "anywhere",
-                      }}
-                    >
-                      {isOpponent
-                        ? opponentName(data, match)
-                        : "Turf Burners FC"}
-                    </Typography>
-                    {match.homeAway && (
-                      <Typography
-                        textAlign="center"
-                        color="text.secondary"
-                        sx={{
-                          textTransform: "uppercase",
-                          letterSpacing: 1,
-                          fontSize: 10,
-                        }}
-                      >
-                        {side === "left" ? "Away" : "Home"}
-                      </Typography>
-                    )}
-                  </Stack>
-                </Fragment>
-              );
-            })}
-          </Stack>
-          <Box sx={{ mt: 2 }}>
-            <RecordBar
-              opponentWins={headToHead.L}
-              draws={headToHead.D}
-              tbfcWins={headToHead.W}
-              opponentColor={opponent?.color}
-              reverse={match.homeAway === "away"}
-            />
-          </Box>
-
-          <Box
-            className="match-banner-info"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              gap: 1,
-              "& > img": {
-                width: { xs: 38, sm: 80 },
-                flexShrink: 0,
-              },
-              alignItems: "center",
-              justifyContent: "center",
-              mt: 2,
-              px: 2,
-            }}
-          >
-            {match.kit === "White" && (
-              <Box
-                component="img"
-                sx={{ width: { xs: 38, sm: 80 } }}
-                src={WhiteKitImage}
-                alt="White kit"
-              />
-            )}
-
-            {match.kit === "Black" && (
-              <Box
-                component="img"
-                sx={{ width: { xs: 38, sm: 80 } }}
-                src={BlackKitImage}
-                alt="Black kit"
-              />
-            )}
-
-            <Box sx={{ minWidth: 0 }}>
+          <Box sx={{ width: "100%", maxWidth: 768, mx: "auto" }}>
+            <Box className="banner-secondary" sx={{ minWidth: 0, mt: 0.5 }}>
               <Typography
                 sx={{
                   fontSize: { xs: 14, sm: 20 },
                   fontWeight: 700,
-                  textShadow: "0 0 3px rgba(0,0,0,0.3)",
+                  textShadow: "0 0 6px rgba(0,0,0,0.75)",
                   textAlign: "center",
                 }}
               >
@@ -395,7 +235,8 @@ export default function MatchBanner({
                   flexWrap: "wrap",
                   justifyContent: "center",
                   "& .MuiTypography-root": { fontSize: { xs: 12, sm: 16 } },
-                  textShadow: "0 0 3px rgba(0,0,0,0.3)",
+                  mb: 2,
+                  textShadow: "0 0 6px rgba(0,0,0,0.75)",
                 }}
               >
                 <Typography sx={{ textAlign: "inherit" }}>
@@ -410,53 +251,203 @@ export default function MatchBanner({
                       gap: 0.5,
                     }}
                   >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 0.5,
-                        marginInline: 1,
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          height: { xs: 12, sm: 20 },
-                          width: { xs: 6, sm: 10 },
-                          transform: "skewX(-10deg)",
-                          backgroundColor:
-                            match.pitch === "1" ? "#db6337" : "#b6b6b6",
-                        }}
-                      ></Box>
-                      <Box
-                        sx={{
-                          height: { xs: 12, sm: 20 },
-                          width: { xs: 6, sm: 10 },
-                          transform: "skewX(-10deg)",
-                          border:
-                            match.pitch === "2"
-                              ? "1px solid rgba(255,255,255,0.2)"
-                              : "1px solid #b6b6b6",
-                          backgroundColor:
-                            match.pitch === "2" ? "#db6337" : "#b6b6b6",
-                        }}
-                      ></Box>
-                      <Box
-                        sx={{
-                          height: { xs: 12, sm: 20 },
-                          width: { xs: 6, sm: 10 },
-                          transform: "skewX(-10deg)",
-                          border:
-                            match.pitch === "3"
-                              ? "1px solid #fff"
-                              : "1px solid #b6b6b6",
-                          backgroundColor:
-                            match.pitch === "3" ? "#db6337" : "#b6b6b6",
-                        }}
-                      ></Box>
+                    <Box sx={{ marginInline: 1 }}>
+                      <PitchIndicator pitch={match.pitch} />
                     </Box>
                     <Typography>Pitch {match.pitch}</Typography>
                   </Box>
                 )}
               </Box>
+            </Box>
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              gap={{ xs: 1, sm: 2 }}
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
+                width: "100%",
+              }}
+            >
+              {(["left", "right"] as const).map((side) => {
+                const isOpponent =
+                  side === "left"
+                    ? match.homeAway !== "away"
+                    : match.homeAway === "away";
+
+                const clubKit =
+                  match.homeAway &&
+                  (match.kit === "White"
+                    ? WhiteKitImage
+                    : match.kit === "Black"
+                      ? BlackKitImage
+                      : undefined);
+                const kitImage =
+                  detail && isOpponent ? opponent?.kitImageUrl : clubKit;
+                return (
+                  <Fragment key={side}>
+                    {side === "right" && match.status === "scheduled" && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: 1,
+                        }}
+                      >
+                        <Versus data-banner-move="score">VS</Versus>
+                        <Chip
+                          className="banner-secondary"
+                          size="small"
+                          label="Upcoming"
+                          color="info"
+                          sx={{
+                            textTransform: "uppercase",
+                            fontSize: { xs: 9, sm: 12 },
+                            height: { xs: 20, sm: 24 },
+                            "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } },
+                          }}
+                        />
+                      </Box>
+                    )}
+                    {side === "right" && match.status !== "scheduled" && (
+                      <Box>
+                        <Typography
+                          component="div"
+                          data-banner-move="score"
+                          sx={{
+                            fontWeight: 900,
+                            letterSpacing: "-0.08em",
+                            fontSize: { xs: "3rem", sm: "4rem" },
+                            whiteSpace: "nowrap",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textShadow: "0 0 6px rgba(0,0,0,0.75)",
+                          }}
+                        >
+                          {isOpponent ? match.goalsFor : match.goalsAgainst}
+                          {side === "right" && (
+                            <span
+                              style={{
+                                paddingInline: 10,
+                              }}
+                            >
+                              {detail && match.status === "in_progress" ? (
+                                <>
+                                  <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>-</Box>
+                                  <Box component="span" sx={{ display: { xs: "block", sm: "none" }, letterSpacing: 0 }}>
+                                    {phase?.label === "HALF TIME" ? <Typography variant="caption">HT</Typography> : clock}
+                                  </Box>
+                                </>
+                              ) : "-"}
+                            </span>
+                          )}
+                          {isOpponent ? match.goalsAgainst : match.goalsFor}
+                        </Typography>
+
+                        {side === "right" && (
+                          <Box
+                            className="banner-secondary"
+                            sx={{
+                              display: detail && match.status === "in_progress" ? { xs: "none", sm: "flex" } : "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
+                          >
+                            {match.status === "in_progress" ? (
+                              clock
+                            ) : (
+                              <ResultLabel result={match.resultLabel} />
+                            )}
+                          </Box>
+                        )}
+                      </Box>
+                    )}
+                    <Stack
+                      className="banner-team"
+                      alignItems="center"
+                      gap={1}
+                      sx={{
+                        minWidth: 0,
+                        flex: {
+                          xs: "1 1 0",
+                          sm: "initial",
+                          textShadow: "0 0 6px rgba(0,0,0,0.75)",
+                        },
+                      }}
+                    >
+                      <Box data-banner-move={side} sx={{ display: "flex" }}>
+                        {isOpponent ? (
+                          <OpponentCrest
+                            key={opponent?.crestUrl ?? ""}
+                            url={opponent?.crestUrl}
+                            size={165}
+                            mobileSize={64}
+                            teamId={opponent?.id}
+                            teamName={opponent?.name}
+                          />
+                        ) : (
+                          <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
+                        )}
+                      </Box>
+                      <Typography
+                        fontWeight={800}
+                        textAlign="center"
+                        sx={{
+                          fontSize: { xs: 12, sm: 16 },
+                          lineHeight: 1.3,
+                          overflowWrap: "anywhere",
+                        }}
+                      >
+                        {isOpponent
+                          ? opponentName(data, match)
+                          : "Turf Burners FC"}
+                      </Typography>
+                      {match.homeAway && (
+                        <Typography
+                          textAlign="center"
+                          color="text.secondary"
+                          sx={{
+                            textTransform: "uppercase",
+                            letterSpacing: 1,
+                            mt: -0.9,
+                            fontSize: 10,
+                          }}
+                        >
+                          {side === "left" ? "Away" : "Home"}
+                        </Typography>
+                      )}
+                      {kitImage && (
+                        <Box
+                          component="img"
+                          src={kitImage}
+                          alt={
+                            isOpponent
+                              ? (opponent?.name ?? match.opponent) + " kit"
+                              : "TBFC " + match.kit + " kit"
+                          }
+                          sx={{
+                            width: { xs: 30, sm: 40 },
+                            height: { xs: 36, sm: 48 },
+                            objectFit: "contain",
+                          }}
+                        />
+                      )}
+                    </Stack>
+                  </Fragment>
+                );
+              })}
+            </Stack>
+            <Box className="banner-secondary" sx={{ mt: 2, px: { xs: 1.5, sm: 0 } }}>
+              <RecordBar
+                opponentWins={headToHead.L}
+                draws={headToHead.D}
+                tbfcWins={headToHead.W}
+                opponentColor={opponent?.color}
+                reverse={match.homeAway === "away"}
+              />
             </Box>
           </Box>
         </CardContent>

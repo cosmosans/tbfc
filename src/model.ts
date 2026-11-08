@@ -65,6 +65,7 @@ export type Opponent = {
   id: string;
   name: string;
   crestUrl: string;
+  kitImageUrl?: string;
   color: string;
   notes: string;
 };

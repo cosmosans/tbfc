@@ -40,6 +40,7 @@ import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
+import { matchAtTime } from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import LineupEditor from "./features/lineup/LineupEditor";
@@ -53,7 +54,7 @@ import TeamDetail from "./features/teams/TeamDetail";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub, setManageModeAccess } from "./editAccess";
-import { fetchClubData, publishClubData } from "./remoteData";
+import { fetchClubData, fetchMatchEvents, publishClubData } from "./remoteData";
 
 type Page =
   | "matches"
@@ -98,7 +99,12 @@ const blankMatch = (): Match => ({
 });
 
 export default function App() {
-  const [data, setData] = useState<ClubData>(loadData);
+  const [sourceData, setData] = useState<ClubData>(loadData);
+  const [clockTime, setClockTime] = useState(Date.now);
+  const data = useMemo(() => ({
+    ...sourceData,
+    matches: sourceData.matches.map((match) => matchAtTime(match, clockTime)),
+  }), [sourceData, clockTime]);
   const [syncState, setSyncState] = useState<
     "loading" | "ready" | "empty" | "error"
   >("loading");
@@ -250,6 +256,54 @@ export default function App() {
       );
     });
   }
+  useEffect(() => {
+    const tick = () => setClockTime(Date.now());
+    tick();
+    const timer = window.setInterval(tick, 60_000);
+    window.addEventListener("focus", tick);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", tick);
+    };
+  }, []);
+  const viewedMatchId = matchRoute?.params.id;
+  useEffect(() => {
+    if (manageMode || dirty) return;
+    let active = true;
+    let loading = false;
+    const refresh = async () => {
+      if (loading || document.visibilityState === "hidden") return;
+      loading = true;
+      try {
+        if (viewedMatchId && syncState === "ready") {
+          const events = await fetchMatchEvents(viewedMatchId);
+          if (active) setData(current => ({
+            ...current,
+            events: [...current.events.filter(event => event.matchId !== viewedMatchId), ...events],
+          }));
+          return;
+        }
+        const remote = await fetchClubData();
+        if (active && remote.data) {
+          revision.current = remote.revision;
+          setData(remote.data);
+          setSyncState("ready");
+        }
+      } catch {
+        // Keep the last available match data and retry at the next interval.
+      } finally {
+        loading = false;
+      }
+    };
+    const timer = window.setInterval(() => void refresh(), 60_000);
+    const onFocus = () => void refresh();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [manageMode, dirty, viewedMatchId, syncState]);
   async function publishCurrentData() {
     if (!canEditClub || publishing) return;
     setPublishing(true);

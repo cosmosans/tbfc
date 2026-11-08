@@ -104,6 +104,10 @@ export default function TeamDetail({
           <Typography textAlign="center" color="text.secondary" sx={{ mt: 2 }}>
             {results.played} Matches Played
           </Typography>
+          {team.kitImageUrl && (
+            <Box component="img" src={team.kitImageUrl} alt={team.name + " kit"}
+              sx={{ display: "block", maxWidth: "100%", maxHeight: 240, objectFit: "contain" }} />
+          )}
           {team.notes && (
             <Typography sx={{ mt: 2, whiteSpace: "pre-wrap" }}>
               {team.notes}
