@@ -4,10 +4,12 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControlLabel,
   Stack,
   Typography,
 } from "@mui/material";
@@ -21,10 +23,12 @@ import { isTurfbotReport } from "./reportAttribution";
 export default function MatchHistory({
   match,
   onSaveReport,
+  onAuditChange,
   onSavePhotos,
 }: {
   match: Match;
   onSaveReport?: (report: string) => void;
+  onAuditChange?: (complete: boolean) => void;
   onSavePhotos?: (photos: MatchPhoto[]) => void;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -106,6 +110,18 @@ export default function MatchHistory({
                 WRITTEN BY FOOTBOT
               </Typography>
             </Stack>
+          )}
+          {onAuditChange && (
+            <FormControlLabel
+              sx={{ mt: 2 }}
+              control={
+                <Checkbox
+                  checked={match.matchAuditComplete === true}
+                  onChange={(event) => onAuditChange(event.target.checked)}
+                />
+              }
+              label="Match Audit Complete"
+            />
           )}
         </CardContent>
       </Card>

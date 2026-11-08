@@ -880,6 +880,19 @@ export default function App() {
                 <MatchHistory
                   key={selected.id}
                   match={selected}
+                  onAuditChange={
+                    canEditClub
+                      ? (matchAuditComplete) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id
+                                ? { ...match, matchAuditComplete }
+                                : match,
+                            ),
+                          })
+                      : undefined
+                  }
                   onSavePhotos={
                     canEditClub
                       ? (photos) =>
