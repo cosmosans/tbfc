@@ -5,7 +5,7 @@ import PlayerDetail from "./features/roster/PlayerDetail";
 import { readDraft, writeDraft } from "./localDraft";
 import { backupMatchesLive } from "./backupCompare";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
   Link,
@@ -22,10 +22,11 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
-import type { ClubData, Match } from "./model";
+import type { ClubData, Match, MatchEvent } from "./model";
 import { issues } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
 import { opponentFor, opponentName } from "./clubView";
@@ -265,6 +266,20 @@ export default function App() {
     };
   }, []);
   const viewedMatchId = matchRoute?.params.id;
+  const currentEvents = useRef(sourceData.events);
+  useLayoutEffect(() => {
+    currentEvents.current = sourceData.events;
+  }, [sourceData.events]);
+  const [notices, setNotices] = useState<MatchEvent[]>([]);
+  const matchNotices = notices.filter(event => event.matchId === viewedMatchId);
+  const notice = matchNotices[0];
+  const noticePlayer = notice && data.players.find(player => player.id === notice.playerId);
+  const [goalBurst, setGoalBurst] = useState<{ matchId: string; started: number } | null>(null);
+  useEffect(() => {
+    if (!goalBurst) return;
+    const timer = window.setTimeout(() => setGoalBurst(null), 5200);
+    return () => window.clearTimeout(timer);
+  }, [goalBurst]);
   useEffect(() => {
     if (manageMode || dirty) return;
     let active = true;
@@ -275,7 +290,14 @@ export default function App() {
       try {
         if (viewedMatchId && syncState === "ready") {
           const { match, events } = await fetchMatchEvents(viewedMatchId);
-          if (active) setData(current => ({
+          if (!active) return;
+          const known = new Set(currentEvents.current.filter(event => event.matchId === viewedMatchId).map(event => event.id));
+          const additions = events.filter(event => !known.has(event.id));
+          if (additions.length) setNotices(previous => [...previous, ...additions]);
+          if (additions.some(event => event.kind === "goal" && event.team !== "opponent")) {
+            setGoalBurst({ matchId: viewedMatchId, started: performance.now() });
+          }
+          setData(current => ({
             ...current,
             events: [...current.events.filter(event => event.matchId !== viewedMatchId), ...events],
             matches: match
@@ -552,6 +574,7 @@ export default function App() {
           selected.status === "scheduled" ? (
             <MatchEventPage
               key={selected.id}
+              goalTime={goalBurst?.matchId === selected.id ? goalBurst.started : undefined}
               data={data}
               match={selected}
               update={update}
@@ -562,6 +585,7 @@ export default function App() {
           ) : (
             <>
               <MatchBanner
+                goalTime={goalBurst?.matchId === selected.id ? goalBurst.started : undefined}
                 data={data}
                 match={selected}
                 detail
@@ -850,6 +874,25 @@ export default function App() {
           </>
         )}
       </Container>
+      {notice && selected && (
+        <Snackbar key={notice.id} open anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          sx={{ bottom: { xs: "calc(68px + env(safe-area-inset-bottom))", sm: 24 } }}>
+          <Alert severity="info" icon={false}
+            sx={{ maxWidth: "min(480px, 94vw)", maxHeight: "50vh", overflowY: "auto", overflowWrap: "anywhere" }}
+            action={<Button color="inherit" size="small" onClick={() => setNotices(queue => queue.filter(event => event !== notice))}>Dismiss</Button>}>
+            <Typography fontWeight={700} sx={{ textTransform: "capitalize" }}>
+              {notice.kind.replaceAll("_", " ")} · {notice.team === "opponent" ? opponentName(data, selected) : "Turf Burners FC"}
+            </Typography>
+            <Typography variant="body2">Minute {notice.minute ?? "—"} · #{noticePlayer?.number || "—"} · {noticePlayer?.name || "No player recorded"}</Typography>
+            <Typography variant="body2">Note: {notice.note || "—"}</Typography>
+            <details>
+              <summary>Event data</summary>
+              <Box component="pre" sx={{ whiteSpace: "pre-wrap", fontSize: 12 }}>{JSON.stringify(notice, null, 2)}</Box>
+            </details>
+            {matchNotices.length > 1 && <Typography variant="caption">{matchNotices.length - 1} more waiting</Typography>}
+          </Alert>
+        </Snackbar>
+      )}
       {canEditClub && (
         <MatchDialog
           open={!!editing || showNew}

@@ -13,6 +13,7 @@ import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
+import GoalFire from "./GoalFire";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
 import PitchIndicator from "../../components/PitchIndicator";
@@ -99,12 +100,14 @@ export default function MatchBanner({
   onOpen,
   onEdit,
   detail = false,
+  goalTime,
 }: {
   data: ClubData;
   match: Match;
   onOpen?: () => void;
   onEdit?: () => void;
   detail?: boolean;
+  goalTime?: number;
 }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -130,6 +133,9 @@ export default function MatchBanner({
   );
   const clock = match.status === "in_progress" && (
     <Stack spacing={0.5}>
+      {phase?.label === "HALF TIME" && (
+        <Chip size="small" label="HALF TIME" color="primary" sx={{ textShadow: "none" }} />
+      )}
       {phase && phase.label !== "HALF TIME" && (
         <Typography variant="caption" textAlign="center" fontWeight={700}>
           {String(Math.floor(phase.seconds / 60)).padStart(2, "0")}:
@@ -338,7 +344,7 @@ export default function MatchBanner({
                                 <>
                                   <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>-</Box>
                                   <Box component="span" sx={{ display: { xs: "block", sm: "none" }, letterSpacing: 0 }}>
-                                    {phase?.label === "HALF TIME" ? <Typography variant="caption">HT</Typography> : clock}
+                                    {clock}
                                   </Box>
                                 </>
                               ) : "-"}
@@ -378,7 +384,7 @@ export default function MatchBanner({
                         },
                       }}
                     >
-                      <Box data-banner-move={side} sx={{ display: "flex" }}>
+                      <Box data-banner-move={side} sx={{ display: "flex", position: "relative" }}>
                         {isOpponent ? (
                           <OpponentCrest
                             key={opponent?.crestUrl ?? ""}
@@ -389,7 +395,10 @@ export default function MatchBanner({
                             teamName={opponent?.name}
                           />
                         ) : (
-                          <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
+                          <>
+                            <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
+                            {goalTime !== undefined && <GoalFire key={goalTime} started={goalTime} />}
+                          </>
                         )}
                       </Box>
                       <Typography

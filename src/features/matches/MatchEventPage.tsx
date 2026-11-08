@@ -14,10 +14,12 @@ export default function MatchEventPage({
   match,
   update,
   onEdit,
+  goalTime,
 }: {
   data: ClubData;
   match: Match;
   update: (data: ClubData) => void;
+  goalTime?: number;
   onEdit?: () => void;
 }) {
   const [searchParams] = useSearchParams();
@@ -25,7 +27,7 @@ export default function MatchEventPage({
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={2}>
-      <MatchBanner data={data} match={match} detail onEdit={onEdit} />
+      <MatchBanner goalTime={goalTime} data={data} match={match} detail onEdit={onEdit} />
       <MatchNavigation matches={data.matches} match={match} />
       {match.report && (
         <Box
