@@ -71,7 +71,6 @@ export default function MatchEventSnackbar({
           width: "min(800px, 94vw)",
           boxSizing: "border-box",
           position: "relative",
-          border: `1px solid green`,
           maxHeight: "50vh",
           overflowY: "auto",
           overflowWrap: "anywhere",
