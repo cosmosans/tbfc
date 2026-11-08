@@ -330,12 +330,17 @@ export default function MatchBanner({
             className="match-banner-info"
             sx={{
               display: "flex",
-              flexDirection: { xs: "row", sm: "column" },
+              flexDirection: "column",
+              width: "100%",
               gap: 1,
-              "& > img": { width: { xs: 38, sm: 80 }, flexShrink: 0 },
+              "& > img": {
+                width: { xs: 38, sm: 80 },
+                flexShrink: 0,
+              },
               alignItems: "center",
               justifyContent: "center",
               mt: 2,
+              px: 2,
             }}
           >
             {match.kit === "White" && (
@@ -356,7 +361,7 @@ export default function MatchBanner({
               />
             )}
 
-            <Box sx={{ minWidth: 0, marginLeft: { xs: 0, sm: 1 } }}>
+            <Box sx={{ minWidth: 0 }}>
               <Typography
                 sx={{
                   fontSize: { xs: 14, sm: 20 },
@@ -383,7 +388,7 @@ export default function MatchBanner({
                   textShadow: "0 0 3px rgba(0,0,0,0.3)",
                 }}
               >
-                <Typography textAlign="center">
+                <Typography sx={{ textAlign: "inherit" }}>
                   {match.venue || "Venue TBD"}
                 </Typography>
 

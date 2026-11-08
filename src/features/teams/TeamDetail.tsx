@@ -1,12 +1,10 @@
 import {
   Box,
-  Button,
   Card,
   CardContent,
   Stack,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { ClubData, Match, Opponent } from "../../model";
 import { record } from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
@@ -18,12 +16,10 @@ import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
 export default function TeamDetail({
   data,
   team,
-  onBack,
   onOpenMatch,
 }: {
   data: ClubData;
   team: Opponent;
-  onBack: () => void;
   onOpenMatch: (match: Match) => void;
 }) {
   const matches = data.matches.filter(
@@ -41,13 +37,6 @@ export default function TeamDetail({
 
   return (
     <Stack gap={3}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={onBack}
-        sx={{ alignSelf: "flex-start" }}
-      >
-        Back to Teams
-      </Button>
       <Card sx={{ bgcolor: "#171a1c", border: 0 }}>
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           <Typography variant="overline" color="primary">

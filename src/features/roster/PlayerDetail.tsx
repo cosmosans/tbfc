@@ -22,7 +22,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlayerSummary from "./PlayerSummary";
 import {
   PlayerCardFrame,
@@ -118,14 +117,6 @@ export default function PlayerDetail({
     historySort === key ? (descending ? "desc" : "asc") : false;
   return (
     <Stack gap={3}>
-      <Button
-        component={Link}
-        to="/roster"
-        startIcon={<ArrowBackIcon />}
-        sx={{ alignSelf: "flex-start" }}
-      >
-        Back to Roster
-      </Button>
       <PlayerCardFrame>
         <PlayerCardInner flipped={false}>
           <PlayerCardFront as="header" aria-label={player.name}>

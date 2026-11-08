@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 export type NavigationPage =
   | "matches"
@@ -28,8 +29,12 @@ const Brand = styled(Box)({
   cursor: "pointer",
   "@media (max-width: 599.95px)": {
     width: "auto",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     gap: 8,
+    position: "absolute",
+    top: 4,
+    left: "50%",
+    transform: "translateX(-50%)",
   },
 });
 const mobileCrestSize = 36;
@@ -67,22 +72,32 @@ export default function AppHeader({
   page,
   onNavigate,
   onAdmin,
+  onBack,
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
   onAdmin?: () => void;
+  onBack?: () => void;
 }) {
   return (
     <Header position="sticky" elevation={0}>
       <Toolbar
         sx={{
-          minHeight: 76,
+          minHeight: { xs: 44, sm: 76 },
+          position: "relative",
           gap: { xs: 0.5, sm: 2 },
-          py: { xs: 1, sm: 0 },
+          pt: { xs: 0.5, sm: 0 },
+          pb: 0,
           flexWrap: { xs: "wrap", md: "nowrap" },
           px: { xs: 2, md: 4 },
         }}
       >
+        {onBack && (
+          <IconButton onClick={onBack} aria-label="Back" title="Back"
+            sx={{ color: "#fff", flexShrink: 0, mr: { xs: 0, sm: 1 }, width: 44, height: 44 }}>
+            <ArrowBackIosNewIcon />
+          </IconButton>
+        )}
         <Brand
           onClick={() => onNavigate("matches")}
           role="button"
@@ -147,7 +162,7 @@ export default function AppHeader({
         </Navigation>
         {onAdmin && (
           <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
-            sx={{ color: "#fff", border: "1px solid #ffffff99", borderRadius: 1, width: { xs: mobileCrestSize, sm: 44 }, height: { xs: mobileCrestSize, sm: 44 }, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 }, "&:hover": { borderColor: "#fff" } }}>
+            sx={{ color: "#fff", border: 0, width: 44, height: 44, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 } }}>
             <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
           </IconButton>
         )}

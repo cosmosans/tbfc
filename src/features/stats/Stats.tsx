@@ -45,7 +45,9 @@ function TeamCrestTick({
   const team = teams.find((item) => item.team === payload?.value);
   const [failedUrl, setFailedUrl] = useState("");
   const crest = team?.crestUrl;
-  const open = () => { if (team?.id) onOpenTeam(team.id); };
+  const open = () => {
+    if (team?.id) onOpenTeam(team.id);
+  };
   return (
     <g
       transform={`translate(${x - 18}, ${y + 8})`}
@@ -173,7 +175,8 @@ export default function Stats({
           )
         : opponentMetric === "goalsAgainst"
           ? [...teams].sort(
-              (a, b) => b.goalsAgainst - a.goalsAgainst || a.team.localeCompare(b.team),
+              (a, b) =>
+                b.goalsAgainst - a.goalsAgainst || a.team.localeCompare(b.team),
             )
           : teams;
   return (
@@ -184,9 +187,15 @@ export default function Stats({
           flexDirection: "column",
           gap: 2,
           alignItems: "start",
-
         }}
       >
+        {" "}
+        <Typography
+          variant="h4"
+          sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1, ml: { xs: 2, sm: 0 } }}
+        >
+          Opponents
+        </Typography>
         <Card sx={{ minWidth: 0, width: "100%" }}>
           <CardContent>
             <Stack
@@ -202,7 +211,10 @@ export default function Stats({
                 value={opponentMetric}
                 onChange={(event) =>
                   setOpponentMetric(
-                    event.target.value as "teamGoals" | "goalsFor" | "goalsAgainst",
+                    event.target.value as
+                      | "teamGoals"
+                      | "goalsFor"
+                      | "goalsAgainst",
                   )
                 }
                 inputProps={{ "aria-label": "Opponent chart metric" }}
@@ -230,113 +242,131 @@ export default function Stats({
                     overflowX: "auto",
                   }}
                 >
-                  <Box sx={{ minWidth: Math.max(600, teams.length * (opponentMetric === "teamGoals" ? 80 : 64)), height: 400 }}>
-                  <ResponsiveContainer>
-                    <BarChart
-                      key={opponentMetric}
-                      data={chartTeams}
-                      accessibilityLayer
-                      margin={{ top: 24, right: 16, left: 0, bottom: 8 }}
-                      barSize={opponentMetric === "teamGoals" ? 12 : 24}
-                      barGap={4}
-                    >
-                      <CartesianGrid stroke="#394144" vertical={false} />
-                      <XAxis
-                        type="category"
-                        dataKey="team"
-                        height={60}
-                        interval={0}
-                        tickLine={false}
-                        stroke="#a7afb1"
-                        tick={<TeamCrestTick teams={teams} onOpenTeam={openTeam} />}
-                      />
-                      <YAxis type="number" allowDecimals={false} stroke="#a7afb1" />
-                      <Tooltip
-                        cursor={{ fill: "#38383880" }}
-                        contentStyle={{
-                          background: "#1b2022",
-                          border: "1px solid #394144",
-                        }}
-                      />
-                      {opponentMetric === "teamGoals" ? (
-                        <>
-                          <Bar
-                            minPointSize={3}
-                            dataKey="goalsFor"
-                            name="Turf Burners FC goals"
-                            fill={theme.palette.primary.main}
-                            isAnimationActive={false}
-                            cursor="pointer"
-                            onClick={(entry) => openTeam(entry.payload?.id)}
-                          >
-                            <LabelList
+                  <Box
+                    sx={{
+                      minWidth: Math.max(
+                        600,
+                        teams.length *
+                          (opponentMetric === "teamGoals" ? 80 : 64),
+                      ),
+                      height: 400,
+                    }}
+                  >
+                    <ResponsiveContainer>
+                      <BarChart
+                        key={opponentMetric}
+                        data={chartTeams}
+                        accessibilityLayer
+                        margin={{ top: 24, right: 16, left: 0, bottom: 8 }}
+                        barSize={opponentMetric === "teamGoals" ? 12 : 24}
+                        barGap={4}
+                      >
+                        <CartesianGrid stroke="#394144" vertical={false} />
+                        <XAxis
+                          type="category"
+                          dataKey="team"
+                          height={60}
+                          interval={0}
+                          tickLine={false}
+                          stroke="#a7afb1"
+                          tick={
+                            <TeamCrestTick
+                              teams={teams}
+                              onOpenTeam={openTeam}
+                            />
+                          }
+                        />
+                        <YAxis
+                          type="number"
+                          allowDecimals={false}
+                          stroke="#a7afb1"
+                        />
+                        <Tooltip
+                          cursor={{ fill: "#38383880" }}
+                          contentStyle={{
+                            background: "#1b2022",
+                            border: "1px solid #394144",
+                          }}
+                        />
+                        {opponentMetric === "teamGoals" ? (
+                          <>
+                            <Bar
+                              minPointSize={3}
                               dataKey="goalsFor"
-                              position="top"
-                              fill="#fff"
-                              fontWeight={800}
-                            />
-                          </Bar>
+                              name="Turf Burners FC goals"
+                              fill={theme.palette.primary.main}
+                              isAnimationActive={false}
+                              cursor="pointer"
+                              onClick={(entry) => openTeam(entry.payload?.id)}
+                            >
+                              <LabelList
+                                dataKey="goalsFor"
+                                position="top"
+                                fill="#fff"
+                                fontWeight={800}
+                              />
+                            </Bar>
+                            <Bar
+                              minPointSize={3}
+                              dataKey="goalsAgainst"
+                              name="Opponent goals"
+                              fill="#a7afb1"
+                              isAnimationActive={false}
+                              cursor="pointer"
+                              onClick={(entry) => openTeam(entry.payload?.id)}
+                            >
+                              {chartTeams.map((team) => (
+                                <Cell
+                                  key={team.team}
+                                  fill={team.color || "#a7afb1"}
+                                />
+                              ))}
+                              <LabelList
+                                dataKey="goalsAgainst"
+                                position="top"
+                                fill="#fff"
+                                fontWeight={800}
+                              />
+                            </Bar>
+                          </>
+                        ) : (
                           <Bar
                             minPointSize={3}
-                            dataKey="goalsAgainst"
-                            name="Opponent goals"
-                            fill="#a7afb1"
-                            isAnimationActive={false}
                             cursor="pointer"
                             onClick={(entry) => openTeam(entry.payload?.id)}
-                          >
-                            {chartTeams.map((team) => (
-                              <Cell
-                                key={team.team}
-                                fill={team.color || "#a7afb1"}
-                              />
-                            ))}
-                            <LabelList
-                              dataKey="goalsAgainst"
-                              position="top"
-                              fill="#fff"
-                              fontWeight={800}
-                            />
-                          </Bar>
-                        </>
-                      ) : (
-                        <Bar
-                            minPointSize={3}
-                          cursor="pointer"
-                          onClick={(entry) => openTeam(entry.payload?.id)}
-                          dataKey={
-                            opponentMetric === "goalsFor"
-                              ? "goalsFor"
-                              : "goalsAgainst"
-                          }
-                          name={
-                            opponentMetric === "goalsFor"
-                              ? "TBFC Goals Scored"
-                              : "Goals Allowed"
-                          }
-                          fill={theme.palette.primary.main}
-                          isAnimationActive={false}
-                        >
-                          {chartTeams.map((team) => (
-                            <Cell
-                              key={team.team}
-                              fill={team.color || theme.palette.primary.main}
-                            />
-                          ))}
-                          <LabelList
                             dataKey={
                               opponentMetric === "goalsFor"
                                 ? "goalsFor"
                                 : "goalsAgainst"
                             }
-                            position="top"
-                            fill="#fff"
-                            fontWeight={800}
-                          />
-                        </Bar>
-                      )}
-                    </BarChart>
-                  </ResponsiveContainer>
+                            name={
+                              opponentMetric === "goalsFor"
+                                ? "TBFC Goals Scored"
+                                : "Goals Allowed"
+                            }
+                            fill={theme.palette.primary.main}
+                            isAnimationActive={false}
+                          >
+                            {chartTeams.map((team) => (
+                              <Cell
+                                key={team.team}
+                                fill={team.color || theme.palette.primary.main}
+                              />
+                            ))}
+                            <LabelList
+                              dataKey={
+                                opponentMetric === "goalsFor"
+                                  ? "goalsFor"
+                                  : "goalsAgainst"
+                              }
+                              position="top"
+                              fill="#fff"
+                              fontWeight={800}
+                            />
+                          </Bar>
+                        )}
+                      </BarChart>
+                    </ResponsiveContainer>
                   </Box>
                 </Box>
               ) : (
@@ -347,7 +377,13 @@ export default function Stats({
             </>
           </CardContent>
         </Card>
-        <Card sx={{ minWidth: 0, width: "100%", "@media (min-width: 1080px)": { width: "calc((100% - 16px) / 2)" } }}> 
+        <Card
+          sx={{
+            minWidth: 0,
+            width: "100%",
+            "@media (min-width: 1080px)": { width: "calc((100% - 16px) / 2)" },
+          }}
+        >
           <CardContent>
             <Stack
               direction="row"

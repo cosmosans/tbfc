@@ -27,7 +27,6 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import type { ClubData, Match } from "./model";
 import { issues } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
@@ -363,6 +362,7 @@ export default function App() {
   return (
     <>
       <AppHeader
+        onBack={playerRoute ? () => navigate("/roster") : teamRoute ? () => navigate("/teams") : matchRoute ? () => navigate("/schedule") : undefined}
         page={
           playerRoute
             ? "roster"
@@ -377,7 +377,14 @@ export default function App() {
         onAdmin={() => setAdminBackupOpen(true)}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
-      <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
+      <Container
+        maxWidth="xl"
+        sx={{
+          pt: { xs: 0, sm: 4 },
+          pb: { xs: 2, sm: 4 },
+          px: { xs: page === "roster" || page === "stats" ? 0 : 2, sm: 3 },
+        }}
+      >
         {canEditClub && dirty && (
           <Alert
             severity="info"
@@ -460,9 +467,6 @@ export default function App() {
           ) : (
             <Alert severity="warning">
               Player not found.{" "}
-              <Button component={Link} to="/roster">
-                Back to Roster
-              </Button>
             </Alert>
           )
         ) : matchRoute && !selected ? (
@@ -479,7 +483,6 @@ export default function App() {
           <TeamDetail
             data={data}
             team={selectedTeam}
-            onBack={() => navigate("/teams")}
             onOpenMatch={(match) =>
               navigate(`/match/${encodeURIComponent(match.id)}`)
             }
@@ -491,20 +494,12 @@ export default function App() {
               data={data}
               match={selected}
               update={update}
-              onBack={() => navigate("/schedule")}
               onEdit={
                 canEditClub ? () => setEditing({ ...selected }) : undefined
               }
             />
           ) : (
             <>
-              <Button
-                startIcon={<ArrowBackIcon />}
-                onClick={() => navigate("/schedule")}
-                sx={{ mb: 1, mt: -1, bgcolor: "#111", color: "#fff" }}
-              >
-                Back to Schedule
-              </Button>
               <MatchBanner
                 data={data}
                 match={selected}

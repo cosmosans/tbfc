@@ -146,6 +146,7 @@ export default function Roster({
         justifyContent="space-between"
         alignItems="center"
         gap={2}
+        sx={{ mx: { xs: 2, sm: 0 } }}
       >
         <Typography
           variant="h4"
@@ -276,7 +277,7 @@ export default function Roster({
       <Box sx={{ bgcolor: "background.paper", overflow: "hidden" }}>
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", sm: "flex" },
             alignItems: "center",
             bgcolor: "rgba(255,255,255,.09)",
             borderBottom: "1px solid rgba(255,255,255,.2)",

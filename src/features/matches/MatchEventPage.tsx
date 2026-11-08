@@ -1,7 +1,6 @@
 import MatchNavigation from "./MatchNavigation";
 import { useSearchParams } from "react-router-dom";
-import { Alert, Box, Button, Stack, Tab, Tabs } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Alert, Box, Stack, Tab, Tabs } from "@mui/material";
 import type { ClubData, Match } from "../../model";
 import { opponentFor } from "../../clubView";
 import LineupEditor from "../lineup/LineupEditor";
@@ -14,13 +13,11 @@ export default function MatchEventPage({
   data,
   match,
   update,
-  onBack,
   onEdit,
 }: {
   data: ClubData;
   match: Match;
   update: (data: ClubData) => void;
-  onBack: () => void;
   onEdit?: () => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,13 +25,6 @@ export default function MatchEventPage({
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={2}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={onBack}
-        sx={{ alignSelf: "flex-start", bgcolor: "#111", color: "#fff" }}
-      >
-        Back
-      </Button>
       <MatchBanner data={data} match={match} detail onEdit={onEdit} />
       <MatchNavigation matches={data.matches} match={match} />
       {match.report && (
