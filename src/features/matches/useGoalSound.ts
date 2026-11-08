@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 export function useGoalSound(matchInProgress: boolean) {
   const play = useRef<() => void>(() => {});
+  const playWhistle = useRef<() => void>(() => {});
   const enable = useRef<() => Promise<boolean>>(async () => false);
   const disable = useRef<() => void>(() => {});
   const setStadiumActive = useRef<(active: boolean) => void>(() => {});
@@ -11,7 +12,9 @@ export function useGoalSound(matchInProgress: boolean) {
     const controller = new AbortController();
     let clip: Promise<AudioBuffer | null> | undefined;
     let stadiumClip: Promise<AudioBuffer | null> | undefined;
+    let whistleClip: Promise<AudioBuffer | null> | undefined;
     let source: AudioBufferSourceNode | undefined;
+    let whistleSource: AudioBufferSourceNode | undefined;
     let stadiumSource: AudioBufferSourceNode | undefined;
     let active = true;
     let enabled = false;
@@ -19,6 +22,7 @@ export function useGoalSound(matchInProgress: boolean) {
     let stadiumRequest = 0;
     let generation = 0;
     let playback = Promise.resolve();
+    let whistlePlayback = Promise.resolve();
 
     function prepare() {
       clip ??= fetch("/audio/tbfc-goal.mp3", { signal: controller.signal })
@@ -39,6 +43,16 @@ export function useGoalSound(matchInProgress: boolean) {
         .then((bytes) => context.decodeAudioData(bytes))
         .catch(() => { stadiumClip = undefined; return null; });
       return stadiumClip;
+    }
+    function prepareWhistle() {
+      whistleClip ??= fetch("/audio/whistle.mp3", { signal: controller.signal })
+        .then((response) => {
+          if (!response.ok) throw new Error("Whistle sound unavailable");
+          return response.arrayBuffer();
+        })
+        .then((bytes) => context.decodeAudioData(bytes))
+        .catch(() => { whistleClip = undefined; return null; });
+      return whistleClip;
     }
     function stopStadium() {
       stadiumRequest++;
@@ -61,6 +75,7 @@ export function useGoalSound(matchInProgress: boolean) {
       });
     }
     void prepare();
+    void prepareWhistle();
     setStadiumActive.current = (shouldPlay) => {
       stadiumWanted = shouldPlay;
       if (shouldPlay) startStadium();
@@ -82,6 +97,8 @@ export function useGoalSound(matchInProgress: boolean) {
       stopStadium();
       source?.stop();
       source = undefined;
+      whistleSource?.stop();
+      whistleSource = undefined;
     };
     play.current = () => {
       if (!enabled) return;
@@ -102,14 +119,35 @@ export function useGoalSound(matchInProgress: boolean) {
         });
       }).catch(() => {});
     };
+    playWhistle.current = () => {
+      if (!enabled) return;
+      const requestGeneration = generation;
+      whistlePlayback = whistlePlayback.then(async () => {
+        const buffer = await prepareWhistle();
+        if (!buffer || !active || !enabled || requestGeneration !== generation) return;
+        const currentSource = context.createBufferSource();
+        whistleSource = currentSource;
+        currentSource.buffer = buffer;
+        currentSource.connect(context.destination);
+        currentSource.start();
+        await new Promise<void>((resolve) => {
+          currentSource.onended = () => {
+            if (whistleSource === currentSource) whistleSource = undefined;
+            resolve();
+          };
+        });
+      }).catch(() => {});
+    };
     return () => {
       active = false;
       play.current = () => {};
+      playWhistle.current = () => {};
       enable.current = async () => false;
       disable.current = () => {};
       setStadiumActive.current = () => {};
       stopStadium();
       if (source) source.stop();
+      if (whistleSource) whistleSource.stop();
       controller.abort();
       void context.close().catch(() => {});
     };
@@ -117,5 +155,5 @@ export function useGoalSound(matchInProgress: boolean) {
   useEffect(() => {
     setStadiumActive.current(matchInProgress);
   }, [matchInProgress]);
-  return { play, enable, disable };
+  return { play, playWhistle, enable, disable };
 }

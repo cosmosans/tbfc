@@ -40,7 +40,7 @@ import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
-import { kickoffTime, matchAtTime } from "./features/matches/matchClock";
+import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import LineupEditor from "./features/lineup/LineupEditor";
@@ -306,7 +306,7 @@ export default function App() {
     : undefined;
   const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
   const matchInProgress = data.matches.some((match) => match.id === pollingMatchId && match.status === "in_progress");
-  const { play: goalSound, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(matchInProgress);
+  const { play: goalSound, playWhistle, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(matchInProgress);
   const [goalSoundEnabled, setGoalSoundEnabled] = useState(false);
   async function toggleGoalSound() {
     if (goalSoundEnabled) {
@@ -317,9 +317,11 @@ export default function App() {
     }
   }
   const currentEvents = useRef(sourceData.events);
+  const currentMatches = useRef(sourceData.matches);
   useLayoutEffect(() => {
     currentEvents.current = sourceData.events;
-  }, [sourceData.events]);
+    currentMatches.current = sourceData.matches;
+  }, [sourceData.events, sourceData.matches]);
   const [notices, setNotices] = useState<MatchEvent[]>([]);
   const matchNotices = notices.filter(
     (event) => event.matchId === pollingMatchId,
@@ -403,6 +405,7 @@ export default function App() {
           if (additions.length)
             setNotices((previous) => [...previous, ...additions]);
           const tbfcGoals = additions.filter((event) => event.kind === "goal" && event.team !== "opponent");
+          additions.filter((event) => event.kind === "penalty_kick").forEach(() => playWhistle.current());
           if (tbfcGoals.length) {
             tbfcGoals.forEach(() => goalSound.current());
             setGoalBurst({
@@ -451,7 +454,7 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [manageMode, dirty, pollingMatchId, syncState, goalSound, sourceData.matches, clockTime]);
+  }, [manageMode, dirty, pollingMatchId, syncState, goalSound, playWhistle, sourceData.matches, clockTime]);
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
@@ -523,6 +526,42 @@ export default function App() {
     .filter((match) => match.status === "in_progress")
     .sort((a, b) => b.date.localeCompare(a.date))[0];
   const nextMatch = liveMatch ?? upcoming.find((match) => match.date >= today);
+  const monitoredMatchId = viewedMatchId ?? (page === "matches" ? nextMatch?.id : undefined);
+  useEffect(() => {
+    if (!monitoredMatchId) return;
+    const stateAt = (now: number) => {
+      const match = currentMatches.current.find((item) => item.id === monitoredMatchId);
+      if (!match) return null;
+      return {
+        status: matchAtTime(match, now).status,
+        phase: matchPhase(match, now)?.label,
+      };
+    };
+    let previous = stateAt(Date.now());
+    const check = () => {
+      const now = Date.now();
+      const current = stateAt(now);
+      if (!current || !previous) {
+        previous = current;
+        return;
+      }
+      if (
+        (previous.status === "scheduled" && current.status === "in_progress") ||
+        (previous.status !== "completed" && current.status === "completed") ||
+        (previous.status === "in_progress" && previous.phase !== "HALF TIME" && current.phase === "HALF TIME")
+      ) {
+        playWhistle.current();
+      }
+      if (previous.status !== current.status) setClockTime(now);
+      previous = current;
+    };
+    const timer = window.setInterval(check, 1000);
+    window.addEventListener("focus", check);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", check);
+    };
+  }, [monitoredMatchId, playWhistle]);
   const noticeMatch = selected ?? (page === "matches" ? liveMatch : undefined);
   const nextLineup = nextMatch
     ? (data.lineups.find((lineup) => lineup.matchId === nextMatch.id) ??

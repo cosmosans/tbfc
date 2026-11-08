@@ -148,34 +148,7 @@ export default function MatchBanner({
           : "D";
     headToHead[liveResult] += 1;
   }
-  const clock = match.status === "in_progress" && (
-    <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
-      {phase?.label === "HALF TIME" && (
-        <Chip
-          size="small"
-          label="HALF TIME"
-          sx={{
-            textShadow: "none",
-            background: "transparent",
-            fontSize: 10,
-          }}
-        />
-      )}
-      {phase && phase.label !== "HALF TIME" && (
-        <Typography variant="caption" textAlign="center" fontWeight={700}>
-          {String(Math.floor(phase.seconds / 60)).padStart(2, "0")}:
-          {String(phase.seconds % 60).padStart(2, "0")}
-        </Typography>
-      )}
-      {phase && phase.label !== "HALF TIME" && (
-        <LinearProgress
-          variant="indeterminate"
-          color="primary"
-          aria-label="Match in progress"
-          sx={{ transform: "skewX(-15deg)" }}
-        />
-      )}
-      {onGoalSoundToggle && (
+  const soundToggle = onGoalSoundToggle && (
         <IconButton
           aria-label={
             goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"
@@ -226,7 +199,35 @@ export default function MatchBanner({
             )}
           </Box>
         </IconButton>
+  );
+  const clock = match.status === "in_progress" && (
+    <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
+      {phase?.label === "HALF TIME" && (
+        <Chip
+          size="small"
+          label="HALF TIME"
+          sx={{
+            textShadow: "none",
+            background: "transparent",
+            fontSize: 10,
+          }}
+        />
       )}
+      {phase && phase.label !== "HALF TIME" && (
+        <Typography variant="caption" textAlign="center" fontWeight={700}>
+          {String(Math.floor(phase.seconds / 60)).padStart(2, "0")}:
+          {String(phase.seconds % 60).padStart(2, "0")}
+        </Typography>
+      )}
+      {phase && phase.label !== "HALF TIME" && (
+        <LinearProgress
+          variant="indeterminate"
+          color="primary"
+          aria-label="Match in progress"
+          sx={{ transform: "skewX(-15deg)" }}
+        />
+      )}
+      {soundToggle}
     </Stack>
   );
   const bannerRef = useMatchBannerCollapse(detail, match.id, match.status);
@@ -400,6 +401,7 @@ export default function MatchBanner({
                             "& .MuiChip-label": { px: { xs: 0.75, sm: 1 } },
                           }}
                         />
+                        {soundToggle}
                       </Box>
                     )}
                     {side === "right" && match.status !== "scheduled" && (
