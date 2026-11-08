@@ -393,6 +393,8 @@ export default function MatchBanner({
                         )}
                       </Box>
                       <Typography
+                        data-banner-move={side}
+                        className="banner-team-name"
                         fontWeight={800}
                         textAlign="center"
                         sx={{

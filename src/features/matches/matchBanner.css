@@ -23,6 +23,15 @@
     --shrink: 0.28;
   }
 
+  .match-banner-detail .banner-team-name {
+    --shrink: 0;
+    max-width: min(100%, var(--name-width, 100%));
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+  }
+
   .match-banner-detail .banner-secondary,
   .match-banner-detail .banner-team > :not([data-banner-move]) {
     opacity: clamp(0, calc(1 - var(--collapse) / 0.75), 1);

@@ -40,9 +40,14 @@ export function useMatchBannerCollapse(detail: boolean, matchId: string, status?
       banner.style.setProperty("--sticky-top", (headerHeight - travel) + "px");
       const center = banner.clientWidth / 2;
       const crestDistance = score.offsetWidth * scoreScale / 2 + 8 + compactCrest / 2;
+      const nameEdge = crestDistance + compactCrest / 2 + 5;
+      banner.style.setProperty("--name-width", Math.max(1, center - nameEdge - 8) + "px");
       for (const node of movers) {
         const side = node.dataset.bannerMove;
-        const targetX = center + (side === "left" ? -crestDistance : side === "right" ? crestDistance : 0);
+        const distance = node.classList.contains("banner-team-name")
+          ? nameEdge + node.offsetWidth / 2
+          : crestDistance;
+        const targetX = center + (side === "left" ? -distance : side === "right" ? distance : 0);
         node.style.setProperty("--move-x", (targetX - node.offsetLeft - node.offsetWidth / 2) + "px");
         node.style.setProperty("--move-y", (banner.offsetHeight - compactHeight / 2 - node.offsetTop - node.offsetHeight / 2) + "px");
       }
