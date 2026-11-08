@@ -33,6 +33,7 @@ import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
 import DataTransferDialog from "./components/DataTransferDialog";
+import { useGoalSound } from "./features/matches/useGoalSound";
 import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
@@ -266,6 +267,7 @@ export default function App() {
     };
   }, []);
   const viewedMatchId = matchRoute?.params.id;
+  const goalSound = useGoalSound(viewedMatchId);
   const currentEvents = useRef(sourceData.events);
   useLayoutEffect(() => {
     currentEvents.current = sourceData.events;
@@ -275,6 +277,27 @@ export default function App() {
   const notice = matchNotices[0];
   const noticePlayer = notice && data.players.find(player => player.id === notice.playerId);
   const [goalBurst, setGoalBurst] = useState<{ matchId: string; started: number } | null>(null);
+  useEffect(() => {
+    const matchId = viewedMatchId;
+    if (!matchId) return;
+    const previewGoal = (key: KeyboardEvent) => {
+      if (key.key.toLowerCase() !== "g" || key.repeat || key.isComposing ||
+          key.ctrlKey || key.metaKey || key.altKey || key.defaultPrevented) return;
+      if (key.target instanceof HTMLElement && (key.target.isContentEditable ||
+          key.target.closest("input, textarea, select, [role=textbox], [role=dialog]"))) return;
+      const scorer = data.players.find(player => player.active && player.number) ?? data.players[0];
+      const started = performance.now();
+      const sample: MatchEvent = {
+        id: `preview-${started}`, matchId, kind: "goal", team: "tbfc",
+        playerId: scorer?.id, minute: 23, note: "Preview goal — curled into the top corner.",
+      };
+      setNotices(queue => [...queue, sample]);
+      goalSound.current();
+      setGoalBurst({ matchId, started });
+    };
+    window.addEventListener("keydown", previewGoal);
+    return () => window.removeEventListener("keydown", previewGoal);
+  }, [viewedMatchId, data.players, goalSound]);
   useEffect(() => {
     if (!goalBurst) return;
     const timer = window.setTimeout(() => setGoalBurst(null), 5200);
@@ -295,6 +318,7 @@ export default function App() {
           const additions = events.filter(event => !known.has(event.id));
           if (additions.length) setNotices(previous => [...previous, ...additions]);
           if (additions.some(event => event.kind === "goal" && event.team !== "opponent")) {
+            goalSound.current();
             setGoalBurst({ matchId: viewedMatchId, started: performance.now() });
           }
           setData(current => ({
@@ -326,7 +350,7 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [manageMode, dirty, viewedMatchId, syncState]);
+  }, [manageMode, dirty, viewedMatchId, syncState, goalSound]);
   async function publishCurrentData() {
     if (!canEditClub || publishing) return;
     setPublishing(true);
@@ -464,26 +488,29 @@ export default function App() {
         maxWidth={false}
         sx={{
           pt: 0,
-          pb: "calc(82px + env(safe-area-inset-bottom, 0px))",
+          pb: `calc(${canEditClub && dirty ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
           px: 0,
         }}
       >
         {canEditClub && dirty && (
-          <Alert
-            severity="info"
-            sx={{ mb: 2 }}
-            action={
-              <Button
-                disabled={publishing}
-                onClick={() => void publishCurrentData()}
-              >
-                {publishing ? "Publishing…" : "Publish to Live"}
-              </Button>
-            }
-          >
-            Local draft — changes are not published yet. Download a backup for
-            an additional copy.
-          </Alert>
+          <Box component="aside" aria-label="Unpublished changes" sx={{
+            position: "fixed", left: 0, right: 0,
+            bottom: "calc(63px + env(safe-area-inset-bottom, 0px))",
+            zIndex: theme => theme.zIndex.appBar + 1,
+            bgcolor: "#ffad45", color: "#21150a", boxShadow: "0 -3px 14px #0005",
+            display: "flex", justifyContent: "center", alignItems: "center",
+            gap: { xs: 1.5, sm: 4 }, px: 1.5, py: 1,
+          }}>
+            <Box role="status">
+              <Typography fontWeight={800} lineHeight={1.2}>Unpublished changes</Typography>
+              <Typography variant="body2">Only visible on this device.</Typography>
+            </Box>
+            <Button variant="contained" disabled={publishing} onClick={() => void publishCurrentData()}
+              sx={{ bgcolor: "#21150a", color: "white", minHeight: 44, flexShrink: 0,
+                "&:hover": { bgcolor: "#453018" } }}>
+              {publishing ? "Publishing…" : "Publish to Live"}
+            </Button>
+          </Box>
         )}
         {syncState === "empty" && (
           <Alert
@@ -876,7 +903,7 @@ export default function App() {
       </Container>
       {notice && selected && (
         <Snackbar key={notice.id} open anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          sx={{ bottom: { xs: "calc(68px + env(safe-area-inset-bottom))", sm: 24 } }}>
+          sx={{ bottom: `calc(${canEditClub && dirty ? 150 : 68}px + env(safe-area-inset-bottom, 0px))` }}>
           <Alert severity="info" icon={false}
             sx={{ maxWidth: "min(480px, 94vw)", maxHeight: "50vh", overflowY: "auto", overflowWrap: "anywhere" }}
             action={<Button color="inherit" size="small" onClick={() => setNotices(queue => queue.filter(event => event !== notice))}>Dismiss</Button>}>
