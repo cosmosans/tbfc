@@ -305,7 +305,8 @@ export default function App() {
         .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
     : undefined;
   const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
-  const { play: goalSound, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound();
+  const matchInProgress = data.matches.some((match) => match.id === pollingMatchId && match.status === "in_progress");
+  const { play: goalSound, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(matchInProgress);
   const [goalSoundEnabled, setGoalSoundEnabled] = useState(false);
   async function toggleGoalSound() {
     if (goalSoundEnabled) {
