@@ -140,10 +140,26 @@ export default function MatchEventSnackbar({
             alignItems: "center",
             width: "100%",
             boxSizing: "border-box",
-            gap: 1,
+            gap: 0.5,
             p: 1,
           }}
         >
+          <Typography
+            sx={{
+              backgroundColor: "#c4c4c4",
+              px: 0.5,
+              paddingRight: 0.25,
+              lineHeight: 1.4,
+              pt: 0.2,
+              marginTop: `-1px`,
+              fontSize: 12,
+              //fontWeight: "bold",
+              color: "black",
+              transform: `translateY(-2px)`,
+            }}
+          >
+            {notice.minute}&apos;
+          </Typography>
           {notice.kind === "goal" && (
             <img
               src={SoccerBallImage}
@@ -151,11 +167,11 @@ export default function MatchEventSnackbar({
               style={{
                 width: 15,
                 height: 15,
-                marginLeft: -5,
-                transform: "translateY(-1px)",
+                transform: "translateY(-3px)",
               }}
             />
           )}
+
           <Typography
             sx={{
               textTransform: "uppercase",
@@ -187,26 +203,12 @@ export default function MatchEventSnackbar({
                     fontWeight: 700,
                     fontSize: 16,
                     paddingLeft: 0.5,
-                    marginRight: 2,
                   }}
                 >
                   {player?.name}
                 </Typography>
               </>
             )}
-            <Typography
-              sx={{
-                backgroundColor: "#c4c4c4",
-                p: 0.5,
-                px: 1,
-                fontSize: 12,
-                //fontWeight: "bold",
-                color: "black",
-                transform: `translateY(-2px)`,
-              }}
-            >
-              {notice.minute}&apos;
-            </Typography>
           </Typography>
         </Box>
 
