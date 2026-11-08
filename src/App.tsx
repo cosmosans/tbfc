@@ -503,7 +503,10 @@ export default function App() {
   );
   const currentDate = new Date();
   const today = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(2, "0")}`;
-  const nextMatch = upcoming.find((match) => match.date >= today);
+  const liveMatch = data.matches
+    .filter((match) => match.status === "in_progress")
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  const nextMatch = liveMatch ?? upcoming.find((match) => match.date >= today);
   const nextLineup = nextMatch
     ? (data.lineups.find((lineup) => lineup.matchId === nextMatch.id) ??
       defaultLineup(nextMatch.id))
@@ -511,7 +514,7 @@ export default function App() {
   const tacticsMatches = [
     ...(nextMatch ? [nextMatch] : []),
     ...data.matches
-      .filter((match) => match.status !== "scheduled")
+      .filter((match) => match.status !== "scheduled" && match.id !== nextMatch?.id)
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 5),
   ];
