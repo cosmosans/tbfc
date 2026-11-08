@@ -298,14 +298,20 @@ export default function App() {
     };
   }, []);
   const viewedMatchId = matchRoute?.params.id;
-  const goalSound = useGoalSound(viewedMatchId);
+  const matchdayLiveMatchId = page === "matches"
+    ? data.matches
+        .filter((match) => match.status === "in_progress")
+        .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
+    : undefined;
+  const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
+  const goalSound = useGoalSound();
   const currentEvents = useRef(sourceData.events);
   useLayoutEffect(() => {
     currentEvents.current = sourceData.events;
   }, [sourceData.events]);
   const [notices, setNotices] = useState<MatchEvent[]>([]);
   const matchNotices = notices.filter(
-    (event) => event.matchId === viewedMatchId,
+    (event) => event.matchId === pollingMatchId,
   );
   const notice = matchNotices[0];
   const noticePlayer =
@@ -364,35 +370,32 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [goalBurst]);
   useEffect(() => {
-    const viewedMatch = sourceData.matches.find((match) => match.id === viewedMatchId);
-    const start = viewedMatch ? kickoffTime(viewedMatch) : null;
+    const pollingMatch = sourceData.matches.find((match) => match.id === pollingMatchId);
+    const start = pollingMatch ? kickoffTime(pollingMatch) : null;
     const liveWindow = start !== null && clockTime >= start && clockTime < start + 61 * 60_000;
-    if (manageMode || dirty || (viewedMatchId && !liveWindow)) return;
+    if (dirty || (manageMode && !pollingMatchId) || (pollingMatchId && !liveWindow)) return;
     let active = true;
     let loading = false;
     const refresh = async () => {
       if (loading || document.visibilityState === "hidden") return;
       loading = true;
       try {
-        if (viewedMatchId && syncState === "ready") {
-          const { match, events } = await fetchMatchEvents(viewedMatchId);
+        if (pollingMatchId && syncState === "ready") {
+          const { match, events } = await fetchMatchEvents(pollingMatchId);
           if (!active) return;
           const known = new Set(
             currentEvents.current
-              .filter((event) => event.matchId === viewedMatchId)
+              .filter((event) => event.matchId === pollingMatchId)
               .map((event) => event.id),
           );
           const additions = events.filter((event) => !known.has(event.id));
           if (additions.length)
             setNotices((previous) => [...previous, ...additions]);
-          if (
-            additions.some(
-              (event) => event.kind === "goal" && event.team !== "opponent",
-            )
-          ) {
-            goalSound.current();
+          const tbfcGoals = additions.filter((event) => event.kind === "goal" && event.team !== "opponent");
+          if (tbfcGoals.length) {
+            tbfcGoals.forEach(() => goalSound.current());
             setGoalBurst({
-              matchId: viewedMatchId,
+              matchId: pollingMatchId,
               started: performance.now(),
             });
           }
@@ -400,13 +403,13 @@ export default function App() {
             ...current,
             events: [
               ...current.events.filter(
-                (event) => event.matchId !== viewedMatchId,
+                (event) => event.matchId !== pollingMatchId,
               ),
               ...events,
             ],
             matches: match
               ? current.matches.map((existing) =>
-                  existing.id === viewedMatchId ? match : existing,
+                  existing.id === pollingMatchId ? { ...match, chat: existing.chat } : existing,
                 )
               : current.matches,
           }));
@@ -426,7 +429,7 @@ export default function App() {
     };
     const timer = window.setInterval(
       () => void refresh(),
-      viewedMatchId && syncState === "ready" ? 5_000 : 60_000,
+      pollingMatchId && syncState === "ready" ? 5_000 : 60_000,
     );
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
@@ -435,7 +438,7 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [manageMode, dirty, viewedMatchId, syncState, goalSound, sourceData.matches, clockTime]);
+  }, [manageMode, dirty, pollingMatchId, syncState, goalSound, sourceData.matches, clockTime]);
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
@@ -507,6 +510,7 @@ export default function App() {
     .filter((match) => match.status === "in_progress")
     .sort((a, b) => b.date.localeCompare(a.date))[0];
   const nextMatch = liveMatch ?? upcoming.find((match) => match.date >= today);
+  const noticeMatch = selected ?? (page === "matches" ? liveMatch : undefined);
   const nextLineup = nextMatch
     ? (data.lineups.find((lineup) => lineup.matchId === nextMatch.id) ??
       defaultLineup(nextMatch.id))
@@ -923,6 +927,7 @@ export default function App() {
                 >
                   {nextMatch && (
                     <MatchBanner
+                      goalTime={goalBurst?.matchId === nextMatch.id ? goalBurst.started : undefined}
                       data={data}
                       match={nextMatch}
                       onOpen={() =>
@@ -1075,17 +1080,17 @@ export default function App() {
           </>
         )}
       </Container>
-      {notice && selected && (
+      {notice && noticeMatch && (
         <MatchEventSnackbar
           key={notice.id}
           notice={notice}
           player={noticePlayer}
-          opponent={opponentName(data, selected)}
-          opponentCrestUrl={opponentFor(data, selected)?.crestUrl}
+          opponent={opponentName(data, noticeMatch)}
+          opponentCrestUrl={opponentFor(data, noticeMatch)?.crestUrl}
           creditedTeamColor={notice.team === "opponent"
-            ? opponentFor(data, selected)?.color || "#828892"
+            ? opponentFor(data, noticeMatch)?.color || "#828892"
             : "#CA5126"}
-          match={selected}
+          match={noticeMatch}
           events={data.events}
           remaining={matchNotices.length - 1}
           publishBarVisible={canEditClub && dirty}

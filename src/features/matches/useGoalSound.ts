@@ -1,14 +1,15 @@
 import { useEffect, useRef } from "react";
 
-export function useGoalSound(matchId?: string) {
+export function useGoalSound() {
   const play = useRef<() => void>(() => {});
   useEffect(() => {
-    if (!matchId || !window.AudioContext) return;
+    if (!window.AudioContext) return;
     const context = new AudioContext();
     const controller = new AbortController();
     let clip: Promise<AudioBuffer | null> | undefined;
     let source: AudioBufferSourceNode | undefined;
-    let sequence = 0;
+    let active = true;
+    let playback = Promise.resolve();
 
     function prepare() {
       clip ??= fetch("/audio/tbfc-goal.mp3", { signal: controller.signal })
@@ -27,25 +28,27 @@ export function useGoalSound(matchId?: string) {
     window.addEventListener("pointerup", unlock);
     window.addEventListener("keydown", unlock);
     play.current = () => {
-      const request = ++sequence;
-      const started = performance.now();
-      void Promise.all([prepare(), context.resume()]).then(([buffer]) => {
-        if (!buffer || request !== sequence || performance.now() - started > 2000) return;
-        source?.stop();
+      playback = playback.then(async () => {
+        const [buffer] = await Promise.all([prepare(), context.resume()]);
+        if (!buffer || !active) return;
         source = context.createBufferSource();
         source.buffer = buffer;
         source.connect(context.destination);
         source.start();
+        await new Promise<void>((resolve) => {
+          if (source) source.onended = () => resolve();
+        });
       }).catch(() => {});
     };
     return () => {
-      sequence++;
+      active = false;
       play.current = () => {};
+      source?.stop();
       controller.abort();
       window.removeEventListener("pointerup", unlock);
       window.removeEventListener("keydown", unlock);
       void context.close().catch(() => {});
     };
-  }, [matchId]);
+  }, []);
   return play;
 }

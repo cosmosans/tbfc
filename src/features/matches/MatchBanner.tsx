@@ -140,7 +140,7 @@ export default function MatchBanner({
     headToHead[liveResult] += 1;
   }
   const clock = match.status === "in_progress" && (
-    <Stack spacing={0.5}>
+    <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
       {phase?.label === "HALF TIME" && (
         <Chip size="small" label="HALF TIME" color="primary" sx={{ textShadow: "none" }} />
       )}
@@ -150,7 +150,7 @@ export default function MatchBanner({
           {String(phase.seconds % 60).padStart(2, "0")}
         </Typography>
       )}
-      {detail && phase?.label !== "HALF TIME" && (
+      {phase && phase.label !== "HALF TIME" && (
         <LinearProgress
           variant="indeterminate"
           color="primary"
