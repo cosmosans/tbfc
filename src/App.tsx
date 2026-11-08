@@ -40,7 +40,7 @@ import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
-import { matchAtTime } from "./features/matches/matchClock";
+import { kickoffTime, matchAtTime } from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import LineupEditor from "./features/lineup/LineupEditor";
@@ -364,7 +364,10 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [goalBurst]);
   useEffect(() => {
-    if (manageMode || dirty) return;
+    const viewedMatch = sourceData.matches.find((match) => match.id === viewedMatchId);
+    const start = viewedMatch ? kickoffTime(viewedMatch) : null;
+    const liveWindow = start !== null && clockTime >= start && clockTime < start + 61 * 60_000;
+    if (manageMode || dirty || (viewedMatchId && !liveWindow)) return;
     let active = true;
     let loading = false;
     const refresh = async () => {
@@ -423,7 +426,7 @@ export default function App() {
     };
     const timer = window.setInterval(
       () => void refresh(),
-      viewedMatchId ? 30_000 : 60_000,
+      viewedMatchId && syncState === "ready" ? 5_000 : 60_000,
     );
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
@@ -432,7 +435,7 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [manageMode, dirty, viewedMatchId, syncState, goalSound]);
+  }, [manageMode, dirty, viewedMatchId, syncState, goalSound, sourceData.matches, clockTime]);
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
