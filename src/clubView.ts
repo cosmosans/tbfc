@@ -16,7 +16,7 @@ function seasonFor(data: ClubData, match: Match) {
 export function seasonName(data: ClubData, match: Match) {
   return seasonFor(data, match)?.name ?? match.season;
 }
-function seasonDate(data: ClubData, season: Season) {
+export function seasonDate(data: ClubData, season: Season) {
   return (
     season.startsOn ||
     data.matches
@@ -25,6 +25,7 @@ function seasonDate(data: ClubData, season: Season) {
           m.seasonId === season.id || (!m.seasonId && m.season === season.name),
       )
       .map((m) => m.date)
+      .filter(Boolean)
       .sort()[0] ||
     ""
   );

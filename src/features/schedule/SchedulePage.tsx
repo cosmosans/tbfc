@@ -10,14 +10,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import moment from "moment";
 import AddIcon from "@mui/icons-material/Add";
 import { isMatchCompleted, type ClubData, type Match } from "../../model";
-import { opponentName, orderedSeasons } from "../../clubView";
+import { opponentName, orderedSeasons, seasonDate, seasonName } from "../../clubView";
 import MatchTable from "../matches/MatchTable";
 import ScheduleImporter from "./ScheduleImporter";
 import { matchLocation } from "../../matchLocation";
 import { canEditClub } from "../../editAccess";
 import PageHeading from "../../components/PageHeading";
+
+const sectionHeading = { fontWeight: 300, display: "inline-block", bgcolor: "#111", color: "#fff", py: 1, mb: 2 };
 
 type Props = {
   data: ClubData;
@@ -49,14 +52,22 @@ export default function SchedulePage({
     `${opponentName(data, match)} ${matchLocation(match)} ${match.league ?? ""} ${match.competition}`
       .toLowerCase()
       .includes(search.toLowerCase());
-  const upcoming = data.matches
-    .filter((match) => match.status === "scheduled" && includes(match))
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const inProgress = data.matches
-    .filter((match) => match.status === "in_progress" && includes(match))
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const history = data.matches
-    .filter((match) => isMatchCompleted(match) && includes(match))
+  const today = moment().format("YYYY-MM-DD");
+  const liveMatch = data.matches.find((match) => match.status === "in_progress");
+  const startedSeason = seasons.find((item) => {
+    const start = seasonDate(data, item);
+    return start && start <= today;
+  });
+  const currentSeason = liveMatch ? seasonName(data, liveMatch) : startedSeason?.name;
+  // Keep other announced seasons visible when their fixtures are already on the schedule.
+  const seasonHeadings = new Set<string>();
+  if (currentSeason) seasonHeadings.add(currentSeason);
+  for (const match of data.matches) {
+    if (!isMatchCompleted(match)) seasonHeadings.add(seasonName(data, match));
+  }
+  const filtered = data.matches.filter(includes);
+  const history = filtered
+    .filter((match) => !seasonHeadings.has(seasonName(data, match)))
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
   return (
     <Stack gap={2}>
@@ -98,40 +109,21 @@ export default function SchedulePage({
           onClose={() => setUploadOpen(false)}
         />
       )}
-      {inProgress.length > 0 && (
-        <section style={{ minWidth: 0, width: "100%" }}>
-          <Typography variant="h5" sx={{ mb: 2 }}>
-            In Progress
-          </Typography>
-          <MatchTable data={data} matches={inProgress} onOpen={onOpen} />
-        </section>
-      )}
-      {upcoming.length > 0 && (
-        <section style={{ minWidth: 0, width: "100%" }}>
-          <MatchTable
-            data={data}
-            matches={upcoming}
-            upcoming
-            showSeasonDividers={season === "All seasons" && search === ""}
-            onOpen={onOpen}
-          />
-        </section>
-      )}
+      {Array.from(seasonHeadings, (name) => {
+        const matches = filtered
+          .filter((match) => seasonName(data, match) === name)
+          .sort((a, b) => a.date.localeCompare(b.date));
+        if (!matches.length) return null;
+        return (
+          <section key={name} style={{ minWidth: 0, width: "100%" }}>
+            <Typography variant="h5" sx={sectionHeading}>{name || "Season schedule"}</Typography>
+            <MatchTable data={data} matches={matches} seasonSchedule label={name || "Season schedule"} onOpen={onOpen} />
+          </section>
+        );
+      })}
 
       <section style={{ minWidth: 0, width: "100%" }}>
-        <Typography
-          variant="h5"
-          sx={{
-            fontWeight: 300,
-            display: "inline-block",
-            bgcolor: "#111",
-            color: "#fff",
-            py: 1,
-            mb: 2,
-          }}
-        >
-          Past Results
-        </Typography>
+        <Typography variant="h5" sx={sectionHeading}>Past Results</Typography>
         <Stack
           direction={{ xs: "column", sm: "row" }}
           gap={2}

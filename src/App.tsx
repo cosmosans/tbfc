@@ -274,10 +274,13 @@ export default function App() {
       loading = true;
       try {
         if (viewedMatchId && syncState === "ready") {
-          const events = await fetchMatchEvents(viewedMatchId);
+          const { match, events } = await fetchMatchEvents(viewedMatchId);
           if (active) setData(current => ({
             ...current,
             events: [...current.events.filter(event => event.matchId !== viewedMatchId), ...events],
+            matches: match
+              ? current.matches.map(existing => existing.id === viewedMatchId ? match : existing)
+              : current.matches,
           }));
           return;
         }
@@ -293,7 +296,7 @@ export default function App() {
         loading = false;
       }
     };
-    const timer = window.setInterval(() => void refresh(), 60_000);
+    const timer = window.setInterval(() => void refresh(), viewedMatchId ? 30_000 : 60_000);
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
     return () => {

@@ -1,6 +1,6 @@
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
-import type { ClubData, MatchEvent } from './model';
+import type { ClubData, Match, MatchEvent } from './model';
 
 const collections = ['matches', 'players', 'opponents', 'seasons', 'locations', 'events', 'lineups', 'boards', 'standings'] as const;
 
@@ -38,14 +38,15 @@ export async function fetchClubData(): Promise<RemoteClub> {
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }
 
-export async function fetchMatchEvents(matchId: string): Promise<MatchEvent[]> {
+export async function fetchMatchEvents(matchId: string): Promise<{ match: Match | null; events: MatchEvent[] }> {
   const query = new URLSearchParams({ matchId });
   const response = await fetch(`/api/match-events?${query}`, { cache: 'no-store' });
-  const { events } = await readResponse(response);
+  const { match, events } = await readResponse(response);
   if (!Array.isArray(events) || !events.every(event => event?.matchId === matchId)) {
     throw new Error('Invalid match events response.');
   }
-  return events;
+  if (match && match.id !== matchId) throw new Error('Invalid match response.');
+  return { match, events };
 }
 
 export async function publishClubData(data: ClubData, revision: number): Promise<number> {

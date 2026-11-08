@@ -15,5 +15,10 @@ export async function onRequestGet({ request, env }: { request: Request; env: { 
   const rows = await env.CLUB_DB.prepare(
     "SELECT payload FROM club_records WHERE collection = 'events' AND json_extract(payload, '$.matchId') = ? ORDER BY record_id"
   ).bind(matchId).all<{ payload: string }>();
-  return Response.json({ events: rows.results.map(row => JSON.parse(row.payload)) }, { headers });
+  const matchRows = await env.CLUB_DB.prepare(
+    "SELECT payload FROM club_records WHERE collection = 'matches' AND record_id = ?"
+  ).bind(matchId).all<{ payload: string }>();
+  const match = matchRows.results[0] ? JSON.parse(matchRows.results[0].payload) : null;
+  if (match) delete match.chat;
+  return Response.json({ match, events: rows.results.map(row => JSON.parse(row.payload)) }, { headers });
 }

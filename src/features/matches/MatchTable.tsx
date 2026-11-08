@@ -30,13 +30,15 @@ type SortColumn = "date" | "opponent" | "score" | "result" | "venue" | "kit";
 export default function MatchTable({
   data,
   matches,
-  upcoming = false,
+  seasonSchedule = false,
+  label = "Match history",
   showSeasonDividers = false,
   onOpen,
 }: {
   data: ClubData;
   matches: Match[];
-  upcoming?: boolean;
+  seasonSchedule?: boolean;
+  label?: string;
   showSeasonDividers?: boolean;
   onOpen: (match: Match) => void;
 }) {
@@ -46,7 +48,7 @@ export default function MatchTable({
   const compareText = (a: string, b: string) =>
     a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
   const sortedMatches =
-    upcoming || !sortColumn
+    !sortColumn
       ? matches
       : [...matches].sort((a, b) => {
           let comparison = 0;
@@ -66,7 +68,7 @@ export default function MatchTable({
               break;
             case "result": {
               const rank = (match: Match) =>
-                match.status === "in_progress"
+                match.status === "scheduled" ? -2 : match.status === "in_progress"
                   ? -1
                   : ({ W: 2, D: 1, L: 0 }[scoreResult(match)] ?? -1);
               comparison = rank(a) - rank(b);
@@ -90,12 +92,9 @@ export default function MatchTable({
     return (
       <TableCell
         align={centered ? "center" : "left"}
-        sortDirection={!upcoming && active ? direction : false}
+        sortDirection={active ? direction : false}
       >
-        {upcoming ? (
-          label
-        ) : (
-          <TableSortLabel
+        <TableSortLabel
             active={active}
             direction={active ? direction : "asc"}
             onClick={() => {
@@ -110,7 +109,6 @@ export default function MatchTable({
           >
             {label}
           </TableSortLabel>
-        )}
       </TableCell>
     );
   }
@@ -124,7 +122,7 @@ export default function MatchTable({
       }}
     >
       <Table
-        aria-label={upcoming ? "Upcoming fixtures" : "Match history"}
+        aria-label={label}
         sx={{
           minWidth: { xs: 0, lg: 850 },
           tableLayout: { xs: "fixed", sm: "auto" },
@@ -133,11 +131,11 @@ export default function MatchTable({
             paddingInlineStart: { xs: 1, sm: 1.5, lg: 2 },
           },
           "& tr > :last-child": { paddingInlineEnd: { xs: 1, sm: 1.5, lg: 2 } },
-          "& thead th:first-of-type": { width: { xs: "7.75rem", sm: "auto" } },
+          "& thead th:first-of-type": { width: { xs: seasonSchedule ? 57 : "7.75rem", sm: "auto" } },
           "& thead th:nth-of-type(3)": {
-            width: { xs: upcoming ? 76 : 49, sm: "auto" },
+            width: { xs: seasonSchedule ? 64 : 49, sm: "auto" },
           },
-          "& thead th:nth-of-type(4)": { width: { xs: 48, sm: "auto" } },
+          "& thead th:nth-of-type(4)": { width: { xs: seasonSchedule ? 80 : 48, sm: "auto" } },
           "& .MuiTableSortLabel-icon": {
             display: { xs: "none", sm: "inline-block" },
           },
@@ -147,10 +145,10 @@ export default function MatchTable({
           <TableRow>
             {header("date", "Date")}
             {header("opponent", "Opponent")}
-            {header("score", upcoming ? "Kickoff" : "Score")}
-            {!upcoming && header("result", "Result", true)}
+            {header("score", seasonSchedule ? "Score / Kickoff" : "Score")}
+            {header("result", "Result", true)}
             {!compact && header("venue", "Venue")}
-            {!compact && header("kit", upcoming ? "Home / Away" : "Kit")}
+            {!compact && header("kit", "Kit")}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -161,7 +159,7 @@ export default function MatchTable({
               (!sortColumn || sortColumn === "date") &&
               (next
                 ? seasonName(data, match) !== seasonName(data, next)
-                : !upcoming);
+                : true);
             const opponent = opponentFor(data, match);
             return (
               <TableRow
@@ -183,7 +181,7 @@ export default function MatchTable({
                 }}
               >
                 <TableCell>
-                  <Typography
+                  {!seasonSchedule && <Typography
                     component="span"
                     variant="caption"
                     color="text.secondary"
@@ -198,7 +196,7 @@ export default function MatchTable({
                     }}
                   >
                     {seasonName(data, match)}
-                  </Typography>
+                  </Typography>}
                   {match.date && moment(match.date).isValid()
                     ? moment(match.date).format("MMM D")
                     : "Date TBD"}
@@ -221,7 +219,7 @@ export default function MatchTable({
                         event.stopPropagation();
                         onOpen(match);
                       }}
-                      aria-label={`Open ${upcoming ? "fixture" : "match"} against ${opponentName(data, match)}`}
+                      aria-label={`Open ${match.status === "scheduled" ? "fixture" : "match"} against ${opponentName(data, match)}`}
                       sx={{
                         color: "text.primary",
                         fontWeight: 700,
@@ -247,23 +245,21 @@ export default function MatchTable({
                 </TableCell>
                 <TableCell>
                   <Typography color="primary" fontWeight={700}>
-                    {upcoming
+                    {match.status === "scheduled"
                       ? match.kickoff || "Time TBD"
                       : displayScore(match)}
                   </Typography>
                 </TableCell>
-                {!upcoming && (
-                  <TableCell align="center">
-                    <MatchResultChip match={match} />
-                  </TableCell>
-                )}
+                <TableCell align="center">
+                  {match.status === "scheduled" ? "Upcoming" : <MatchResultChip match={match} />}
+                </TableCell>
                 {!compact && (
                   <TableCell>
                     <Stack gap={0.5} alignItems="flex-start">
                       <Typography variant="body2" color="text.secondary">
                         {matchLocation(match) || "Venue TBD"}
                       </Typography>
-                      {!upcoming && issues(match).length > 0 && (
+                      {issues(match).length > 0 && (
                         <Chip
                           size="small"
                           color="warning"
@@ -275,15 +271,7 @@ export default function MatchTable({
                 )}
                 {!compact && (
                   <TableCell>
-                    {upcoming ? (
-                      match.homeAway === "home" ? (
-                        "Home"
-                      ) : match.homeAway === "away" ? (
-                        "Away"
-                      ) : (
-                        "—"
-                      )
-                    ) : match.kit === "White" || match.kit === "Black" ? (
+                    {match.kit === "White" || match.kit === "Black" ? (
                       <Box
                         component="img"
                         src={
