@@ -1,4 +1,5 @@
 export type MatchPhoto = { id: string; src: string; name: string };
+export type MatchVideo = { id: string; url: string; title: string };
 
 export type MatchChatReply = { id: string; playerId: string; text: string; senderName?: string; sentAt?: string };
 export type MatchChatMessage = MatchChatReply & { replies?: MatchChatReply[] };
@@ -32,6 +33,7 @@ export type Match = {
   matchAuditComplete?: boolean;
   reportAuthor?: "turfbot";
   photos?: MatchPhoto[];
+  videos?: MatchVideo[];
   chat?: MatchChatMessage[];
   sourceRow?: number;
 };

@@ -27,6 +27,8 @@ import { opponentFor, opponentName } from "../../clubView";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import WhistleIcon from "../../img/penalty-kick.svg";
 import OwnGoalIcon from "../../img/bomb.svg";
+import YellowCardIcon from "../../img/cards.svg";
+import SaveIcon from "../../img/gloves.svg";
 import { canEditClub } from "../../editAccess";
 
 export default function Events({
@@ -354,11 +356,15 @@ export default function Events({
                     src={
                       event.kind === "penalty_kick"
                         ? WhistleIcon
+                        : event.kind === "yellow_card"
+                          ? YellowCardIcon
+                          : event.kind === "penalty_save"
+                            ? SaveIcon
                         : event.ownGoal
                           ? OwnGoalIcon
                           : GoalIcon
                     }
-                    alt="Goal"
+                    alt={event.kind.replaceAll("_", " ")}
                     style={{
                       width: 16,
                       height: 16,

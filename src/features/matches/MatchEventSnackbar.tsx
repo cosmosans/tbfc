@@ -64,13 +64,14 @@ export default function MatchEventSnackbar({
       sx={{
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
         bottom: `calc(${publishBarVisible ? 150 : 68}px + env(safe-area-inset-bottom, 0px))`,
+        justifyContent: "normal",
       }}
     >
       <Alert
         severity="info"
         icon={false}
         sx={{
-          width: "min(800px, 96vw)",
+          width: "min(460px, 96vw)",
           boxSizing: "border-box",
           position: "relative",
           maxHeight: "50vh",

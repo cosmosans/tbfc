@@ -14,9 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 import { EditorContent, useEditor } from "@tiptap/react";
-import MatchGallery from "./MatchGallery";
 import StarterKit from "@tiptap/starter-kit";
-import type { Match, MatchPhoto } from "../../model";
+import type { Match } from "../../model";
 import { saveStoryHtml, storyToHtml } from "./matchStory";
 import { isTurfbotReport } from "./reportAttribution";
 
@@ -24,12 +23,10 @@ export default function MatchHistory({
   match,
   onSaveReport,
   onAuditChange,
-  onSavePhotos,
 }: {
   match: Match;
   onSaveReport?: (report: string) => void;
   onAuditChange?: (complete: boolean) => void;
-  onSavePhotos?: (photos: MatchPhoto[]) => void;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [, refreshToolbar] = useState(0);
@@ -125,7 +122,6 @@ export default function MatchHistory({
           )}
         </CardContent>
       </Card>
-      <MatchGallery photos={match.photos ?? []} onSave={onSavePhotos} />
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}

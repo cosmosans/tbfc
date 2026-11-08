@@ -3,6 +3,7 @@ export const matchTabs = [
   "events",
   "story",
   "chat",
+  "media",
   "matchboard",
 ] as const;
 export type MatchTab = (typeof matchTabs)[number];

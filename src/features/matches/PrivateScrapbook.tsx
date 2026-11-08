@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -8,6 +10,7 @@ import {
   DialogTitle,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import type { MatchChatMessage, Player } from "../../model";
 import { canEditClub } from "../../editAccess";
@@ -140,32 +143,63 @@ export default function PrivateScrapbook({
         body: JSON.stringify({ matchId, messages: next, previous: messages }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not save the chat.");
+      if (!response.ok)
+        throw new Error(body.error || "Could not save the chat.");
       setMessages(body.messages);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not save the chat.");
+      setError(
+        cause instanceof Error ? cause.message : "Could not save the chat.",
+      );
     } finally {
       setBusy(false);
     }
   }
   return (
-    <Stack gap={2}>
-      <Button
-        variant="outlined"
-        disabled={busy}
-        sx={{ alignSelf: "flex-start" }}
-        onClick={() =>
-          messages === null ? (setError(""), setOpen(true)) : void lock()
-        }
-      >
-        {messages === null ? "Unlock Scrapbook" : "Lock Scrapbook"}
-      </Button>
+    <Stack gap={2} sx={{ alignItems: "center" }}>
+      {messages === null && (
+        <Box
+          sx={(theme) => ({
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            border: `1px solid ${theme.palette.primary.main}`,
+            p: 2,
+            maxWidth: 500,
+          })}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: "center",
+            }}
+          >
+            <LockOutlinedIcon
+              sx={{ color: "white", verticalAlign: "middle", mr: 0.5 }}
+            />
+            <strong>Team Chat is set to private.</strong>
+          </Typography>
+          <Button
+            variant="contained"
+            disabled={busy}
+            sx={{ marginTop: 1 }}
+            onClick={() =>
+              messages === null ? (setError(""), setOpen(true)) : void lock()
+            }
+          >
+            {messages === null ? "Enter Team Password" : "Lock Scrapbook"}
+          </Button>
+        </Box>
+      )}
+
       {error && !open && <Alert severity="error">{error}</Alert>}
       {messages !== null && (
         <MatchChat
           messages={messages}
           players={players}
-          onSave={canEditClub && !busy ? (next) => void saveMessages(next) : undefined}
+          onSave={
+            canEditClub && !busy ? (next) => void saveMessages(next) : undefined
+          }
         />
       )}
       <Dialog open={open} onClose={close} fullWidth maxWidth="xs">
@@ -175,7 +209,7 @@ export default function PrivateScrapbook({
             void unlock();
           }}
         >
-          <DialogTitle>Unlock Scrapbook</DialogTitle>
+          <DialogTitle>Enter Team Password</DialogTitle>
           <DialogContent>
             <Stack gap={2} sx={{ pt: 1 }}>
               <TextField
@@ -189,8 +223,7 @@ export default function PrivateScrapbook({
                 disabled={busy}
               />
               <Alert severity="info">
-                Private chats. This device stays unlocked for 30 days, or until
-                you lock the scrapbook.
+                This device will stay unlocked for 30 days.
               </Alert>
               {error && <Alert severity="error">{error}</Alert>}
             </Stack>

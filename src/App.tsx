@@ -39,6 +39,7 @@ import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
+import MatchMedia from "./features/matches/MatchMedia";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
 import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
 import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchClock";
@@ -893,19 +894,6 @@ export default function App() {
                           })
                       : undefined
                   }
-                  onSavePhotos={
-                    canEditClub
-                      ? (photos) =>
-                          update({
-                            ...data,
-                            matches: data.matches.map((match) =>
-                              match.id === selected.id
-                                ? { ...match, photos }
-                                : match,
-                            ),
-                          })
-                      : undefined
-                  }
                   onSaveReport={
                     canEditClub
                       ? (report) =>
@@ -942,6 +930,37 @@ export default function App() {
                 />
               )}
               {activeDetailTab === 4 && (
+                <MatchMedia
+                  match={selected}
+                  onSavePhotos={
+                    canEditClub
+                      ? (photos) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id
+                                ? { ...match, photos }
+                                : match,
+                            ),
+                          })
+                      : undefined
+                  }
+                  onSaveVideos={
+                    canEditClub
+                      ? (videos) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id
+                                ? { ...match, videos }
+                                : match,
+                            ),
+                          })
+                      : undefined
+                  }
+                />
+              )}
+              {activeDetailTab === 5 && (
                 <Matchboard data={data} match={selected} update={update} />
               )}
             </>

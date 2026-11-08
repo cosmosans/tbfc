@@ -99,7 +99,10 @@ export default function StandingsWidget({
     setMessage(`${selectedSeason?.name ?? "Season"} standings updated.`);
   }
   return (
-    <Card component="section" sx={{ bgcolor: "background.paper", border: 0, minWidth: 0 }}>
+    <Card
+      component="section"
+      sx={{ bgcolor: "background.paper", border: 0, minWidth: 0 }}
+    >
       <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
@@ -108,7 +111,15 @@ export default function StandingsWidget({
           gap={2}
           sx={{ p: { xs: 2, sm: 3 }, gap: 2 }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1, flexWrap: "wrap" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flex: 1,
+              gap: 1,
+              flexWrap: "wrap",
+            }}
+          >
             <Typography
               variant="body2"
               sx={{ textTransform: "uppercase", fontSize: 12 }}
@@ -183,10 +194,15 @@ export default function StandingsWidget({
         )}
         {snapshot?.rows.length ? (
           <>
-            <TableContainer sx={{ overflowX: "auto", bgcolor: "background.paper" }}>
+            <TableContainer
+              sx={{ overflowX: "auto", bgcolor: "background.paper" }}
+            >
               <Table
                 aria-label={`${selectedSeason?.name ?? "Season"} standings`}
-                sx={{ minWidth: 820, "& .MuiTableCell-root": { px: { xs: 1, sm: 1.5, lg: 2 } } }}
+                sx={{
+                  minWidth: 820,
+                  "& .MuiTableCell-root": { px: { xs: 1, sm: 1.5, lg: 2 } },
+                }}
               >
                 <TableHead sx={{ bgcolor: "action.hover" }}>
                   <TableRow
@@ -349,14 +365,6 @@ export default function StandingsWidget({
                 </TableBody>
               </Table>
             </TableContainer>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ display: "block", mt: 1 }}
-            >
-              Diff is calculated from scored and allowed. PI and ranking points
-              come from the uploaded league table.
-            </Typography>
           </>
         ) : (
           <Alert severity="info">

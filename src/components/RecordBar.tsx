@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -22,7 +23,6 @@ const Segment = styled(Box, {
   placeItems: "center",
   transform: "skewX(-10deg)",
   minWidth: 46,
-  transition: "flex-grow 4s ease",
   background:
     tone === "win"
       ? theme.palette.success.main
@@ -64,6 +64,8 @@ type HeadToHeadProps = {
   tbfcWins: number;
   opponentColor?: string;
   reverse?: boolean;
+  animationKey?: string;
+  scoreKey?: string;
 };
 type ResultsProps = {
   variant: "results";
@@ -73,6 +75,19 @@ type ResultsProps = {
 };
 
 export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
+  const previous = useRef<{ animationKey?: string; scoreKey?: string } | null>(null);
+  const animationEndsAt = useRef(0);
+  const animationKey = props.variant === "results" ? undefined : props.animationKey;
+  const scoreKey = props.variant === "results" ? undefined : props.scoreKey;
+  const scoreChanged = !!scoreKey && previous.current?.animationKey === animationKey &&
+    !!previous.current?.scoreKey && previous.current.scoreKey !== scoreKey;
+  const animate = scoreChanged ||
+    (previous.current?.animationKey === animationKey && Date.now() < animationEndsAt.current);
+  useLayoutEffect(() => {
+    if (scoreChanged) animationEndsAt.current = Date.now() + 4000;
+    else if (previous.current?.animationKey !== animationKey) animationEndsAt.current = 0;
+    previous.current = { animationKey, scoreKey };
+  }, [animationKey, scoreKey, scoreChanged]);
   const results = props.variant === "results";
   const reverse = !results && props.reverse;
   const counts = results
@@ -82,6 +97,7 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
       : [props.opponentWins, props.draws, props.tbfcWins];
   const total = counts.reduce((sum, count) => sum + count, 0);
   const sizes = total ? counts : [1, 1, 1];
+  const segmentTransition = animate ? "flex-grow 4s ease" : "none";
   return (
     <Box
       aria-label={
@@ -94,7 +110,7 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
         <Segment
           tone={results ? "win" : reverse ? "tbfc" : "opponent"}
           opponentColor={results ? undefined : props.opponentColor}
-          sx={{ flex: sizes[0] }}
+          sx={{ flex: sizes[0], transition: segmentTransition }}
         >
           <Typography
             variant="caption"
@@ -103,7 +119,7 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
             {counts[0]}W
           </Typography>
         </Segment>
-        <Segment tone={results ? "resultDraw" : "draw"} sx={{ flex: sizes[1] }}>
+        <Segment tone={results ? "resultDraw" : "draw"} sx={{ flex: sizes[1], transition: segmentTransition }}>
           <Typography
             variant="caption"
             sx={{ fontWeight: 700, transform: "skewX(10deg)" }}
@@ -115,7 +131,7 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
           tone={results ? "loss" : reverse ? "opponent" : "tbfc"}
           opponentColor={results ? undefined : props.opponentColor}
           last
-          sx={{ flex: sizes[2] }}
+          sx={{ flex: sizes[2], transition: segmentTransition }}
         >
           <Typography
             variant="caption"

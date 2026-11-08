@@ -8,6 +8,7 @@ import {
   IconButton,
   LinearProgress,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
@@ -149,12 +150,12 @@ export default function MatchBanner({
     headToHead[liveResult] += 1;
   }
   const soundToggle = onGoalSoundToggle && (
+      <Tooltip title="Toggle Match Audio" arrow>
         <IconButton
           aria-label={
             goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"
           }
           aria-pressed={goalSoundEnabled}
-          title={goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"}
           onClick={(event) => {
             event.stopPropagation();
             onGoalSoundToggle();
@@ -199,6 +200,7 @@ export default function MatchBanner({
             )}
           </Box>
         </IconButton>
+      </Tooltip>
   );
   const clock = match.status === "in_progress" && (
     <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
@@ -582,6 +584,8 @@ export default function MatchBanner({
               sx={{ mt: 2, px: { xs: 1.5, sm: 0 } }}
             >
               <RecordBar
+                animationKey={match.id}
+                scoreKey={match.status === "in_progress" ? `${match.goalsFor}-${match.goalsAgainst}` : undefined}
                 opponentWins={headToHead.L}
                 draws={headToHead.D}
                 tbfcWins={headToHead.W}
