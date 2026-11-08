@@ -11,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
+import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
@@ -139,17 +140,23 @@ export default function MatchBanner({
     ),
   );
   if (match.status === "in_progress") {
-    const liveResult = match.goalsFor > match.goalsAgainst
-      ? "W"
-      : match.goalsFor < match.goalsAgainst
-        ? "L"
-        : "D";
+    const liveResult =
+      match.goalsFor > match.goalsAgainst
+        ? "W"
+        : match.goalsFor < match.goalsAgainst
+          ? "L"
+          : "D";
     headToHead[liveResult] += 1;
   }
   const clock = match.status === "in_progress" && (
     <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
       {phase?.label === "HALF TIME" && (
-        <Chip size="small" label="HALF TIME" color="primary" sx={{ textShadow: "none" }} />
+        <Chip
+          size="small"
+          label="HALF TIME"
+          color="primary"
+          sx={{ textShadow: "none" }}
+        />
       )}
       {phase && phase.label !== "HALF TIME" && (
         <Typography variant="caption" textAlign="center" fontWeight={700}>
@@ -167,20 +174,62 @@ export default function MatchBanner({
       )}
       {onGoalSoundToggle && (
         <IconButton
-          aria-label={goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"}
+          aria-label={
+            goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"
+          }
           aria-pressed={goalSoundEnabled}
           title={goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"}
           onClick={(event) => {
             event.stopPropagation();
             onGoalSoundToggle();
           }}
-          sx={{ alignSelf: "center", color: "#fff", p: 0.5 }}
+          sx={{
+            borderColor: goalSoundEnabled
+              ? "primary.main"
+              : "rgba(255,255,255,.3)",
+            backgroundColor: goalSoundEnabled ? "primary.main" : "transparent",
+            "&:hover": {
+              backgroundColor: goalSoundEnabled
+                ? "primary.light"
+                : "transparent",
+            },
+            borderWidth: 1,
+            borderStyle: "solid",
+            alignSelf: "center",
+            color: "#fff",
+            p: 0.5,
+            px: 1,
+            transform: "translateY(5px) skewX(-10deg)",
+            borderRadius: 0,
+          }}
         >
-          {goalSoundEnabled ? (
-            <Box component="img" src="/icons/volume-white.svg" alt="" sx={{ width: 24, height: 24 }} />
-          ) : (
-            <VolumeOffIcon sx={{ fontSize: 24 }} />
-          )}
+          <Box
+            sx={{
+              transform: "skewX(10deg)",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {goalSoundEnabled ? (
+              <VolumeUpIcon sx={{ fontSize: 20, color: "white" }} />
+            ) : (
+              <VolumeOffIcon
+                sx={{ fontSize: 20, color: "rgba(255,255,255,.7)" }}
+              />
+            )}
+
+            <Typography
+              sx={{
+                textTransform: "uppercase",
+                fontSize: 12,
+                paddingLeft: `3px`,
+                color: goalSoundEnabled ? "white" : "rgba(255,255,255,.7)",
+                fontWeight: goalSoundEnabled ? 700 : 400,
+              }}
+            >
+              Match Audio
+            </Typography>
+          </Box>
         </IconButton>
       )}
     </Stack>
@@ -242,8 +291,16 @@ export default function MatchBanner({
           }}
         >
           {detail && onEdit && (
-            <Box className="banner-secondary" sx={{ display: "flex", justifyContent: "flex-end", pr: { xs: 1.5, sm: 3 }, mb: 1 }}>
-              <Button variant="outlined" onClick={onEdit}>
+            <Box
+              className="banner-secondary"
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                pr: { xs: 1.5, sm: 3 },
+                mb: 1,
+              }}
+            >
+              <Button variant="contained" onClick={onEdit}>
                 Edit Match
               </Button>
             </Box>
@@ -356,6 +413,7 @@ export default function MatchBanner({
                           component="div"
                           data-banner-move="score"
                           sx={{
+                            mb: -2,
                             fontWeight: 900,
                             letterSpacing: "-0.08em",
                             fontSize: { xs: "3rem", sm: "4rem" },
@@ -366,7 +424,13 @@ export default function MatchBanner({
                             textShadow: "0 0 6px rgba(0,0,0,0.75)",
                           }}
                         >
-                          <RollingScore key={`${match.id}-left`} value={isOpponent ? match.goalsFor : match.goalsAgainst} animate={match.status === "in_progress"} />
+                          <RollingScore
+                            key={`${match.id}-left`}
+                            value={
+                              isOpponent ? match.goalsFor : match.goalsAgainst
+                            }
+                            animate={match.status === "in_progress"}
+                          />
                           {side === "right" && (
                             <span
                               style={{
@@ -375,22 +439,46 @@ export default function MatchBanner({
                             >
                               {detail && match.status === "in_progress" ? (
                                 <>
-                                  <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>-</Box>
-                                  <Box component="span" sx={{ display: { xs: "block", sm: "none" }, letterSpacing: 0 }}>
+                                  <Box
+                                    component="span"
+                                    sx={{
+                                      display: { xs: "none", sm: "inline" },
+                                    }}
+                                  >
+                                    -
+                                  </Box>
+                                  <Box
+                                    component="span"
+                                    sx={{
+                                      display: { xs: "block", sm: "none" },
+                                      letterSpacing: 0,
+                                    }}
+                                  >
                                     {clock}
                                   </Box>
                                 </>
-                              ) : "-"}
+                              ) : (
+                                "-"
+                              )}
                             </span>
                           )}
-                          <RollingScore key={`${match.id}-right`} value={isOpponent ? match.goalsAgainst : match.goalsFor} animate={match.status === "in_progress"} />
+                          <RollingScore
+                            key={`${match.id}-right`}
+                            value={
+                              isOpponent ? match.goalsAgainst : match.goalsFor
+                            }
+                            animate={match.status === "in_progress"}
+                          />
                         </Typography>
 
                         {side === "right" && (
                           <Box
                             className="banner-secondary"
                             sx={{
-                              display: detail && match.status === "in_progress" ? { xs: "none", sm: "flex" } : "flex",
+                              display:
+                                detail && match.status === "in_progress"
+                                  ? { xs: "none", sm: "flex" }
+                                  : "flex",
                               justifyContent: "center",
                               alignItems: "center",
                             }}
@@ -417,7 +505,10 @@ export default function MatchBanner({
                         },
                       }}
                     >
-                      <Box data-banner-move={side} sx={{ display: "flex", position: "relative" }}>
+                      <Box
+                        data-banner-move={side}
+                        sx={{ display: "flex", position: "relative" }}
+                      >
                         {isOpponent ? (
                           <OpponentCrest
                             key={opponent?.crestUrl ?? ""}
@@ -429,8 +520,13 @@ export default function MatchBanner({
                           />
                         ) : (
                           <>
-                            <HomeCrest src="/crests/tbfc.png" alt="TBFC crest" />
-                            {goalTime !== undefined && <GoalFire key={goalTime} started={goalTime} />}
+                            <HomeCrest
+                              src="/crests/tbfc.png"
+                              alt="TBFC crest"
+                            />
+                            {goalTime !== undefined && (
+                              <GoalFire key={goalTime} started={goalTime} />
+                            )}
                           </>
                         )}
                       </Box>
@@ -484,7 +580,10 @@ export default function MatchBanner({
                 );
               })}
             </Stack>
-            <Box className="banner-secondary" sx={{ mt: 2, px: { xs: 1.5, sm: 0 } }}>
+            <Box
+              className="banner-secondary"
+              sx={{ mt: 2, px: { xs: 1.5, sm: 0 } }}
+            >
               <RecordBar
                 opponentWins={headToHead.L}
                 draws={headToHead.D}

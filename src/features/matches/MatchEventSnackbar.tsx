@@ -60,6 +60,7 @@ export default function MatchEventSnackbar({
       open
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       sx={{
+        boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
         bottom: `calc(${publishBarVisible ? 150 : 68}px + env(safe-area-inset-bottom, 0px))`,
       }}
     >
@@ -67,14 +68,23 @@ export default function MatchEventSnackbar({
         severity="info"
         icon={false}
         sx={{
-          maxWidth: 800,
-          minWidth: {
-            sm: 600,
-          },
+          width: "min(800px, 94vw)",
+          boxSizing: "border-box",
+          position: "relative",
+          border: `1px solid green`,
           maxHeight: "50vh",
           overflowY: "auto",
           overflowWrap: "anywhere",
           background: "#060606",
+          "& .MuiAlert-message": { width: "100%", minWidth: 0, pt: 7 },
+          "& .MuiAlert-action": {
+            position: "absolute",
+            top: 8,
+            right: 12,
+            zIndex: 1,
+            m: 0,
+            p: 0,
+          },
         }}
         action={
           <Button
@@ -84,6 +94,7 @@ export default function MatchEventSnackbar({
               textTransform: "uppercase",
               letterSpacing: "0.05em",
               fontWeight: 400,
+
               fontSize: 12,
             }}
             onClick={onDismiss}
@@ -101,6 +112,7 @@ export default function MatchEventSnackbar({
             right: 0,
             p: 1,
             px: 2,
+            pr: 12,
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -123,41 +135,33 @@ export default function MatchEventSnackbar({
           </Box>
         </Box>
 
-        {notice.kind === "goal" && (
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}>
-            {creditedToOpponent ? (
-              <OpponentCrest url={opponentCrestUrl} size={36} />
-            ) : (
-              <Box
-                component="img"
-                src="/crests/tbfc.png"
-                alt=""
-                sx={{ width: 36, height: 36, objectFit: "contain" }}
-              />
-            )}
-            <Typography
-              fontWeight={700}
-              sx={{ textTransform: "uppercase", color: "#fff" }}
-            >
-              {creditedToOpponent ? opponent : "Turf Burners FC"}
-            </Typography>
-          </Box>
-        )}
         <Box
-          sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1, p: 1 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            boxSizing: "border-box",
+            gap: 1,
+            p: 1,
+          }}
         >
           {notice.kind === "goal" && (
             <img
               src={SoccerBallImage}
               alt="Goal"
-              style={{ width: 15, height: 15, transform: "translateY(-1px)" }}
+              style={{
+                width: 15,
+                height: 15,
+                marginLeft: -5,
+                transform: "translateY(-1px)",
+              }}
             />
           )}
           <Typography
             sx={{
               textTransform: "uppercase",
               fontWeight: "bold",
-              marginRight: 2,
+              flex: 1,
             }}
           >
             {notice.kind}
@@ -174,7 +178,7 @@ export default function MatchEventSnackbar({
               alignItems: "center",
             }}
           >
-            #{player?.number || "—"}{" "}
+            #{player?.number || ""}{" "}
             <Typography
               component="span"
               sx={{
@@ -182,18 +186,20 @@ export default function MatchEventSnackbar({
                 fontWeight: 700,
                 fontSize: 16,
                 paddingLeft: 0.5,
+                marginRight: 2,
               }}
             >
               {player?.name || "No player recorded"}
             </Typography>
             <Typography
               sx={{
-                backgroundColor: "#999",
+                backgroundColor: "#c4c4c4",
                 p: 0.5,
                 px: 1,
                 fontSize: 12,
-                fontWeight: "bold",
+                //fontWeight: "bold",
                 color: "black",
+                transform: `translateY(-2px)`,
               }}
             >
               {notice.minute}&apos;
@@ -206,7 +212,11 @@ export default function MatchEventSnackbar({
           the top of the box.
         </Typography>
         {remaining > 0 && (
-          <Typography variant="caption">{remaining} more waiting</Typography>
+          <Box sx={{ mt: 1, opacity: 0.6 }}>
+            <Typography sx={{ textTransform: "uppercase" }} variant="caption">
+              +{remaining} More
+            </Typography>
+          </Box>
         )}
       </Alert>
     </Snackbar>
