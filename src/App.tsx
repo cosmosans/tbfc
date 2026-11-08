@@ -55,6 +55,7 @@ import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub, setManageModeAccess } from "./editAccess";
 import { fetchClubData, fetchMatchEvents, publishClubData } from "./remoteData";
+import FlameIcon from "./img/flame-white.svg";
 
 type Page =
   | "matches"
@@ -101,10 +102,13 @@ const blankMatch = (): Match => ({
 export default function App() {
   const [sourceData, setData] = useState<ClubData>(loadData);
   const [clockTime, setClockTime] = useState(Date.now);
-  const data = useMemo(() => ({
-    ...sourceData,
-    matches: sourceData.matches.map((match) => matchAtTime(match, clockTime)),
-  }), [sourceData, clockTime]);
+  const data = useMemo(
+    () => ({
+      ...sourceData,
+      matches: sourceData.matches.map((match) => matchAtTime(match, clockTime)),
+    }),
+    [sourceData, clockTime],
+  );
   const [syncState, setSyncState] = useState<
     "loading" | "ready" | "empty" | "error"
   >("loading");
@@ -273,31 +277,60 @@ export default function App() {
     currentEvents.current = sourceData.events;
   }, [sourceData.events]);
   const [notices, setNotices] = useState<MatchEvent[]>([]);
-  const matchNotices = notices.filter(event => event.matchId === viewedMatchId);
+  const matchNotices = notices.filter(
+    (event) => event.matchId === viewedMatchId,
+  );
   const notice = matchNotices[0];
-  const noticePlayer = notice && data.players.find(player => player.id === notice.playerId);
-  const [goalBurst, setGoalBurst] = useState<{ matchId: string; started: number } | null>(null);
+  const noticePlayer =
+    notice && data.players.find((player) => player.id === notice.playerId);
+  const [goalBurst, setGoalBurst] = useState<{
+    matchId: string;
+    started: number;
+  } | null>(null);
   useEffect(() => {
     const matchId = viewedMatchId;
     if (!matchId) return;
     const previewGoal = (key: KeyboardEvent) => {
-      if (key.key.toLowerCase() !== "g" || key.repeat || key.isComposing ||
-          key.ctrlKey || key.metaKey || key.altKey || key.defaultPrevented) return;
-      if (key.target instanceof HTMLElement && (key.target.isContentEditable ||
-          key.target.closest("input, textarea, select, [role=textbox], [role=dialog]"))) return;
-      const scorer = data.players.find(player => player.active && player.number) ?? data.players[0];
+      if (
+        key.key.toLowerCase() !== "g" ||
+        key.repeat ||
+        key.isComposing ||
+        key.ctrlKey ||
+        key.metaKey ||
+        key.altKey ||
+        key.defaultPrevented
+      )
+        return;
+      if (
+        key.target instanceof HTMLElement &&
+        (key.target.isContentEditable ||
+          key.target.closest(
+            "input, textarea, select, [role=textbox], [role=dialog]",
+          ))
+      )
+        return;
+      const scorer =
+        data.players.find((player) => player.active && player.number) ??
+        data.players[0];
       const started = performance.now();
       const sample: MatchEvent = {
-        id: `preview-${started}`, matchId, kind: "goal", team: "tbfc",
-        playerId: scorer?.id, minute: 23, note: "Preview goal — curled into the top corner.",
+        id: `preview-${started}`,
+        matchId,
+        kind: "goal",
+        team: "tbfc",
+        playerId: scorer?.id,
+        minute: 23,
+        note: "Preview goal — curled into the top corner.",
       };
-      setNotices(queue => [...queue, sample]);
+      setNotices((queue) => [...queue, sample]);
       goalSound.current();
       setGoalBurst({ matchId, started });
     };
     window.addEventListener("keydown", previewGoal);
     return () => window.removeEventListener("keydown", previewGoal);
   }, [viewedMatchId, data.players, goalSound]);
+
+  console.log(notice);
   useEffect(() => {
     if (!goalBurst) return;
     const timer = window.setTimeout(() => setGoalBurst(null), 5200);
@@ -314,18 +347,37 @@ export default function App() {
         if (viewedMatchId && syncState === "ready") {
           const { match, events } = await fetchMatchEvents(viewedMatchId);
           if (!active) return;
-          const known = new Set(currentEvents.current.filter(event => event.matchId === viewedMatchId).map(event => event.id));
-          const additions = events.filter(event => !known.has(event.id));
-          if (additions.length) setNotices(previous => [...previous, ...additions]);
-          if (additions.some(event => event.kind === "goal" && event.team !== "opponent")) {
+          const known = new Set(
+            currentEvents.current
+              .filter((event) => event.matchId === viewedMatchId)
+              .map((event) => event.id),
+          );
+          const additions = events.filter((event) => !known.has(event.id));
+          if (additions.length)
+            setNotices((previous) => [...previous, ...additions]);
+          if (
+            additions.some(
+              (event) => event.kind === "goal" && event.team !== "opponent",
+            )
+          ) {
             goalSound.current();
-            setGoalBurst({ matchId: viewedMatchId, started: performance.now() });
+            setGoalBurst({
+              matchId: viewedMatchId,
+              started: performance.now(),
+            });
           }
-          setData(current => ({
+          setData((current) => ({
             ...current,
-            events: [...current.events.filter(event => event.matchId !== viewedMatchId), ...events],
+            events: [
+              ...current.events.filter(
+                (event) => event.matchId !== viewedMatchId,
+              ),
+              ...events,
+            ],
             matches: match
-              ? current.matches.map(existing => existing.id === viewedMatchId ? match : existing)
+              ? current.matches.map((existing) =>
+                  existing.id === viewedMatchId ? match : existing,
+                )
               : current.matches,
           }));
           return;
@@ -342,7 +394,10 @@ export default function App() {
         loading = false;
       }
     };
-    const timer = window.setInterval(() => void refresh(), viewedMatchId ? 30_000 : 60_000);
+    const timer = window.setInterval(
+      () => void refresh(),
+      viewedMatchId ? 30_000 : 60_000,
+    );
     const onFocus = () => void refresh();
     window.addEventListener("focus", onFocus);
     return () => {
@@ -463,13 +518,31 @@ export default function App() {
   return (
     <>
       <AppHeader
-        matchTab={selected ? normalizeMatchTab(requestedTab, selected.status === "scheduled") : undefined}
-        matchTabOptions={selected?.status === "scheduled" ? ["lineup", "matchboard"] : selected ? matchTabs : undefined}
+        matchTab={
+          selected
+            ? normalizeMatchTab(requestedTab, selected.status === "scheduled")
+            : undefined
+        }
+        matchTabOptions={
+          selected?.status === "scheduled"
+            ? ["lineup", "matchboard"]
+            : selected
+              ? matchTabs
+              : undefined
+        }
         onMatchTabChange={(tab) => {
           const index = matchTabs.indexOf(tab);
           if (index >= 0) setActiveDetailTab(index);
         }}
-        onBack={playerRoute ? () => navigate("/roster") : teamRoute ? () => navigate("/teams") : matchRoute ? () => navigate("/schedule") : undefined}
+        onBack={
+          playerRoute
+            ? () => navigate("/roster")
+            : teamRoute
+              ? () => navigate("/teams")
+              : matchRoute
+                ? () => navigate("/schedule")
+                : undefined
+        }
         page={
           playerRoute
             ? "roster"
@@ -493,22 +566,52 @@ export default function App() {
         }}
       >
         {canEditClub && dirty && (
-          <Box component="aside" aria-label="Unpublished changes" sx={{
-            position: "fixed", left: 0, right: 0,
-            bottom: "calc(63px + env(safe-area-inset-bottom, 0px))",
-            zIndex: theme => theme.zIndex.appBar + 1,
-            bgcolor: "#ffad45", color: "#21150a", boxShadow: "0 -3px 14px #0005",
-            display: "flex", justifyContent: "center", alignItems: "center",
-            gap: { xs: 1.5, sm: 4 }, px: 1.5, py: 1,
-          }}>
+          <Box
+            component="aside"
+            aria-label="Unpublished changes"
+            sx={{
+              position: "fixed",
+              left: 0,
+              right: 0,
+              bottom: "calc(63px + env(safe-area-inset-bottom, 0px))",
+              zIndex: (theme) => theme.zIndex.appBar + 1,
+              bgcolor: "#ffad45",
+              color: "#21150a",
+              boxShadow: "0 -3px 14px #0005",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: { xs: 1.5, sm: 4 },
+              px: 1.5,
+              py: 1,
+            }}
+          >
             <Box role="status">
-              <Typography fontWeight={800} lineHeight={1.2}>Unpublished changes</Typography>
-              <Typography variant="body2">Only visible on this device.</Typography>
+              <Typography fontWeight={800} lineHeight={1.2}>
+                Unpublished changes
+              </Typography>
+              <Typography variant="body2">
+                Only visible on this device.
+              </Typography>
             </Box>
-            <Button variant="contained" disabled={publishing} onClick={() => void publishCurrentData()}
-              sx={{ bgcolor: "#21150a", color: "white", minHeight: 44, flexShrink: 0,
-                "&:hover": { bgcolor: "#453018" } }}>
-              {publishing ? "Publishing…" : "Publish to Live"}
+            <Button
+              variant="contained"
+              disabled={publishing}
+              onClick={() => void publishCurrentData()}
+              sx={{
+                bgcolor: "#CA5126",
+                color: "#fff",
+                minHeight: 44,
+                flexShrink: 0,
+                "&:hover": { bgcolor: "#d75f33" },
+              }}
+            >
+              <img
+                src={FlameIcon}
+                alt=""
+                style={{ marginRight: 10, height: 20 }}
+              />
+              {publishing ? "Publishing…" : "Publish"}
             </Button>
           </Box>
         )}
@@ -575,9 +678,7 @@ export default function App() {
               update={update}
             />
           ) : (
-            <Alert severity="warning">
-              Player not found.{" "}
-            </Alert>
+            <Alert severity="warning">Player not found. </Alert>
           )
         ) : matchRoute && !selected ? (
           <Alert severity="warning">
@@ -601,7 +702,11 @@ export default function App() {
           selected.status === "scheduled" ? (
             <MatchEventPage
               key={selected.id}
-              goalTime={goalBurst?.matchId === selected.id ? goalBurst.started : undefined}
+              goalTime={
+                goalBurst?.matchId === selected.id
+                  ? goalBurst.started
+                  : undefined
+              }
               data={data}
               match={selected}
               update={update}
@@ -612,7 +717,11 @@ export default function App() {
           ) : (
             <>
               <MatchBanner
-                goalTime={goalBurst?.matchId === selected.id ? goalBurst.started : undefined}
+                goalTime={
+                  goalBurst?.matchId === selected.id
+                    ? goalBurst.started
+                    : undefined
+                }
                 data={data}
                 match={selected}
                 detail
@@ -902,21 +1011,66 @@ export default function App() {
         )}
       </Container>
       {notice && selected && (
-        <Snackbar key={notice.id} open anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          sx={{ bottom: `calc(${canEditClub && dirty ? 150 : 68}px + env(safe-area-inset-bottom, 0px))` }}>
-          <Alert severity="info" icon={false}
-            sx={{ maxWidth: "min(480px, 94vw)", maxHeight: "50vh", overflowY: "auto", overflowWrap: "anywhere" }}
-            action={<Button color="inherit" size="small" onClick={() => setNotices(queue => queue.filter(event => event !== notice))}>Dismiss</Button>}>
+        <Snackbar
+          key={notice.id}
+          open
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          sx={{
+            bottom: `calc(${canEditClub && dirty ? 150 : 68}px + env(safe-area-inset-bottom, 0px))`,
+          }}
+        >
+          <Alert
+            severity="info"
+            icon={false}
+            sx={{
+              maxWidth: "min(480px, 94vw)",
+              maxHeight: "50vh",
+              overflowY: "auto",
+              overflowWrap: "anywhere",
+              background: "#060606",
+            }}
+            action={
+              <Button
+                color="inherit"
+                size="small"
+                sx={{
+                  textTransform: "uppercase",
+                }}
+                onClick={() =>
+                  setNotices((queue) =>
+                    queue.filter((event) => event !== notice),
+                  )
+                }
+              >
+                Dismiss
+              </Button>
+            }
+          >
             <Typography fontWeight={700} sx={{ textTransform: "capitalize" }}>
-              {notice.kind.replaceAll("_", " ")} · {notice.team === "opponent" ? opponentName(data, selected) : "Turf Burners FC"}
+              {notice.kind.replaceAll("_", " ")} ·{" "}
+              {notice.team === "opponent"
+                ? opponentName(data, selected)
+                : "Turf Burners FC"}
             </Typography>
-            <Typography variant="body2">Minute {notice.minute ?? "—"} · #{noticePlayer?.number || "—"} · {noticePlayer?.name || "No player recorded"}</Typography>
+            <Typography variant="body2">
+              Minute {notice.minute ?? "—"} · #{noticePlayer?.number || "—"} ·{" "}
+              {noticePlayer?.name || "No player recorded"}
+            </Typography>
             <Typography variant="body2">Note: {notice.note || "—"}</Typography>
             <details>
               <summary>Event data</summary>
-              <Box component="pre" sx={{ whiteSpace: "pre-wrap", fontSize: 12 }}>{JSON.stringify(notice, null, 2)}</Box>
+              <Box
+                component="pre"
+                sx={{ whiteSpace: "pre-wrap", fontSize: 12 }}
+              >
+                {JSON.stringify(notice, null, 2)}
+              </Box>
             </details>
-            {matchNotices.length > 1 && <Typography variant="caption">{matchNotices.length - 1} more waiting</Typography>}
+            {matchNotices.length > 1 && (
+              <Typography variant="caption">
+                {matchNotices.length - 1} more waiting
+              </Typography>
+            )}
           </Alert>
         </Snackbar>
       )}
