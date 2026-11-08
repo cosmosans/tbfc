@@ -305,8 +305,12 @@ export default function App() {
         .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
     : undefined;
   const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
-  const matchInProgress = data.matches.some((match) => match.id === pollingMatchId && match.status === "in_progress");
-  const { play: goalSound, playWhistle, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(matchInProgress);
+  const stadiumShouldPlay = data.matches.some((match) =>
+    match.id === pollingMatchId &&
+    match.status === "in_progress" &&
+    matchPhase(match, clockTime)?.label !== "HALF TIME"
+  );
+  const { play: goalSound, playWhistle, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(stadiumShouldPlay);
   const [goalSoundEnabled, setGoalSoundEnabled] = useState(false);
   async function toggleGoalSound() {
     if (goalSoundEnabled) {
@@ -548,11 +552,15 @@ export default function App() {
       if (
         (previous.status === "scheduled" && current.status === "in_progress") ||
         (previous.status !== "completed" && current.status === "completed") ||
-        (previous.status === "in_progress" && previous.phase !== "HALF TIME" && current.phase === "HALF TIME")
+        (previous.status === "in_progress" && previous.phase !== "HALF TIME" && current.phase === "HALF TIME") ||
+        (previous.phase === "HALF TIME" && current.phase === "SECOND HALF")
       ) {
         playWhistle.current();
       }
-      if (previous.status !== current.status) setClockTime(now);
+      if (
+        previous.status !== current.status ||
+        (previous.phase === "HALF TIME") !== (current.phase === "HALF TIME")
+      ) setClockTime(now);
       previous = current;
     };
     const timer = window.setInterval(check, 1000);
