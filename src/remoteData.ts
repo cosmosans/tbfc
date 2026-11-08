@@ -1,3 +1,4 @@
+import { Capacitor, CapacitorHttp } from "@capacitor/core";
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
 import type { ClubData, Match, MatchEvent } from './model';
@@ -28,20 +29,34 @@ async function readResponse(response: Response) {
   return body;
 }
 
+async function readPublicApi(path: string) {
+  if (Capacitor.isNativePlatform()) {
+    const response = await CapacitorHttp.get({
+      url: new URL(path, 'https://turfburnersfc.soccer').href,
+      responseType: 'json',
+      headers: { 'Cache-Control': 'no-cache' },
+    });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error(response.data?.error || `Database request failed (${response.status}).`);
+    }
+    return response.data;
+  }
+  return readResponse(await fetch(path, { cache: 'no-store', credentials: 'same-origin' }));
+}
+
 let baseline: RemoteClub | undefined;
 const keyFor = (collection: string, item: Record<string, unknown>) =>
   String(item[collection === 'lineups' || collection === 'boards' ? 'matchId' : collection === 'standings' ? 'seasonId' : 'id']);
 
 export async function fetchClubData(): Promise<RemoteClub> {
-  baseline = await readResponse(await fetch('/api/club', { cache: 'no-store', credentials: 'same-origin' })) as RemoteClub;
+  baseline = await readPublicApi('/api/club') as RemoteClub;
   if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }
 
 export async function fetchMatchEvents(matchId: string): Promise<{ match: Match | null; events: MatchEvent[] }> {
   const query = new URLSearchParams({ matchId });
-  const response = await fetch(`/api/match-events?${query}`, { cache: 'no-store' });
-  const { match, events } = await readResponse(response);
+  const { match, events } = await readPublicApi(`/api/match-events?${query}`);
   if (!Array.isArray(events) || !events.every(event => event?.matchId === matchId)) {
     throw new Error('Invalid match events response.');
   }

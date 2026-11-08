@@ -24,6 +24,7 @@ import { matchLocation } from "../../matchLocation";
 import OpponentCrest from "../../components/OpponentCrest";
 import WhiteKitImage from "../../img/white-front.png";
 import BlackKitImage from "../../img/black-front.png";
+import CheckIcon from "@mui/icons-material/Check";
 
 type SortColumn = "date" | "opponent" | "score" | "result" | "venue" | "kit";
 
@@ -34,6 +35,7 @@ export default function MatchTable({
   forceCompact = false,
   label = "Match history",
   showSeasonDividers = false,
+  showAudit = false,
   onOpen,
 }: {
   data: ClubData;
@@ -42,6 +44,7 @@ export default function MatchTable({
   forceCompact?: boolean;
   label?: string;
   showSeasonDividers?: boolean;
+  showAudit?: boolean;
   onOpen: (match: Match) => void;
 }) {
   const narrowScreen = useMediaQuery(useTheme().breakpoints.down("lg"));
@@ -127,8 +130,8 @@ export default function MatchTable({
       <Table
         aria-label={label}
         sx={{
-          minWidth: forceCompact ? 0 : { xs: 0, lg: 850 },
-          tableLayout: { xs: "fixed", sm: "auto" },
+          minWidth: showAudit ? { xs: 650, lg: 850 } : forceCompact ? 0 : { xs: 0, lg: 850 },
+          tableLayout: showAudit ? "auto" : { xs: "fixed", sm: "auto" },
           "& .MuiTableCell-root": { px: { xs: 0.5, sm: 1.5, lg: 2 } },
           "& tr > :first-child": {
             paddingInlineStart: { xs: 1, sm: 1.5, lg: 2 },
@@ -150,6 +153,7 @@ export default function MatchTable({
             {header("opponent", "Opponent")}
             {header("score", seasonSchedule ? "Score / Kickoff" : "Score")}
             {header("result", "Result", true)}
+            {showAudit && <TableCell align="center">Match Audit Complete</TableCell>}
             {!compact && header("venue", "Venue")}
             {!compact && header("kit", "Kit")}
           </TableRow>
@@ -256,6 +260,13 @@ export default function MatchTable({
                 <TableCell align="center">
                   {match.status === "scheduled" ? "Upcoming" : <MatchResultChip match={match} />}
                 </TableCell>
+                {showAudit && (
+                  <TableCell align="center">
+                    {match.matchAuditComplete === true && (
+                      <CheckIcon aria-label="Match audit complete" fontSize="small" color="success" />
+                    )}
+                  </TableCell>
+                )}
                 {!compact && (
                   <TableCell>
                     <Stack gap={0.5} alignItems="flex-start">

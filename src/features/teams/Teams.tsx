@@ -248,6 +248,7 @@ export default function Teams({
                     {canEditClub && (
                       <Button
                         variant="outlined"
+                        sx={{ borderColor: "white", color: "white" }}
                         onClick={() => setEditing({ ...opponent })}
                       >
                         Edit

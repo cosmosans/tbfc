@@ -31,6 +31,7 @@ import { defaultLineup, exportData, loadData } from "./store";
 import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
+import PublishingMatchEventDialog from "./components/PublishingMatchEventDialog";
 import DataTransferDialog from "./components/DataTransferDialog";
 import { useGoalSound } from "./features/matches/useGoalSound";
 import MatchEventSnackbar from "./features/matches/MatchEventSnackbar";
@@ -679,13 +680,13 @@ export default function App() {
         sx={{
           pt: 0,
           pb: {
-            xs: `calc(${canEditClub && dirty ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
-            sm: `calc(${canEditClub && dirty ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
+            xs: `calc(${canEditClub && dirty && !publishing ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
+            sm: `calc(${canEditClub && dirty && !publishing ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
           },
           px: 0,
         }}
       >
-        {canEditClub && dirty && (
+        {canEditClub && dirty && !publishing && (
           <Box
             component="aside"
             aria-label="Unpublished changes"
@@ -1146,6 +1147,7 @@ export default function App() {
           </>
         )}
       </Container>
+      <PublishingMatchEventDialog open={publishing} />
       {notice && noticeMatch && (
         <MatchEventSnackbar
           key={notice.id}
@@ -1159,7 +1161,7 @@ export default function App() {
           match={noticeMatch}
           events={data.events}
           remaining={matchNotices.length - 1}
-          publishBarVisible={canEditClub && dirty}
+          publishBarVisible={canEditClub && dirty && !publishing}
           onDismiss={() => setNotices(queue => queue.filter(event => event !== notice))}
         />
       )}

@@ -336,6 +336,7 @@ export default function SchedulePage({
           <MatchTable
             data={data}
             matches={history}
+            showAudit={canEditClub}
             showSeasonDividers={season === "All seasons" && search === ""}
             onOpen={onOpen}
           />
