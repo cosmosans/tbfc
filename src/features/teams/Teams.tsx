@@ -18,6 +18,7 @@ import { record } from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
 import { FourColumnGrid } from "../../components/layout";
 import RecordBar from "../../components/RecordBar";
+import PageHeading from "../../components/PageHeading";
 
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
 import { canEditClub } from "../../editAccess";
@@ -75,155 +76,175 @@ export default function Teams({
     setEditing(null);
   }
   return (
-    <Stack gap={2}>
-      {canEditClub && (
-        <Stack direction="row" gap={2}>
-          <TextField
-            label="Team Name"
-            size="small"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            sx={{ flexGrow: 1 }}
-          />
-          <Button
-            variant="contained"
-            disabled={
-              !name.trim() ||
-              data.opponents.some(
-                (o) => o.name.toLowerCase() === name.trim().toLowerCase(),
-              )
-            }
-            onClick={() => {
-              saveOpponent({
-                id: crypto.randomUUID(),
-                name: name.trim(),
-                crestUrl: "",
-                color: "",
-                notes: "",
-              });
-              setName("");
-            }}
-          >
-            Add Team
-          </Button>
-        </Stack>
-      )}
-      <FourColumnGrid>
-        {sorted.map((opponent) => {
-          const games = data.matches.filter(
-            (m) =>
-              m.opponentId === opponent.id ||
-              (!m.opponentId && m.opponent === opponent.name),
-          );
-          const r = record(games);
-          return (
-            <Card
-              key={opponent.id}
-              sx={{
-                backgroundColor: opponent.color
-                  ? `${opponent.color}77`
-                  : "transparent",
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Stack gap={2}>
+        <PageHeading>Teams</PageHeading>
+
+        {canEditClub && (
+          <Stack direction="row" gap={2}>
+            <TextField
+              label="Team Name"
+              size="small"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ flexGrow: 1 }}
+            />
+            <Button
+              variant="contained"
+              disabled={
+                !name.trim() ||
+                data.opponents.some(
+                  (o) => o.name.toLowerCase() === name.trim().toLowerCase(),
+                )
+              }
+              onClick={() => {
+                saveOpponent({
+                  id: crypto.randomUUID(),
+                  name: name.trim(),
+                  crestUrl: "",
+                  color: "",
+                  notes: "",
+                });
+                setName("");
               }}
             >
-              <CardContent>
-                <Stack direction="row" alignItems="center" gap={2}>
-                  <OpponentCrest
-                    key={opponent.crestUrl}
-                    url={opponent.crestUrl}
-                    teamId={opponent.id}
-                    teamName={opponent.name}
-                  />
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography variant="h6">{opponent.name}</Typography>
-                  </Box>
-                </Stack>
+              Add Team
+            </Button>
+          </Stack>
+        )}
+        <FourColumnGrid>
+          {sorted.map((opponent) => {
+            const games = data.matches.filter(
+              (m) =>
+                m.opponentId === opponent.id ||
+                (!m.opponentId && m.opponent === opponent.name),
+            );
+            const r = record(games);
+            return (
+              <Card
+                key={opponent.id}
+                sx={{
+                  backgroundColor: opponent.color
+                    ? `${opponent.color}77`
+                    : "transparent",
+                }}
+              >
+                <CardContent>
+                  <Stack direction="row" alignItems="center" gap={2}>
+                    <OpponentCrest
+                      key={opponent.crestUrl}
+                      url={opponent.crestUrl}
+                      teamId={opponent.id}
+                      teamName={opponent.name}
+                    />
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6">{opponent.name}</Typography>
+                    </Box>
+                  </Stack>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mt: `5px`,
-                    paddingInline: `5px`,
-                  }}
-                >
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", fontSize: 14 }}
-                    color="text.secondary"
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      mt: `5px`,
+                      paddingInline: `5px`,
+                    }}
                   >
-                    {" "}
-                    {r.against}
-                    <img
-                      src={SoccerBallIcon}
-                      alt="Soccer ball"
-                      style={{
-                        width: 15,
-                        height: 15,
-                        marginInline: 5,
+                    <Typography
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: 14,
                       }}
-                    />
-                  </Typography>
+                      color="text.secondary"
+                    >
+                      {" "}
+                      {r.against}
+                      <img
+                        src={SoccerBallIcon}
+                        alt="Soccer ball"
+                        style={{
+                          width: 15,
+                          height: 15,
+                          marginInline: 5,
+                        }}
+                      />
+                    </Typography>
 
-                  <Box sx={{ flex: 1 }}>
-                    <RecordBar
-                      opponentWins={r.L}
-                      draws={r.D}
-                      tbfcWins={r.W}
-                      opponentColor={opponent.color}
-                    />
+                    <Box sx={{ flex: 1 }}>
+                      <RecordBar
+                        opponentWins={r.L}
+                        draws={r.D}
+                        tbfcWins={r.W}
+                        opponentColor={opponent.color}
+                      />
+                    </Box>
+
+                    <Typography
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        fontSize: 14,
+                      }}
+                      color="text.secondary"
+                    >
+                      <img
+                        src={SoccerBallIcon}
+                        alt="Soccer ball"
+                        style={{ width: 15, height: 15, marginInline: 5 }}
+                      />{" "}
+                      {r.for}
+                    </Typography>
                   </Box>
 
-                  <Typography
-                    sx={{ display: "flex", alignItems: "center", fontSize: 14 }}
-                    color="text.secondary"
-                  >
-                    <img
-                      src={SoccerBallIcon}
-                      alt="Soccer ball"
-                      style={{ width: 15, height: 15, marginInline: 5 }}
-                    />{" "}
-                    {r.for}
-                  </Typography>
-                </Box>
-
-                {opponent.notes && (
-                  <Typography
-                    variant="body2"
-                    sx={{ mt: 1, whiteSpace: "pre-wrap" }}
-                  >
-                    {opponent.notes}
-                  </Typography>
-                )}
-                <Stack
-                  direction="row"
-                  gap={1}
-                  sx={{ justifyContent: "space-between", mt: 3, mb: -1 }}
-                >
-                  {canEditClub && (
-                    <Button
-                      variant="outlined"
-                      onClick={() => setEditing({ ...opponent })}
+                  {opponent.notes && (
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 1, whiteSpace: "pre-wrap" }}
                     >
-                      Edit
-                    </Button>
+                      {opponent.notes}
+                    </Typography>
                   )}
-                  <Button variant="contained" onClick={() => onOpen(opponent)}>
-                    View Team
-                  </Button>
-                </Stack>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </FourColumnGrid>
-      {canEditClub && (
-        <OpponentDialog
-          key={editing?.id ?? "closed"}
-          opponent={editing}
-          onClose={() => setEditing(null)}
-          onSave={saveOpponent}
-        />
-      )}
-    </Stack>
+                  <Stack
+                    direction="row"
+                    gap={1}
+                    sx={{ justifyContent: "space-between", mt: 3, mb: -1 }}
+                  >
+                    {canEditClub && (
+                      <Button
+                        variant="outlined"
+                        onClick={() => setEditing({ ...opponent })}
+                      >
+                        Edit
+                      </Button>
+                    )}
+                    <Button
+                      variant="contained"
+                      onClick={() => onOpen(opponent)}
+                    >
+                      View Team
+                    </Button>
+                  </Stack>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </FourColumnGrid>
+        {canEditClub && (
+          <OpponentDialog
+            key={editing?.id ?? "closed"}
+            opponent={editing}
+            onClose={() => setEditing(null)}
+            onSave={saveOpponent}
+          />
+        )}
+      </Stack>
+    </Box>
   );
 }
 

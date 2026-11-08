@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import type { ClubData } from "../../model";
 import { isMatchCompleted, record } from "../../model";
 import { opponentFor, opponentName, orderedSeasons } from "../../clubView";
-import Seasons from "../seasons/Seasons";
+import PageHeading from "../../components/PageHeading";
 
 function TeamCrestTick({
   x = 0,
@@ -97,8 +97,6 @@ function TeamCrestTick({
 
 export default function Stats({
   data,
-  update,
-  openSeason,
 }: {
   data: ClubData;
   update: (data: ClubData) => void;
@@ -189,13 +187,7 @@ export default function Stats({
           alignItems: "start",
         }}
       >
-        {" "}
-        <Typography
-          variant="h4"
-          sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1, ml: { xs: 2, sm: 0 } }}
-        >
-          Opponents
-        </Typography>
+        <PageHeading>Stats</PageHeading>
         <Card sx={{ minWidth: 0, width: "100%" }}>
           <CardContent>
             <Stack
@@ -381,7 +373,6 @@ export default function Stats({
           sx={{
             minWidth: 0,
             width: "100%",
-            "@media (min-width: 1080px)": { width: "calc((100% - 16px) / 2)" },
           }}
         >
           <CardContent>
@@ -583,7 +574,6 @@ export default function Stats({
           </CardContent>
         </Card>
       </Box>
-      <Seasons data={data} update={update} openSeason={openSeason} />
     </Stack>
   );
 }

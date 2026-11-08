@@ -1,3 +1,13 @@
+import matchdayActiveIcon from "../img/nav/matchday-active.svg";
+import matchdayIcon from "../img/nav/matchday.svg";
+import scheduleActiveIcon from "../img/nav/schedule-active.svg";
+import scheduleIcon from "../img/nav/schedule.svg";
+import squadActiveIcon from "../img/nav/squad-active.svg";
+import squadIcon from "../img/nav/squad.svg";
+import statsActiveIcon from "../img/nav/stats-active.svg";
+import statsIcon from "../img/nav/stats.svg";
+import teamsActiveIcon from "../img/nav/teams-active.svg";
+import teamsIcon from "../img/nav/teams.svg";
 import {
   AppBar,
   Box,
@@ -9,6 +19,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import type { MatchTab } from "../features/matches/matchTabs";
 
 export type NavigationPage =
   | "matches"
@@ -45,41 +56,33 @@ const BrandCrest = styled("img")({
   "@media (max-width: 599.95px)": { width: mobileCrestSize, height: mobileCrestSize },
   filter: "drop-shadow(0 2px 3px #0008)",
 });
-const Navigation = styled(Tabs)({
-  minHeight: 64,
-  "@media (max-width: 599.95px)": { minHeight: 44 },
-  "& .MuiTabs-indicator": {
-    height: 5,
-    background: "#ebebeb",
-    transform: "skewX(-25deg)",
-  },
-});
-const NavigationTab = styled(Tab)({
-  minHeight: 64,
-  color: "#fff",
-  fontSize: "1.05rem",
-  "@media (max-width: 599.95px)": {
-    minHeight: 44,
-    minWidth: 0,
-    padding: "8px 10px",
-    fontSize: ".75rem",
-  },
-  fontWeight: 700,
-  "&.Mui-selected": { color: "#fff" },
-});
+const primaryItems = [
+  { page: "matches", label: "Matchday", active: matchdayActiveIcon, inactive: matchdayIcon },
+  { page: "schedule", label: "Schedule", active: scheduleActiveIcon, inactive: scheduleIcon },
+  { page: "roster", label: "Squad", active: squadActiveIcon, inactive: squadIcon },
+  { page: "stats", label: "Stats", active: statsActiveIcon, inactive: statsIcon },
+  { page: "teams", label: "Teams", active: teamsActiveIcon, inactive: teamsIcon },
+] as const;
 
 export default function AppHeader({
   page,
   onNavigate,
   onAdmin,
   onBack,
+  matchTab,
+  matchTabOptions,
+  onMatchTabChange,
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
   onAdmin?: () => void;
   onBack?: () => void;
+  matchTab?: MatchTab;
+  matchTabOptions?: readonly MatchTab[];
+  onMatchTabChange?: (tab: MatchTab) => void;
 }) {
   return (
+    <>
     <Header position="sticky" elevation={0}>
       <Toolbar
         sx={{
@@ -118,55 +121,107 @@ export default function AppHeader({
             Turf Burners FC
           </Typography>
         </Brand>
-        <Navigation
+        <Tabs
           value={page}
           variant="scrollable"
           scrollButtons="auto"
           sx={{
-            ml: { md: "auto" },
-            maxWidth: "100%",
+            display: { xs: "none", sm: "flex" },
+            ml: "auto",
             minWidth: 0,
-            flexShrink: 1,
-            width: { xs: "100%", sm: "auto" },
-            order: { xs: 2, md: 0 },
+            "& .MuiTabs-indicator": { bgcolor: "#fff", height: 5, transform: "skewX(-25deg)" },
           }}
         >
-          <NavigationTab
-            value="matches"
-            label="Matchday"
-            onClick={() => onNavigate("matches")}
-          />
-          <NavigationTab
-            value="schedule"
-            label="Schedule"
-            onClick={() => onNavigate("schedule")}
-          />
-          <NavigationTab
-            value="roster"
-            label="Roster"
-            onClick={() => onNavigate("roster")}
-          />
-          {/* <NavigationTab value="tactics" label="Tactics" /> */}
-          <NavigationTab
-            value="stats"
-            label="Stats"
-            onClick={() => onNavigate("stats")}
-          />
-          <NavigationTab
-            value="teams"
-            label="Teams"
-            onClick={() => onNavigate("teams")}
-          />
-          {/* <NavigationTab value="locations" label="Locations" />
-          <NavigationTab value="seasons" label="Seasons" /> */}
-        </Navigation>
+          {primaryItems.map((item) => (
+            <Tab
+              key={item.page}
+              value={item.page}
+              label={item.label}
+              onClick={() => onNavigate(item.page)}
+              sx={{ color: "#fff", fontWeight: 700, minHeight: 64, "&.Mui-selected": { color: "#fff" } }}
+            />
+          ))}
+        </Tabs>
         {onAdmin && (
           <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
-            sx={{ color: "#fff", border: 0, width: 44, height: 44, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 } }}>
+            sx={{ color: "#fff", border: 0, width: 44, height: 44, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: "auto" }}>
             <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
           </IconButton>
         )}
       </Toolbar>
+      {matchTab && matchTabOptions && onMatchTabChange && (
+        <Tabs
+          value={matchTab}
+          onChange={(_, value: MatchTab) => onMatchTabChange(value)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            display: { xs: "flex", sm: "none" },
+            minHeight: 48,
+            px: 1,
+            "& .MuiTabs-indicator": { bgcolor: "#fff", height: 4, transform: "skewX(-25deg)" },
+          }}
+        >
+          {matchTabOptions.map((tab) => (
+            <Tab key={tab} value={tab} label={tab === "story" ? "Report" : tab} sx={{ color: "#fff", fontWeight: 700, minHeight: 48, "&.Mui-selected": { color: "#fff" } }} />
+          ))}
+        </Tabs>
+      )}
     </Header>
+    <Box
+      component="nav"
+      aria-label="Primary navigation"
+      sx={{
+        display: { xs: "grid", sm: "none" },
+        position: "fixed",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: (theme) => theme.zIndex.appBar + 1,
+        gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+        bgcolor: "#111",
+        borderTop: "1px solid #333",
+        pb: "env(safe-area-inset-bottom, 0px)",
+        boxShadow: "0 -4px 18px #0008",
+      }}
+    >
+      {primaryItems.map((item) => {
+        const active = page === item.page;
+        return (
+          <Box
+            key={item.page}
+            component="button"
+            type="button"
+            aria-label={item.label}
+            aria-current={active ? "page" : undefined}
+            onClick={() => onNavigate(item.page)}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 0.35,
+              minWidth: 0,
+              minHeight: 62,
+              py: 0.75,
+              px: 0.25,
+              color: active ? "#CA5126" : "#777",
+              bgcolor: "transparent",
+              border: 0,
+              cursor: "pointer",
+              font: "inherit",
+              fontSize: "0.62rem",
+              fontWeight: 800,
+              textTransform: "uppercase",
+              "&:focus-visible": { outline: "2px solid #fff", outlineOffset: -3 },
+            }}
+          >
+            <Box component="img" src={active ? item.active : item.inactive} alt="" aria-hidden="true" sx={{ width: 27, height: 27, objectFit: "contain", pointerEvents: "none" }} />
+            <Box component="span" sx={{ overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%" }}>{item.label}</Box>
+          </Box>
+        );
+      })}
+    </Box>
+    </>
   );
 }

@@ -28,6 +28,7 @@ import {
   type Position,
 } from "../../model";
 import PlayerCard, { PositionSelect } from "./PlayerCard";
+import PageHeading from "../../components/PageHeading";
 
 type SortKey =
   | "number"
@@ -146,14 +147,8 @@ export default function Roster({
         justifyContent="space-between"
         alignItems="center"
         gap={2}
-        sx={{ mx: { xs: 2, sm: 0 } }}
       >
-        <Typography
-          variant="h4"
-          sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1 }}
-        >
-          Roster
-        </Typography>
+        <PageHeading>Roster</PageHeading>
         {canEditClub && (
           <Stack direction="row" gap={2}>
             <Button variant="outlined" onClick={() => setStartersOpen(true)}>

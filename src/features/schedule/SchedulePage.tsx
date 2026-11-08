@@ -17,6 +17,7 @@ import MatchTable from "../matches/MatchTable";
 import ScheduleImporter from "./ScheduleImporter";
 import { matchLocation } from "../../matchLocation";
 import { canEditClub } from "../../editAccess";
+import PageHeading from "../../components/PageHeading";
 
 type Props = {
   data: ClubData;
@@ -58,19 +59,14 @@ export default function SchedulePage({
     .filter((match) => isMatchCompleted(match) && includes(match))
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
   return (
-    <Stack gap={3}>
+    <Stack gap={2}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
         alignItems={{ sm: "center" }}
         gap={2}
       >
-        <Typography
-          variant="h4"
-          sx={{ bgcolor: "#111", color: "#fff", py: 1, mb: -2 }}
-        >
-          Schedule
-        </Typography>
+        <PageHeading>Schedule</PageHeading>
         {canEditClub && (
           <Stack direction="row" gap={1} flexWrap="wrap">
             <Button variant="outlined" onClick={onManageSeasons}>
@@ -103,7 +99,7 @@ export default function SchedulePage({
         />
       )}
       {inProgress.length > 0 && (
-        <section>
+        <section style={{ minWidth: 0, width: "100%" }}>
           <Typography variant="h5" sx={{ mb: 2 }}>
             In Progress
           </Typography>
@@ -111,7 +107,7 @@ export default function SchedulePage({
         </section>
       )}
       {upcoming.length > 0 && (
-        <section>
+        <section style={{ minWidth: 0, width: "100%" }}>
           <MatchTable
             data={data}
             matches={upcoming}
@@ -122,7 +118,7 @@ export default function SchedulePage({
         </section>
       )}
 
-      <section>
+      <section style={{ minWidth: 0, width: "100%" }}>
         <Typography
           variant="h5"
           sx={{

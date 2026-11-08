@@ -116,14 +116,12 @@ export default function MatchTable({
   }
   return (
     <TableContainer
-      sx={(theme) => ({
+      sx={{
         bgcolor: "background.paper",
+        width: "100%",
+        maxWidth: "100%",
         overflowX: "auto",
-        [theme.breakpoints.down("sm")]: {
-          mx: -2,
-          width: `calc(100% + ${theme.spacing(4)})`,
-        },
-      })}
+      }}
     >
       <Table
         aria-label={upcoming ? "Upcoming fixtures" : "Match history"}

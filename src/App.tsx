@@ -362,6 +362,12 @@ export default function App() {
   return (
     <>
       <AppHeader
+        matchTab={selected ? normalizeMatchTab(requestedTab, selected.status === "scheduled") : undefined}
+        matchTabOptions={selected?.status === "scheduled" ? ["lineup", "matchboard"] : selected ? matchTabs : undefined}
+        onMatchTabChange={(tab) => {
+          const index = matchTabs.indexOf(tab);
+          if (index >= 0) setActiveDetailTab(index);
+        }}
         onBack={playerRoute ? () => navigate("/roster") : teamRoute ? () => navigate("/teams") : matchRoute ? () => navigate("/schedule") : undefined}
         page={
           playerRoute
@@ -378,11 +384,11 @@ export default function App() {
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container
-        maxWidth="xl"
+        maxWidth={false}
         sx={{
-          pt: { xs: 0, sm: 4 },
-          pb: { xs: 2, sm: 4 },
-          px: { xs: page === "roster" || page === "stats" ? 0 : 2, sm: 3 },
+          pt: 0,
+          pb: "calc(82px + env(safe-area-inset-bottom, 0px))",
+          px: 0,
         }}
       >
         {canEditClub && dirty && (
@@ -525,6 +531,7 @@ export default function App() {
                 value={activeDetailTab}
                 onChange={(_, value) => setActiveDetailTab(value)}
                 sx={{
+                  display: { xs: "none", sm: "flex" },
                   mt: 3,
                   mb: 2,
                   bgcolor: "#111",

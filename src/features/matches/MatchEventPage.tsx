@@ -46,7 +46,7 @@ export default function MatchEventPage({
             replace: true,
           })
         }
-        sx={{ bgcolor: "#111", px: 2 }}
+        sx={{ display: { xs: "none", sm: "flex" }, bgcolor: "#111", px: 2 }}
       >
         <Tab value="lineup" label="Lineup" />
         <Tab value="matchboard" label="Matchboard" />

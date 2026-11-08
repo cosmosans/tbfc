@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   Chip,
+  LinearProgress,
   Stack,
   Typography,
 } from "@mui/material";
@@ -256,11 +257,20 @@ export default function MatchBanner({
                           }}
                         >
                           {match.status === "in_progress" ? (
-                            <Chip
-                              size="small"
-                              label="In Progress"
-                              color="warning"
-                            />
+                            <Stack spacing={0.5}>
+                              <Chip
+                                size="small"
+                                label="IN PROGRESS"
+                                color="warning"
+                              />
+                              {detail && (
+                                <LinearProgress
+                                  variant="indeterminate"
+                                  color="primary"
+                                  aria-label="Match in progress"
+                                />
+                              )}
+                            </Stack>
                           ) : (
                             <ResultLabel result={match.resultLabel} />
                           )}
