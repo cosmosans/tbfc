@@ -224,18 +224,6 @@ export default function MatchBanner({
                 sx={{ fontSize: 20, color: "rgba(255,255,255,.7)" }}
               />
             )}
-
-            <Typography
-              sx={{
-                textTransform: "uppercase",
-                fontSize: 12,
-                paddingLeft: `3px`,
-                color: goalSoundEnabled ? "white" : "rgba(255,255,255,.7)",
-                fontWeight: goalSoundEnabled ? 700 : 400,
-              }}
-            >
-              Match Audio
-            </Typography>
           </Box>
         </IconButton>
       )}

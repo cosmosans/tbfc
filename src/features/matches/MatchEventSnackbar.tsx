@@ -1,6 +1,8 @@
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import type { Match, MatchEvent, Player } from "../../model";
 import SoccerBallImage from "../../img/soccer-ball-variant.svg";
+import AssistIcon from "../../img/cleats.svg";
+
 import OpponentCrest from "../../components/OpponentCrest";
 
 type Props = {
@@ -68,7 +70,7 @@ export default function MatchEventSnackbar({
         severity="info"
         icon={false}
         sx={{
-          width: "min(800px, 94vw)",
+          width: "min(800px, 96vw)",
           boxSizing: "border-box",
           position: "relative",
           maxHeight: "50vh",
@@ -153,34 +155,48 @@ export default function MatchEventSnackbar({
               pt: 0.2,
               marginTop: `-1px`,
               fontSize: 12,
-              //fontWeight: "bold",
+              fontWeight: "bold",
               color: "black",
-              transform: `translateY(-2px)`,
             }}
           >
             {notice.minute}&apos;
           </Typography>
-          {notice.kind === "goal" && (
-            <img
-              src={SoccerBallImage}
-              alt="Goal"
-              style={{
-                width: 15,
-                height: 15,
-                transform: "translateY(-3px)",
-              }}
-            />
-          )}
 
+          <Box
+            sx={{
+              px: 0.5,
+              transform: "translateY(2px)",
+            }}
+          >
+            {notice.kind === "goal" && (
+              <img
+                src={SoccerBallImage}
+                alt="Goal"
+                style={{
+                  width: 15,
+                  height: 15,
+                }}
+              />
+            )}
+            {notice.kind === "assist" && (
+              <img
+                src={AssistIcon}
+                alt="Assist"
+                style={{
+                  width: 15,
+                  height: 15,
+                }}
+              />
+            )}
+          </Box>
           <Typography
             sx={{
               textTransform: "uppercase",
-              fontWeight: "bold",
+              fontSize: 14,
               flex: 1,
             }}
           >
             {notice.kind}
-            {notice.kind === "goal"}
           </Typography>
 
           <Typography
