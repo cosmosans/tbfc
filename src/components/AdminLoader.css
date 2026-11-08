@@ -1,0 +1,87 @@
+.admin-loader {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  background: rgba(8, 12, 13, .94);
+}
+
+.admin-loader-art {
+  --bounce-duration: 1050ms;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-items: end;
+  width: 232px;
+  height: 146px;
+}
+
+.admin-loader-art::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 86px;
+  height: 6px;
+  background: radial-gradient(ellipse, #bf582b 4%, transparent 70%);
+  animation: street-ball-shadow var(--bounce-duration) infinite;
+}
+
+.admin-loader-ball {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  transform-origin: center 98%;
+  animation: street-ball-bounce var(--bounce-duration) infinite;
+}
+
+.admin-loader-paint {
+  position: absolute;
+  inset: auto 0 1px;
+  height: 34px;
+  transform-origin: center bottom;
+  background:
+    radial-gradient(ellipse at 8% 66%, #ff7624 2px, transparent 3px),
+    radial-gradient(circle at 5% 26%, #ffbf83 1px, transparent 2px),
+    radial-gradient(ellipse at 20% 82%, #ec6222 5px, transparent 6px),
+    radial-gradient(circle at 17% 42%, #ff9741 2px, transparent 3px),
+    radial-gradient(circle at 24% 18%, #ed6225 1px, transparent 2px),
+    radial-gradient(ellipse at 77% 72%, #ff873f 4px, transparent 5px),
+    radial-gradient(circle at 85% 25%, #ffbf83 2px, transparent 3px),
+    radial-gradient(circle at 90% 65%, #ed6225 2px, transparent 3px),
+    radial-gradient(circle at 95% 43%, #ed6225 1px, transparent 2px);
+  animation: street-paint-impact var(--bounce-duration) infinite;
+}
+
+.admin-loader-caption {
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+
+@keyframes street-ball-bounce {
+  0%, 100% { transform: scale(1.3, .53); }
+  9% { transform: scale(.93, 1.06); animation-timing-function: cubic-bezier(.2,.62,.4,1); }
+  52% { transform: translateY(-54px); animation-timing-function: cubic-bezier(.6,0,.85,.48); }
+  92% { transform: scale(.96, 1.04); animation-timing-function: ease-out; }
+}
+
+@keyframes street-ball-shadow {
+  0%, 100% { transform: scaleX(1.15); opacity: .85; }
+  52% { transform: scaleX(.6); opacity: .32; }
+}
+
+@keyframes street-paint-impact {
+  0% { opacity: .95; transform: scale(.73, .3); }
+  18% { opacity: 1; transform: scale(.94, .95); }
+  37%, 90% { opacity: 0; transform: translateY(3px) scale(1.02, .8); }
+  92% { opacity: 0; transform: scale(.4, .08); }
+  100% { opacity: .95; transform: scale(.73, .3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-loader-ball, .admin-loader-art::before, .admin-loader-paint { animation: none; }
+  .admin-loader-paint { opacity: 0; }
+}

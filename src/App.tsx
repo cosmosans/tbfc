@@ -116,6 +116,7 @@ export default function App() {
   const [syncMessage, setSyncMessage] = useState("");
   const [dirty, setDirty] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [discarding, setDiscarding] = useState(false);
   const editVersion = useRef(0);
   const revision = useRef(0);
   const saveQueue = useRef(Promise.resolve());
@@ -433,7 +434,7 @@ export default function App() {
     };
   }, [manageMode, dirty, viewedMatchId, syncState, goalSound]);
   async function publishCurrentData() {
-    if (!canEditClub || publishing) return;
+    if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
     const version = editVersion.current;
     try {
@@ -451,6 +452,26 @@ export default function App() {
       );
     } finally {
       setPublishing(false);
+    }
+  }
+  async function discardCurrentChanges() {
+    if (!canEditClub || !dirty || publishing || discarding) return;
+    setDiscarding(true);
+    const version = editVersion.current;
+    try {
+      await saveQueue.current;
+      const remote = await fetchClubData();
+      if (!remote.data) throw new Error("Published club data is unavailable.");
+      if (version !== editVersion.current) return;
+      await writeDraft({ data: remote.data, revision: remote.revision, dirty: false });
+      revision.current = remote.revision;
+      setData(remote.data);
+      setDirty(false);
+      setSyncMessage("");
+    } catch (error) {
+      setSyncMessage(error instanceof Error ? error.message : "Could not discard changes.");
+    } finally {
+      setDiscarding(false);
     }
   }
   const upcoming = useMemo(
@@ -587,7 +608,10 @@ export default function App() {
         maxWidth={false}
         sx={{
           pt: 0,
-          pb: `calc(${canEditClub && dirty ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
+          pb: {
+            xs: `calc(${canEditClub && dirty ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
+            sm: `calc(${canEditClub && dirty ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
+          },
           px: 0,
         }}
       >
@@ -607,9 +631,10 @@ export default function App() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              gap: { xs: 1.5, sm: 4 },
+              gap: { xs: 1.5, sm: 3 },
               px: 1.5,
               py: 1,
+              flexWrap: "wrap",
             }}
           >
             <Box role="status">
@@ -621,8 +646,16 @@ export default function App() {
               </Typography>
             </Box>
             <Button
+              variant="outlined"
+              disabled={publishing || discarding}
+              onClick={() => void discardCurrentChanges()}
+              sx={{ color: "#111", borderColor: "#111", minHeight: 44, flexShrink: 0, "&:hover": { borderColor: "#111", bgcolor: "#0001" } }}
+            >
+              {discarding ? "Discarding…" : "Discard Changes"}
+            </Button>
+            <Button
               variant="contained"
-              disabled={publishing}
+              disabled={publishing || discarding}
               onClick={() => void publishCurrentData()}
               sx={{
                 bgcolor: "#CA5126",

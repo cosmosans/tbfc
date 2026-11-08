@@ -99,20 +99,21 @@ export default function StandingsWidget({
     setMessage(`${selectedSeason?.name ?? "Season"} standings updated.`);
   }
   return (
-    <Card
-      component="section"
-      sx={{ bgcolor: "#111", border: "1px solid #543026" }}
-    >
-      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+    <Card component="section" sx={{ bgcolor: "background.paper", border: 0, minWidth: 0 }}>
+      <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
         <Stack
           direction={{ xs: "column", md: "row" }}
           justifyContent="space-between"
           alignItems={{ md: "center" }}
           gap={2}
-          sx={{ mb: 0 }}
+          sx={{ p: { xs: 2, sm: 3 }, gap: 2 }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
-            <Typography variant="h4" sx={{ flex: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1, flexWrap: "wrap" }}>
+            <Typography
+              variant="body2"
+              sx={{ textTransform: "uppercase", fontSize: 12 }}
+              color="text.secondary"
+            >
               {selectedSeason?.name} Standings
             </Typography>
             {snapshot && (
@@ -182,20 +183,18 @@ export default function StandingsWidget({
         )}
         {snapshot?.rows.length ? (
           <>
-            <TableContainer sx={{ overflowX: "auto" }}>
+            <TableContainer sx={{ overflowX: "auto", bgcolor: "background.paper" }}>
               <Table
-                size="small"
                 aria-label={`${selectedSeason?.name ?? "Season"} standings`}
-                sx={{ minWidth: 820 }}
+                sx={{ minWidth: 820, "& .MuiTableCell-root": { px: { xs: 1, sm: 1.5, lg: 2 } } }}
               >
-                <TableHead>
+                <TableHead sx={{ bgcolor: "action.hover" }}>
                   <TableRow
                     sx={{
                       "& th": {
-                        color: "#bcbcbc",
-                        fontWeight: 800,
+                        color: "text.primary",
+                        fontWeight: 700,
                         whiteSpace: "nowrap",
-                        borderBottom: "2px solid #CA5126",
                       },
                     }}
                   >
@@ -259,18 +258,14 @@ export default function StandingsWidget({
                               outlineColor: "primary.main",
                               outlineOffset: -2,
                             },
-                            bgcolor: tbfc
-                              ? "#CA51262b"
-                              : row.rank % 2
-                                ? "#1b1b1b"
-                                : "#151515",
+                            bgcolor: tbfc ? "#CA51262b" : "background.paper",
                             transition: "background-color 150ms ease",
                             "& td": {
                               borderBottomWidth: index === 3 ? 4 : 1,
                               borderBottomStyle: "solid",
                               borderBottomColor:
-                                index === 3 ? "#CA5126" : "#343434",
-                              py: 1.2,
+                                index === 3 ? "#CA5126" : "divider",
+                              py: 1.5,
                             },
                             "&:hover": {
                               backgroundColor: "rgba(255,255,255,.1)",

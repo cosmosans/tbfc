@@ -209,7 +209,7 @@ export default function MatchBanner({
           }}
         >
           {detail && onEdit && (
-            <Box className="banner-secondary" sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
+            <Box className="banner-secondary" sx={{ display: "flex", justifyContent: "flex-end", pr: { xs: 1.5, sm: 3 }, mb: 1 }}>
               <Button variant="outlined" onClick={onEdit}>
                 Edit Match
               </Button>

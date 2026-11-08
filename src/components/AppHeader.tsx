@@ -40,12 +40,12 @@ const Brand = styled(Box)({
   cursor: "pointer",
   position: "absolute",
   left: "50%",
-  transform: "translateX(-50%)",
+  top: "50%",
+  transform: "translate(-50%, -50%)",
   "@media (max-width: 599.95px)": {
     width: "auto",
     justifyContent: "center",
     gap: 8,
-    top: 4,
   },
 });
 const mobileCrestSize = 36;
@@ -114,16 +114,10 @@ export default function AppHeader({
       <Header id="club-header" position="sticky" elevation={0}>
         <Toolbar
           sx={{
-            minHeight: { xs: 44, sm: 76 },
+            minHeight: { xs: 48, sm: 56 },
             position: "relative",
             gap: { xs: 0.5, sm: 2 },
-            pt: { xs: 0.5, sm: 0 },
-            pb: 0,
-            mb: {
-              xs: -1.25,
-              sm: -3,
-            },
-            flexWrap: { xs: "wrap", md: "nowrap" },
+            flexWrap: "nowrap",
             px: { xs: 2, md: 4 },
           }}
         >
@@ -199,6 +193,9 @@ export default function AppHeader({
             sx={{
               minHeight: 48,
               px: 1,
+              "& .MuiTabs-list": {
+                justifyContent: { lg: "center" },
+              },
               "& .MuiTabs-indicator": {
                 bgcolor: "#fff",
                 height: 4,

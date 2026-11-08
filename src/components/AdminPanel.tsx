@@ -1,3 +1,5 @@
+import "./AdminLoader.css";
+import streetSoccerBall from "../img/street-soccer-ball.webp";
 import { useEffect, useState } from "react";
 import {
   Alert,
@@ -12,6 +14,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
+const loadingCaptions = {
+  manager: "Switching to Manager Mode...",
+  player: "Switching to Player Mode...",
+  backup: "Downloading production backup…",
+};
 
 export default function AdminPanel({
   open,
@@ -31,7 +39,11 @@ export default function AdminPanel({
   onBackupTools: () => void;
 }) {
   const [checking, setChecking] = useState(false);
-  const [busy, setBusy] = useState(false);
+  const [pendingAction, setPendingAction] = useState<
+    keyof typeof loadingCaptions | null
+  >(null);
+  const [working, setWorking] = useState(false);
+  const busy = working || pendingAction !== null;
   const [secret, setSecret] = useState("");
   const [error, setError] = useState("");
 
@@ -67,7 +79,7 @@ export default function AdminPanel({
 
   async function signIn() {
     if (!secret || busy) return;
-    setBusy(true);
+    setWorking(true);
     setError("");
     const entered = secret;
     setSecret("");
@@ -84,12 +96,12 @@ export default function AdminPanel({
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not sign in.");
     } finally {
-      setBusy(false);
+      setWorking(false);
     }
   }
 
   async function changeManageMode(enabled: boolean) {
-    setBusy(true);
+    setPendingAction(enabled ? "manager" : "player");
     setError("");
     try {
       await onManageModeChange(enabled);
@@ -100,12 +112,12 @@ export default function AdminPanel({
           : "Could not change Manage Mode.",
       );
     } finally {
-      setBusy(false);
+      setPendingAction(null);
     }
   }
 
   async function download() {
-    setBusy(true);
+    setPendingAction("backup");
     setError("");
     try {
       const response = await fetch("/api/admin/backup", {
@@ -136,12 +148,12 @@ export default function AdminPanel({
       if (cause instanceof Error && cause.message.includes("expired"))
         onAuthChange(false);
     } finally {
-      setBusy(false);
+      setPendingAction(null);
     }
   }
 
   async function signOut() {
-    setBusy(true);
+    setWorking(true);
     setError("");
     try {
       const response = await fetch("/api/admin/session", {
@@ -153,7 +165,7 @@ export default function AdminPanel({
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not sign out.");
     } finally {
-      setBusy(false);
+      setWorking(false);
     }
   }
 
@@ -206,7 +218,7 @@ export default function AdminPanel({
                     onChange={(_, enabled) => void changeManageMode(enabled)}
                   />
                 }
-                label="Manage Mode"
+                label="Manager Mode"
               />
               <Typography variant="body2" color="text.secondary">
                 {manageMode
@@ -254,6 +266,17 @@ export default function AdminPanel({
           </Button>
         )}
       </DialogActions>
+      {pendingAction && (
+        <div className="admin-loader" role="status">
+          <div className="admin-loader-art" aria-hidden="true">
+            <span className="admin-loader-paint" />
+            <img src={streetSoccerBall} className="admin-loader-ball" alt="" />
+          </div>
+          <span className="admin-loader-caption">
+            {loadingCaptions[pendingAction]}
+          </span>
+        </div>
+      )}
     </Dialog>
   );
 }

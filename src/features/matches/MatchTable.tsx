@@ -31,6 +31,7 @@ export default function MatchTable({
   data,
   matches,
   seasonSchedule = false,
+  forceCompact = false,
   label = "Match history",
   showSeasonDividers = false,
   onOpen,
@@ -38,11 +39,13 @@ export default function MatchTable({
   data: ClubData;
   matches: Match[];
   seasonSchedule?: boolean;
+  forceCompact?: boolean;
   label?: string;
   showSeasonDividers?: boolean;
   onOpen: (match: Match) => void;
 }) {
-  const compact = useMediaQuery(useTheme().breakpoints.down("lg"));
+  const narrowScreen = useMediaQuery(useTheme().breakpoints.down("lg"));
+  const compact = forceCompact || narrowScreen;
   const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const compareText = (a: string, b: string) =>
@@ -124,7 +127,7 @@ export default function MatchTable({
       <Table
         aria-label={label}
         sx={{
-          minWidth: { xs: 0, lg: 850 },
+          minWidth: forceCompact ? 0 : { xs: 0, lg: 850 },
           tableLayout: { xs: "fixed", sm: "auto" },
           "& .MuiTableCell-root": { px: { xs: 0.5, sm: 1.5, lg: 2 } },
           "& tr > :first-child": {

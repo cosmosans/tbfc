@@ -51,10 +51,9 @@ export default function MatchEventSnackbar({
         );
   const scoreline =
     match.homeAway === "away"
-      ? `${opponent.toUpperCase()} ${opponentScore} - ${tbfcScore} TURF BURNERS FC`
-      : `TURF BURNERS FC ${tbfcScore} - ${opponentScore} ${opponent.toUpperCase()}`;
+      ? `${opponent} ${opponentScore} - ${tbfcScore} Turf Burners FC`
+      : `Turf Burners FC ${tbfcScore} - ${opponentScore} ${opponent}`;
   const creditedToOpponent = notice.team === "opponent";
-  console.log("NOTICE", notice);
 
   return (
     <Snackbar
@@ -68,7 +67,10 @@ export default function MatchEventSnackbar({
         severity="info"
         icon={false}
         sx={{
-          maxWidth: "min(480px, 94vw)",
+          maxWidth: 800,
+          minWidth: {
+            sm: 600,
+          },
           maxHeight: "50vh",
           overflowY: "auto",
           overflowWrap: "anywhere",
@@ -80,6 +82,9 @@ export default function MatchEventSnackbar({
             size="small"
             sx={{
               textTransform: "uppercase",
+              letterSpacing: "0.05em",
+              fontWeight: 400,
+              fontSize: 12,
             }}
             onClick={onDismiss}
           >
@@ -138,47 +143,68 @@ export default function MatchEventSnackbar({
             </Typography>
           </Box>
         )}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box
+          sx={{ display: "flex", alignItems: "center", flex: 1, gap: 1, p: 1 }}
+        >
           {notice.kind === "goal" && (
             <img
               src={SoccerBallImage}
               alt="Goal"
-              style={{ width: 24, height: 24 }}
+              style={{ width: 15, height: 15, transform: "translateY(-1px)" }}
             />
           )}
           <Typography
             sx={{
               textTransform: "uppercase",
               fontWeight: "bold",
+              marginRight: 2,
             }}
           >
-            {notice.minute}&apos; {notice.kind}
-            {notice.kind === "goal" && <>!</>}
+            {notice.kind}
+            {notice.kind === "goal"}
+          </Typography>
+
+          <Typography
+            variant="body2"
+            sx={{
+              color: "#CA5126",
+              fontWeight: 900,
+              fontSize: 24,
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            #{player?.number || "—"}{" "}
+            <Typography
+              component="span"
+              sx={{
+                color: "white",
+                fontWeight: 700,
+                fontSize: 16,
+                paddingLeft: 0.5,
+              }}
+            >
+              {player?.name || "No player recorded"}
+            </Typography>
+            <Typography
+              sx={{
+                backgroundColor: "#999",
+                p: 0.5,
+                px: 1,
+                fontSize: 12,
+                fontWeight: "bold",
+                color: "black",
+              }}
+            >
+              {notice.minute}&apos;
+            </Typography>
           </Typography>
         </Box>
 
-        {notice.kind === "goal" && (
-          <Typography
-            sx={{
-              fontSize: 14,
-              opacity: 0.6,
-              my: 1,
-            }}
-          >
-            {scoreline}
-          </Typography>
-        )}
-
         <Typography variant="body2">
-          #{player?.number || "—"} · {player?.name || "No player recorded"}
+          {notice.kind === "goal" && <>{scoreline}. </>}Right footed shot from
+          the top of the box.
         </Typography>
-        <Typography variant="body2">Note: {notice.note || "—"}</Typography>
-        <details>
-          <summary>Event data</summary>
-          <Box component="pre" sx={{ whiteSpace: "pre-wrap", fontSize: 12 }}>
-            {JSON.stringify(notice, null, 2)}
-          </Box>
-        </details>
         {remaining > 0 && (
           <Typography variant="caption">{remaining} more waiting</Typography>
         )}
