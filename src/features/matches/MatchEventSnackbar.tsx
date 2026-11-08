@@ -177,19 +177,23 @@ export default function MatchEventSnackbar({
               alignItems: "center",
             }}
           >
-            #{player?.number || ""}{" "}
-            <Typography
-              component="span"
-              sx={{
-                color: "white",
-                fontWeight: 700,
-                fontSize: 16,
-                paddingLeft: 0.5,
-                marginRight: 2,
-              }}
-            >
-              {player?.name || "No player recorded"}
-            </Typography>
+            {!creditedToOpponent && (
+              <>
+                #{player?.number || ""}{" "}
+                <Typography
+                  component="span"
+                  sx={{
+                    color: "white",
+                    fontWeight: 700,
+                    fontSize: 16,
+                    paddingLeft: 0.5,
+                    marginRight: 2,
+                  }}
+                >
+                  {player?.name}
+                </Typography>
+              </>
+            )}
             <Typography
               sx={{
                 backgroundColor: "#c4c4c4",

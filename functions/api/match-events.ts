@@ -20,5 +20,6 @@ export async function onRequestGet({ request, env }: { request: Request; env: { 
   ).bind(matchId).all<{ payload: string }>();
   const match = matchRows.results[0] ? JSON.parse(matchRows.results[0].payload) : null;
   if (match) delete match.chat;
+  if (match) delete match.matchAuditComplete;
   return Response.json({ match, events: rows.results.map(row => JSON.parse(row.payload)) }, { headers });
 }

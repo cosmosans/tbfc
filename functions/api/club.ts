@@ -50,6 +50,7 @@ export async function onRequestGet({ request, env }: Context): Promise<Response>
       if (Object.hasOwn(data, row.collection)) {
         const item = JSON.parse(row.payload);
         if (row.collection === 'matches' && !headerAdmin) delete item.chat;
+        if (row.collection === 'matches' && !headerAdmin && !sessionAdmin) delete item.matchAuditComplete;
         data[row.collection].push(item);
       }
     }

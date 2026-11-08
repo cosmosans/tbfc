@@ -97,6 +97,7 @@ const blankMatch = (): Match => ({
   kit: "",
   scorerNotes: "",
   report: "",
+  matchAuditComplete: false,
 });
 
 export default function App() {
@@ -418,7 +419,9 @@ export default function App() {
             ],
             matches: match
               ? current.matches.map((existing) =>
-                  existing.id === pollingMatchId ? { ...match, chat: existing.chat } : existing,
+                  existing.id === pollingMatchId
+                    ? { ...match, chat: existing.chat, matchAuditComplete: existing.matchAuditComplete }
+                    : existing,
                 )
               : current.matches,
           }));

@@ -11,10 +11,12 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   Stack,
+  Switch,
   TextField,
 } from "@mui/material";
 import type { Location, Match, Opponent, Season } from "../../model";
@@ -22,6 +24,7 @@ import { scoreResult } from "../../model";
 import { splitMatchLocation } from "../../matchLocation";
 import { isTurfbotReport } from "./reportAttribution";
 import { splitCompetition } from "../../matchCompetition";
+import { canEditClub } from "../../editAccess";
 
 export default function MatchDialog({
   open,
@@ -47,7 +50,7 @@ export default function MatchDialog({
   const [kickoffInvalid, setKickoffInvalid] = useState(false);
   useEffect(() => {
     if (open) {
-      setDraft({ ...splitCompetition(match), ...splitMatchLocation(match.venue, match.pitch) });
+      setDraft({ ...splitCompetition(match), ...splitMatchLocation(match.venue, match.pitch), matchAuditComplete: match.matchAuditComplete ?? false });
       const parsed = moment(match.kickoff, "h:mm A", true);
       setKickoffValue(match.kickoff && parsed.isValid() ? parsed : null);
       setKickoffInvalid(false);
@@ -327,6 +330,17 @@ export default function MatchDialog({
               onChange={(e) => setDraft({ ...draft, report: e.target.value })}
               multiline
               minRows={4}
+            />
+          )}
+          {canEditClub && (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={draft.matchAuditComplete ?? false}
+                  onChange={(event) => setDraft({ ...draft, matchAuditComplete: event.target.checked })}
+                />
+              }
+              label="Match Audit Complete"
             />
           )}
         </Stack>

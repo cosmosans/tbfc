@@ -112,9 +112,9 @@ export default function Events({
               direction={{ xs: "column", md: "row" }}
               gap={2}
               flexWrap="wrap"
-              alignItems="center"
+              alignItems={{ xs: "stretch", md: "center" }}
             >
-              <FormControl size="small" sx={{ minWidth: 150 }}>
+              <FormControl size="small" sx={{ minWidth: { md: 150 }, width: { xs: "100%", md: "auto" } }}>
                 <InputLabel>Event</InputLabel>
                 <Select
                   label="Event"
@@ -143,7 +143,7 @@ export default function Events({
                 </Select>
               </FormControl>
               {hasTeam && (
-                <FormControl size="small" sx={{ minWidth: 180 }}>
+                <FormControl size="small" sx={{ minWidth: { md: 180 }, width: { xs: "100%", md: "auto" } }}>
                   <InputLabel>
                     {kind === "goal"
                       ? "Goal For"
@@ -172,7 +172,7 @@ export default function Events({
                   </Select>
                 </FormControl>
               )}
-              <FormControl size="small" sx={{ minWidth: 180 }}>
+              <FormControl size="small" sx={{ minWidth: { md: 180 }, width: { xs: "100%", md: "auto" } }}>
                 <InputLabel>{kind === "goal" ? "Scorer" : "Player"}</InputLabel>
                 <Select
                   label={kind === "goal" ? "Scorer" : "Player"}
@@ -193,6 +193,7 @@ export default function Events({
               </FormControl>
               {kind === "goal" && (
                 <FormControlLabel
+                  sx={{ width: { xs: "100%", md: "auto" }, m: 0 }}
                   control={
                     <Checkbox
                       checked={ownGoal}
@@ -212,7 +213,7 @@ export default function Events({
                 inputProps={{ min: 0 }}
                 value={minute}
                 onChange={(e) => setMinute(e.target.value)}
-                sx={{ width: 100 }}
+                sx={{ width: { xs: "100%", md: 100 } }}
               />
               <Button
                 variant="outlined"
@@ -223,7 +224,8 @@ export default function Events({
                 }}
                 sx={{
                   flexGrow: 1,
-                  minWidth: 160,
+                  minWidth: { md: 160 },
+                  width: { xs: "100%", md: "auto" },
                   maxWidth: { md: 320 },
                   justifyContent: "flex-start",
                 }}
@@ -236,8 +238,8 @@ export default function Events({
                   {note || "Add note"}
                 </Typography>
               </Button>
-              {editingEvent && <Button onClick={closeEditor}>Cancel</Button>}
-              <Button variant="contained" onClick={addEvent}
+              {editingEvent && <Button onClick={closeEditor} sx={{ width: { xs: "100%", md: "auto" } }}>Cancel</Button>}
+              <Button variant="contained" onClick={addEvent} sx={{ width: { xs: "100%", md: "auto" } }}
                 disabled={minute !== "" && (!Number.isFinite(Number(minute)) || Number(minute) < 0)}>
                 {editingEvent ? "Save changes" : "Add"}
               </Button>

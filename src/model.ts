@@ -29,6 +29,7 @@ export type Match = {
   kit: string;
   scorerNotes: string;
   report: string;
+  matchAuditComplete?: boolean;
   reportAuthor?: "turfbot";
   photos?: MatchPhoto[];
   chat?: MatchChatMessage[];
