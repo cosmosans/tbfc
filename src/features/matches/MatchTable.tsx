@@ -1,3 +1,4 @@
+import MatchResultChip from "../../components/MatchResultChip";
 import { useState } from "react";
 import {
   Box,
@@ -99,7 +100,6 @@ export default function MatchTable({
                 ? seasonName(data, match) !== seasonName(data, next)
                 : !upcoming);
             const opponent = opponentFor(data, match);
-            const result = scoreResult(match);
             return (
               <TableRow
                 key={match.id}
@@ -164,21 +164,7 @@ export default function MatchTable({
                 </TableCell>
                 {!upcoming && (
                   <TableCell align="center">
-                    <Chip
-                      size="small"
-                      label={
-                        match.status === "in_progress" ? "In Progress" : result
-                      }
-                      color={
-                        match.status === "in_progress"
-                          ? "warning"
-                          : result === "W"
-                            ? "success"
-                            : result === "L"
-                              ? "error"
-                              : "default"
-                      }
-                    />
+                    <MatchResultChip match={match} />
                   </TableCell>
                 )}
                 <TableCell>

@@ -23,6 +23,7 @@ import {
   YAxis,
 } from "recharts";
 import { useTheme } from "@mui/material/styles";
+import { useNavigate } from "react-router-dom";
 import type { ClubData } from "../../model";
 import { isMatchCompleted, record } from "../../model";
 import { opponentFor, opponentName, orderedSeasons } from "../../clubView";
@@ -33,20 +34,32 @@ function TeamCrestTick({
   y = 0,
   payload,
   teams,
+  onOpenTeam,
 }: {
   x?: number;
   y?: number;
   payload?: { value: string };
-  teams: { team: string; crestUrl?: string }[];
+  teams: { team: string; id?: string; crestUrl?: string }[];
+  onOpenTeam: (id: string) => void;
 }) {
   const team = teams.find((item) => item.team === payload?.value);
   const [failedUrl, setFailedUrl] = useState("");
   const crest = team?.crestUrl;
+  const open = () => { if (team?.id) onOpenTeam(team.id); };
   return (
     <g
       transform={`translate(${x - 18}, ${y + 8})`}
-      role="img"
-      aria-label={payload?.value}
+      role={team?.id ? "link" : "img"}
+      tabIndex={team?.id ? 0 : undefined}
+      aria-label={team?.id ? `View ${team.team} team page` : payload?.value}
+      onClick={open}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          open();
+        }
+      }}
+      style={{ cursor: team?.id ? "pointer" : "default" }}
     >
       <title>{payload?.value}</title>
       {crest && crest !== failedUrl ? (
@@ -90,6 +103,10 @@ export default function Stats({
   openSeason: (id: string) => void;
 }) {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const openTeam = (id?: string) => {
+    if (id) navigate(`/team/${encodeURIComponent(id)}`);
+  };
   const [metric, setMetric] = useState<"results" | "goals" | "points">(
     "results",
   );
@@ -115,6 +132,7 @@ export default function Stats({
     string,
     {
       team: string;
+      id?: string;
       played: number;
       goalsFor: number;
       goalsAgainst: number;
@@ -126,12 +144,14 @@ export default function Stats({
     if (!isMatchCompleted(match)) continue;
     const team = opponentName(data, match).trim();
     if (!team) continue;
-    const key = opponentFor(data, match)?.id ?? team.toLowerCase();
+    const opponent = opponentFor(data, match);
+    const key = opponent?.id ?? team.toLowerCase();
     const current = opponentCounts.get(key);
     opponentCounts.set(key, {
       team,
-      color: opponentFor(data, match)?.color,
-      crestUrl: opponentFor(data, match)?.crestUrl,
+      id: opponent?.id,
+      color: opponent?.color,
+      crestUrl: opponent?.crestUrl,
       played: (current?.played ?? 0) + 1,
       goalsFor: (current?.goalsFor ?? 0) + match.goalsFor,
       goalsAgainst: (current?.goalsAgainst ?? 0) + match.goalsAgainst,
@@ -228,7 +248,7 @@ export default function Stats({
                         interval={0}
                         tickLine={false}
                         stroke="#a7afb1"
-                        tick={<TeamCrestTick teams={teams} />}
+                        tick={<TeamCrestTick teams={teams} onOpenTeam={openTeam} />}
                       />
                       <YAxis type="number" allowDecimals={false} stroke="#a7afb1" />
                       <Tooltip
@@ -246,6 +266,8 @@ export default function Stats({
                             name="Turf Burners FC goals"
                             fill={theme.palette.primary.main}
                             isAnimationActive={false}
+                            cursor="pointer"
+                            onClick={(entry) => openTeam(entry.payload?.id)}
                           >
                             <LabelList
                               dataKey="goalsFor"
@@ -260,6 +282,8 @@ export default function Stats({
                             name="Opponent goals"
                             fill="#a7afb1"
                             isAnimationActive={false}
+                            cursor="pointer"
+                            onClick={(entry) => openTeam(entry.payload?.id)}
                           >
                             {chartTeams.map((team) => (
                               <Cell
@@ -278,6 +302,8 @@ export default function Stats({
                       ) : (
                         <Bar
                             minPointSize={3}
+                          cursor="pointer"
+                          onClick={(entry) => openTeam(entry.payload?.id)}
                           dataKey={
                             opponentMetric === "goalsFor"
                               ? "goalsFor"

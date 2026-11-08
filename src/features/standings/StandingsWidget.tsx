@@ -6,10 +6,6 @@ import {
   Button,
   Card,
   CardContent,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   Stack,
   Table,
   TableBody,
@@ -19,6 +15,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import moment from "moment";
 import type { ClubData, Opponent, StandingRow } from "../../model";
 import { orderedSeasons } from "../../clubView";
 import { parseStandingsCsv } from "../../standingsImport";
@@ -60,10 +57,10 @@ export default function StandingsWidget({
   const seasons = orderedSeasons(data, true).filter(
     (season) => season.id === "season-fall-2026",
   );
-  const [requestedSeasonId, setSeasonId] = useState(initialSeasonId ?? "");
+  const [requestedSeasonId] = useState(initialSeasonId ?? "");
   const seasonId = seasons.some((season) => season.id === requestedSeasonId)
     ? requestedSeasonId
-    : seasons[0]?.id ?? "";
+    : (seasons[0]?.id ?? "");
   const [pending, setPending] = useState<StandingRow[] | null>(null);
   const [fileName, setFileName] = useState("");
   const [error, setError] = useState("");
@@ -112,13 +109,19 @@ export default function StandingsWidget({
           justifyContent="space-between"
           alignItems={{ md: "center" }}
           gap={2}
-          sx={{ mb: 2 }}
+          sx={{ mb: -1 }}
         >
           <Box>
-            <Typography variant="h4">Standings</Typography>
+            <Typography variant="h4">
+              {selectedSeason?.name} Standings
+            </Typography>
             {snapshot && (
-              <Typography variant="body2" color="text.secondary">
-                {selectedSeason?.name} · Updated {snapshot.updatedOn}
+              <Typography
+                variant="body2"
+                sx={{ textTransform: "uppercase", fontSize: 12 }}
+                color="text.secondary"
+              >
+                Updated {moment(snapshot.updatedOn).fromNow()}
               </Typography>
             )}
           </Box>
@@ -127,26 +130,6 @@ export default function StandingsWidget({
             alignItems={{ sm: "center" }}
             gap={1}
           >
-            <FormControl size="small" sx={{ minWidth: 170 }}>
-              <InputLabel>Season</InputLabel>
-              <Select
-                label="Season"
-                value={seasonId}
-                onChange={(event) => {
-                  setSeasonId(event.target.value);
-                  setPending(null);
-                  setFileName("");
-                  setError("");
-                  setMessage("");
-                }}
-              >
-                {seasons.map((item) => (
-                  <MenuItem key={item.id} value={item.id}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
             {canEditClub && (
               <Button
                 component="a"
@@ -240,19 +223,30 @@ export default function StandingsWidget({
                           item.name.trim().toLowerCase() ===
                           row.team.trim().toLowerCase(),
                       );
-                      const teamUrl = opponent ? `/team/${encodeURIComponent(opponent.id)}` : tbfc ? "/stats" : undefined;
+                      const teamUrl = opponent
+                        ? `/team/${encodeURIComponent(opponent.id)}`
+                        : tbfc
+                          ? "/stats"
+                          : undefined;
                       const diff = row.pointsScored - row.pointsAllowed;
                       return (
                         <TableRow
                           key={`${row.rank}-${row.team}`}
                           tabIndex={teamUrl ? 0 : undefined}
-                          aria-label={teamUrl ? `View ${row.team} stats` : undefined}
+                          aria-label={
+                            teamUrl ? `View ${row.team} stats` : undefined
+                          }
                           onClick={(event) => {
-                            if ((event.target as HTMLElement).closest("a")) return;
+                            if ((event.target as HTMLElement).closest("a"))
+                              return;
                             if (teamUrl) navigate(teamUrl);
                           }}
                           onKeyDown={(event) => {
-                            if (event.target !== event.currentTarget || !teamUrl) return;
+                            if (
+                              event.target !== event.currentTarget ||
+                              !teamUrl
+                            )
+                              return;
                             if (event.key === "Enter" || event.key === " ") {
                               event.preventDefault();
                               navigate(teamUrl);
@@ -260,7 +254,11 @@ export default function StandingsWidget({
                           }}
                           sx={{
                             cursor: teamUrl ? "pointer" : "default",
-                            "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: -2 },
+                            "&:focus-visible": {
+                              outline: "2px solid",
+                              outlineColor: "primary.main",
+                              outlineOffset: -2,
+                            },
                             bgcolor: tbfc
                               ? "#CA51262b"
                               : row.rank % 2

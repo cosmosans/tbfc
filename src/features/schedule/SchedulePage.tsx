@@ -67,7 +67,7 @@ export default function SchedulePage({
       >
         <Typography
           variant="h4"
-          sx={{ bgcolor: "#111", color: "#fff", px: 2, py: 1 }}
+          sx={{ bgcolor: "#111", color: "#fff", py: 1, mb: -2 }}
         >
           Schedule
         </Typography>
@@ -112,20 +112,6 @@ export default function SchedulePage({
       )}
       {upcoming.length > 0 && (
         <section>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 300,
-              display: "inline-block",
-              bgcolor: "#111",
-              color: "#fff",
-              px: 2,
-              py: 1,
-              mb: 2,
-            }}
-          >
-            Upcoming
-          </Typography>
           <MatchTable
             data={data}
             matches={upcoming}
@@ -144,7 +130,6 @@ export default function SchedulePage({
             display: "inline-block",
             bgcolor: "#111",
             color: "#fff",
-            px: 2,
             py: 1,
             mb: 2,
           }}

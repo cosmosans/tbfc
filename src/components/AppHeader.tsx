@@ -32,11 +32,12 @@ const Brand = styled(Box)({
     gap: 8,
   },
 });
+const mobileCrestSize = 36;
 const BrandCrest = styled("img")({
   width: 48,
   height: 48,
   objectFit: "contain",
-  "@media (max-width: 599.95px)": { width: 36, height: 36 },
+  "@media (max-width: 599.95px)": { width: mobileCrestSize, height: mobileCrestSize },
   filter: "drop-shadow(0 2px 3px #0008)",
 });
 const Navigation = styled(Tabs)({
@@ -146,7 +147,7 @@ export default function AppHeader({
         </Navigation>
         {onAdmin && (
           <IconButton onClick={onAdmin} aria-label="Open Admin Panel" title="Admin Panel"
-            sx={{ color: "#fff", border: "1px solid #ffffff99", borderRadius: 1, width: 44, height: 44, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 }, "&:hover": { borderColor: "#fff" } }}>
+            sx={{ color: "#fff", border: "1px solid #ffffff99", borderRadius: 1, width: { xs: mobileCrestSize, sm: 44 }, height: { xs: mobileCrestSize, sm: 44 }, p: { xs: 0, sm: 1 }, flexShrink: 0, order: { xs: 1, md: 0 }, ml: { xs: "auto", md: 0 }, "&:hover": { borderColor: "#fff" } }}>
             <Box component="img" src="/icons/admin-flame.svg" alt="" aria-hidden="true" sx={{ width: 25, height: 25 }} />
           </IconButton>
         )}

@@ -535,7 +535,7 @@ export default function App() {
             {page === "matches" && (
               <Stack gap={3} sx={{ mb: 3 }}>
                 <Box
-                  sx={{
+                  sx={(theme) => ({
                     display: "grid",
                     gridTemplateColumns: {
                       xs: "minmax(0, 1fr)",
@@ -544,36 +544,43 @@ export default function App() {
                         : "minmax(0, 1fr)",
                     },
                     gap: 3,
-                    alignItems: "stretch",
-                    gridAutoRows: "1fr",
-                    "& > *": {
-                      display: "flex",
-                      flexDirection: "column",
-                      minWidth: 0,
+                    alignItems: { xs: "start", lg: "stretch" },
+                    [theme.breakpoints.down("lg")]: {
+                      "& .lineup-pitch > div": {
+                        minHeight: nextLineup?.bench.length ? 450 : 290,
+                        aspectRatio: "1.9",
+                      },
                     },
-                    "& > * > .MuiCard-root": {
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
+                    [theme.breakpoints.up("lg")]: {
+                      "& > *": {
+                        display: "flex",
+                        flexDirection: "column",
+                        minWidth: 0,
+                      },
+                      "& > * > .MuiCard-root": {
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                      },
+                      "& .match-banner-content": {
+                        flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                      },
+                      "& .match-banner-info": {
+                        mt: "auto",
+                        pt: { xs: 2, sm: 4 },
+                      },
+                      "& .lineup-pitch": {
+                        flex: 1,
+                        width: "100%",
+                        minWidth: 0,
+                        display: "flex",
+                        flexDirection: "column",
+                      },
+                      "& .lineup-pitch > div": { flex: 1 },
                     },
-                    "& .match-banner-content": {
-                      flex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                    },
-                    "& .match-banner-info": {
-                      mt: "auto",
-                      pt: { xs: 2, sm: 4 },
-                    },
-                    "& .lineup-pitch": {
-                      flex: 1,
-                      width: "100%",
-                      minWidth: 0,
-                      display: "flex",
-                      flexDirection: "column",
-                    },
-                    "& .lineup-pitch > div": { flex: 1 },
-                  }}
+                  })}
                 >
                   {nextMatch && (
                     <MatchBanner

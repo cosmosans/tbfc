@@ -41,8 +41,8 @@ export const PlayerCardFront = styled("button")({
   background: "#171a1c",
   color: "#fff",
   textAlign: "left",
-  cursor: "pointer",
-  "&:hover": { background: "rgba(255,255,255,.04)" },
+  "&:is(button)": { cursor: "pointer" },
+  "&:is(button):hover": { background: "rgba(255,255,255,.04)" },
   "&:focus-visible": { outline: "3px solid #f47730", outlineOffset: 3 },
 });
 export const PlayerCardBack = styled(Card)({
