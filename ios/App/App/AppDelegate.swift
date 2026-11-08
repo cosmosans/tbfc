@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import WebKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,5 +41,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                           sessionRole: connectingSceneSession.role)
         config.delegateClass = SceneDelegate.self
         return config
+    }
+}
+
+
+// Keep the header aligned with UIKit when WebKit reports a zero top inset.
+final class ClubBridgeViewController: CAPBridgeViewController {
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        let top = view.safeAreaInsets.top
+        let script = "document.documentElement?.style.setProperty('--club-safe-top', '\(top)px')"
+        webView?.evaluateJavaScript(script)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // The first layout can precede navigation to the bundled document.
+        let top = view.safeAreaInsets.top
+        let script = "document.documentElement.style.setProperty('--club-safe-top', '\(top)px')"
+        webView?.configuration.userContentController.addUserScript(
+            WKUserScript(source: script, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        )
+        webView?.evaluateJavaScript(script)
     }
 }

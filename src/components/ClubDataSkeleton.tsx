@@ -49,7 +49,6 @@ export default function ClubDataSkeleton({ view }: { view: string }) {
     <Box role="status" aria-label="Loading club data" aria-busy="true"
       sx={{ "@media (prefers-reduced-motion: reduce)": { "& .MuiSkeleton-root": { animation: "none" } } }}>
       <Stack gap={3} aria-hidden="true">
-        <Skeleton width={180} height={42} />
         {view === "schedule" ? (
           <>
             <Stack direction="row" gap={2}>

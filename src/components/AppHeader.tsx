@@ -30,6 +30,7 @@ export type NavigationPage =
   | "locations"
   | "stats";
 const Header = styled(AppBar)({
+  paddingTop: "var(--club-safe-top, env(safe-area-inset-top, 0px))",
   background: "#CA5126",
 });
 const Brand = styled(Box)({
