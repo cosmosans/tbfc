@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import moment from "moment";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import {
   Autocomplete,
   Button,
@@ -39,9 +43,15 @@ export default function MatchDialog({
   onSave: (match: Match) => void;
 }) {
   const [draft, setDraft] = useState(match);
+  const [kickoffValue, setKickoffValue] = useState<moment.Moment | null>(null);
+  const [kickoffInvalid, setKickoffInvalid] = useState(false);
   useEffect(() => {
-    if (open)
+    if (open) {
       setDraft({ ...splitCompetition(match), ...splitMatchLocation(match.venue, match.pitch) });
+      const parsed = moment(match.kickoff, "h:mm A", true);
+      setKickoffValue(match.kickoff && parsed.isValid() ? parsed : null);
+      setKickoffInvalid(false);
+    }
   }, [open, match.id]);
   const selectedTeamId =
     draft.opponentId ??
@@ -111,12 +121,21 @@ export default function MatchDialog({
               onChange={(e) => setDraft({ ...draft, date: e.target.value })}
               fullWidth
             />
-            <TextField
-              label="Kickoff"
-              value={draft.kickoff}
-              onChange={(e) => setDraft({ ...draft, kickoff: e.target.value })}
-              fullWidth
-            />
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <TimePicker
+                label="Kickoff"
+                ampm
+                format="h:mm A"
+                value={kickoffValue}
+                onChange={(value) => {
+                  setKickoffValue(value);
+                  if (value === null) setDraft((current) => ({ ...current, kickoff: "" }));
+                  else if (value.isValid()) setDraft((current) => ({ ...current, kickoff: value.format("h:mm A") }));
+                }}
+                onError={(error) => setKickoffInvalid(error !== null)}
+                slotProps={{ textField: { fullWidth: true } }}
+              />
+            </LocalizationProvider>
           </Stack>
           <Stack direction={{ xs: "column", sm: "row" }} gap={2}>
             <FormControl fullWidth required>
@@ -316,7 +335,7 @@ export default function MatchDialog({
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
-          disabled={!selectedTeamId || !selectedSeasonId || !draft.date}
+          disabled={!selectedTeamId || !selectedSeasonId || !draft.date || kickoffInvalid}
           onClick={() =>
             onSave({
               ...draft,

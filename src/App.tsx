@@ -100,6 +100,7 @@ const blankMatch = (): Match => ({
 });
 
 export default function App() {
+  const manageModeKey = "tbfc-manage-mode";
   const [sourceData, setData] = useState<ClubData>(loadData);
   const [clockTime, setClockTime] = useState(Date.now);
   const data = useMemo(
@@ -121,6 +122,28 @@ export default function App() {
   useEffect(() => {
     let active = true;
     void (async () => {
+      let restoreManageMode = false;
+      if (window.localStorage.getItem(manageModeKey) === "on") {
+        try {
+          const response = await fetch("/api/admin/session", {
+            credentials: "same-origin",
+            cache: "no-store",
+          });
+          if (response.ok) {
+            const session = await response.json();
+            restoreManageMode = session.authenticated === true;
+            if (!restoreManageMode) window.localStorage.removeItem(manageModeKey);
+          }
+        } catch {
+          // Keep the preference until the session can be checked again.
+        }
+      }
+      if (!active) return;
+      if (restoreManageMode) {
+        setManageModeAccess(true, true);
+        setAdminAuthenticated(true);
+        setManageMode(true);
+      }
       const draft = canEditClub
         ? await readDraft().catch(() => undefined)
         : undefined;
@@ -206,10 +229,12 @@ export default function App() {
       }
       setManageModeAccess(true, true);
       setManageMode(true);
+      window.localStorage.setItem(manageModeKey, "on");
       setSyncMessage("");
     } else {
       setManageModeAccess(false, false);
       setManageMode(false);
+      window.localStorage.removeItem(manageModeKey);
       setDirty(false);
       await saveQueue.current.catch(() => undefined);
       const remote = await fetchClubData();
@@ -220,6 +245,7 @@ export default function App() {
 
   function changeAdminAuthentication(authenticated: boolean) {
     setAdminAuthenticated(authenticated);
+    if (!authenticated) window.localStorage.removeItem(manageModeKey);
     if (!authenticated && manageMode) void changeManageMode(false);
   }
 
