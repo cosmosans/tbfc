@@ -18,6 +18,7 @@ import { opponentFor, opponentName } from "../../clubView";
 import GoalFire from "./GoalFire";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
+import RollingScore from "../../components/RollingScore";
 import PitchIndicator from "../../components/PitchIndicator";
 import moment from "moment";
 import { splitMatchLocation } from "../../matchLocation";
@@ -365,7 +366,7 @@ export default function MatchBanner({
                             textShadow: "0 0 6px rgba(0,0,0,0.75)",
                           }}
                         >
-                          {isOpponent ? match.goalsFor : match.goalsAgainst}
+                          <RollingScore key={`${match.id}-left`} value={isOpponent ? match.goalsFor : match.goalsAgainst} animate={match.status === "in_progress"} />
                           {side === "right" && (
                             <span
                               style={{
@@ -382,7 +383,7 @@ export default function MatchBanner({
                               ) : "-"}
                             </span>
                           )}
-                          {isOpponent ? match.goalsAgainst : match.goalsFor}
+                          <RollingScore key={`${match.id}-right`} value={isOpponent ? match.goalsAgainst : match.goalsFor} animate={match.status === "in_progress"} />
                         </Typography>
 
                         {side === "right" && (
