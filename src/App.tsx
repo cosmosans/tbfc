@@ -112,7 +112,9 @@ export default function App() {
   useEffect(() => {
     let active = true;
     void (async () => {
-      const draft = canEditClub ? await readDraft().catch(() => undefined) : undefined;
+      const draft = canEditClub
+        ? await readDraft().catch(() => undefined)
+        : undefined;
       if (!active) return;
       if (draft) {
         setData(eventOnlyPlayerData(draft.data));
@@ -129,7 +131,11 @@ export default function App() {
         setSyncState(remote.data ? "ready" : "empty");
       } catch (error) {
         if (!active) return;
-        setSyncMessage(error instanceof Error ? error.message : "Could not connect to the shared database.");
+        setSyncMessage(
+          error instanceof Error
+            ? error.message
+            : "Could not connect to the shared database.",
+        );
         setSyncState("error");
       }
     })();
@@ -144,7 +150,9 @@ export default function App() {
   }, [location.pathname]);
   const matchRoute = matchPath("/match/:id", location.pathname);
   const playerRoute = matchPath("/player/:id", location.pathname);
-  const selectedPlayer = data.players.find((player) => player.id === playerRoute?.params.id);
+  const selectedPlayer = data.players.find(
+    (player) => player.id === playerRoute?.params.id,
+  );
   const teamRoute = matchPath("/team/:id", location.pathname);
   const page =
     (Object.keys(pagePaths) as Page[]).find(
@@ -175,7 +183,8 @@ export default function App() {
     if (enabled) {
       await saveQueue.current.catch(() => undefined);
       const remote = await fetchClubData();
-      if (!remote.admin || !remote.data) throw new Error("Admin session has expired. Sign in again.");
+      if (!remote.admin || !remote.data)
+        throw new Error("Admin session has expired. Sign in again.");
       const draft = await readDraft().catch(() => undefined);
       if (draft?.dirty) {
         revision.current = draft.revision;
@@ -208,14 +217,22 @@ export default function App() {
   useEffect(() => {
     if (!manageMode) return;
     const check = () => {
-      void fetch("/api/admin/session", { credentials: "same-origin", cache: "no-store" })
-        .then(response => response.json())
-        .then(status => { if (!status.authenticated) changeAdminAuthentication(false); })
+      void fetch("/api/admin/session", {
+        credentials: "same-origin",
+        cache: "no-store",
+      })
+        .then((response) => response.json())
+        .then((status) => {
+          if (!status.authenticated) changeAdminAuthentication(false);
+        })
         .catch(() => undefined);
     };
     const timer = window.setInterval(check, 60_000);
     window.addEventListener("focus", check);
-    return () => { window.clearInterval(timer); window.removeEventListener("focus", check); };
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", check);
+    };
   }, [manageMode]);
 
   function update(next: ClubData) {
@@ -223,11 +240,15 @@ export default function App() {
     editVersion.current += 1;
     setData(next);
     setDirty(true);
-    saveQueue.current = saveQueue.current.catch(() => undefined).then(() =>
-      writeDraft({ data: next, revision: revision.current, dirty: true })
-    );
+    saveQueue.current = saveQueue.current
+      .catch(() => undefined)
+      .then(() =>
+        writeDraft({ data: next, revision: revision.current, dirty: true }),
+      );
     void saveQueue.current.catch((error) => {
-      setSyncMessage(`Local draft could not be saved: ${error instanceof Error ? error.message : String(error)}. Export a backup before refreshing.`);
+      setSyncMessage(
+        `Local draft could not be saved: ${error instanceof Error ? error.message : String(error)}. Export a backup before refreshing.`,
+      );
     });
   }
   async function publishCurrentData() {
@@ -244,8 +265,12 @@ export default function App() {
       setSyncState("ready");
       setSyncMessage("");
     } catch (error) {
-      setSyncMessage(error instanceof Error ? error.message : "Could not publish club data.");
-    } finally { setPublishing(false); }
+      setSyncMessage(
+        error instanceof Error ? error.message : "Could not publish club data.",
+      );
+    } finally {
+      setPublishing(false);
+    }
   }
   const upcoming = useMemo(
     () =>
@@ -339,25 +364,35 @@ export default function App() {
     <>
       <AppHeader
         page={
-          playerRoute ? "roster" : page === "seasons"
-            ? "stats"
-            : teamRoute
-              ? "teams"
-              : matchRoute
-                ? "schedule"
-                : (page ?? "matches")
+          playerRoute
+            ? "roster"
+            : page === "seasons"
+              ? "stats"
+              : teamRoute
+                ? "teams"
+                : matchRoute
+                  ? "schedule"
+                  : (page ?? "matches")
         }
         onAdmin={() => setAdminBackupOpen(true)}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <Container maxWidth="xl" sx={{ py: { xs: 2, sm: 4 } }}>
         {canEditClub && dirty && (
-          <Alert severity="info" sx={{ mb: 2 }} action={
-            <Button disabled={publishing} onClick={() => void publishCurrentData()}>
-              {publishing ? "Publishing…" : "Publish to Live"}
-            </Button>
-          }>
-            Local draft — changes are not published yet. Download a backup for an additional copy.
+          <Alert
+            severity="info"
+            sx={{ mb: 2 }}
+            action={
+              <Button
+                disabled={publishing}
+                onClick={() => void publishCurrentData()}
+              >
+                {publishing ? "Publishing…" : "Publish to Live"}
+              </Button>
+            }
+          >
+            Local draft — changes are not published yet. Download a backup for
+            an additional copy.
           </Alert>
         )}
         {syncState === "empty" && (
@@ -380,7 +415,8 @@ export default function App() {
         )}
         {syncState === "error" && (
           <Alert severity="error" sx={{ mb: 2 }}>
-            Shared database unavailable. Showing locally available data. {syncMessage}
+            Shared database unavailable. Showing locally available data.{" "}
+            {syncMessage}
           </Alert>
         )}
         {syncState !== "error" && syncMessage && (
@@ -404,11 +440,31 @@ export default function App() {
         {syncState === "loading" ? (
           <ClubDataSkeleton
             view={
-              playerRoute ? "roster" : matchRoute ? "match" : teamRoute ? "team" : (page ?? "matches")
+              playerRoute
+                ? "roster"
+                : matchRoute
+                  ? "match"
+                  : teamRoute
+                    ? "team"
+                    : (page ?? "matches")
             }
           />
         ) : playerRoute ? (
-          selectedPlayer ? <PlayerDetail key={selectedPlayer.id} player={selectedPlayer} data={data} update={update} /> : <Alert severity="warning">Player not found. <Button component={Link} to="/roster">Back to Roster</Button></Alert>
+          selectedPlayer ? (
+            <PlayerDetail
+              key={selectedPlayer.id}
+              player={selectedPlayer}
+              data={data}
+              update={update}
+            />
+          ) : (
+            <Alert severity="warning">
+              Player not found.{" "}
+              <Button component={Link} to="/roster">
+                Back to Roster
+              </Button>
+            </Alert>
+          )
         ) : matchRoute && !selected ? (
           <Alert severity="warning">
             Match not found.{" "}
@@ -445,7 +501,7 @@ export default function App() {
               <Button
                 startIcon={<ArrowBackIcon />}
                 onClick={() => navigate("/schedule")}
-                sx={{ mb: 2, bgcolor: "#111", color: "#fff" }}
+                sx={{ mb: 1, mt: -1, bgcolor: "#111", color: "#fff" }}
               >
                 Back to Schedule
               </Button>
@@ -492,10 +548,19 @@ export default function App() {
                 <MatchHistory
                   key={selected.id}
                   match={selected}
-                  onSavePhotos={canEditClub ? (photos) => update({
-                    ...data,
-                    matches: data.matches.map((match) => match.id === selected.id ? { ...match, photos } : match),
-                  }) : undefined}
+                  onSavePhotos={
+                    canEditClub
+                      ? (photos) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id
+                                ? { ...match, photos }
+                                : match,
+                            ),
+                          })
+                      : undefined
+                  }
                   onSaveReport={
                     canEditClub
                       ? (report) =>
@@ -503,7 +568,14 @@ export default function App() {
                             ...data,
                             matches: data.matches.map((match) =>
                               match.id === selected.id
-                                ? { ...match, report, reportAuthor: report && isTurfbotReport(match) ? "turfbot" : undefined }
+                                ? {
+                                    ...match,
+                                    report,
+                                    reportAuthor:
+                                      report && isTurfbotReport(match)
+                                        ? "turfbot"
+                                        : undefined,
+                                  }
                                 : match,
                             ),
                           })
@@ -518,7 +590,11 @@ export default function App() {
                 <LineupEditor data={data} match={selected} update={update} />
               )}
               {activeDetailTab === 3 && (
-                <PrivateScrapbook key={selected.id} matchId={selected.id} players={data.players} />
+                <PrivateScrapbook
+                  key={selected.id}
+                  matchId={selected.id}
+                  players={data.players}
+                />
               )}
               {activeDetailTab === 4 && (
                 <Matchboard data={data} match={selected} update={update} />
@@ -751,33 +827,57 @@ export default function App() {
           onSave={saveMatch}
         />
       )}
-      <AdminPanel open={adminBackupOpen} onClose={() => setAdminBackupOpen(false)}
-        authenticated={adminAuthenticated} manageMode={manageMode}
-        onAuthChange={changeAdminAuthentication} onManageModeChange={changeManageMode}
-        onBackupTools={() => { setAdminBackupOpen(false); setBackupOpen(true); }} />
+      <AdminPanel
+        open={adminBackupOpen}
+        onClose={() => setAdminBackupOpen(false)}
+        authenticated={adminAuthenticated}
+        manageMode={manageMode}
+        onAuthChange={changeAdminAuthentication}
+        onManageModeChange={changeManageMode}
+        onBackupTools={() => {
+          setAdminBackupOpen(false);
+          setBackupOpen(true);
+        }}
+      />
       {canEditClub && (
         <DataTransferDialog
           open={backupOpen}
           onClose={() => setBackupOpen(false)}
           onDownload={() => exportData(data)}
           onRestore={async (backup) => {
-            const restored = { ...backup, locations: backup.locations ?? [], standings: backup.standings ?? [] };
+            const restored = {
+              ...backup,
+              locations: backup.locations ?? [],
+              standings: backup.standings ?? [],
+            };
             await saveQueue.current.catch(() => undefined);
             const remote = await fetchClubData();
             if (remote.data && backupMatchesLive(restored, remote.data)) {
-              await writeDraft({ data: remote.data, revision: remote.revision, dirty: false });
+              await writeDraft({
+                data: remote.data,
+                revision: remote.revision,
+                dirty: false,
+              });
               revision.current = remote.revision;
               editVersion.current += 1;
               setData(remote.data);
               setDirty(false);
               setSyncMessage("");
-              setBackupMessage("Backup matches live data. Loaded the latest production copy.");
+              setBackupMessage(
+                "Backup matches live data. Loaded the latest production copy.",
+              );
             } else {
-              await writeDraft({ data: restored, revision: revision.current, dirty: true });
+              await writeDraft({
+                data: restored,
+                revision: revision.current,
+                dirty: true,
+              });
               editVersion.current += 1;
               setData(restored);
               setDirty(true);
-              setBackupMessage("Backup restored as a local draft. It differs from live data; review before publishing.");
+              setBackupMessage(
+                "Backup restored as a local draft. It differs from live data; review before publishing.",
+              );
             }
             navigate("/");
           }}

@@ -6,13 +6,6 @@ export const Pitch = styled("div")({
   position: "relative",
   width: "100%",
   minHeight: 620,
-  "&::before": {
-    content: '""',
-    position: "absolute",
-    inset: "2%",
-    border: "2px solid rgba(255,255,255,.65)",
-    pointerEvents: "none",
-  },
   "@media (max-width: 600px)": { minHeight: 530 },
 });
 export const CenterLine = styled("div")({

@@ -43,50 +43,106 @@ export default function MatchTable({
   const compact = useMediaQuery(useTheme().breakpoints.down("lg"));
   const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
-  const compareText = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
-  const sortedMatches = upcoming || !sortColumn ? matches : [...matches].sort((a, b) => {
-    let comparison = 0;
-    switch (sortColumn) {
-      case "date": comparison = compareText(a.date, b.date); break;
-      case "opponent": comparison = compareText(opponentName(data, a), opponentName(data, b)); break;
-      case "score": comparison = a.goalsFor - b.goalsFor || a.goalsAgainst - b.goalsAgainst; break;
-      case "result": {
-        const rank = (match: Match) => match.status === "in_progress" ? -1 : ({ W: 2, D: 1, L: 0 }[scoreResult(match)] ?? -1);
-        comparison = rank(a) - rank(b);
-        break;
-      }
-      case "venue": comparison = compareText(matchLocation(a), matchLocation(b)); break;
-      case "kit": comparison = compareText(a.kit, b.kit); break;
-    }
-    return (direction === "asc" ? comparison : -comparison) || compareText(b.date, a.date) || compareText(a.id, b.id);
-  });
+  const compareText = (a: string, b: string) =>
+    a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
+  const sortedMatches =
+    upcoming || !sortColumn
+      ? matches
+      : [...matches].sort((a, b) => {
+          let comparison = 0;
+          switch (sortColumn) {
+            case "date":
+              comparison = compareText(a.date, b.date);
+              break;
+            case "opponent":
+              comparison = compareText(
+                opponentName(data, a),
+                opponentName(data, b),
+              );
+              break;
+            case "score":
+              comparison =
+                a.goalsFor - b.goalsFor || a.goalsAgainst - b.goalsAgainst;
+              break;
+            case "result": {
+              const rank = (match: Match) =>
+                match.status === "in_progress"
+                  ? -1
+                  : ({ W: 2, D: 1, L: 0 }[scoreResult(match)] ?? -1);
+              comparison = rank(a) - rank(b);
+              break;
+            }
+            case "venue":
+              comparison = compareText(matchLocation(a), matchLocation(b));
+              break;
+            case "kit":
+              comparison = compareText(a.kit, b.kit);
+              break;
+          }
+          return (
+            (direction === "asc" ? comparison : -comparison) ||
+            compareText(b.date, a.date) ||
+            compareText(a.id, b.id)
+          );
+        });
   function header(column: SortColumn, label: string, centered = false) {
     const active = sortColumn === column;
-    return <TableCell align={centered ? "center" : "left"} sortDirection={!upcoming && active ? direction : false}>
-      {upcoming ? label : <TableSortLabel active={active} direction={active ? direction : "asc"}
-        onClick={() => {
-          if (active) setDirection(direction === "asc" ? "desc" : "asc");
-          else {
-            setSortColumn(column);
-            setDirection(["date", "score", "result"].includes(column) ? "desc" : "asc");
-          }
-        }}>
-        {label}
-      </TableSortLabel>}
-    </TableCell>;
+    return (
+      <TableCell
+        align={centered ? "center" : "left"}
+        sortDirection={!upcoming && active ? direction : false}
+      >
+        {upcoming ? (
+          label
+        ) : (
+          <TableSortLabel
+            active={active}
+            direction={active ? direction : "asc"}
+            onClick={() => {
+              if (active) setDirection(direction === "asc" ? "desc" : "asc");
+              else {
+                setSortColumn(column);
+                setDirection(
+                  ["date", "score", "result"].includes(column) ? "desc" : "asc",
+                );
+              }
+            }}
+          >
+            {label}
+          </TableSortLabel>
+        )}
+      </TableCell>
+    );
   }
   return (
-    <TableContainer sx={{ bgcolor: "background.paper", overflowX: "auto" }}>
+    <TableContainer
+      sx={(theme) => ({
+        bgcolor: "background.paper",
+        overflowX: "auto",
+        [theme.breakpoints.down("sm")]: {
+          mx: -2,
+          width: `calc(100% + ${theme.spacing(4)})`,
+        },
+      })}
+    >
       <Table
         aria-label={upcoming ? "Upcoming fixtures" : "Match history"}
         sx={{
           minWidth: { xs: 0, lg: 850 },
           tableLayout: { xs: "fixed", sm: "auto" },
           "& .MuiTableCell-root": { px: { xs: 0.5, sm: 1.5, lg: 2 } },
-          "& thead th:first-of-type": { width: { xs: 85, sm: "auto" } },
-          "& thead th:nth-of-type(3)": { width: { xs: upcoming ? 76 : 49, sm: "auto" } },
+          "& tr > :first-child": {
+            paddingInlineStart: { xs: 1, sm: 1.5, lg: 2 },
+          },
+          "& tr > :last-child": { paddingInlineEnd: { xs: 1, sm: 1.5, lg: 2 } },
+          "& thead th:first-of-type": { width: { xs: "7.75rem", sm: "auto" } },
+          "& thead th:nth-of-type(3)": {
+            width: { xs: upcoming ? 76 : 49, sm: "auto" },
+          },
           "& thead th:nth-of-type(4)": { width: { xs: 48, sm: "auto" } },
-          "& .MuiTableSortLabel-icon": { display: { xs: "none", sm: "inline-block" } },
+          "& .MuiTableSortLabel-icon": {
+            display: { xs: "none", sm: "inline-block" },
+          },
         }}
       >
         <TableHead sx={{ bgcolor: "action.hover" }}>
@@ -129,8 +185,20 @@ export default function MatchTable({
                 }}
               >
                 <TableCell>
-                  <Typography component="span" variant="caption" color="text.secondary"
-                    sx={{ display: "block", letterSpacing: ".08em", textTransform: "uppercase" }}>
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="text.secondary"
+                    title={seasonName(data, match)}
+                    sx={{
+                      display: "block",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      letterSpacing: ".08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
                     {seasonName(data, match)}
                   </Typography>
                   {match.date && moment(match.date).isValid()
@@ -138,7 +206,11 @@ export default function MatchTable({
                     : "Date TBD"}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  <Stack direction="row" alignItems="center" gap={{ xs: 0.5, sm: 1.5 }}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap={{ xs: 0.5, sm: 1.5 }}
+                  >
                     <OpponentCrest
                       url={opponent?.crestUrl}
                       compact
@@ -161,7 +233,17 @@ export default function MatchTable({
                         px: { xs: 0, sm: 1 },
                       }}
                     >
-                      <Box component="span" title={opponentName(data, match)} sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{opponentName(data, match)}</Box>
+                      <Box
+                        component="span"
+                        title={opponentName(data, match)}
+                        sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {opponentName(data, match)}
+                      </Box>
                     </Button>
                   </Stack>
                 </TableCell>
@@ -177,47 +259,51 @@ export default function MatchTable({
                     <MatchResultChip match={match} />
                   </TableCell>
                 )}
-                {!compact && <TableCell>
-                  <Stack gap={0.5} alignItems="flex-start">
-                    <Typography variant="body2" color="text.secondary">
-                      {matchLocation(match) || "Venue TBD"}
-                    </Typography>
-                    {!upcoming && issues(match).length > 0 && (
-                      <Chip
-                        size="small"
-                        color="warning"
-                        label="Review Source"
+                {!compact && (
+                  <TableCell>
+                    <Stack gap={0.5} alignItems="flex-start">
+                      <Typography variant="body2" color="text.secondary">
+                        {matchLocation(match) || "Venue TBD"}
+                      </Typography>
+                      {!upcoming && issues(match).length > 0 && (
+                        <Chip
+                          size="small"
+                          color="warning"
+                          label="Review Source"
+                        />
+                      )}
+                    </Stack>
+                  </TableCell>
+                )}
+                {!compact && (
+                  <TableCell>
+                    {upcoming ? (
+                      match.homeAway === "home" ? (
+                        "Home"
+                      ) : match.homeAway === "away" ? (
+                        "Away"
+                      ) : (
+                        "—"
+                      )
+                    ) : match.kit === "White" || match.kit === "Black" ? (
+                      <Box
+                        component="img"
+                        src={
+                          match.kit === "White" ? WhiteKitImage : BlackKitImage
+                        }
+                        alt={`${match.kit} kit`}
+                        sx={{
+                          width: 30,
+                          height: 30,
+                          objectFit: "contain",
+                          display: "block",
+                        }}
                       />
-                    )}
-                  </Stack>
-                </TableCell>}
-                {!compact && <TableCell>
-                  {upcoming ? (
-                    match.homeAway === "home" ? (
-                      "Home"
-                    ) : match.homeAway === "away" ? (
-                      "Away"
                     ) : (
-                      "—"
-                    )
-                  ) : match.kit === "White" || match.kit === "Black" ? (
-                    <Box
-                      component="img"
-                      src={
-                        match.kit === "White" ? WhiteKitImage : BlackKitImage
-                      }
-                      alt={`${match.kit} kit`}
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        objectFit: "contain",
-                        display: "block",
-                      }}
-                    />
-                  ) : (
-                    match.kit || "—"
-                  )}
-                </TableCell>}
+                      match.kit || "—"
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}

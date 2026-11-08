@@ -116,7 +116,14 @@ export default function MatchBanner({
   );
   console.log(data, match, detail);
   return (
-    <Box>
+    <Box
+      sx={(theme) => ({
+        [theme.breakpoints.down("sm")]: {
+          mx: -2,
+          width: `calc(100% + ${theme.spacing(4)})`,
+        },
+      })}
+    >
       <Panel
         sx={{
           ...(location?.imageUrl
@@ -167,14 +174,17 @@ export default function MatchBanner({
               justifyContent="space-between"
               alignItems="center"
               gap={2}
-              sx={{ mb: 2, flexWrap: "wrap" }}
+              sx={{ mb: 2 }}
             >
               <Typography
                 variant="overline"
                 color="primary"
                 sx={{ background: "black", paddingInline: 1 }}
               >
-                {[seasonName(data, match), match.league, match.competition].filter(Boolean).join(" · ")}
+                {match.season}
+                {[seasonName(data, match), match.league, match.competition]
+                  .filter(Boolean)
+                  .join(" · ")}
               </Typography>
 
               {onEdit && (

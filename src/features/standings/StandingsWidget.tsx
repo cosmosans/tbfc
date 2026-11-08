@@ -109,10 +109,10 @@ export default function StandingsWidget({
           justifyContent="space-between"
           alignItems={{ md: "center" }}
           gap={2}
-          sx={{ mb: -1 }}
+          sx={{ mb: 0 }}
         >
-          <Box>
-            <Typography variant="h4">
+          <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+            <Typography variant="h4" sx={{ flex: 1 }}>
               {selectedSeason?.name} Standings
             </Typography>
             {snapshot && (

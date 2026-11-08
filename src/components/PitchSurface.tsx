@@ -20,6 +20,13 @@ const Markings = styled("div")({
   position: "absolute",
   inset: 0,
   zIndex: 3,
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    inset: "2%",
+    border: "2px solid rgba(255,255,255,.65)",
+    pointerEvents: "none",
+  },
   pointerEvents: "none",
 });
 
