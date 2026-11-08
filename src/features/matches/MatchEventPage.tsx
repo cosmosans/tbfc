@@ -15,11 +15,15 @@ export default function MatchEventPage({
   update,
   onEdit,
   goalTime,
+  goalSoundEnabled,
+  onGoalSoundToggle,
 }: {
   data: ClubData;
   match: Match;
   update: (data: ClubData) => void;
   goalTime?: number;
+  goalSoundEnabled?: boolean;
+  onGoalSoundToggle?: () => void;
   onEdit?: () => void;
 }) {
   const [searchParams] = useSearchParams();
@@ -27,7 +31,7 @@ export default function MatchEventPage({
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={2}>
-      <MatchBanner goalTime={goalTime} data={data} match={match} detail onEdit={onEdit} />
+      <MatchBanner goalTime={goalTime} goalSoundEnabled={goalSoundEnabled} onGoalSoundToggle={onGoalSoundToggle} data={data} match={match} detail onEdit={onEdit} />
       <MatchNavigation matches={data.matches} match={match} />
       {match.report && (
         <Box

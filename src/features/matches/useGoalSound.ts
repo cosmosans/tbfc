@@ -2,6 +2,8 @@ import { useEffect, useRef } from "react";
 
 export function useGoalSound() {
   const play = useRef<() => void>(() => {});
+  const enable = useRef<() => Promise<boolean>>(async () => false);
+  const disable = useRef<() => void>(() => {});
   useEffect(() => {
     if (!window.AudioContext) return;
     const context = new AudioContext();
@@ -9,6 +11,8 @@ export function useGoalSound() {
     let clip: Promise<AudioBuffer | null> | undefined;
     let source: AudioBufferSourceNode | undefined;
     let active = true;
+    let enabled = false;
+    let generation = 0;
     let playback = Promise.resolve();
 
     function prepare() {
@@ -21,34 +25,50 @@ export function useGoalSound() {
         .catch(() => { clip = undefined; return null; });
       return clip;
     }
-    function unlock() {
-      if (context.state !== "running") void context.resume().catch(() => {});
-    }
     void prepare();
-    window.addEventListener("pointerup", unlock);
-    window.addEventListener("keydown", unlock);
+    enable.current = async () => {
+      try {
+        await context.resume();
+        enabled = context.state === "running";
+        return enabled;
+      } catch {
+        return false;
+      }
+    };
+    disable.current = () => {
+      enabled = false;
+      generation++;
+      source?.stop();
+      source = undefined;
+    };
     play.current = () => {
+      if (!enabled) return;
+      const requestGeneration = generation;
       playback = playback.then(async () => {
-        const [buffer] = await Promise.all([prepare(), context.resume()]);
-        if (!buffer || !active) return;
-        source = context.createBufferSource();
-        source.buffer = buffer;
-        source.connect(context.destination);
-        source.start();
+        const buffer = await prepare();
+        if (!buffer || !active || !enabled || requestGeneration !== generation) return;
+        const currentSource = context.createBufferSource();
+        source = currentSource;
+        currentSource.buffer = buffer;
+        currentSource.connect(context.destination);
+        currentSource.start();
         await new Promise<void>((resolve) => {
-          if (source) source.onended = () => resolve();
+          currentSource.onended = () => {
+            if (source === currentSource) source = undefined;
+            resolve();
+          };
         });
       }).catch(() => {});
     };
     return () => {
       active = false;
       play.current = () => {};
-      source?.stop();
+      enable.current = async () => false;
+      disable.current = () => {};
+      if (source) source.stop();
       controller.abort();
-      window.removeEventListener("pointerup", unlock);
-      window.removeEventListener("keydown", unlock);
       void context.close().catch(() => {});
     };
   }, []);
-  return play;
+  return { play, enable, disable };
 }

@@ -304,7 +304,16 @@ export default function App() {
         .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
     : undefined;
   const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
-  const goalSound = useGoalSound();
+  const { play: goalSound, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound();
+  const [goalSoundEnabled, setGoalSoundEnabled] = useState(false);
+  async function toggleGoalSound() {
+    if (goalSoundEnabled) {
+      disableGoalSound.current();
+      setGoalSoundEnabled(false);
+    } else if (await enableGoalSound.current()) {
+      setGoalSoundEnabled(true);
+    }
+  }
   const currentEvents = useRef(sourceData.events);
   useLayoutEffect(() => {
     currentEvents.current = sourceData.events;
@@ -771,6 +780,8 @@ export default function App() {
           selected.status === "scheduled" ? (
             <MatchEventPage
               key={selected.id}
+              goalSoundEnabled={goalSoundEnabled}
+              onGoalSoundToggle={() => void toggleGoalSound()}
               goalTime={
                 goalBurst?.matchId === selected.id
                   ? goalBurst.started
@@ -786,6 +797,8 @@ export default function App() {
           ) : (
             <>
               <MatchBanner
+                goalSoundEnabled={goalSoundEnabled}
+                onGoalSoundToggle={() => void toggleGoalSound()}
                 goalTime={
                   goalBurst?.matchId === selected.id
                     ? goalBurst.started
@@ -927,6 +940,8 @@ export default function App() {
                 >
                   {nextMatch && (
                     <MatchBanner
+                      goalSoundEnabled={goalSoundEnabled}
+                      onGoalSoundToggle={() => void toggleGoalSound()}
                       goalTime={goalBurst?.matchId === nextMatch.id ? goalBurst.started : undefined}
                       data={data}
                       match={nextMatch}

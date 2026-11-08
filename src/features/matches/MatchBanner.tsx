@@ -5,10 +5,12 @@ import {
   Card,
   CardContent,
   Chip,
+  IconButton,
   LinearProgress,
   Stack,
   Typography,
 } from "@mui/material";
+import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
@@ -101,6 +103,8 @@ export default function MatchBanner({
   onEdit,
   detail = false,
   goalTime,
+  goalSoundEnabled = false,
+  onGoalSoundToggle,
 }: {
   data: ClubData;
   match: Match;
@@ -108,6 +112,8 @@ export default function MatchBanner({
   onEdit?: () => void;
   detail?: boolean;
   goalTime?: number;
+  goalSoundEnabled?: boolean;
+  onGoalSoundToggle?: () => void;
 }) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
@@ -157,6 +163,24 @@ export default function MatchBanner({
           aria-label="Match in progress"
           sx={{ transform: "skewX(-15deg)" }}
         />
+      )}
+      {onGoalSoundToggle && (
+        <IconButton
+          aria-label={goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"}
+          aria-pressed={goalSoundEnabled}
+          title={goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"}
+          onClick={(event) => {
+            event.stopPropagation();
+            onGoalSoundToggle();
+          }}
+          sx={{ alignSelf: "center", color: "#fff", p: 0.5 }}
+        >
+          {goalSoundEnabled ? (
+            <Box component="img" src="/icons/volume-white.svg" alt="" sx={{ width: 24, height: 24 }} />
+          ) : (
+            <VolumeOffIcon sx={{ fontSize: 24 }} />
+          )}
+        </IconButton>
       )}
     </Stack>
   );
