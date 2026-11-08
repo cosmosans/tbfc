@@ -22,7 +22,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   Stack,
   Typography,
 } from "@mui/material";
@@ -34,6 +33,7 @@ import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
 import DataTransferDialog from "./components/DataTransferDialog";
 import { useGoalSound } from "./features/matches/useGoalSound";
+import MatchEventSnackbar from "./features/matches/MatchEventSnackbar";
 import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
@@ -1011,68 +1011,21 @@ export default function App() {
         )}
       </Container>
       {notice && selected && (
-        <Snackbar
+        <MatchEventSnackbar
           key={notice.id}
-          open
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          sx={{
-            bottom: `calc(${canEditClub && dirty ? 150 : 68}px + env(safe-area-inset-bottom, 0px))`,
-          }}
-        >
-          <Alert
-            severity="info"
-            icon={false}
-            sx={{
-              maxWidth: "min(480px, 94vw)",
-              maxHeight: "50vh",
-              overflowY: "auto",
-              overflowWrap: "anywhere",
-              background: "#060606",
-            }}
-            action={
-              <Button
-                color="inherit"
-                size="small"
-                sx={{
-                  textTransform: "uppercase",
-                }}
-                onClick={() =>
-                  setNotices((queue) =>
-                    queue.filter((event) => event !== notice),
-                  )
-                }
-              >
-                Dismiss
-              </Button>
-            }
-          >
-            <Typography fontWeight={700} sx={{ textTransform: "capitalize" }}>
-              {notice.kind.replaceAll("_", " ")} ·{" "}
-              {notice.team === "opponent"
-                ? opponentName(data, selected)
-                : "Turf Burners FC"}
-            </Typography>
-            <Typography variant="body2">
-              Minute {notice.minute ?? "—"} · #{noticePlayer?.number || "—"} ·{" "}
-              {noticePlayer?.name || "No player recorded"}
-            </Typography>
-            <Typography variant="body2">Note: {notice.note || "—"}</Typography>
-            <details>
-              <summary>Event data</summary>
-              <Box
-                component="pre"
-                sx={{ whiteSpace: "pre-wrap", fontSize: 12 }}
-              >
-                {JSON.stringify(notice, null, 2)}
-              </Box>
-            </details>
-            {matchNotices.length > 1 && (
-              <Typography variant="caption">
-                {matchNotices.length - 1} more waiting
-              </Typography>
-            )}
-          </Alert>
-        </Snackbar>
+          notice={notice}
+          player={noticePlayer}
+          opponent={opponentName(data, selected)}
+          opponentCrestUrl={opponentFor(data, selected)?.crestUrl}
+          creditedTeamColor={notice.team === "opponent"
+            ? opponentFor(data, selected)?.color || "#828892"
+            : "#CA5126"}
+          match={selected}
+          events={data.events}
+          remaining={matchNotices.length - 1}
+          publishBarVisible={canEditClub && dirty}
+          onDismiss={() => setNotices(queue => queue.filter(event => event !== notice))}
+        />
       )}
       {canEditClub && (
         <MatchDialog

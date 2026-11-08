@@ -136,8 +136,17 @@ export default function Teams({
                     : "transparent",
                 }}
               >
-                <CardContent>
-                  <Stack direction="row" alignItems="center" gap={2}>
+                <CardContent sx={{ pt: 2.5, px: 2.5 }}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    gap={2}
+                    sx={{
+                      "& a img": {
+                        filter: "drop-shadow(2px 4px 6px rgba(0,0,0,.4))",
+                      },
+                    }}
+                  >
                     <OpponentCrest
                       size={teamCardImageSize}
                       key={opponent.crestUrl}
@@ -145,7 +154,10 @@ export default function Teams({
                       teamId={opponent.id}
                       teamName={opponent.name}
                     />
-                    <Typography variant="h6" sx={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ flex: 1, minWidth: 0, overflowWrap: "anywhere" }}
+                    >
                       {opponent.name}
                     </Typography>
                     {opponent.kitImageUrl && (
@@ -159,6 +171,7 @@ export default function Teams({
                           flexShrink: 0,
                           objectFit: "contain",
                           objectPosition: "right center",
+                          filter: "drop-shadow(2px 4px 6px rgba(0,0,0,.4))",
                         }}
                       />
                     )}
@@ -331,18 +344,30 @@ function OpponentDialog({
           />
           <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
             {draft?.kitImageUrl && (
-              <Box component="img" src={draft.kitImageUrl} alt="Kit preview"
-                sx={{ width: 80, height: 80, objectFit: "contain" }} />
+              <Box
+                component="img"
+                src={draft.kitImageUrl}
+                alt="Kit preview"
+                sx={{ width: 80, height: 80, objectFit: "contain" }}
+              />
             )}
             <Button component="label" variant="outlined" disabled={uploading}>
               Upload Kit Image
-              <input hidden type="file" accept="image/*" onChange={(e) => {
-                void uploadImage("kitImageUrl", e.target.files?.[0]);
-                e.target.value = "";
-              }} />
+              <input
+                hidden
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  void uploadImage("kitImageUrl", e.target.files?.[0]);
+                  e.target.value = "";
+                }}
+              />
             </Button>
             {draft?.kitImageUrl && (
-              <Button disabled={uploading} onClick={() => setDraft({ ...draft, kitImageUrl: "" })}>
+              <Button
+                disabled={uploading}
+                onClick={() => setDraft({ ...draft, kitImageUrl: "" })}
+              >
                 Remove Kit Image
               </Button>
             )}
