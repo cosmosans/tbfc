@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Avatar, Box, Button, Card, CardContent, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import type { MatchChatMessage, MatchChatReply, Player } from '../../model';
 
 export default function MatchChat({ messages, players, onSave }: {
@@ -31,7 +29,7 @@ export default function MatchChat({ messages, players, onSave }: {
     changeList(next, parent);
   }
   function save() {
-    if (!draft || !draft.text.trim() || !players.some(player => player.id === draft.playerId)) return;
+    if (!draft || !draft.text.trim() || (!editing && !players.some(player => player.id === draft.playerId))) return;
     if (parentId && !messages.some(item => item.id === parentId)) return;
     const message = { ...draft, text: draft.text.trim() };
     changeList(editing
@@ -52,8 +50,11 @@ export default function MatchChat({ messages, players, onSave }: {
           {!parent && <Button size="small" disabled={!players.length} onClick={() => openDraft({ id: crypto.randomUUID(), playerId: '', text: '' }, message.id)}>Reply</Button>}
           <IconButton size="small" aria-label={`Move ${label} up`} disabled={index === 0} onClick={() => move(index, -1, parent)}><ArrowUpwardIcon fontSize="small" /></IconButton>
           <IconButton size="small" aria-label={`Move ${label} down`} disabled={index === list.length - 1} onClick={() => move(index, 1, parent)}><ArrowDownwardIcon fontSize="small" /></IconButton>
-          <IconButton size="small" aria-label={`Edit ${label}`} onClick={() => openDraft(message, parent)}><EditIcon fontSize="small" /></IconButton>
-          <IconButton size="small" aria-label={`Delete ${label}`} onClick={() => changeList(list.filter(item => item.id !== message.id), parent)}><DeleteOutlineIcon fontSize="small" /></IconButton>
+          <Button size="small" aria-label={`Edit ${label}`} onClick={() => openDraft(message, parent)}>Edit</Button>
+          <Button size="small" color="error" aria-label={`Delete ${label}`} onClick={() => {
+            if (window.confirm(`Delete this ${parent ? 'reply' : 'message'} from the chat archive?`))
+              changeList(list.filter(item => item.id !== message.id), parent);
+          }}>Delete</Button>
         </Stack>}
       </Box>
     </Stack>;
@@ -81,11 +82,13 @@ export default function MatchChat({ messages, players, onSave }: {
       <DialogTitle>{editing ? (parentId ? 'Edit reply' : 'Edit message') : (parentId ? 'Add reply' : 'Add message')}</DialogTitle>
       <DialogContent><Stack gap={2} mt={1}>
         <TextField select label="Player" value={draft?.playerId ?? ''} onChange={event => setDraft(current => current && ({ ...current, playerId: event.target.value }))}>
+          {draft?.playerId && !players.some(player => player.id === draft.playerId) &&
+            <MenuItem value={draft.playerId}>{draft.senderName || 'Former player'}</MenuItem>}
           {[...players].sort((a, b) => a.name.localeCompare(b.name)).map(player => <MenuItem key={player.id} value={player.id}>{player.name}</MenuItem>)}
         </TextField>
         <TextField label="Message" multiline minRows={4} value={draft?.text ?? ''} onChange={event => setDraft(current => current && ({ ...current, text: event.target.value }))} />
       </Stack></DialogContent>
-      <DialogActions><Button onClick={() => setDraft(null)}>Cancel</Button><Button variant="contained" disabled={!draft?.text.trim() || !players.some(player => player.id === draft?.playerId)} onClick={save}>{parentId ? 'Save reply' : 'Save message'}</Button></DialogActions>
+      <DialogActions><Button onClick={() => setDraft(null)}>Cancel</Button><Button variant="contained" disabled={!draft?.text.trim() || (!editing && !players.some(player => player.id === draft?.playerId))} onClick={save}>{parentId ? 'Save reply' : 'Save message'}</Button></DialogActions>
     </Dialog>
   </CardContent></Card>;
 }

@@ -1,4 +1,5 @@
 import { createSession, passwordMatches, privateJson, sessionCookie, sessionExpiry, type AuthEnv } from "../lib/scrapbookAuth";
+import { adminSessionExpiry } from "../lib/adminBackupAuth";
 type Statement = { bind(...values: unknown[]): Statement; first<T>(): Promise<T | null>; run(): Promise<unknown> };
 type Context = { request: Request; env: AuthEnv & { CLUB_DB?: { prepare(sql: string): Statement } } };
 
@@ -11,6 +12,36 @@ export async function onRequestGet({ request, env }: Context) {
   const row = await env.CLUB_DB.prepare("SELECT payload FROM club_records WHERE collection = 'matches' AND record_id = ?").bind(matchId).first<{ payload: string }>();
   if (!row) return privateJson({ error: "Match not found." }, 404);
   return privateJson({ messages: JSON.parse(row.payload).chat ?? [], expires });
+}
+export async function onRequestPut({ request, env }: Context) {
+  if (request.headers.get("origin") !== new URL(request.url).origin) return privateJson({ error: "Request not allowed." }, 403);
+  if (!await adminSessionExpiry(request, env) || !await sessionExpiry(request, env))
+    return privateJson({ error: "Manager Mode and an unlocked scrapbook are required." }, 403);
+  if (!env.CLUB_DB) return privateJson({ error: "Scrapbook is unavailable." }, 503);
+  if (!request.headers.get("content-type")?.includes("application/json")) return privateJson({ error: "Invalid request." }, 400);
+  try {
+    const body = await request.json() as { matchId?: unknown; messages?: unknown; previous?: unknown };
+    const validMessage = (value: unknown): boolean => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+      const item = value as Record<string, unknown>;
+      return typeof item.id === "string" && typeof item.playerId === "string" &&
+        typeof item.text === "string" && item.text.length <= 10000 &&
+        (item.senderName === undefined || typeof item.senderName === "string") &&
+        (item.sentAt === undefined || typeof item.sentAt === "string") &&
+        (item.replies === undefined || Array.isArray(item.replies) && item.replies.every(validMessage));
+    };
+    if (typeof body.matchId !== "string" || !Array.isArray(body.messages) || !body.messages.every(validMessage) ||
+        !Array.isArray(body.previous) || !body.previous.every(validMessage) ||
+        JSON.stringify(body.messages).length > 250000)
+      return privateJson({ error: "Invalid chat messages." }, 400);
+    const result = await env.CLUB_DB.prepare(
+      "UPDATE club_records SET payload = json_set(payload, '$.chat', json(?)) WHERE collection = 'matches' AND record_id = ? AND coalesce(json_extract(payload, '$.chat'), '[]') = json(?)"
+    ).bind(JSON.stringify(body.messages), body.matchId, JSON.stringify(body.previous)).run() as { meta?: { changes?: number } };
+    if (!result.meta?.changes) return privateJson({ error: "The chat changed elsewhere. Reload it before editing." }, 409);
+    return privateJson({ messages: body.messages });
+  } catch {
+    return privateJson({ error: "Could not save the chat." }, 500);
+  }
 }
 export async function onRequestPost({ request, env }: Context) {
   if (request.headers.get("origin") !== new URL(request.url).origin) return privateJson({ error: "Request not allowed." }, 403);

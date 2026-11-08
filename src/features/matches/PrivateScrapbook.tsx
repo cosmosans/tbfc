@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import type { MatchChatMessage, Player } from "../../model";
+import { canEditClub } from "../../editAccess";
 import MatchChat from "./MatchChat";
 
 export default function PrivateScrapbook({
@@ -127,6 +128,26 @@ export default function PrivateScrapbook({
       setBusy(false);
     }
   }
+  async function saveMessages(next: MatchChatMessage[]) {
+    if (!canEditClub || messages === null || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch("/api/scrapbook", {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ matchId, messages: next, previous: messages }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not save the chat.");
+      setMessages(body.messages);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save the chat.");
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <Stack gap={2}>
       <Button
@@ -140,7 +161,13 @@ export default function PrivateScrapbook({
         {messages === null ? "Unlock Scrapbook" : "Lock Scrapbook"}
       </Button>
       {error && !open && <Alert severity="error">{error}</Alert>}
-      {messages !== null && <MatchChat messages={messages} players={players} />}
+      {messages !== null && (
+        <MatchChat
+          messages={messages}
+          players={players}
+          onSave={canEditClub && !busy ? (next) => void saveMessages(next) : undefined}
+        />
+      )}
       <Dialog open={open} onClose={close} fullWidth maxWidth="xs">
         <form
           onSubmit={(event) => {
