@@ -23,6 +23,8 @@ export function useMatchBannerCollapse(detail: boolean, matchId: string, status?
       frame = 0;
       if (!mobile.matches || !banner || !travel) return;
       const progress = Math.max(0, Math.min(1, (headerHeight - banner.getBoundingClientRect().top) / travel));
+      // Counter the card’s upward travel so the venue stays anchored beneath the tabs.
+      banner.style.setProperty("--backdrop-offset", (progress * travel) + "px");
       banner.style.setProperty("--collapse", String(reducedMotion.matches ? Number(progress >= 0.5) : progress));
       banner.dataset.detailsHidden = String(progress >= (reducedMotion.matches ? 0.5 : 0.75));
     }

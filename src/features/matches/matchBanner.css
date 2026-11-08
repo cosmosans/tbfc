@@ -8,16 +8,8 @@
 
   .match-banner-detail > .MuiCard-root {
     position: relative;
-    isolation: isolate;
-  }
-
-  .match-banner-detail > .MuiCard-root::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: #08090a;
-    opacity: var(--collapse);
+    background-position: center calc(100% + var(--backdrop-offset, 0px));
+    background-repeat: no-repeat;
   }
 
   .match-banner-detail [data-banner-move] {
