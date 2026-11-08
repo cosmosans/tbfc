@@ -199,7 +199,11 @@ export default function MatchBanner({
             color: "#fff",
             p: 0.5,
             px: 1,
-            transform: "translateY(5px) skewX(-10deg)",
+            transform: {
+              xs: "translateY(0px) skewX(-10deg) scale(.9)",
+              sm: "translateY(0px) skewX(-10deg)",
+              md: "translateY(5px) skewX(-10deg)",
+            },
             borderRadius: 0,
           }}
         >

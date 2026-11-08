@@ -206,9 +206,9 @@ export default function MatchEventSnackbar({
           </Typography>
         </Box>
 
-        <Typography variant="body2">
-          {notice.kind === "goal" && <>{scoreline}. </>}Right footed shot from
-          the top of the box.
+        <Typography variant="body2" sx={{ fontSize: 12 }}>
+          {notice.kind === "goal" && <>{scoreline}. </>}
+          {notice.note}
         </Typography>
         {remaining > 0 && (
           <Box sx={{ mt: 1, opacity: 0.6 }}>
