@@ -121,11 +121,16 @@ export default function StandingsWidget({
             }}
           >
             <Typography
-              variant="body2"
-              sx={{ textTransform: "uppercase", fontSize: 12 }}
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                flex: 1,
+                fontSize: 24,
+                display: "inline-block",
+              }}
               color="text.secondary"
             >
-              {selectedSeason?.name} Standings
+              Standings
             </Typography>
             {snapshot && (
               <Typography
@@ -268,6 +273,7 @@ export default function StandingsWidget({
                             }
                           }}
                           sx={{
+                            height: `75px`,
                             cursor: teamUrl ? "pointer" : "default",
                             "&:focus-visible": {
                               outline: "2px solid",

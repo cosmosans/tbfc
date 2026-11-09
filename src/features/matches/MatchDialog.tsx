@@ -91,27 +91,23 @@ export default function MatchDialog({
       <DialogTitle>
         {match.sourceRow
           ? "Edit Imported Match"
-          : match.status === "scheduled"
-            ? "Fixture Details"
-            : "Match Details"}
+          : "Match Details"}
       </DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
-          <FormControl fullWidth required>
-            <InputLabel>Team</InputLabel>
+          <FormControl fullWidth required={draft.status !== "scheduled"}>
+            <InputLabel shrink>Team</InputLabel>
             <Select
               label="Team"
+              displayEmpty
+              notched
               value={selectedTeamId}
               onChange={(e) => {
                 const team = teams.find((item) => item.id === e.target.value);
-                if (team)
-                  setDraft({
-                    ...draft,
-                    opponentId: team.id,
-                    opponent: team.name,
-                  });
+                setDraft({ ...draft, opponentId: team?.id, opponent: team?.name ?? "" });
               }}
             >
+              {draft.status === "scheduled" && <MenuItem value="">TBD</MenuItem>}
               {teams.map((team) => (
                 <MenuItem key={team.id} value={team.id}>
                   {team.name}
@@ -346,7 +342,7 @@ export default function MatchDialog({
           </TextField>
           {draft.status === "scheduled" && (
             <TextField
-              label="Fixture Notes"
+              label="Match Notes"
               value={draft.report}
               onChange={(e) => setDraft({ ...draft, report: e.target.value })}
               multiline
@@ -371,7 +367,7 @@ export default function MatchDialog({
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"
-          disabled={!selectedTeamId || !selectedSeasonId || !draft.date || kickoffInvalid}
+          disabled={(!selectedTeamId && draft.status !== "scheduled") || !selectedSeasonId || !draft.date || kickoffInvalid}
           onClick={() =>
             onSave({
               ...draft,

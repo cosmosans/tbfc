@@ -6,7 +6,7 @@ export function opponentFor(data: ClubData, match: Match) {
   );
 }
 export function opponentName(data: ClubData, match: Match) {
-  return opponentFor(data, match)?.name ?? match.opponent;
+  return opponentFor(data, match)?.name || match.opponent || "TBD";
 }
 function seasonFor(data: ClubData, match: Match) {
   return data.seasons.find(

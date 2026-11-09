@@ -226,7 +226,7 @@ export default function MatchTable({
                         event.stopPropagation();
                         onOpen(match);
                       }}
-                      aria-label={`Open ${match.status === "scheduled" ? "fixture" : "match"} against ${opponentName(data, match)}`}
+                      aria-label={`Open match against ${opponentName(data, match)}`}
                       sx={{
                         color: "text.primary",
                         fontWeight: 700,

@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
   useMediaQuery,
+  Box,
 } from "@mui/material";
 import moment from "moment";
 import TuneIcon from "@mui/icons-material/Tune";
@@ -160,61 +161,65 @@ export default function SchedulePage({
         (!kit || match.kit === kit),
     )
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-  const activeCount = [season !== "All seasons", result, venue, kit].filter(Boolean).length;
+  const activeCount = [season !== "All seasons", result, venue, kit].filter(
+    Boolean,
+  ).length;
+
   const filterControls = (
     <>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
-            <InputLabel id="history-season-label">Season</InputLabel>
-            <Select
-              labelId="history-season-label"
-              label="Season"
-              value={season}
-              onChange={(event) => setSeason(event.target.value)}
-            >
-              <MenuItem value="All seasons">All Seasons</MenuItem>
-              {seasons.map((item) => (
-                <MenuItem key={item.id} value={item.id}>
-                  {item.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <HistoryFilter
-            label="Result"
-            value={result}
-            onChange={setResult}
-            options={[
-              { value: "W", label: "Win" },
-              { value: "D", label: "Draw" },
-              { value: "L", label: "Loss" },
-            ]}
-          />
-          <HistoryFilter
-            label="Venue"
-            value={venue}
-            onChange={setVenue}
-            options={filterOptions(pastMatches.map(venueName))}
-          />
-          <HistoryFilter
-            label="Kit"
-            value={kit}
-            onChange={setKit}
-            options={filterOptions(pastMatches.map((match) => match.kit))}
-          />
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setSearch("");
-              setSeason("All seasons");
-              setResult("");
-              setVenue("");
-              setKit("");
-            }}
-          >
-            CLEAR
-          </Button>
+      <FormControl size="small" sx={{ minWidth: 180 }}>
+        <InputLabel id="history-season-label">Season</InputLabel>
+        <Select
+          labelId="history-season-label"
+          label="Season"
+          value={season}
+          onChange={(event) => setSeason(event.target.value)}
+        >
+          <MenuItem value="All seasons">All Seasons</MenuItem>
+          {seasons.map((item) => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <HistoryFilter
+        label="Result"
+        value={result}
+        onChange={setResult}
+        options={[
+          { value: "W", label: "Win" },
+          { value: "D", label: "Draw" },
+          { value: "L", label: "Loss" },
+        ]}
+      />
+      <HistoryFilter
+        label="Venue"
+        value={venue}
+        onChange={setVenue}
+        options={filterOptions(pastMatches.map(venueName))}
+      />
+      <HistoryFilter
+        label="Kit"
+        value={kit}
+        onChange={setKit}
+        options={filterOptions(pastMatches.map((match) => match.kit))}
+      />
+      <Button
+        variant="outlined"
+        onClick={() => {
+          setSearch("");
+          setSeason("All seasons");
+          setResult("");
+          setVenue("");
+          setKit("");
+        }}
+      >
+        CLEAR
+      </Button>
     </>
   );
+
   return (
     <Stack gap={2}>
       <Stack
@@ -242,7 +247,7 @@ export default function SchedulePage({
               startIcon={<AddIcon />}
               onClick={onAddFixture}
             >
-              Add Fixture
+              Add Match
             </Button>
           </Stack>
         )}
@@ -256,12 +261,40 @@ export default function SchedulePage({
           onClose={() => setUploadOpen(false)}
         />
       )}
+
       <Stack
         direction={showStandings ? "row" : "column"}
         gap={2}
         alignItems="flex-start"
       >
-        <Stack gap={2} sx={{ flex: 1, minWidth: 0, width: "100%" }}>
+        <Stack sx={{ flex: 1, minWidth: 0, width: "100%", "& section + section": { mt: 2 } }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              bgcolor: "background.paper",
+              p: { xs: 2, sm: 3 },
+              minHeight: { md: canEditClub ? 84 : 80 },
+              gap: 1,
+              flexWrap: "wrap",
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                flex: 1,
+                fontSize: 24,
+                display: "inline-block",
+              }}
+              color="text.secondary"
+            >
+              Current Season
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ textTransform: "uppercase", fontSize: 12 }}>
+              Updated just now
+            </Typography>
+          </Box>
           {Array.from(seasonHeadings, (name) => {
             const matches = filtered
               .filter((match) => seasonName(data, match) === name)
@@ -316,18 +349,34 @@ export default function SchedulePage({
               onClick={() => setFiltersOpen(true)}
               sx={{ width: 44, border: 1, borderColor: "primary.main" }}
             >
-              <Badge badgeContent={activeCount} color="primary"><TuneIcon /></Badge>
+              <Badge badgeContent={activeCount} color="primary">
+                <TuneIcon />
+              </Badge>
             </IconButton>
-          ) : filterControls}
+          ) : (
+            filterControls
+          )}
         </Stack>
         {mobile && (
-          <Dialog open={filtersOpen} onClose={() => setFiltersOpen(false)}
-            aria-labelledby="past-results-filter-title" fullWidth maxWidth="xs">
-            <DialogTitle id="past-results-filter-title">Past Results filters</DialogTitle>
-            <DialogContent><Stack gap={2} sx={{ pt: 1 }}>{filterControls}</Stack></DialogContent>
+          <Dialog
+            open={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+            aria-labelledby="past-results-filter-title"
+            fullWidth
+            maxWidth="xs"
+          >
+            <DialogTitle id="past-results-filter-title">
+              Past Results filters
+            </DialogTitle>
+            <DialogContent>
+              <Stack gap={2} sx={{ pt: 1 }}>
+                {filterControls}
+              </Stack>
+            </DialogContent>
             <DialogActions>
               <Button variant="contained" onClick={() => setFiltersOpen(false)}>
-                Show {history.length} {history.length === 1 ? "match" : "matches"}
+                Show {history.length}{" "}
+                {history.length === 1 ? "match" : "matches"}
               </Button>
             </DialogActions>
           </Dialog>

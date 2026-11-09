@@ -137,7 +137,7 @@ export default function MatchBanner({
   const headToHead = record(
     data.matches.filter(
       (item) =>
-        item.opponentId === opponent?.id || item.opponent === match.opponent,
+        (opponent && item.opponentId === opponent.id) || (!!match.opponent && item.opponent === match.opponent),
     ),
   );
   if (match.status === "in_progress") {

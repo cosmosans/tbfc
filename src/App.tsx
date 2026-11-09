@@ -31,7 +31,7 @@ import {
 import type { ClubData, Match, MatchEvent } from "./model";
 import { issues, removeMatch } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
-import { opponentFor, opponentName } from "./clubView";
+import { opponentFor, opponentName, orderedSeasons } from "./clubView";
 import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
 import PublishingMatchEventDialog from "./components/PublishingMatchEventDialog";
@@ -201,6 +201,7 @@ export default function App() {
   const [editing, setEditing] = useState<Match | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [newMatch, setNewMatch] = useState<Match>(blankMatch);
+  const matchSeasons = useMemo(() => orderedSeasons(sourceData, true), [sourceData]);
   const requestedTab = new URLSearchParams(location.search).get("tab");
   const activeDetailTab = matchTabs.indexOf(
     !canEditClub && requestedTab === "chat" ? "lineup" : normalizeMatchTab(requestedTab),
@@ -618,13 +619,13 @@ export default function App() {
         o.id === match.opponentId ||
         o.name.toLowerCase() === match.opponent.trim().toLowerCase(),
     );
-    const opponent = existing ?? {
+    const opponent = existing ?? (match.opponent.trim() ? {
       id: crypto.randomUUID(),
       name: match.opponent.trim(),
       crestUrl: "",
       color: "",
       notes: "",
-    };
+    } : undefined);
     const existingSeason = data.seasons.find(
       (s) =>
         s.id === match.seasonId ||
@@ -638,14 +639,14 @@ export default function App() {
     const linked = {
       ...match,
       ...splitMatchLocation(match.venue, match.pitch),
-      opponentId: opponent.id,
-      opponent: opponent.name,
+      opponentId: opponent?.id,
+      opponent: opponent?.name ?? "",
       seasonId: seasonRecord.id,
       season: seasonRecord.name,
     };
     const next = {
       ...data,
-      opponents: existing ? data.opponents : [...data.opponents, opponent],
+      opponents: existing || !opponent ? data.opponents : [...data.opponents, opponent],
       seasons: existingSeason ? data.seasons : [...data.seasons, seasonRecord],
       matches: data.matches.some((m) => m.id === match.id)
         ? data.matches.map((m) => (m.id === match.id ? linked : m))
@@ -715,7 +716,7 @@ export default function App() {
             xs: `calc(${canEditClub && dirty && !publishing ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
             sm: `calc(${canEditClub && dirty && !publishing ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
           },
-          px: 0,
+          px: { xs: 0, sm: 2, md: 3, lg: 4 },
         }}
       >
         {canEditClub && dirty && !publishing && (
@@ -1114,7 +1115,8 @@ export default function App() {
                   navigate(`/match/${encodeURIComponent(match.id)}`);
                 }}
                 onAddFixture={() => {
-                  setNewMatch(blankMatch());
+                  const latest = matchSeasons[0];
+                  setNewMatch({ ...blankMatch(), seasonId: latest?.id, season: latest?.name ?? "" });
                   setShowNew(true);
                 }}
                 onManageSeasons={() => navigate("/stats")}
@@ -1180,7 +1182,7 @@ export default function App() {
                   </>
                 ) : (
                   <Alert severity="info">
-                    Add a fixture to start a coaching board.
+                    Add a match to start a coaching board.
                   </Alert>
                 )}
               </Stack>
@@ -1234,7 +1236,7 @@ export default function App() {
           match={editing ?? newMatch}
           matches={data.matches}
           teams={data.opponents}
-          seasons={data.seasons}
+          seasons={matchSeasons}
           locations={data.locations}
           onClose={() => {
             setEditing(null);
