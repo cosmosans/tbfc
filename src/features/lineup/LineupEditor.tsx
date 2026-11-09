@@ -1,5 +1,7 @@
 import {
   Alert,
+  Autocomplete,
+  TextField,
   Box,
   Button,
   ButtonBase,
@@ -180,41 +182,41 @@ export default function LineupEditor({
               <LineupGrid sx={{ mt: 2 }}>
                 {lineup.starters.map((id, index) => {
                   const slot = slots[index];
-                  const label = slot;
-                  const candidates = eligiblePlayers.filter(
-                    (player) => player.preferredPosition === slot || player.secondaryPosition === slot,
-                  );
-                  const hasUnlistedStarter = id && !candidates.some((player) => player.id === id);
-                  const savedPlayer = hasUnlistedStarter
-                    ? data.players.find((player) => player.id === id)
-                    : undefined;
+                  const selected = data.players.find(player => player.id === id);
+                  const options = [...data.players].sort(byPlayerNumber);
+                  const playerLabel = (player: (typeof options)[number]) =>
+                    `#${player.number} ${player.name}`;
                   return (
-                    <FormControl key={index} size="small" fullWidth>
-                      <InputLabel>{label}</InputLabel>
-                      <Select
-                        label={label}
-                        value={id}
-                        disabled={!canEditClub}
-                        onChange={(e) => assignStarter(index, e.target.value)}
-                      >
-                        <MenuItem value="">Empty</MenuItem>
-                        {hasUnlistedStarter && (
-                          <MenuItem value={id} disabled sx={{ display: "none" }}>
-                            {savedPlayer ? `#${savedPlayer.number} ${savedPlayer.name}` : "Unknown player"}
-                          </MenuItem>
-                        )}
-                        {candidates.map((p) => (
-                          <MenuItem key={p.id} value={p.id}>
-                            #{p.number} {p.name}
-                            {p.preferredPosition === slot
-                              ? " (Primary)"
-                              : p.secondaryPosition === slot
-                                ? " (Secondary)"
-                                : ""}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+                    <Autocomplete
+                      key={slot}
+                      size="small"
+                      fullWidth
+                      openOnFocus
+                      options={options}
+                      value={selected ?? null}
+                      getOptionLabel={playerLabel}
+                      getOptionKey={player => player.id}
+                      isOptionEqualToValue={(player, value) => player.id === value.id}
+                      filterOptions={(players, { inputValue }) => {
+                        const query = inputValue.trim().toLocaleLowerCase();
+                        if (query) return players.filter(player =>
+                          playerLabel(player).toLocaleLowerCase().includes(query),
+                        );
+                        return eligiblePlayers.filter(player =>
+                          player.preferredPosition === slot || player.secondaryPosition === slot,
+                        );
+                      }}
+                      onChange={(_, player) => assignStarter(index, player?.id ?? "")}
+                      renderOption={({ key, ...props }, player) => (
+                        <li key={key} {...props}>
+                          {playerLabel(player)}
+                          {player.preferredPosition === slot ? " (Primary)" :
+                            player.secondaryPosition === slot ? " (Secondary)" : ""}
+                        </li>
+                      )}
+                      noOptionsText="No matches. Search by name or number."
+                      renderInput={params => <TextField {...params} label={slot} />}
+                    />
                   );
                 })}
               </LineupGrid>

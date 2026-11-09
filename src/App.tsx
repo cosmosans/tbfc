@@ -1016,12 +1016,6 @@ export default function App() {
                     },
                     gap: 3,
                     alignItems: { xs: "start", lg: "stretch" },
-                    [theme.breakpoints.down("lg")]: {
-                      "& .lineup-pitch > div": {
-                        minHeight: nextLineup?.bench.length ? 450 : 290,
-                        aspectRatio: "1.9",
-                      },
-                    },
                     [theme.breakpoints.up("lg")]: {
                       "& > *": {
                         display: "flex",
@@ -1049,7 +1043,6 @@ export default function App() {
                         display: "flex",
                         flexDirection: "column",
                       },
-                      "& .lineup-pitch > div": { flex: 1 },
                     },
                   })}
                 >

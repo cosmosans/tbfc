@@ -35,9 +35,9 @@ export default function LineupPitch({
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 
   return (
-    <Box className="lineup-pitch">
+    <Box className="lineup-pitch" sx={{ width: "100%", minWidth: 0 }}>
       <Pitch
-        sx={{ minHeight: lineup.formation === "1-2-3-1" ? 560 : { xs: 380, sm: 500 }, touchAction: "auto" }}
+        sx={{ aspectRatio: "1.65", minHeight: lineup.bench.length ? 450 : 280, touchAction: "auto" }}
         aria-label={`${lineup.formation} lineup with substitutes`}
       >
         <PitchSurface />
@@ -68,8 +68,9 @@ export default function LineupPitch({
                   left: `${x}%`,
                   top: `${centralRoleY[slots[index]] ?? y}%`,
                   transform: "translate(-50%, -50%)",
-                  width: "22%",
-                  maxWidth: 160,
+                  width: "26%",
+                  maxWidth: 180,
+                  containerType: "inline-size",
                 }}
               >
                 <Typography
@@ -82,7 +83,7 @@ export default function LineupPitch({
                     pb: 0.75,
                     color: "#fff",
                     fontFamily: "Oxanium, sans-serif",
-                    fontSize: { xs: 12, sm: 14 },
+                    fontSize: "clamp(10px, 10cqw, 16px)",
                     fontWeight: 700,
                     lineHeight: 1.2,
                     letterSpacing: ".16em",
@@ -98,6 +99,17 @@ export default function LineupPitch({
                     key={person?.id ?? "empty"}
                     kit={kit}
                     goalkeeper={goalkeeperPlate(person?.id, slots[index])}
+                    sx={{
+                      minHeight: 0,
+                      padding: "0 7%",
+                      "& > span": {
+                        fontSize: "clamp(10px, 9.5cqw, 17px)",
+                        lineHeight: 1,
+                        maxWidth: "100%",
+                      },
+                      "& > span strong": { fontSize: "1.35em" },
+                      "& > span span": { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
+                    }}
                     data-player-number={person?.number}
                     aria-label={`${slots[index]}${row ? " substitute" : " starter"}: ${person ? `#${person.number} ${person.name}` : "Unassigned"}`}
                   >
