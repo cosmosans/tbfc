@@ -1,3 +1,4 @@
+import { clubApiRequest } from "../../clubApiRequest";
 import { useEffect, useState } from "react";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import {
@@ -14,6 +15,8 @@ import {
 } from "@mui/material";
 import type { MatchChatMessage, Player } from "../../model";
 import { canEditClub } from "../../editAccess";
+import OpeningBall from "../../img/street-soccer-ball.webp";
+import "../../components/AdminLoader.css";
 import MatchChat from "./MatchChat";
 
 export default function PrivateScrapbook({
@@ -29,16 +32,22 @@ export default function PrivateScrapbook({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [opening, setOpening] = useState(true);
   const [refresh, setRefresh] = useState(0);
   useEffect(() => {
     const controller = new AbortController();
+    setOpening(true);
+    setError("");
     setMessages(null);
     setExpires(0);
-    void fetch("/api/scrapbook?match=" + encodeURIComponent(matchId), {
-      cache: "no-store",
-      credentials: "same-origin",
-      signal: controller.signal,
-    })
+    void clubApiRequest(
+      `/api/scrapbook?match=${encodeURIComponent(matchId)}`,
+      {
+        cache: "no-store",
+        credentials: "same-origin",
+        signal: controller.signal,
+      },
+    )
       .then(async (response) => {
         if (response.status === 401) return;
         if (!response.ok) throw new Error("Could not load the scrapbook.");
@@ -50,6 +59,9 @@ export default function PrivateScrapbook({
       })
       .catch((cause) => {
         if (!controller.signal.aborted) setError(cause.message);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setOpening(false);
       });
     return () => controller.abort();
   }, [matchId, refresh]);
@@ -85,10 +97,12 @@ export default function PrivateScrapbook({
     }
   }
   async function unlock() {
+    setOpening(true);
+    setOpen(false);
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/scrapbook", {
+      const response = await clubApiRequest("/api/scrapbook", {
         method: "POST",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
@@ -101,6 +115,8 @@ export default function PrivateScrapbook({
       setOpen(false);
       setRefresh((value) => value + 1);
     } catch (cause) {
+      setOpening(false);
+      setOpen(true);
       setError(
         cause instanceof Error
           ? cause.message
@@ -114,7 +130,7 @@ export default function PrivateScrapbook({
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/scrapbook", {
+      const response = await clubApiRequest("/api/scrapbook", {
         method: "DELETE",
         credentials: "same-origin",
       });
@@ -136,7 +152,7 @@ export default function PrivateScrapbook({
     setBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/scrapbook", {
+      const response = await clubApiRequest("/api/scrapbook", {
         method: "PUT",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
@@ -156,7 +172,20 @@ export default function PrivateScrapbook({
   }
   return (
     <Stack gap={2} sx={{ alignItems: "center" }}>
-      {messages === null && (
+      {opening && (
+        <Box
+          className="admin-loader"
+          role="status"
+          sx={{ position: "relative", width: "100%", py: 2 }}
+        >
+          <div className="admin-loader-art" aria-hidden="true">
+            <span className="admin-loader-paint" />
+            <img src={OpeningBall} className="admin-loader-ball" alt="" />
+          </div>
+          <span className="admin-loader-caption">Opening Chat...</span>
+        </Box>
+      )}
+      {!opening && messages === null && (
         <Box
           sx={(theme) => ({
             display: "flex",
@@ -187,13 +216,13 @@ export default function PrivateScrapbook({
               messages === null ? (setError(""), setOpen(true)) : void lock()
             }
           >
-            {messages === null ? "Enter Team Password" : "Lock Scrapbook"}
+            {messages === null && "Enter Team Password"}
           </Button>
         </Box>
       )}
 
       {error && !open && <Alert severity="error">{error}</Alert>}
-      {messages !== null && (
+      {!opening && messages !== null && (
         <MatchChat
           messages={messages}
           players={players}

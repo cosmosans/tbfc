@@ -149,6 +149,16 @@ export type ClubData = {
   standings: StandingsSnapshot[];
 };
 
+export function removeMatch(data: ClubData, matchId: string): ClubData {
+  return {
+    ...data,
+    matches: data.matches.filter(match => match.id !== matchId),
+    events: data.events.filter(event => event.matchId !== matchId),
+    lineups: data.lineups.filter(lineup => lineup.matchId !== matchId),
+    boards: data.boards.filter(board => board.matchId !== matchId),
+  };
+}
+
 export function scoreResult(match: Match): "W" | "L" | "D" {
   if (match.goalsFor > match.goalsAgainst) return "W";
   if (match.goalsFor < match.goalsAgainst) return "L";

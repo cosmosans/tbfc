@@ -26,12 +26,15 @@ export function useGoalSound(matchInProgress: boolean) {
 
     function prepare() {
       clip ??= fetch("/audio/tbfc-goal.mp3", { signal: controller.signal })
-        .then(response => {
+        .then((response) => {
           if (!response.ok) throw new Error("Goal sound unavailable");
           return response.arrayBuffer();
         })
-        .then(bytes => context.decodeAudioData(bytes))
-        .catch(() => { clip = undefined; return null; });
+        .then((bytes) => context.decodeAudioData(bytes))
+        .catch(() => {
+          clip = undefined;
+          return null;
+        });
       return clip;
     }
     function prepareStadium() {
@@ -51,7 +54,10 @@ export function useGoalSound(matchInProgress: boolean) {
           return response.arrayBuffer();
         })
         .then((bytes) => context.decodeAudioData(bytes))
-        .catch(() => { whistleClip = undefined; return null; });
+        .catch(() => {
+          whistleClip = undefined;
+          return null;
+        });
       return whistleClip;
     }
     function stopStadium() {
@@ -63,7 +69,14 @@ export function useGoalSound(matchInProgress: boolean) {
       if (!active || !enabled || !stadiumWanted || stadiumSource) return;
       const request = ++stadiumRequest;
       void prepareStadium().then((buffer) => {
-        if (!buffer || !active || !enabled || !stadiumWanted || request !== stadiumRequest) return;
+        if (
+          !buffer ||
+          !active ||
+          !enabled ||
+          !stadiumWanted ||
+          request !== stadiumRequest
+        )
+          return;
         const loop = context.createBufferSource();
         const volume = context.createGain();
         volume.gain.value = 0.35;
@@ -103,40 +116,56 @@ export function useGoalSound(matchInProgress: boolean) {
     play.current = () => {
       if (!enabled) return;
       const requestGeneration = generation;
-      playback = playback.then(async () => {
-        const buffer = await prepare();
-        if (!buffer || !active || !enabled || requestGeneration !== generation) return;
-        const currentSource = context.createBufferSource();
-        source = currentSource;
-        currentSource.buffer = buffer;
-        currentSource.connect(context.destination);
-        currentSource.start();
-        await new Promise<void>((resolve) => {
-          currentSource.onended = () => {
-            if (source === currentSource) source = undefined;
-            resolve();
-          };
-        });
-      }).catch(() => {});
+      playback = playback
+        .then(async () => {
+          const buffer = await prepare();
+          if (
+            !buffer ||
+            !active ||
+            !enabled ||
+            requestGeneration !== generation
+          )
+            return;
+          const currentSource = context.createBufferSource();
+          source = currentSource;
+          currentSource.buffer = buffer;
+          currentSource.connect(context.destination);
+          currentSource.start();
+          await new Promise<void>((resolve) => {
+            currentSource.onended = () => {
+              if (source === currentSource) source = undefined;
+              resolve();
+            };
+          });
+        })
+        .catch(() => {});
     };
     playWhistle.current = () => {
       if (!enabled) return;
       const requestGeneration = generation;
-      whistlePlayback = whistlePlayback.then(async () => {
-        const buffer = await prepareWhistle();
-        if (!buffer || !active || !enabled || requestGeneration !== generation) return;
-        const currentSource = context.createBufferSource();
-        whistleSource = currentSource;
-        currentSource.buffer = buffer;
-        currentSource.connect(context.destination);
-        currentSource.start();
-        await new Promise<void>((resolve) => {
-          currentSource.onended = () => {
-            if (whistleSource === currentSource) whistleSource = undefined;
-            resolve();
-          };
-        });
-      }).catch(() => {});
+      whistlePlayback = whistlePlayback
+        .then(async () => {
+          const buffer = await prepareWhistle();
+          if (
+            !buffer ||
+            !active ||
+            !enabled ||
+            requestGeneration !== generation
+          )
+            return;
+          const currentSource = context.createBufferSource();
+          whistleSource = currentSource;
+          currentSource.buffer = buffer;
+          currentSource.connect(context.destination);
+          currentSource.start();
+          await new Promise<void>((resolve) => {
+            currentSource.onended = () => {
+              if (whistleSource === currentSource) whistleSource = undefined;
+              resolve();
+            };
+          });
+        })
+        .catch(() => {});
     };
     return () => {
       active = false;

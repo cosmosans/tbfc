@@ -1,3 +1,4 @@
+import { clubApiRequest } from "./clubApiRequest";
 import { Capacitor, CapacitorHttp } from "@capacitor/core";
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
@@ -87,7 +88,7 @@ export async function publishClubData(data: ClubData, revision: number): Promise
   }
   const incremental = baseline?.supportsIncremental === true && baseline.data && baseline.revision === revision;
   if (incremental && !changes.length) return revision;
-  const result = await readResponse(await fetch('/api/club', {
+  const result = await readResponse(await clubApiRequest('/api/club', {
     method: 'PUT',
     credentials: 'same-origin',
     headers: { 'content-type': 'application/json' },

@@ -34,6 +34,7 @@ export default function MatchDialog({
   seasons,
   locations,
   onClose,
+  onDelete,
   onSave,
 }: {
   open: boolean;
@@ -43,9 +44,11 @@ export default function MatchDialog({
   seasons: Season[];
   locations: Location[];
   onClose: () => void;
+  onDelete?: () => void;
   onSave: (match: Match) => void;
 }) {
   const [draft, setDraft] = useState(match);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [kickoffValue, setKickoffValue] = useState<moment.Moment | null>(null);
   const [kickoffInvalid, setKickoffInvalid] = useState(false);
   useEffect(() => {
@@ -65,6 +68,24 @@ export default function MatchDialog({
     seasons.find((season) => season.name === draft.season)?.id ??
     "";
   const competitionOptions = [...new Set(matches.map(item => splitCompetition(item).competition).filter(Boolean))].sort();
+  if (confirmDelete && onDelete) {
+    return (
+      <Dialog open={open} onClose={() => setConfirmDelete(false)} aria-labelledby="delete-match-title">
+        <DialogTitle id="delete-match-title">Delete match against {match.opponent}?</DialogTitle>
+        <DialogContent>
+          The {match.date} match, all its events, lineup, matchboard, report, chat, and media
+          will be removed. Team and player stats will update. Publish to apply the deletion for everyone.
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={() => setConfirmDelete(false)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={() => {
+            setConfirmDelete(false);
+            onDelete();
+          }}>Delete Match</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
@@ -346,6 +367,7 @@ export default function MatchDialog({
         </Stack>
       </DialogContent>
       <DialogActions>
+        {onDelete && <Button color="error" sx={{ mr: "auto" }} onClick={() => setConfirmDelete(true)}>Delete Match</Button>}
         <Button onClick={onClose}>Cancel</Button>
         <Button
           variant="contained"

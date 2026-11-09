@@ -237,12 +237,7 @@ export default function MatchBanner({
     <Box
       ref={bannerRef}
       className={detail ? "match-banner-detail" : undefined}
-      sx={(theme) => ({
-        [theme.breakpoints.down("sm")]: {
-          mx: -2,
-          width: `calc(100% + ${theme.spacing(4)})`,
-        },
-      })}
+      sx={{ minWidth: 0 }}
     >
       <Panel
         sx={{

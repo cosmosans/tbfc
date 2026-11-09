@@ -2,6 +2,7 @@ import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import type { Match, MatchEvent, Player } from "../../model";
 import SoccerBallImage from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
+import PenaltyIcon from "../../img/penalty-kick.svg";
 
 import OpponentCrest from "../../components/OpponentCrest";
 
@@ -169,6 +170,17 @@ export default function MatchEventSnackbar({
               transform: "translateY(2px)",
             }}
           >
+            {notice.kind === "penalty_kick" && (
+              <img
+                src={PenaltyIcon}
+                alt="Penalty"
+                style={{
+                  width: 15,
+                  height: 15,
+                }}
+              />
+            )}
+
             {notice.kind === "goal" && (
               <img
                 src={SoccerBallImage}
@@ -197,7 +209,7 @@ export default function MatchEventSnackbar({
               flex: 1,
             }}
           >
-            {notice.kind}
+            {notice.kind.replaceAll("_", " ")}
           </Typography>
 
           <Typography
@@ -210,7 +222,7 @@ export default function MatchEventSnackbar({
               alignItems: "center",
             }}
           >
-            {!creditedToOpponent && (
+            {!creditedToOpponent && player?.number && (
               <>
                 #{player?.number || ""}{" "}
                 <Typography

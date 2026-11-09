@@ -1,10 +1,13 @@
+import { clubApiRequest } from "./clubApiRequest";
 import { eventOnlyPlayerData } from "./playerData";
+import { Capacitor } from "@capacitor/core";
 import MatchNavigation from "./features/matches/MatchNavigation";
 import { isTurfbotReport } from "./features/matches/reportAttribution";
 import PlayerDetail from "./features/roster/PlayerDetail";
 import { readDraft, writeDraft } from "./localDraft";
 import { backupMatchesLive } from "./backupCompare";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
+import PullToRefresh from "./components/PullToRefresh";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
@@ -26,7 +29,7 @@ import {
   Typography,
 } from "@mui/material";
 import type { ClubData, Match, MatchEvent } from "./model";
-import { issues } from "./model";
+import { issues, removeMatch } from "./model";
 import { defaultLineup, exportData, loadData } from "./store";
 import { opponentFor, opponentName } from "./clubView";
 import AppHeader from "./components/AppHeader";
@@ -129,7 +132,7 @@ export default function App() {
       let restoreManageMode = false;
       if (window.localStorage.getItem(manageModeKey) === "on") {
         try {
-          const response = await fetch("/api/admin/session", {
+          const response = await clubApiRequest("/api/admin/session", {
             credentials: "same-origin",
             cache: "no-store",
           });
@@ -199,7 +202,9 @@ export default function App() {
   const [showNew, setShowNew] = useState(false);
   const [newMatch, setNewMatch] = useState<Match>(blankMatch);
   const requestedTab = new URLSearchParams(location.search).get("tab");
-  const activeDetailTab = matchTabs.indexOf(normalizeMatchTab(requestedTab));
+  const activeDetailTab = matchTabs.indexOf(
+    !canEditClub && requestedTab === "chat" ? "lineup" : normalizeMatchTab(requestedTab),
+  );
   function setActiveDetailTab(index: number) {
     navigate(
       index === 0
@@ -256,7 +261,7 @@ export default function App() {
   useEffect(() => {
     if (!manageMode) return;
     const check = () => {
-      void fetch("/api/admin/session", {
+      void clubApiRequest("/api/admin/session", {
         credentials: "same-origin",
         cache: "no-store",
       })
@@ -502,6 +507,23 @@ export default function App() {
       setDiscarding(false);
     }
   }
+  async function refreshMainPage() {
+    if (dirty || publishing || discarding) return;
+    const version = editVersion.current;
+    try {
+      const remote = await fetchClubData();
+      if (version !== editVersion.current) return;
+      revision.current = remote.revision;
+      if (remote.data) setData(remote.data);
+      setClockTime(Date.now());
+      setSyncState(remote.data ? "ready" : "empty");
+      setSyncMessage("");
+    } catch (error) {
+      setSyncMessage(
+        `Refresh failed: ${error instanceof Error ? error.message : "Could not load club data."}`,
+      );
+    }
+  }
   const upcoming = useMemo(
     () =>
       data.matches
@@ -514,15 +536,16 @@ export default function App() {
   const selected = data.matches.find((m) => m.id === matchRoute?.params.id);
   useEffect(() => {
     if (!selected || !requestedTab) return;
-    const canonical = normalizeMatchTab(
+    const normalized = normalizeMatchTab(
       requestedTab,
       selected.status === "scheduled",
     );
+    const canonical = !canEditClub && normalized === "chat" ? "lineup" : normalized;
     if (requestedTab === canonical) return;
     const params = new URLSearchParams(location.search);
     params.set("tab", canonical);
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-  }, [selected, requestedTab, location.pathname, location.search, navigate]);
+  }, [selected, requestedTab, location.pathname, location.search, navigate, manageMode]);
   const selectedTeam = data.opponents.find(
     (team) => team.id === teamRoute?.params.id,
   );
@@ -639,14 +662,16 @@ export default function App() {
       <AppHeader
         matchTab={
           selected
-            ? normalizeMatchTab(requestedTab, selected.status === "scheduled")
+            ? (!canEditClub && requestedTab === "chat"
+                ? "lineup"
+                : normalizeMatchTab(requestedTab, selected.status === "scheduled"))
             : undefined
         }
         matchTabOptions={
           selected?.status === "scheduled"
             ? ["lineup", "matchboard"]
             : selected
-              ? matchTabs
+              ? canEditClub ? matchTabs : matchTabs.filter((tab) => tab !== "chat")
               : undefined
         }
         onMatchTabChange={(tab) => {
@@ -676,9 +701,15 @@ export default function App() {
         onAdmin={() => setAdminBackupOpen(true)}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
+      <PullToRefresh
+        enabled={Capacitor.getPlatform() === "ios" && !matchRoute && (page !== null || !!teamRoute || !!playerRoute) && syncState !== "loading" && !dirty && !publishing && !discarding}
+        onRefresh={refreshMainPage}
+      />
       <Container
         maxWidth={false}
+        disableGutters
         sx={{
+          overflowX: "clip",
           pt: 0,
           pb: {
             xs: `calc(${canEditClub && dirty && !publishing ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
@@ -1210,6 +1241,12 @@ export default function App() {
             setShowNew(false);
           }}
           onSave={saveMatch}
+          onDelete={editing ? () => {
+            update(removeMatch(sourceData, editing.id));
+            setNotices(queue => queue.filter(event => event.matchId !== editing.id));
+            setEditing(null);
+            navigate("/schedule", { replace: true });
+          } : undefined}
         />
       )}
       <AdminPanel

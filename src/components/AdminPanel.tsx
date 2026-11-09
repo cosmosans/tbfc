@@ -1,3 +1,4 @@
+import { clubApiRequest } from "../clubApiRequest";
 import "./AdminLoader.css";
 import streetSoccerBall from "../img/street-soccer-ball.webp";
 import { useEffect, useState } from "react";
@@ -52,7 +53,7 @@ export default function AdminPanel({
     const controller = new AbortController();
     setChecking(true);
     setError("");
-    void fetch("/api/admin/session", {
+    void clubApiRequest("/api/admin/session", {
       credentials: "same-origin",
       cache: "no-store",
       signal: controller.signal,
@@ -84,7 +85,7 @@ export default function AdminPanel({
     const entered = secret;
     setSecret("");
     try {
-      const response = await fetch("/api/admin/session", {
+      const response = await clubApiRequest("/api/admin/session", {
         method: "POST",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
@@ -120,7 +121,7 @@ export default function AdminPanel({
     setPendingAction("backup");
     setError("");
     try {
-      const response = await fetch("/api/admin/backup", {
+      const response = await clubApiRequest("/api/admin/backup", {
         credentials: "same-origin",
         cache: "no-store",
       });
@@ -156,7 +157,7 @@ export default function AdminPanel({
     setWorking(true);
     setError("");
     try {
-      const response = await fetch("/api/admin/session", {
+      const response = await clubApiRequest("/api/admin/session", {
         method: "DELETE",
         credentials: "same-origin",
       });
