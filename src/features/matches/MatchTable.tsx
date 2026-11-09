@@ -53,46 +53,47 @@ export default function MatchTable({
   const [direction, setDirection] = useState<"asc" | "desc">("desc");
   const compareText = (a: string, b: string) =>
     a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" });
-  const sortedMatches =
-    !sortColumn
-      ? matches
-      : [...matches].sort((a, b) => {
-          let comparison = 0;
-          switch (sortColumn) {
-            case "date":
-              comparison = compareText(a.date, b.date);
-              break;
-            case "opponent":
-              comparison = compareText(
-                opponentName(data, a),
-                opponentName(data, b),
-              );
-              break;
-            case "score":
-              comparison =
-                a.goalsFor - b.goalsFor || a.goalsAgainst - b.goalsAgainst;
-              break;
-            case "result": {
-              const rank = (match: Match) =>
-                match.status === "scheduled" ? -2 : match.status === "in_progress"
+  const sortedMatches = !sortColumn
+    ? matches
+    : [...matches].sort((a, b) => {
+        let comparison = 0;
+        switch (sortColumn) {
+          case "date":
+            comparison = compareText(a.date, b.date);
+            break;
+          case "opponent":
+            comparison = compareText(
+              opponentName(data, a),
+              opponentName(data, b),
+            );
+            break;
+          case "score":
+            comparison =
+              a.goalsFor - b.goalsFor || a.goalsAgainst - b.goalsAgainst;
+            break;
+          case "result": {
+            const rank = (match: Match) =>
+              match.status === "scheduled"
+                ? -2
+                : match.status === "in_progress"
                   ? -1
                   : ({ W: 2, D: 1, L: 0 }[scoreResult(match)] ?? -1);
-              comparison = rank(a) - rank(b);
-              break;
-            }
-            case "venue":
-              comparison = compareText(matchLocation(a), matchLocation(b));
-              break;
-            case "kit":
-              comparison = compareText(a.kit, b.kit);
-              break;
+            comparison = rank(a) - rank(b);
+            break;
           }
-          return (
-            (direction === "asc" ? comparison : -comparison) ||
-            compareText(b.date, a.date) ||
-            compareText(a.id, b.id)
-          );
-        });
+          case "venue":
+            comparison = compareText(matchLocation(a), matchLocation(b));
+            break;
+          case "kit":
+            comparison = compareText(a.kit, b.kit);
+            break;
+        }
+        return (
+          (direction === "asc" ? comparison : -comparison) ||
+          compareText(b.date, a.date) ||
+          compareText(a.id, b.id)
+        );
+      });
   function header(column: SortColumn, label: string, centered = false) {
     const active = sortColumn === column;
     return (
@@ -101,20 +102,20 @@ export default function MatchTable({
         sortDirection={active ? direction : false}
       >
         <TableSortLabel
-            active={active}
-            direction={active ? direction : "asc"}
-            onClick={() => {
-              if (active) setDirection(direction === "asc" ? "desc" : "asc");
-              else {
-                setSortColumn(column);
-                setDirection(
-                  ["date", "score", "result"].includes(column) ? "desc" : "asc",
-                );
-              }
-            }}
-          >
-            {label}
-          </TableSortLabel>
+          active={active}
+          direction={active ? direction : "asc"}
+          onClick={() => {
+            if (active) setDirection(direction === "asc" ? "desc" : "asc");
+            else {
+              setSortColumn(column);
+              setDirection(
+                ["date", "score", "result"].includes(column) ? "desc" : "asc",
+              );
+            }
+          }}
+        >
+          {label}
+        </TableSortLabel>
       </TableCell>
     );
   }
@@ -130,18 +131,26 @@ export default function MatchTable({
       <Table
         aria-label={label}
         sx={{
-          minWidth: showAudit ? { xs: 650, lg: 850 } : forceCompact ? 0 : { xs: 0, lg: 850 },
+          minWidth: showAudit
+            ? { xs: 650, lg: 850 }
+            : forceCompact
+              ? 0
+              : { xs: 0, lg: 850 },
           tableLayout: showAudit ? "auto" : { xs: "fixed", sm: "auto" },
           "& .MuiTableCell-root": { px: { xs: 0.5, sm: 1.5, lg: 2 } },
           "& tr > :first-child": {
             paddingInlineStart: { xs: 1, sm: 1.5, lg: 2 },
           },
           "& tr > :last-child": { paddingInlineEnd: { xs: 1, sm: 1.5, lg: 2 } },
-          "& thead th:first-of-type": { width: { xs: seasonSchedule ? 57 : "7.75rem", sm: "auto" } },
+          "& thead th:first-of-type": {
+            width: { xs: seasonSchedule ? 57 : "7.75rem", sm: "auto" },
+          },
           "& thead th:nth-of-type(3)": {
             width: { xs: seasonSchedule ? 64 : 49, sm: "auto" },
           },
-          "& thead th:nth-of-type(4)": { width: { xs: seasonSchedule ? 80 : 48, sm: "auto" } },
+          "& thead th:nth-of-type(4)": {
+            width: { xs: seasonSchedule ? 80 : 48, sm: "auto" },
+          },
           "& .MuiTableSortLabel-icon": {
             display: { xs: "none", sm: "inline-block" },
           },
@@ -153,7 +162,9 @@ export default function MatchTable({
             {header("opponent", "Opponent")}
             {header("score", seasonSchedule ? "Score / Kickoff" : "Score")}
             {header("result", "Result", true)}
-            {showAudit && <TableCell align="center">Match Audit Complete</TableCell>}
+            {showAudit && (
+              <TableCell align="center">Match Audit Complete</TableCell>
+            )}
             {!compact && header("venue", "Venue")}
             {!compact && header("kit", "Kit")}
           </TableRow>
@@ -188,22 +199,24 @@ export default function MatchTable({
                 }}
               >
                 <TableCell>
-                  {!seasonSchedule && <Typography
-                    component="span"
-                    variant="caption"
-                    color="text.secondary"
-                    title={seasonName(data, match)}
-                    sx={{
-                      display: "block",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      letterSpacing: ".08em",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {seasonName(data, match)}
-                  </Typography>}
+                  {!seasonSchedule && (
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      color="text.secondary"
+                      title={seasonName(data, match)}
+                      sx={{
+                        display: "block",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        letterSpacing: ".08em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {seasonName(data, match)}
+                    </Typography>
+                  )}
                   {match.date && moment(match.date).isValid()
                     ? moment(match.date).format("MMM D")
                     : "Date TBD"}
@@ -253,17 +266,25 @@ export default function MatchTable({
                 <TableCell>
                   <Typography color="primary" fontWeight={700}>
                     {match.status === "scheduled"
-                      ? match.kickoff || "Time TBD"
+                      ? match.kickoff || "TBD"
                       : displayScore(match)}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
-                  {match.status === "scheduled" ? "Upcoming" : <MatchResultChip match={match} />}
+                  {match.status === "scheduled" ? (
+                    "Upcoming"
+                  ) : (
+                    <MatchResultChip match={match} />
+                  )}
                 </TableCell>
                 {showAudit && (
                   <TableCell align="center">
                     {match.matchAuditComplete === true && (
-                      <CheckIcon aria-label="Match audit complete" fontSize="small" color="success" />
+                      <CheckIcon
+                        aria-label="Match audit complete"
+                        fontSize="small"
+                        color="success"
+                      />
                     )}
                   </TableCell>
                 )}

@@ -40,15 +40,6 @@ import { matchLocation, splitMatchLocation } from "../../matchLocation";
 import { canEditClub } from "../../editAccess";
 import PageHeading from "../../components/PageHeading";
 
-const sectionHeading = {
-  fontWeight: 300,
-  display: "inline-block",
-  bgcolor: "#111",
-  color: "#fff",
-  py: 1,
-  mb: 2,
-};
-
 function HistoryFilter({
   label,
   value,
@@ -221,7 +212,7 @@ export default function SchedulePage({
   );
 
   return (
-    <Stack gap={2}>
+    <Stack gap={{ xs: 2, md: 3, lg: 4 }}>
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
@@ -264,10 +255,17 @@ export default function SchedulePage({
 
       <Stack
         direction={showStandings ? "row" : "column"}
-        gap={2}
+        gap={{ xs: 2, md: 3, lg: 4 }}
         alignItems="flex-start"
       >
-        <Stack sx={{ flex: 1, minWidth: 0, width: "100%", "& section + section": { mt: 2 } }}>
+        <Stack
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            width: "100%",
+            "& section + section": { mt: 2 },
+          }}
+        >
           <Box
             sx={{
               display: "flex",
@@ -291,7 +289,11 @@ export default function SchedulePage({
             >
               Current Season
             </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ textTransform: "uppercase", fontSize: 12 }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ textTransform: "uppercase", fontSize: 12 }}
+            >
               Updated just now
             </Typography>
           </Box>
@@ -321,16 +323,26 @@ export default function SchedulePage({
         )}
       </Stack>
 
-      <section style={{ minWidth: 0, width: "100%" }}>
-        <Typography variant="h5" sx={sectionHeading}>
-          Past Results
-        </Typography>
+      <section style={{ minWidth: 0, mt: 5, width: "100%" }}>
         <Stack
           direction="row"
-          gap={mobile ? 1 : 2}
-          flexWrap={mobile ? "nowrap" : "wrap"}
-          sx={{ bgcolor: "#111", mb: 2, mt: -1 }}
+          alignItems="center"
+          flexWrap="wrap"
+          gap={{ xs: 1, sm: 2 }}
+          sx={{ bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}
         >
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            sx={{
+              flex: 1,
+              fontWeight: 700,
+              fontSize: 24,
+              whiteSpace: "nowrap",
+            }}
+          >
+            Past Results
+          </Typography>
           <TextField
             label="Search Matches"
             size="small"
@@ -339,7 +351,7 @@ export default function SchedulePage({
               setSearch(event.target.value);
               if (event.target.value) setSeason("All seasons");
             }}
-            sx={{ flexGrow: 1, minWidth: mobile ? 0 : 180 }}
+            sx={{ width: { xs: 128, sm: 200 }, maxWidth: 200, minWidth: 0 }}
           />
           {mobile ? (
             <IconButton

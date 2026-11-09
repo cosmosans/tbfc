@@ -137,7 +137,8 @@ export default function MatchBanner({
   const headToHead = record(
     data.matches.filter(
       (item) =>
-        (opponent && item.opponentId === opponent.id) || (!!match.opponent && item.opponent === match.opponent),
+        (opponent && item.opponentId === opponent.id) ||
+        (!!match.opponent && item.opponent === match.opponent),
     ),
   );
   if (match.status === "in_progress") {
@@ -150,57 +151,55 @@ export default function MatchBanner({
     headToHead[liveResult] += 1;
   }
   const soundToggle = onGoalSoundToggle && (
-      <Tooltip title="Toggle Match Audio" arrow>
-        <IconButton
-          aria-label={
-            goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"
-          }
-          aria-pressed={goalSoundEnabled}
-          onClick={(event) => {
-            event.stopPropagation();
-            onGoalSoundToggle();
-          }}
+    <Tooltip title="Toggle Match Audio" arrow>
+      <IconButton
+        aria-label={
+          goalSoundEnabled ? "Mute goal sounds" : "Enable goal sounds"
+        }
+        aria-pressed={goalSoundEnabled}
+        onClick={(event) => {
+          event.stopPropagation();
+          onGoalSoundToggle();
+        }}
+        sx={{
+          borderColor: goalSoundEnabled
+            ? "primary.main"
+            : "rgba(255,255,255,.3)",
+          backgroundColor: goalSoundEnabled ? "primary.main" : "transparent",
+          "&:hover": {
+            backgroundColor: goalSoundEnabled ? "primary.light" : "transparent",
+          },
+          borderWidth: 1,
+          borderStyle: "solid",
+          alignSelf: "center",
+          color: "#fff",
+          p: 0.5,
+          px: 1,
+          transform: {
+            xs: "translateY(0px) skewX(-10deg) scale(.9)",
+            sm: "translateY(0px) skewX(-10deg)",
+            md: "translateY(5px) skewX(-10deg)",
+          },
+          borderRadius: 0,
+        }}
+      >
+        <Box
           sx={{
-            borderColor: goalSoundEnabled
-              ? "primary.main"
-              : "rgba(255,255,255,.3)",
-            backgroundColor: goalSoundEnabled ? "primary.main" : "transparent",
-            "&:hover": {
-              backgroundColor: goalSoundEnabled
-                ? "primary.light"
-                : "transparent",
-            },
-            borderWidth: 1,
-            borderStyle: "solid",
-            alignSelf: "center",
-            color: "#fff",
-            p: 0.5,
-            px: 1,
-            transform: {
-              xs: "translateY(0px) skewX(-10deg) scale(.9)",
-              sm: "translateY(0px) skewX(-10deg)",
-              md: "translateY(5px) skewX(-10deg)",
-            },
-            borderRadius: 0,
+            transform: "skewX(10deg)",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          <Box
-            sx={{
-              transform: "skewX(10deg)",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            {goalSoundEnabled ? (
-              <VolumeUpIcon sx={{ fontSize: 20, color: "white" }} />
-            ) : (
-              <VolumeOffIcon
-                sx={{ fontSize: 20, color: "rgba(255,255,255,.7)" }}
-              />
-            )}
-          </Box>
-        </IconButton>
-      </Tooltip>
+          {goalSoundEnabled ? (
+            <VolumeUpIcon sx={{ fontSize: 20, color: "white" }} />
+          ) : (
+            <VolumeOffIcon
+              sx={{ fontSize: 20, color: "rgba(255,255,255,.7)" }}
+            />
+          )}
+        </Box>
+      </IconButton>
+    </Tooltip>
   );
   const clock = match.status === "in_progress" && (
     <Stack spacing={0.5} sx={{ minWidth: detail ? undefined : 100 }}>
@@ -311,7 +310,7 @@ export default function MatchBanner({
               >
                 {moment(match.date).format("MMMM Do YYYY")}{" "}
                 <span style={{ color: "#db6337" }}>
-                  {match.kickoff || "Time TBD"}
+                  {match.kickoff || "TBD"}
                 </span>
               </Typography>
 
@@ -580,7 +579,11 @@ export default function MatchBanner({
             >
               <RecordBar
                 animationKey={match.id}
-                scoreKey={match.status === "in_progress" ? `${match.goalsFor}-${match.goalsAgainst}` : undefined}
+                scoreKey={
+                  match.status === "in_progress"
+                    ? `${match.goalsFor}-${match.goalsAgainst}`
+                    : undefined
+                }
                 opponentWins={headToHead.L}
                 draws={headToHead.D}
                 tbfcWins={headToHead.W}

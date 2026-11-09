@@ -7,6 +7,7 @@ import {
   MenuItem,
   Stack,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Bar,
@@ -35,7 +36,9 @@ function TeamCrestTick({
   payload,
   teams,
   onOpenTeam,
+  side = false,
 }: {
+  side?: boolean;
   x?: number;
   y?: number;
   payload?: { value: string };
@@ -50,7 +53,7 @@ function TeamCrestTick({
   };
   return (
     <g
-      transform={`translate(${x - 18}, ${y + 8})`}
+      transform={`translate(${side ? x - 40 : x - 18}, ${side ? y - 18 : y + 8})`}
       role={team?.id ? "link" : "img"}
       tabIndex={team?.id ? 0 : undefined}
       aria-label={team?.id ? `View ${team.team} team page` : payload?.value}
@@ -160,23 +163,15 @@ export default function Stats({
   const teams = [...opponentCounts.values()].sort(
     (a, b) => b.played - a.played || a.team.localeCompare(b.team),
   );
-  const chartTeams =
-    opponentMetric === "teamGoals"
-      ? [...teams].sort(
-          (a, b) =>
-            b.goalsFor - b.goalsAgainst - (a.goalsFor - a.goalsAgainst) ||
-            a.team.localeCompare(b.team),
-        )
-      : opponentMetric === "goalsFor"
-        ? [...teams].sort(
-            (a, b) => b.goalsFor - a.goalsFor || a.team.localeCompare(b.team),
-          )
-        : opponentMetric === "goalsAgainst"
-          ? [...teams].sort(
-              (a, b) =>
-                b.goalsAgainst - a.goalsAgainst || a.team.localeCompare(b.team),
-            )
-          : teams;
+  const sortField = opponentMetric === "goalsAgainst" ? "goalsAgainst" : "goalsFor";
+  const chartTeams = [...teams].sort(
+    (a, b) => b[sortField] - a[sortField] || a.team.localeCompare(b.team),
+  );
+  const horizontalBars = useMediaQuery(theme.breakpoints.down("sm"));
+  const seasonsOnLeft = horizontalBars && metric !== "points";
+  const seasonData = metric === "points" ? seasonPoints : seasons;
+  const seasonUnit = metric === "points" ? "Total points" : metric === "results" ? "Matches" : "Goals";
+  const crestTick = <TeamCrestTick teams={teams} onOpenTeam={openTeam} side={horizontalBars} />;
   return (
     <Stack gap={2}>
       <Box
@@ -236,43 +231,35 @@ export default function Stats({
                 >
                   <Box
                     sx={{
-                      minWidth: Math.max(
+                      minWidth: horizontalBars ? 0 : Math.max(
                         600,
                         teams.length *
                           (opponentMetric === "teamGoals" ? 80 : 64),
                       ),
-                      height: 400,
+                      height: horizontalBars ? chartTeams.length * 52 + 60 : 400,
                     }}
                   >
                     <ResponsiveContainer>
                       <BarChart
                         key={opponentMetric}
+                        layout={horizontalBars ? "vertical" : "horizontal"}
                         data={chartTeams}
                         accessibilityLayer
-                        margin={{ top: 24, right: 16, left: 0, bottom: 8 }}
+                        margin={{ top: 24, right: horizontalBars ? 36 : 16, left: 0, bottom: 8 }}
                         barSize={opponentMetric === "teamGoals" ? 12 : 24}
                         barGap={4}
                       >
-                        <CartesianGrid stroke="#394144" vertical={false} />
-                        <XAxis
-                          type="category"
-                          dataKey="team"
-                          height={60}
-                          interval={0}
-                          tickLine={false}
-                          stroke="#a7afb1"
-                          tick={
-                            <TeamCrestTick
-                              teams={teams}
-                              onOpenTeam={openTeam}
-                            />
-                          }
-                        />
-                        <YAxis
-                          type="number"
-                          allowDecimals={false}
-                          stroke="#a7afb1"
-                        />
+                        <CartesianGrid stroke="#394144" vertical={horizontalBars} horizontal={!horizontalBars} />
+                        {horizontalBars ? (
+                          <XAxis type="number" allowDecimals={false} stroke="#a7afb1" />
+                        ) : (
+                          <XAxis dataKey="team" height={60} interval={0} tickLine={false} stroke="#a7afb1" tick={crestTick} />
+                        )}
+                        {horizontalBars ? (
+                          <YAxis type="category" dataKey="team" width={48} interval={0} tickLine={false} stroke="#a7afb1" tick={crestTick} />
+                        ) : (
+                          <YAxis type="number" allowDecimals={false} stroke="#a7afb1" />
+                        )}
                         <Tooltip
                           cursor={{ fill: "#38383880" }}
                           contentStyle={{
@@ -293,7 +280,7 @@ export default function Stats({
                             >
                               <LabelList
                                 dataKey="goalsFor"
-                                position="top"
+                                position={horizontalBars ? "right" : "top"}
                                 fill="#fff"
                                 fontWeight={800}
                               />
@@ -315,7 +302,7 @@ export default function Stats({
                               ))}
                               <LabelList
                                 dataKey="goalsAgainst"
-                                position="top"
+                                position={horizontalBars ? "right" : "top"}
                                 fill="#fff"
                                 fontWeight={800}
                               />
@@ -351,7 +338,7 @@ export default function Stats({
                                   ? "goalsFor"
                                   : "goalsAgainst"
                               }
-                              position="top"
+                              position={horizontalBars ? "right" : "top"}
                               fill="#fff"
                               fontWeight={800}
                             />
@@ -414,42 +401,34 @@ export default function Stats({
             <Box sx={{ width: "100%", overflowX: "auto" }}>
               <Box
                 sx={{
-                  minWidth: Math.max(600, seasons.length * 110),
-                  height: 380,
+                  minWidth: metric === "points"
+                    ? 80 + Math.max(0, seasonData.length - 1) * 64
+                    : seasonsOnLeft ? 0 : Math.max(600, seasons.length * 110),
+                  height: seasonsOnLeft ? Math.max(220, seasonData.length * 56 + 100) : 380,
                 }}
               >
                 <ResponsiveContainer>
                   <ComposedChart
                     key={metric}
-                    data={metric === "points" ? seasonPoints : seasons}
+                    data={seasonData}
+                    layout={seasonsOnLeft ? "vertical" : "horizontal"}
                     accessibilityLayer
                     maxBarSize={64}
-                    margin={{ top: 12, right: 12, left: 0, bottom: 30 }}
+                    margin={{ top: 12, right: seasonsOnLeft ? 32 : 12, left: 0, bottom: seasonsOnLeft ? 12 : 30 }}
                   >
-                    <CartesianGrid stroke="#394144" vertical={false} />
-                    <XAxis
-                      dataKey="season"
-                      stroke="#a7afb1"
-                      angle={-25}
-                      textAnchor="end"
-                      height={80}
-                      interval={0}
-                    />
-                    <YAxis
-                      stroke="#a7afb1"
-                      allowDecimals={false}
-                      label={{
-                        value:
-                          metric === "points"
-                            ? "Total points"
-                            : metric === "results"
-                              ? "Matches"
-                              : "Goals",
-                        angle: -90,
-                        position: "insideLeft",
-                        fill: "#a7afb1",
-                      }}
-                    />
+                    <CartesianGrid stroke="#394144" vertical={seasonsOnLeft} horizontal={!seasonsOnLeft} />
+                    {seasonsOnLeft ? (
+                      <XAxis type="number" allowDecimals={false} stroke="#a7afb1" height={48}
+                        label={{ value: seasonUnit, position: "insideBottom", fill: "#a7afb1" }} />
+                    ) : (
+                      <XAxis dataKey="season" stroke="#a7afb1" angle={metric === "points" ? -45 : -25} tick={metric === "points" ? { fontSize: 12 } : undefined} textAnchor="end" height={80} interval={0} />
+                    )}
+                    {seasonsOnLeft ? (
+                      <YAxis type="category" dataKey="season" width={100} interval={0} stroke="#a7afb1" />
+                    ) : (
+                      <YAxis stroke="#a7afb1" allowDecimals={false}
+                        label={{ value: seasonUnit, angle: -90, position: "insideLeft", fill: "#a7afb1" }} />
+                    )}
                     <Legend verticalAlign="top" height={32} itemSorter={null} />
                     <Tooltip
                       content={
@@ -529,7 +508,7 @@ export default function Stats({
                       >
                         <LabelList
                           dataKey="points"
-                          position="top"
+                          position={seasonsOnLeft ? "right" : "top"}
                           fill="#fff"
                           fontWeight={800}
                           fontSize={13}
@@ -545,7 +524,7 @@ export default function Stats({
                         >
                           <LabelList
                             dataKey="for"
-                            position="top"
+                            position={seasonsOnLeft ? "right" : "top"}
                             fill="#fff"
                             fontWeight={800}
                             fontSize={13}
@@ -559,7 +538,7 @@ export default function Stats({
                         >
                           <LabelList
                             dataKey="against"
-                            position="top"
+                            position={seasonsOnLeft ? "right" : "top"}
                             fill="#fff"
                             fontWeight={800}
                             fontSize={13}

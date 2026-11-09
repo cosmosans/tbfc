@@ -106,7 +106,7 @@ export function UpcomingFixtureCard({ data, match, onOpen }: Props) {
               color: "#d7724c",
             }}
           >
-            {match.kickoff || "Time TBD"}
+            {match.kickoff || "TBD"}
           </span>
         </Typography>
 

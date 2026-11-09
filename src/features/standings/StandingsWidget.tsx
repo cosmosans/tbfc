@@ -283,7 +283,7 @@ export default function StandingsWidget({
                             bgcolor: tbfc ? "#CA51262b" : "background.paper",
                             transition: "background-color 150ms ease",
                             "& td": {
-                              borderBottomWidth: index === 3 ? 4 : 1,
+                              borderBottomWidth: index === 3 ? 5 : 1,
                               borderBottomStyle: "solid",
                               borderBottomColor:
                                 index === 3 ? "#CA5126" : "divider",
@@ -292,9 +292,6 @@ export default function StandingsWidget({
                             "&:hover": {
                               backgroundColor: "rgba(255,255,255,.1)",
                             },
-                            borderLeft: tbfc
-                              ? "4px solid #CA5126"
-                              : "4px solid transparent",
                           }}
                         >
                           <TableCell align="center" sx={{ fontWeight: 800 }}>

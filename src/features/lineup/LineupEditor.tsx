@@ -107,9 +107,10 @@ export default function LineupEditor({
         !lineup.starters.includes(player.id),
     )
     .sort(byPlayerNumber);
-  const unavailablePlayers = data.players
+  const unassignedActivePlayers = data.players
     .filter(
       (player) =>
+        player.active &&
         !lineup.starters.includes(player.id) &&
         !lineup.bench.includes(player.id),
     )
@@ -233,7 +234,7 @@ export default function LineupEditor({
                       <ButtonBase
                         type="button"
                         disabled={!canEditClub}
-                        aria-label={`Move #${player.number} ${player.name} to Unavailable`}
+                        aria-label={`Move #${player.number} ${player.name} off the bench`}
                         title={`#${player.number} ${player.name}`}
                         sx={{
                           width: 180,
@@ -328,10 +329,10 @@ export default function LineupEditor({
           <Card>
             <CardContent>
               <Typography variant="h6" gutterBottom>
-                Unavailable ({unavailablePlayers.length})
+                Active Roster ({unassignedActivePlayers.length})
               </Typography>
               <Stack direction="row" gap={1} flexWrap="wrap">
-                {unavailablePlayers.map((player) => (
+                {unassignedActivePlayers.map((player) => (
                   <ButtonBase
                     key={player.id}
                     type="button"
@@ -367,9 +368,9 @@ export default function LineupEditor({
                     </LineupNameplate>
                   </ButtonBase>
                 ))}
-                {unavailablePlayers.length === 0 && (
+                {unassignedActivePlayers.length === 0 && (
                   <Typography color="text.secondary">
-                    Everyone is assigned.
+                    All active players are assigned.
                   </Typography>
                 )}
               </Stack>
