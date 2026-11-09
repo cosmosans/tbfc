@@ -16,6 +16,24 @@ import {
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { formationPoints, formationSlots } from "./formations";
+const plateStyle = {
+  minHeight: 0,
+  padding: "0 7%",
+  "& > span": {
+    fontSize: "clamp(10px, 9.5cqw, 17px)",
+    lineHeight: 1,
+    maxWidth: "100%",
+  },
+  "& > span strong": { fontSize: "1.35em" },
+  "& > span span": {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+};
+
+import RubberDuckIcon from "../../img/rubber-duck.svg";
+
 export default function LineupPitch({
   data,
   lineup,
@@ -32,12 +50,22 @@ export default function LineupPitch({
   // Reserve vertical space for a starter and two substitutes in each central role.
   const centralRoleY: Partial<Record<string, number>> =
     lineup.formation === "1-2-3-1" ? { ST: 22, CAM: 53, GK: 84 } : {};
+  const floaters = data.players.filter(
+    (player) =>
+      lineup.bench.includes(player.id) &&
+      !lineup.starters.includes(player.id) &&
+      !lineup.benchPositions?.[player.id],
+  );
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 
   return (
     <Box className="lineup-pitch" sx={{ width: "100%", minWidth: 0 }}>
       <Pitch
-        sx={{ aspectRatio: "1.65", minHeight: lineup.bench.length ? 450 : 280, touchAction: "auto" }}
+        sx={{
+          aspectRatio: "1.65",
+          minHeight: lineup.bench.length ? 450 : 280,
+          touchAction: "auto",
+        }}
         aria-label={`${lineup.formation} lineup with substitutes`}
       >
         <PitchSurface />
@@ -54,11 +82,11 @@ export default function LineupPitch({
               (item) => item.id === lineup.starters[index],
             );
             const substitutes = data.players.filter(
-                  (p) =>
-                    lineup.bench.includes(p.id) &&
-                    !lineup.starters.includes(p.id) &&
-                    lineup.benchPositions?.[p.id] === slots[index],
-                );
+              (p) =>
+                lineup.bench.includes(p.id) &&
+                !lineup.starters.includes(p.id) &&
+                lineup.benchPositions?.[p.id] === slots[index],
+            );
             return (
               <Stack
                 key={`${lineup.formation}-${index}`}
@@ -99,17 +127,7 @@ export default function LineupPitch({
                     key={person?.id ?? "empty"}
                     kit={kit}
                     goalkeeper={goalkeeperPlate(person?.id, slots[index])}
-                    sx={{
-                      minHeight: 0,
-                      padding: "0 7%",
-                      "& > span": {
-                        fontSize: "clamp(10px, 9.5cqw, 17px)",
-                        lineHeight: 1,
-                        maxWidth: "100%",
-                      },
-                      "& > span strong": { fontSize: "1.35em" },
-                      "& > span span": { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" },
-                    }}
+                    sx={plateStyle}
                     data-player-number={person?.number}
                     aria-label={`${slots[index]}${row ? " substitute" : " starter"}: ${person ? `#${person.number} ${person.name}` : "Unassigned"}`}
                   >
@@ -122,6 +140,67 @@ export default function LineupPitch({
               </Stack>
             );
           })}
+          {floaters.length > 0 && (
+            <Stack
+              component="section"
+              aria-label="Floaters"
+              gap={0.5}
+              sx={{
+                position: "absolute",
+                right: "30px",
+                bottom: "23px",
+                width: "28%",
+                maxWidth: 170,
+                maxHeight: "22%",
+                overflowY: "auto",
+                containerType: "inline-size",
+                p: 2,
+                paddingTop: 1.5,
+                bgcolor: "rgba(202, 81, 38, 0.75)",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={RubberDuckIcon}
+                  alt="Rubber Duck"
+                  style={{
+                    width: 15,
+                    height: 15,
+                    marginRight: 5,
+                    transform: "translateY(-1px)",
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  align="center"
+                  color="white"
+                  sx={{ letterSpacing: 1 }}
+                >
+                  FLOATERS
+                </Typography>
+              </Box>
+
+              {floaters.map((player) => (
+                <LineupNameplate
+                  key={player.id}
+                  kit={kit}
+                  sx={{ ...plateStyle, flexShrink: 0 }}
+                  aria-label={`Floater: #${player.number} ${player.name}`}
+                >
+                  <NameplateText
+                    number={player.number}
+                    name={player.name.split(" ")[0]}
+                  />
+                </LineupNameplate>
+              ))}
+            </Stack>
+          )}
         </Box>
       </Pitch>
       {(onFormationChange || showTitle) && (
@@ -153,7 +232,6 @@ export default function LineupPitch({
               </Typography>
             )
           )}
-
         </Stack>
       )}
     </Box>

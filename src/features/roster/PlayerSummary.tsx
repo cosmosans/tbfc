@@ -67,7 +67,7 @@ export default function PlayerSummary({
             gridArea: "stats",
           }}
         >
-          {playerStats(player, events).map(([label, count], index) => (
+          {playerStats(player, events).filter(([label]) => label !== "Clean Sheets" || player.playerType === "Goal Keeper").map(([label, count], index) => (
             <Tooltip key={label} title={label === "PK Saves" ? "Penalty Saves" : label} describeChild arrow>
               <Box
                 component="span"
@@ -81,7 +81,7 @@ export default function PlayerSummary({
               >
                 <Box
                   component="img"
-                  src={[GoalIcon, AssistIcon, SaveIcon, CardIcon][index]}
+                  src={[GoalIcon, AssistIcon, SaveIcon, CardIcon, SaveIcon][index]}
                   alt=""
                   sx={{
                     width: { xs: 16, md: 22 },

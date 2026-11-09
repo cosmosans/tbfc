@@ -72,18 +72,20 @@ export default function MatchEventSnackbar({
       sx={{
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
         bottom: `calc(${publishBarVisible ? 150 : 45}px + env(safe-area-inset-bottom, 0px))`,
-        left: 25,
-        right: 25,
-        justifyContent: "normal",
+        left: 0,
+        display: "flex",
+        justifyContent: "center",
+        width: "min(460px, 100vw)",
+        right: 0,
       }}
     >
       <Alert
         severity="info"
         icon={false}
         sx={{
-          width: "min(460px, 96vw)",
           boxSizing: "border-box",
           position: "relative",
+          minWidth: `96vw`,
           maxHeight: "50vh",
           overflowY: "auto",
           overflowWrap: "anywhere",
@@ -154,10 +156,10 @@ export default function MatchEventSnackbar({
             width: "100%",
             boxSizing: "border-box",
             gap: 0.5,
-            p: 1,
+            mb: 1,
           }}
         >
-          <TimelineMarker minute={notice.minute} />
+          <TimelineMarker minute={notice.kind === "clean_sheet" ? "50′+1" : notice.minute} />
 
           <Box
             sx={{

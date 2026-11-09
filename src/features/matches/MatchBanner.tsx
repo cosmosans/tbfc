@@ -17,6 +17,8 @@ import { styled } from "@mui/material/styles";
 import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
+import CheckIcon from "@mui/icons-material/Check";
+import { canEditClub } from "../../editAccess";
 import GoalFire from "./GoalFire";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
@@ -32,6 +34,7 @@ import { useMatchBannerCollapse } from "./useMatchBannerCollapse";
 import "./matchBanner.css";
 
 const Panel = styled(Card)({
+  position: "relative",
   borderRadius: 0,
   background: "#171a1c",
   border: 0,
@@ -105,6 +108,7 @@ export default function MatchBanner({
   onOpen,
   onEdit,
   detail = false,
+  replaySeconds,
   goalTime,
   goalSoundEnabled = false,
   onGoalSoundToggle,
@@ -115,6 +119,7 @@ export default function MatchBanner({
   onOpen?: () => void;
   onEdit?: () => void;
   detail?: boolean;
+  replaySeconds?: number;
   goalTime?: number;
   goalSoundEnabled?: boolean;
   onPreviewGoal?: () => void;
@@ -122,13 +127,16 @@ export default function MatchBanner({
 }) {
   const press = useRef<{ id: number; start: number; x: number; y: number } | null>(null);
   const [now, setNow] = useState(Date.now());
+  const replaying = replaySeconds !== undefined;
   useEffect(() => {
-    if (match.status !== "in_progress") return;
+    if (replaying || match.status !== "in_progress") return;
     setNow(Date.now());
     const timer = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(timer);
-  }, [match.status]);
-  const phase = match.status === "in_progress" ? matchPhase(match, now) : null;
+  }, [match.status, replaying]);
+  const phase = replaying
+    ? { seconds: replaySeconds, label: "REPLAY" }
+    : match.status === "in_progress" ? matchPhase(match, now) : null;
   const opponent = opponentFor(data, match);
   const location =
     data.locations.find((item) => item.id === match.locationId) ??
@@ -140,8 +148,9 @@ export default function MatchBanner({
   const headToHead = record(
     data.matches.filter(
       (item) =>
-        (opponent && item.opponentId === opponent.id) ||
-        (!!match.opponent && item.opponent === match.opponent),
+        !(replaying && item.id === match.id && match.status === "in_progress") &&
+        ((opponent && item.opponentId === opponent.id) ||
+          (!!match.opponent && item.opponent === match.opponent)),
     ),
   );
   if (match.status === "in_progress") {
@@ -278,6 +287,16 @@ export default function MatchBanner({
           }
         }}
       >
+        {canEditClub && match.matchAuditComplete === true && (
+          <Tooltip title="Match audit complete">
+            <CheckIcon
+              titleAccess="Match audit complete"
+              color="success"
+              fontSize="small"
+              sx={{ position: "absolute", top: 8, left: 8, filter: "drop-shadow(0 1px 2px #000)" }}
+            />
+          </Tooltip>
+        )}
         <CardContent
           className="match-banner-content"
           sx={{

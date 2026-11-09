@@ -1,3 +1,4 @@
+import { compareMatchEvents } from "./matchEventOrder";
 import TimelineMarker from "../../components/TimelineMarker";
 import AddIcon from "@mui/icons-material/Add";
 import { useState, type ReactNode } from "react";
@@ -39,13 +40,14 @@ function TimelineCard({
   minute,
   children,
 }: {
-  minute?: number;
+  minute?: number | string;
   children: ReactNode;
 }) {
   return (
     <Card sx={{ py: 0.5 }}>
       <CardContent sx={{ py: 2, "&:last-child": { pb: 2 } }}>
-        <Stack direction="row" alignItems="flex-start" gap={2} flexWrap="wrap">
+        <Stack direction="row" alignItems="flex-start" gap={{ xs: 1, sm: 2 }} flexWrap="wrap"
+          sx={{ display: { xs: "grid", sm: "flex" }, gridTemplateColumns: "auto minmax(0, 1fr)" }}>
           <TimelineMarker compact={true} minute={minute} />
           {children}
         </Stack>
@@ -129,7 +131,7 @@ export default function Events({
   const opponent = opponentFor(data, match);
   const events = data.events
     .filter((e) => e.matchId === match.id)
-    .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
+    .sort(compareMatchEvents);
   const logged = goalTotals(events, match.id);
   function editEvent(event: MatchEvent) {
     setEditingEvent(event);
@@ -452,6 +454,7 @@ export default function Events({
       {events.map((event) => {
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
         const eventHasTeam =
+          event.kind === "clean_sheet" ||
           event.kind === "assist" ||
           event.kind === "goal" ||
           event.kind === "yellow_card" ||
@@ -463,15 +466,16 @@ export default function Events({
             : "Turf Burners FC";
 
         return (
-          <TimelineCard key={event.id} minute={event.minute}>
-            <Typography sx={{ minWidth: 0, display: "flex", gap: 2 }}>
+          <TimelineCard key={event.id} minute={event.kind === "clean_sheet" ? "50′+1" : event.minute}>
+            <Box sx={{ minWidth: 0, display: { xs: "grid", sm: "flex" }, gap: { xs: 0.75, sm: 2 },
+              gridTemplateColumns: "16px auto minmax(0, 1fr)" }}>
               <img
                 src={
                   event.kind === "penalty_kick"
                     ? PenaltyKick
                     : event.kind === "yellow_card"
                       ? YellowCardIcon
-                      : event.kind === "penalty_save"
+                      : event.kind === "penalty_save" || event.kind === "clean_sheet"
                         ? SaveIcon
                         : event.ownGoal
                           ? OwnGoalIcon
@@ -526,7 +530,7 @@ export default function Events({
                         gap: 1,
                         minWidth: 0,
                       }
-                    : undefined
+                    : { display: { xs: "contents", sm: "block" } }
                 }
               >
                 {eventHasTeam && (
@@ -540,7 +544,10 @@ export default function Events({
                       alignItems: "center",
                       gap: 1,
                       mt: event.kind === "penalty_kick" ? 0 : -0.8,
+                      minWidth: 0,
                       flexShrink: 0,
+                      "& > div": { minWidth: 0 },
+                      "& > div > span": { overflowWrap: "anywhere" },
                     }}
                   >
                     {event.team === "opponent" ? (
@@ -590,6 +597,7 @@ export default function Events({
                       fontSize: 14,
                       alignSelf:
                         event.kind === "penalty_kick" ? "center" : "start",
+                      gridColumn: "1 / -1",
                       overflowWrap: "anywhere",
                       opacity: 0.7,
                       "@media (max-width: 1199px)": {
@@ -602,15 +610,16 @@ export default function Events({
                   </Typography>
                 )}
               </Box>
-            </Typography>
+            </Box>
 
-            {canEditClub && (
+            {canEditClub && event.kind !== "clean_sheet" && (
               <Stack
                 direction="row"
                 sx={{
                   flex: 1,
                   display: "flex",
                   justifyContent: "flex-end",
+                  gridColumn: "1 / -1",
                   order: 3,
                   "@media (max-width: 1199px)": { order: 2 },
                 }}

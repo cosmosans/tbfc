@@ -260,6 +260,7 @@ export default function PlayerDetail({
                 }}
               >
                 {counts
+                  .filter(([label]) => label !== "Clean Sheets" || player.playerType === "Goal Keeper")
                   .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
                   .map(([label, count]) => (
                     <Tooltip
@@ -306,7 +307,7 @@ export default function PlayerDetail({
                             alt="Yellow Cards"
                             style={{ marginRight: 8, width: 20, height: 20 }}
                           />
-                        ) : null}
+                        ) : label === "Clean Sheets" ? <Typography component="span" variant="caption">Clean Sheets</Typography> : null}
 
                         <Typography
                           variant="h4"
@@ -549,7 +550,7 @@ export default function PlayerDetail({
                                   overflowWrap: "anywhere",
                                 }}
                               >
-                                {event.minute != null && <><TimelineMarker minute={event.minute} compact />{" "}</>}
+                                {event.minute != null && <><TimelineMarker minute={event.kind === "clean_sheet" ? "50′+1" : event.minute} compact />{" "}</>}
                                 <Tooltip title={event.note?.trim() || ""} describeChild arrow>
                                   <Box component="strong" tabIndex={event.note?.trim() ? 0 : undefined}
                                     sx={{

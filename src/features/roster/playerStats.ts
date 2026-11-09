@@ -27,5 +27,6 @@ export function playerStats(player: Player, events: MatchEvent[]) {
         events.filter((e) => e.playerId === player.id && e.kind === "yellow_card" && e.team !== "opponent")
           .length,
     ],
+    ["Clean Sheets", events.filter(e => e.kind === "clean_sheet" && e.playerId === player.id && e.team === "tbfc").length],
   ] as const;
 }

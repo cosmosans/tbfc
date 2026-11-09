@@ -4,7 +4,7 @@ export default function TimelineMarker({
   minute,
   compact = false,
 }: {
-  minute?: number;
+  minute?: number | string;
   compact?: boolean;
 }) {
   return (
@@ -16,7 +16,7 @@ export default function TimelineMarker({
         height: compact ? 20 : 28,
         flexShrink: 0,
       }}
-      label={minute == null ? "Time Unknown" : `${minute}′`}
+      label={minute == null ? "Time Unknown" : typeof minute === "string" ? minute : `${minute}′`}
     />
   );
 }

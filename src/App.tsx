@@ -39,6 +39,7 @@ import DataTransferDialog from "./components/DataTransferDialog";
 import { readSoundPreference, saveSoundPreference } from "./soundPreference";
 import { useGoalSound } from "./features/matches/useGoalSound";
 import MatchEventSnackbar from "./features/matches/MatchEventSnackbar";
+import MatchReplay from "./features/matches/MatchReplay";
 import MatchBanner from "./features/matches/MatchBanner";
 import SchedulePage from "./features/schedule/SchedulePage";
 import MatchEventPage from "./features/matches/MatchEventPage";
@@ -106,12 +107,14 @@ const blankMatch = (): Match => ({
   matchAuditComplete: false,
 });
 
+import { withCleanSheets } from "./cleanSheets";
+
 export default function App() {
   const manageModeKey = "tbfc-manage-mode";
   const [sourceData, setData] = useState<ClubData>(loadData);
   const [clockTime, setClockTime] = useState(Date.now);
   const data = useMemo(
-    () => ({
+    () => withCleanSheets({
       ...sourceData,
       matches: sourceData.matches.map((match) => matchAtTime(match, clockTime)),
     }),
@@ -891,21 +894,17 @@ export default function App() {
             />
           ) : (
             <>
-              <MatchBanner
-                onPreviewGoal={previewGoal}
-                goalSoundEnabled={goalSoundEnabled}
-                onGoalSoundToggle={() => void toggleGoalSound()}
-                goalTime={
-                  goalBurst?.matchId === selected.id
-                    ? goalBurst.started
-                    : undefined
-                }
-                data={data}
-                match={selected}
-                detail
-                onEdit={
-                  canEditClub ? () => setEditing({ ...selected }) : undefined
-                }
+              <MatchReplay key={selected.id + String(manageMode)} data={data} match={selected}
+                enabled={manageMode && selected.status === "completed"}
+                publishBarVisible={canEditClub && dirty && !publishing}
+                bannerProps={{
+                  detail: true,
+                  onPreviewGoal: previewGoal,
+                  goalSoundEnabled,
+                  onGoalSoundToggle: () => void toggleGoalSound(),
+                  goalTime: goalBurst?.matchId === selected.id ? goalBurst.started : undefined,
+                  onEdit: canEditClub ? () => setEditing({ ...selected }) : undefined,
+                }}
               />
               <MatchNavigation matches={data.matches} match={selected} />
               {opponentFor(data, selected)?.notes && (
