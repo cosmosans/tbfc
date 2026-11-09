@@ -1,5 +1,4 @@
 import { clubApiRequest } from "./clubApiRequest";
-import { Capacitor, CapacitorHttp } from "@capacitor/core";
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
 import type { ClubData, Match, MatchEvent } from './model';
@@ -24,33 +23,69 @@ function forRemote(data: ClubData): ClubData {
 
 export type RemoteClub = { revision: number; data: ClubData | null; updatedAt?: string; supportsIncremental?: boolean; admin?: boolean };
 
+class ClubApiError extends Error {
+  constructor(readonly status: number, message: string) { super(message); }
+}
+
 async function readResponse(response: Response) {
-  const body = await response.json();
-  if (!response.ok) throw new Error(body.error || `Database request failed (${response.status}).`);
-  return body;
-}
-
-async function readPublicApi(path: string) {
-  if (Capacitor.isNativePlatform()) {
-    const response = await CapacitorHttp.get({
-      url: new URL(path, 'https://turfburnersfc.soccer').href,
-      responseType: 'json',
-      headers: { 'Cache-Control': 'no-cache' },
-    });
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(response.data?.error || `Database request failed (${response.status}).`);
-    }
-    return response.data;
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new ClubApiError(response.status, body?.error || `Club API unavailable (HTTP ${response.status}).`);
   }
-  return readResponse(await fetch(path, { cache: 'no-store', credentials: 'same-origin' }));
+  return response.json();
 }
 
-let baseline: RemoteClub | undefined;
+async function readPublicApi(path: `/api/${string}`) {
+  return readResponse(await clubApiRequest(path, { cache: 'no-store', credentials: 'same-origin' }));
+}
+
+type ClubSnapshot = RemoteClub & { access?: string };
+type Manifest = ClubSnapshot & { pages?: { start: number; end: number }[]; unchanged?: boolean };
+
+async function readClubSnapshot(previous?: ClubSnapshot): Promise<ClubSnapshot> {
+  const query = new URLSearchParams({ view: 'manifest' });
+  if (previous?.access) {
+    query.set('access', previous.access);
+    query.set('revision', String(previous.revision));
+  }
+  const manifest: Manifest = await readPublicApi(`/api/club?${query}`);
+  if (manifest.unchanged && previous && previous.revision === manifest.revision && previous.access === manifest.access) return previous;
+  // Older deployments return the full snapshot even when a manifest is requested.
+  if (!manifest.pages) return manifest;
+  const data = Object.fromEntries(collections.map(name => [name, []])) as unknown as ClubData;
+  for (let index = 0; index < manifest.pages.length; index += 3) {
+    const slices = await Promise.all(manifest.pages.slice(index, index + 3).map(async ({ start, end }) => {
+      const params = new URLSearchParams({
+        view: 'page', start: String(start), end: String(end),
+        revision: String(manifest.revision), access: manifest.access!,
+      });
+      const page: ClubSnapshot = await readPublicApi(`/api/club?${params}`);
+      if (!page.data || page.revision !== manifest.revision || page.access !== manifest.access) {
+        throw new Error('Invalid club data page.');
+      }
+      return page.data;
+    }));
+    for (const slice of slices) {
+      for (const name of collections) (data[name] as unknown[]).push(...slice[name]);
+    }
+  }
+  return { revision: manifest.revision, updatedAt: manifest.updatedAt, supportsIncremental: manifest.supportsIncremental, admin: manifest.admin, access: manifest.access, data };
+}
+
+let baseline: ClubSnapshot | undefined;
 const keyFor = (collection: string, item: Record<string, unknown>) =>
   String(item[collection === 'lineups' || collection === 'boards' ? 'matchId' : collection === 'standings' ? 'seasonId' : 'id']);
 
 export async function fetchClubData(): Promise<RemoteClub> {
-  baseline = await readPublicApi('/api/club') as RemoteClub;
+  let snapshot: ClubSnapshot;
+  try {
+    snapshot = await readClubSnapshot(baseline);
+  } catch (error) {
+    if (!(error instanceof ClubApiError) || ![409, 503].includes(error.status)) throw error;
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    snapshot = await readClubSnapshot(baseline);
+  }
+  baseline = snapshot;
   if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
   return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
 }

@@ -447,6 +447,7 @@ export default function App() {
         if (active && remote.data) {
           revision.current = remote.revision;
           setData(remote.data);
+          if (syncState === "error") setSyncMessage("");
           setSyncState("ready");
         }
       } catch {

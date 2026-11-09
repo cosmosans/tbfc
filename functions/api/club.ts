@@ -43,18 +43,52 @@ export async function onRequestGet({ request, env }: Context): Promise<Response>
     const headerAdmin = isAdmin(request, env);
     const sessionAdmin = !!await adminSessionExpiry(request, env);
     const meta = await current(env.CLUB_DB);
-    if (meta.revision === 0) return json({ revision: 0, data: null, supportsIncremental: true, admin: headerAdmin || sessionAdmin, updatedAt: meta.updated_at });
-    const rows = await env.CLUB_DB.prepare('SELECT collection, record_id, payload FROM club_records').all<RecordRow>();
-    const data: Record<string, unknown[]> = Object.fromEntries(collections.map(name => [name, []]));
-    for (const row of rows.results) {
-      if (Object.hasOwn(data, row.collection)) {
-        const item = JSON.parse(row.payload);
-        if (row.collection === 'matches' && !headerAdmin) delete item.chat;
-        if (row.collection === 'matches' && !headerAdmin && !sessionAdmin) delete item.matchAuditComplete;
-        data[row.collection].push(item);
+    const access = headerAdmin ? 'header' : sessionAdmin ? 'session' : 'public';
+    const metadata = { revision: meta.revision, updatedAt: meta.updated_at, supportsIncremental: true, admin: headerAdmin || sessionAdmin, access };
+    if (meta.revision === 0) return json({ ...metadata, data: null });
+    const params = new URL(request.url).searchParams;
+    if (params.get('view') === 'manifest') {
+      if (!headerAdmin && params.get('revision') === String(meta.revision) && params.get('access') === access) {
+        return json({ ...metadata, unchanged: true });
       }
+      // Plan by stored bytes: a single crest or photo can exceed the size of hundreds of matches.
+      const sizes = await env.CLUB_DB.prepare('SELECT rowid AS id, length(CAST(payload AS BLOB)) AS bytes FROM club_records ORDER BY rowid').all<{ id: number; bytes: number }>();
+      const pages: { start: number; end: number }[] = [];
+      let bytes = 0;
+      for (const row of sizes.results) {
+        if (!pages.length || bytes + row.bytes > 768 * 1024) {
+          pages.push({ start: row.id, end: row.id });
+          bytes = 0;
+        }
+        pages[pages.length - 1].end = row.id;
+        bytes += row.bytes;
+      }
+      return json({ ...metadata, pages });
     }
-    return json({ revision: meta.revision, data, supportsIncremental: true, admin: headerAdmin || sessionAdmin, updatedAt: meta.updated_at });
+    const paged = params.get('view') === 'page';
+    if (paged && (params.get('revision') !== String(meta.revision) || params.get('access') !== access)) {
+      return json({ error: 'Club data changed during loading.' }, 409);
+    }
+    // Redact private match fields in D1. Other payloads are already JSON and can be returned verbatim.
+    const payload = headerAdmin ? 'payload' : `CASE WHEN collection = 'matches' THEN json_remove(payload, '$.chat'${sessionAdmin ? '' : ", '$.matchAuditComplete'"}) ELSE payload END`;
+    const sql = `SELECT collection, ${payload} AS payload FROM club_records`;
+    let statement = env.CLUB_DB.prepare(sql);
+    if (paged) {
+      const start = Number(params.get('start'));
+      const end = Number(params.get('end'));
+      if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start <= 0 || end < start) return json({ error: 'Invalid page.' }, 400);
+      statement = env.CLUB_DB.prepare(sql + ' WHERE rowid BETWEEN ? AND ? ORDER BY rowid').bind(start, end);
+    }
+    const rows = await statement.all<{ collection: string; payload: string }>();
+    if (paged && (await current(env.CLUB_DB)).revision !== meta.revision) return json({ error: 'Club data changed during loading.' }, 409);
+    const data: Record<string, string[]> = Object.fromEntries(collections.map(name => [name, []]));
+    for (const row of rows.results) {
+      if (Object.hasOwn(data, row.collection)) data[row.collection].push(row.payload);
+    }
+    const fields = collections.map(name => `"${name}":[${data[name].join(',')}]`);
+    return new Response(`{"data":{${fields.join(',')}},${JSON.stringify(metadata).slice(1)}`, {
+      headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Could not read club data', error);
     return json({ error: 'Could not read club data.' }, 500);
