@@ -1,3 +1,5 @@
+import { tableHeading, tablePaddingX, sortLabelStyle } from "../../components/tableStyles";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import { playerStats } from "./playerStats";
 import { PlayerInformation } from "./PlayerCard.styles";
 import PlayerTypeSelect from "./PlayerTypeSelect";
@@ -86,8 +88,9 @@ export default function Roster({
   function sortHeader(key: SortKey, label: string) {
     const active = sortKey === key;
     return (
-      <Button
-        size="small"
+      <TableSortLabel
+        active={active}
+        direction={active && descending ? "desc" : "asc"}
         onClick={() => {
           if (active) setDescending(!descending);
           else {
@@ -96,16 +99,10 @@ export default function Roster({
           }
         }}
         aria-label={`Sort by ${label}${active ? (descending ? ", descending" : ", ascending") : ""}`}
-        sx={{
-          minWidth: 0,
-          px: 0.25,
-          fontSize: { xs: ".65rem", md: ".75rem" },
-          color: active ? "primary.main" : "text.secondary",
-        }}
+        sx={sortLabelStyle}
       >
         {label}
-        {active ? (descending ? " ↓" : " ↑") : ""}
-      </Button>
+      </TableSortLabel>
     );
   }
 
@@ -279,21 +276,21 @@ export default function Roster({
           sx={{
             display: { xs: "none", sm: "flex" },
             alignItems: "center",
-            bgcolor: "rgba(255,255,255,.09)",
+            bgcolor: "action.hover",
+            ...tableHeading,
             borderBottom: "1px solid rgba(255,255,255,.2)",
           }}
         >
           <Box
             sx={{
               flex: { xs: "0 0 100px", sm: "0 0 180px" },
-              color: "text.secondary",
               textAlign: "center",
-              fontSize: ".75rem",
+              ...tableHeading,
             }}
           >
             Photo
           </Box>
-          <PlayerInformation as="div" style={{ background: "transparent" }}>
+          <PlayerInformation as="div" sx={{ py: 2, px: tablePaddingX }}>
             <Box sx={{ gridArea: "number" }}>
               {sortHeader("number", "Number")}
             </Box>

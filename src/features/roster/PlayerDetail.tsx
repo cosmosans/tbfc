@@ -1,3 +1,5 @@
+import { tableStyles } from "../../components/tableStyles";
+import PanelHeader from "../../components/PanelHeader";
 import RichTextDialog from "../../components/RichTextDialog";
 import { storyToHtml } from "../matches/matchStory";
 import MatchResultChip from "../../components/MatchResultChip";
@@ -24,6 +26,10 @@ import {
   PlayerCardFrame,
   PlayerCardInner,
   PlayerCardFront,
+  PlayerPlaceholder,
+  PlayerName,
+  PlayerNumber,
+  PlayerPositions,
 } from "./PlayerCard.styles";
 import type { ClubData, Player } from "../../model";
 import { displayScore } from "../../model";
@@ -36,7 +42,13 @@ import AssistIcon from "../../img/cleats.svg";
 import SaveIcon from "../../img/gloves.svg";
 import CardIcon from "../../img/cards.svg";
 
-type HistorySort = "date" | "goals" | "assists" | "cards" | "saves";
+type HistorySort =
+  | "date"
+  | "opponent"
+  | "goals"
+  | "assists"
+  | "cards"
+  | "saves";
 const statIndex = { goals: 0, assists: 1, saves: 2, cards: 3 } as const;
 
 export default function PlayerDetail({
@@ -83,8 +95,17 @@ export default function PlayerDetail({
       const comparison =
         historySort === "date"
           ? a.match.date.localeCompare(b.match.date)
-          : a.stats[statIndex[historySort]][1] -
-            b.stats[statIndex[historySort]][1];
+          : historySort === "opponent"
+            ? opponentName(data, a.match).localeCompare(
+                opponentName(data, b.match),
+                undefined,
+                {
+                  sensitivity: "base",
+                  numeric: true,
+                },
+              )
+            : a.stats[statIndex[historySort]][1] -
+              b.stats[statIndex[historySort]][1];
       return (
         (descending ? -comparison : comparison) ||
         b.match.date.localeCompare(a.match.date) ||
@@ -95,7 +116,7 @@ export default function PlayerDetail({
     if (historySort === key) setDescending(!descending);
     else {
       setHistorySort(key);
-      setDescending(true);
+      setDescending(key !== "opponent");
     }
   }
   function sortHeading(key: HistorySort, label: string) {
@@ -134,6 +155,90 @@ export default function PlayerDetail({
           gap: 2,
         }}
       >
+        <Card>
+          <CardContent
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {player.photoUrl ? (
+              <img
+                src={player.photoUrl}
+                alt={player.name}
+                style={{
+                  maxWidth: 125,
+                }}
+              />
+            ) : (
+              <PlayerPlaceholder />
+            )}
+
+            <Typography
+              sx={{
+                gridArea: "number",
+                color: "#d44f25",
+                fontSize: "122px",
+                lineHeight: 1,
+                letterSpacing: "-.07em",
+                fontWeight: 900,
+                marginRight: 2,
+              }}
+            >
+              {player.number}
+            </Typography>
+
+            <Box>
+              <Typography
+                sx={{
+                  fontSize: 42,
+                  fontWeight: 800,
+                }}
+              >
+                {player.name}
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  mt: -1,
+                  gap: 1,
+                }}
+              >
+                {player.playerType && (
+                  <Typography
+                    variant="body2"
+                    color="white"
+                    sx={{
+                      fontSize: 18,
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {player.playerType}
+                  </Typography>
+                )}
+
+                <Typography
+                  sx={{
+                    display: "block",
+                    color: "#777",
+                    fontSize: 18,
+                    textTransform: "uppercase",
+                    lineHeight: 1.2,
+                    fontWeight: 800,
+                  }}
+                >
+                  {[player.preferredPosition, player.secondaryPosition]
+                    .filter(Boolean)
+                    .join(" / ") || ""}
+                </Typography>
+              </Box>
+            </Box>
+          </CardContent>
+        </Card>
+
         {counts
           .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
           .map(([label, count]) => (
@@ -221,11 +326,11 @@ export default function PlayerDetail({
           )}
         </CardContent>
       </Card>
-      <Stack gap={2}>
-        <Typography variant="h5">Match History</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Matches with a saved lineup selection or a recorded event.
-        </Typography>
+      <Stack>
+        <PanelHeader
+          title="Match History"
+          context="Matches with a saved lineup selection or a recorded event."
+        />
         {!history.length ? (
           <Typography color="text.secondary">
             No match history recorded yet.
@@ -235,8 +340,8 @@ export default function PlayerDetail({
             component={Box}
             sx={{ bgcolor: "background.paper", overflowX: "auto" }}
           >
-            <Table size="small" sx={{ minWidth: isGoalkeeper ? 1080 : 980 }}>
-              <TableHead sx={{ bgcolor: "rgba(255,255,255,.09)" }}>
+            <Table sx={{ ...tableStyles, minWidth: isGoalkeeper ? 1080 : 980 }}>
+              <TableHead>
                 <TableRow>
                   <TableCell
                     sx={{ whiteSpace: "nowrap" }}
@@ -244,7 +349,9 @@ export default function PlayerDetail({
                   >
                     {sortHeading("date", "Date")}
                   </TableCell>
-                  <TableCell>Opponent</TableCell>
+                  <TableCell sortDirection={sortDirection("opponent")}>
+                    {sortHeading("opponent", "Opponent")}
+                  </TableCell>
                   <TableCell>Score</TableCell>
                   <TableCell align="center">Result</TableCell>
                   <TableCell>Role</TableCell>

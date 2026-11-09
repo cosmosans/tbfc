@@ -1,3 +1,4 @@
+import { tableStyles } from "../../components/tableStyles";
 import MatchResultChip from "../../components/MatchResultChip";
 import { useState } from "react";
 import {
@@ -137,7 +138,7 @@ export default function MatchTable({
               ? 0
               : { xs: 0, lg: 850 },
           tableLayout: showAudit ? "auto" : { xs: "fixed", sm: "auto" },
-          "& .MuiTableCell-root": { px: { xs: 0.5, sm: 1.5, lg: 2 } },
+          ...tableStyles,
           "& tr > :first-child": {
             paddingInlineStart: { xs: 1, sm: 1.5, lg: 2 },
           },

@@ -1,3 +1,4 @@
+import PanelHeader from "../../components/PanelHeader";
 import { useState } from "react";
 import {
   Box,
@@ -183,16 +184,12 @@ export default function Stats({
         }}
       >
         <PageHeading>Stats</PageHeading>
-        <Card sx={{ minWidth: 0, width: "100%" }}>
-          <CardContent>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              gap={2}
-              sx={{ mb: 1 }}
-            >
-              <Typography variant="h6">Opponents</Typography>
+        <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
+          <PanelHeader title="Opponents" context={opponentMetric === "teamGoals"
+              ? "Goals across all seasons. Turf Burners first, opponent second."
+              : opponentMetric === "goalsFor"
+                ? "Goals scored by TBFC against each opponent across all seasons."
+                : "Goals scored against TBFC by each opponent across all seasons."}>
               <Select
                 size="small"
                 value={opponentMetric}
@@ -211,17 +208,8 @@ export default function Stats({
                 <MenuItem value="goalsFor">Goals Scored</MenuItem>
                 <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
               </Select>
-            </Stack>
-            <>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                {opponentMetric === "teamGoals"
-                  ? "GD across all seasons. Turf Burners goals first, opponent goals second."
-                  : opponentMetric === "goalsFor"
-                    ? " Goals scored by TBFC against each opponent across all seasons."
-                    : opponentMetric === "goalsAgainst"
-                      ? "Goals scored against TBFC by each opponent across all seasons."
-                      : ""}
-              </Typography>
+          </PanelHeader>
+          <CardContent>
               {teams.length ? (
                 <Box
                   sx={{
@@ -353,24 +341,18 @@ export default function Stats({
                   No completed matches yet.
                 </Typography>
               )}
-            </>
           </CardContent>
         </Card>
         <Card
           sx={{
             minWidth: 0,
+            border: 0,
             width: "100%",
           }}
         >
-          <CardContent>
-            <Stack
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              gap={2}
-              sx={{ mb: 1 }}
-            >
-              <Typography variant="h6">Seasons</Typography>
+          <PanelHeader title="Seasons" context={metric === "points"
+              ? "Points per season (3 × wins + draws). Only completed matches count."
+              : undefined}>
               <Select
                 size="small"
                 value={metric}
@@ -386,13 +368,8 @@ export default function Stats({
                 <MenuItem value="goals">Goal Differential</MenuItem>
                 <MenuItem value="points">Points</MenuItem>
               </Select>
-            </Stack>
-            {metric === "points" && (
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                Total points per season: 3 × wins + draws. Seasons without
-                completed matches are excluded.
-              </Typography>
-            )}
+          </PanelHeader>
+          <CardContent>
             {metric === "points" && !seasonPoints.length && (
               <Typography color="text.secondary">
                 No completed matches yet.
