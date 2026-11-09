@@ -1,3 +1,4 @@
+import TimelineMarker from "../../components/TimelineMarker";
 import { tableStyles } from "../../components/tableStyles";
 import PanelHeader from "../../components/PanelHeader";
 import RichTextDialog from "../../components/RichTextDialog";
@@ -548,10 +549,8 @@ export default function PlayerDetail({
                                   overflowWrap: "anywhere",
                                 }}
                               >
+                                {event.minute != null && <><TimelineMarker minute={event.minute} compact />{" "}</>}
                                 <strong style={{ textTransform: "uppercase" }}>
-                                  {event.minute != null
-                                    ? `${event.minute}′ · `
-                                    : ""}
                                   {event.ownGoal
                                     ? "Own Goal"
                                     : event.kind.replaceAll("_", " ")}

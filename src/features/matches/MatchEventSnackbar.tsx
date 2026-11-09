@@ -1,3 +1,4 @@
+import TimelineMarker from "../../components/TimelineMarker";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import type { Match, MatchEvent, Player } from "../../model";
 import SoccerBallImage from "../../img/soccer-ball-variant.svg";
@@ -25,37 +26,10 @@ export default function MatchEventSnackbar({
   opponent,
   opponentCrestUrl,
   creditedTeamColor,
-  match,
-  events,
   remaining,
   publishBarVisible,
   onDismiss,
 }: Props) {
-  const goals = events
-    .filter((event) => event.matchId === match.id && event.kind === "goal")
-    .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
-  const goalIndex = goals.findIndex((event) => event.id === notice.id);
-  const goalsAfter = goalIndex < 0 ? [] : goals.slice(goalIndex + 1);
-  const tbfcScore =
-    goalIndex < 0
-      ? match.goalsFor + (notice.team === "opponent" ? 0 : 1)
-      : Math.max(
-          0,
-          match.goalsFor -
-            goalsAfter.filter((event) => event.team !== "opponent").length,
-        );
-  const opponentScore =
-    goalIndex < 0
-      ? match.goalsAgainst + (notice.team === "opponent" ? 1 : 0)
-      : Math.max(
-          0,
-          match.goalsAgainst -
-            goalsAfter.filter((event) => event.team === "opponent").length,
-        );
-  const scoreline =
-    match.homeAway === "away"
-      ? `${opponent} ${opponentScore} - ${tbfcScore} Turf Burners FC`
-      : `Turf Burners FC ${tbfcScore} - ${opponentScore} ${opponent}`;
   const creditedToOpponent = notice.team === "opponent";
 
   return (
@@ -148,21 +122,7 @@ export default function MatchEventSnackbar({
             p: 1,
           }}
         >
-          <Typography
-            sx={{
-              backgroundColor: "#c4c4c4",
-              px: 0.5,
-              paddingRight: 0.25,
-              lineHeight: 1.4,
-              pt: 0.2,
-              marginTop: `-1px`,
-              fontSize: 12,
-              fontWeight: "bold",
-              color: "black",
-            }}
-          >
-            {notice.minute}&apos;
-          </Typography>
+          <TimelineMarker minute={notice.minute} />
 
           <Box
             sx={{
@@ -206,6 +166,7 @@ export default function MatchEventSnackbar({
             sx={{
               textTransform: "uppercase",
               fontSize: 14,
+              fontWeight: 700,
               flex: 1,
             }}
           >
@@ -242,7 +203,6 @@ export default function MatchEventSnackbar({
         </Box>
 
         <Typography variant="body2" sx={{ fontSize: 12 }}>
-          {notice.kind === "goal" && <>{scoreline}. </>}
           {notice.note}
         </Typography>
         {remaining > 0 && (

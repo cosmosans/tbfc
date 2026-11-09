@@ -1,12 +1,13 @@
-import { useState } from "react";
+import TimelineMarker from "../../components/TimelineMarker";
+import { useState, type ReactNode } from "react";
 import { goalTotals, updateMatchEvents } from "./eventScore";
 import {
   Alert,
+  Autocomplete,
   Button,
   Card,
   CardContent,
   Checkbox,
-  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -25,11 +26,49 @@ import { getContrastRatio } from "@mui/material/styles";
 import type { ClubData, Match, MatchEvent } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
-import WhistleIcon from "../../img/penalty-kick.svg";
+import PenaltyKick from "../../img/penalty-kick.svg";
 import OwnGoalIcon from "../../img/bomb.svg";
 import YellowCardIcon from "../../img/cards.svg";
 import SaveIcon from "../../img/gloves.svg";
 import { canEditClub } from "../../editAccess";
+
+function TimelineCard({
+  minute,
+  children,
+}: {
+  minute?: number;
+  children: ReactNode;
+}) {
+  return (
+    <Card sx={{ py: 0.5 }}>
+      <CardContent sx={{ py: 2, "&:last-child": { pb: 2 } }}>
+        <Stack direction="row" alignItems="flex-start" gap={2} flexWrap="wrap">
+          <TimelineMarker minute={minute} />
+          {children}
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TimelineBoundary({ minute, label }: { minute: number; label: string }) {
+  return (
+    <TimelineCard minute={minute}>
+      <Typography
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          minHeight: 28,
+          fontWeight: 700,
+        }}
+      >
+        <img src={PenaltyKick} alt="" width={16} height={16} />
+        {label}
+      </Typography>
+    </TimelineCard>
+  );
+}
 
 export default function Events({
   data,
@@ -59,6 +98,20 @@ export default function Events({
       ? (eventTeam === "tbfc" && !ownGoal) ||
         (eventTeam === "opponent" && ownGoal)
       : !hasTeam || eventTeam === "tbfc";
+  const playerOptions = [
+    { id: "", label: "Unknown" },
+    ...(kind === "goal"
+      ? [{ id: "team", label: "Team (no player credit)" }]
+      : []),
+    ...(canSelectTbfcPlayer
+      ? data.players.map((player) => ({
+          id: player.id,
+          label: [player.number && `#${player.number}`, player.name]
+            .filter(Boolean)
+            .join(" "),
+        }))
+      : []),
+  ];
   const events = data.events
     .filter((e) => e.matchId === match.id)
     .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
@@ -193,28 +246,25 @@ export default function Events({
               </Select>
             </FormControl>
           )}
-          <FormControl
+          <Autocomplete
             size="small"
-            sx={{ minWidth: { md: 180 }, width: { xs: "100%", md: "auto" } }}
-          >
-            <InputLabel>{kind === "goal" ? "Scorer" : "Player"}</InputLabel>
-            <Select
-              label={kind === "goal" ? "Scorer" : "Player"}
-              value={playerId}
-              onChange={(e) => setPlayerId(e.target.value)}
-            >
-              <MenuItem value="">Unknown</MenuItem>
-              {kind === "goal" && (
-                <MenuItem value="team">Team (no player credit)</MenuItem>
-              )}
-              {canSelectTbfcPlayer &&
-                data.players.map((p) => (
-                  <MenuItem key={p.id} value={p.id}>
-                    #{p.number} {p.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+            sx={{ width: { xs: "100%", md: 220 } }}
+            openOnFocus
+            autoHighlight
+            options={playerOptions}
+            getOptionKey={(option) => option.id}
+            isOptionEqualToValue={(a, b) => a.id === b.id}
+            value={
+              playerOptions.find((option) => option.id === playerId) ?? null
+            }
+            onChange={(_, option) => setPlayerId(option?.id ?? "")}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label={kind === "goal" ? "Scorer" : "Player"}
+              />
+            )}
+          />
           {kind === "goal" && (
             <FormControlLabel
               sx={{ width: { xs: "100%", md: "auto" }, m: 0 }}
@@ -349,6 +399,7 @@ export default function Events({
         ) : (
           eventForm
         ))}
+      <TimelineBoundary minute={0} label="KICKOFF" />
       {events.map((event) => {
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
         const number = targetPlayer?.number;
@@ -375,137 +426,123 @@ export default function Events({
         const actor = name ? `${number ? `#${number} ` : ""}${name}` : "";
 
         return (
-          <Card key={event.id}>
-            <CardContent>
+          <TimelineCard key={event.id} minute={event.minute}>
+            <Typography sx={{ minWidth: 0, display: "flex", gap: 2 }}>
+              <img
+                src={
+                  event.kind === "penalty_kick"
+                    ? PenaltyKick
+                    : event.kind === "yellow_card"
+                      ? YellowCardIcon
+                      : event.kind === "penalty_save"
+                        ? SaveIcon
+                        : event.ownGoal
+                          ? OwnGoalIcon
+                          : GoalIcon
+                }
+                alt={
+                  event.kind === "penalty_kick"
+                    ? "penalty"
+                    : event.kind.replaceAll("_", " ")
+                }
+                style={{
+                  width: 16,
+                  height: 16,
+                  position: "relative",
+                  top: 6,
+                }}
+              />
+              <span
+                style={{
+                  transform: "translateY(2px)",
+                  textTransform: "uppercase",
+                  fontWeight: "bold",
+                }}
+              >
+                {event.kind === "penalty_kick"
+                  ? "penalty"
+                  : event.kind.replaceAll("_", " ")}{" "}
+              </span>
+              {eventHasTeam ? (
+                <>
+                  <Typography
+                    component="span"
+                    sx={{
+                      color: event.team === "opponent" ? "#fff" : teamColor,
+                      bgcolor:
+                        event.team === "opponent"
+                          ? teamColor
+                          : teamLabelBackground,
+                      fontWeight: 700,
+
+                      px: 1,
+                      py: 0.25,
+                      borderRadius: 0,
+                      overflowWrap: "anywhere",
+                    }}
+                  >
+                    {teamName}
+                  </Typography>
+                  {actor && <Box sx={{ mt: "2px" }}>{`${actor}`}</Box>}{" "}
+                </>
+              ) : name ? (
+                actor
+              ) : (
+                ""
+              )}
+            </Typography>
+
+            {event.note && (
+              <Typography
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                  order: 2,
+                  lineHeight: 1.2,
+                  fontSize: 14,
+                  mt: "5px",
+                  "@media (max-width: 1199px)": {
+                    flexBasis: "100%",
+                    order: 3,
+                  },
+                }}
+              >
+                {event.note}
+              </Typography>
+            )}
+            {canEditClub && (
               <Stack
                 direction="row"
-                alignItems="flex-start"
-                gap={2}
-                flexWrap="wrap"
+                sx={{
+                  order: 3,
+                  "@media (max-width: 1199px)": { order: 2 },
+                }}
               >
-                <Chip
+                <Button onClick={() => editEvent(event)}>Edit</Button>
+                <Button
+                  color="error"
                   sx={{
-                    height: 28,
+                    order: 3,
+                    "@media (max-width: 1199px)": { order: 2 },
                   }}
-                  label={
-                    event.minute == null ? "Time Unknown" : `${event.minute}′`
+                  onClick={() =>
+                    update(
+                      updateMatchEvents(
+                        data,
+                        match.id,
+                        data.events.filter((e) => e.id !== event.id),
+                      ),
+                    )
                   }
-                />
-                <Typography sx={{ minWidth: 0, display: "flex", gap: 2 }}>
-                  <img
-                    src={
-                      event.kind === "penalty_kick"
-                        ? WhistleIcon
-                        : event.kind === "yellow_card"
-                          ? YellowCardIcon
-                          : event.kind === "penalty_save"
-                            ? SaveIcon
-                            : event.ownGoal
-                              ? OwnGoalIcon
-                              : GoalIcon
-                    }
-                    alt={
-                      event.kind === "penalty_kick"
-                        ? "penalty"
-                        : event.kind.replaceAll("_", " ")
-                    }
-                    style={{
-                      width: 16,
-                      height: 16,
-                      position: "relative",
-                      top: 6,
-                    }}
-                  />
-                  <span
-                    style={{
-                      transform: "translateY(2px)",
-                      textTransform: "uppercase",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    {event.kind === "penalty_kick"
-                      ? "penalty"
-                      : event.kind.replaceAll("_", " ")}{" "}
-                  </span>
-                  {eventHasTeam ? (
-                    <>
-                      <Typography
-                        component="span"
-                        sx={{
-                          color: event.team === "opponent" ? "#fff" : teamColor,
-                          bgcolor:
-                            event.team === "opponent"
-                              ? teamColor
-                              : teamLabelBackground,
-                          fontWeight: 700,
-
-                          px: 1,
-                          py: 0.25,
-                          borderRadius: 0,
-                          overflowWrap: "anywhere",
-                        }}
-                      >
-                        {teamName}
-                      </Typography>
-                      {actor && <Box sx={{ mt: "2px" }}>{`${actor}`}</Box>}{" "}
-                    </>
-                  ) : name ? (
-                    actor
-                  ) : (
-                    ""
-                  )}
-                </Typography>
-
-                <Typography
-                  sx={{
-                    flex: 1,
-                    minWidth: 0,
-                    order: 2,
-                    lineHeight: 1.2,
-                    fontSize: 14,
-                    mt: "5px",
-                    "@media (max-width: 1199px)": {
-                      flexBasis: "100%",
-                      order: 3,
-                    },
-                  }}
                 >
-                  {event.note}
-                </Typography>
-                {canEditClub && (
-                  <Stack
-                    direction="row"
-                    sx={{
-                      order: 3,
-                      "@media (max-width: 1199px)": { order: 2 },
-                    }}
-                  >
-                    <Button onClick={() => editEvent(event)}>Edit</Button>
-                    <Button
-                      color="error"
-                      sx={{
-                        order: 3,
-                        "@media (max-width: 1199px)": { order: 2 },
-                      }}
-                      onClick={() =>
-                        update(
-                          updateMatchEvents(
-                            data,
-                            match.id,
-                            data.events.filter((e) => e.id !== event.id),
-                          ),
-                        )
-                      }
-                    >
-                      Remove
-                    </Button>
-                  </Stack>
-                )}
+                  Remove
+                </Button>
               </Stack>
-            </CardContent>
-          </Card>
+            )}
+          </TimelineCard>
         );
       })}
+      <TimelineBoundary minute={50} label="FULL TIME" />
     </Stack>
   );
 }
