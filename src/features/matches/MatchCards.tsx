@@ -1,18 +1,16 @@
-import { CardContent, Chip, Stack, Typography } from "@mui/material";
+import { Box, CardContent, Chip, Stack, Typography } from "@mui/material";
 import type { ClubData, Match } from "../../model";
-import { displayScore, issues, scoreResult } from "../../model";
+import { issues, scoreResult } from "../../model";
 import { opponentFor, opponentName, seasonName } from "../../clubView";
 import OpponentCrest from "../../components/OpponentCrest";
 import { InteractiveCard } from "../../components/layout";
-import WhiteKitImage from "../../img/white-front.png";
-import BlackKitImage from "../../img/black-front.png";
-import { matchLocation } from "../../matchLocation";
 import moment from "moment";
 
 type Props = { data: ClubData; match: Match; onOpen: () => void };
 
 export function MatchSummaryCard({ data, match, onOpen }: Props) {
   const result = scoreResult(match);
+  const date = moment(match.date, "YYYY-MM-DD", true);
   const opponent = opponentFor(data, match);
   return (
     <InteractiveCard onClick={onOpen}>
@@ -36,30 +34,35 @@ export function MatchSummaryCard({ data, match, onOpen }: Props) {
             }
           />
         </Stack>
-        <Stack direction="row" alignItems="center" gap={1.5} sx={{ my: 1 }}>
+        <Box sx={{
+          display: "grid",
+          gridTemplateColumns: "26px minmax(0, 1fr) auto",
+          alignItems: "center",
+          gap: 1,
+          my: 1,
+          pb: 1.25,
+          borderBottom: 1,
+          borderColor: "divider",
+        }}>
+          <Box component="img" src="/crests/tbfc.png" alt="" sx={{ width: 26, height: 26, objectFit: "contain" }} />
+          <Typography variant="body2" fontWeight={700}>Turf Burners FC</Typography>
+          <Typography align="right" fontWeight={700}>{match.goalsFor}</Typography>
           <OpponentCrest
-            key={opponent?.crestUrl ?? ""}
             url={opponent?.crestUrl}
-            compact
+            size={26}
             teamId={opponent?.id}
             teamName={opponent?.name}
           />
-          <Typography variant="h6">{opponentName(data, match)}</Typography>
-        </Stack>
-        <Typography variant="h5" color="primary">
-          {displayScore(match)}
-        </Typography>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 1, display: "flex", alignItems: "center", fontSize: 12 }}
-        >
-          <img
-            src={match.kit === "White" ? WhiteKitImage : BlackKitImage}
-            alt={`${match.kit} kit`}
-            style={{ width: 30, height: 30, marginRight: 5 }}
-          />
-          {matchLocation(match)}
+          <Typography variant="body2" fontWeight={700}>{opponentName(data, match)}</Typography>
+          <Typography align="right" fontWeight={700}>{match.goalsAgainst}</Typography>
+        </Box>
+        {match.shootoutFor != null && match.shootoutAgainst != null && (
+          <Typography variant="caption" color="text.secondary">
+            Penalties {match.shootoutFor}–{match.shootoutAgainst}
+          </Typography>
+        )}
+        <Typography variant="body2" color="text.secondary">
+          {date.isValid() ? date.format("MMM D, YYYY") : "Date TBD"}
         </Typography>
         {issues(match).length > 0 && (
           <Chip

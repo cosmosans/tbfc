@@ -1,10 +1,10 @@
+import { loadSound } from "../../loadSound";
 import { useEffect, useRef } from "react";
 
-export function useGoalSound(matchInProgress: boolean) {
+export function useGoalSound(matchInProgress: boolean, soundsEnabled: boolean) {
   const play = useRef<() => void>(() => {});
   const playWhistle = useRef<() => void>(() => {});
-  const enable = useRef<() => Promise<boolean>>(async () => false);
-  const disable = useRef<() => void>(() => {});
+  const setEnabled = useRef<(enabled: boolean) => void>(() => {});
   const setStadiumActive = useRef<(active: boolean) => void>(() => {});
   useEffect(() => {
     if (!window.AudioContext) return;
@@ -25,12 +25,7 @@ export function useGoalSound(matchInProgress: boolean) {
     let whistlePlayback = Promise.resolve();
 
     function prepare() {
-      clip ??= fetch("/audio/tbfc-goal.mp3", { signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error("Goal sound unavailable");
-          return response.arrayBuffer();
-        })
-        .then((bytes) => context.decodeAudioData(bytes))
+      clip ??= loadSound(context, "/audio/tbfc-goal.mp3", controller.signal)
         .catch(() => {
           clip = undefined;
           return null;
@@ -38,22 +33,12 @@ export function useGoalSound(matchInProgress: boolean) {
       return clip;
     }
     function prepareStadium() {
-      stadiumClip ??= fetch("/audio/stadium.mp3", { signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error("Stadium sound unavailable");
-          return response.arrayBuffer();
-        })
-        .then((bytes) => context.decodeAudioData(bytes))
+      stadiumClip ??= loadSound(context, "/audio/stadium.mp3", controller.signal)
         .catch(() => { stadiumClip = undefined; return null; });
       return stadiumClip;
     }
     function prepareWhistle() {
-      whistleClip ??= fetch("/audio/whistle.mp3", { signal: controller.signal })
-        .then((response) => {
-          if (!response.ok) throw new Error("Whistle sound unavailable");
-          return response.arrayBuffer();
-        })
-        .then((bytes) => context.decodeAudioData(bytes))
+      whistleClip ??= loadSound(context, "/audio/whistle.mp3", controller.signal)
         .catch(() => {
           whistleClip = undefined;
           return null;
@@ -94,18 +79,22 @@ export function useGoalSound(matchInProgress: boolean) {
       if (shouldPlay) startStadium();
       else stopStadium();
     };
-    enable.current = async () => {
-      try {
-        await context.resume();
-        enabled = context.state === "running";
+    function resume() {
+      if (enabled && context.state !== "running") void context.resume().catch(() => {});
+    }
+    function resumeWhenVisible() {
+      if (!document.hidden) resume();
+    }
+    window.addEventListener("click", resume, true);
+    window.addEventListener("touchend", resume, true);
+    document.addEventListener("visibilitychange", resumeWhenVisible);
+    setEnabled.current = (value) => {
+      enabled = value;
+      if (enabled) {
+        resume();
         startStadium();
-        return enabled;
-      } catch {
-        return false;
+        return;
       }
-    };
-    disable.current = () => {
-      enabled = false;
       generation++;
       stopStadium();
       source?.stop();
@@ -115,6 +104,7 @@ export function useGoalSound(matchInProgress: boolean) {
     };
     play.current = () => {
       if (!enabled) return;
+      resume();
       const requestGeneration = generation;
       playback = playback
         .then(async () => {
@@ -142,6 +132,7 @@ export function useGoalSound(matchInProgress: boolean) {
     };
     playWhistle.current = () => {
       if (!enabled) return;
+      resume();
       const requestGeneration = generation;
       whistlePlayback = whistlePlayback
         .then(async () => {
@@ -171,8 +162,10 @@ export function useGoalSound(matchInProgress: boolean) {
       active = false;
       play.current = () => {};
       playWhistle.current = () => {};
-      enable.current = async () => false;
-      disable.current = () => {};
+      window.removeEventListener("click", resume, true);
+      window.removeEventListener("touchend", resume, true);
+      document.removeEventListener("visibilitychange", resumeWhenVisible);
+      setEnabled.current = () => {};
       setStadiumActive.current = () => {};
       stopStadium();
       if (source) source.stop();
@@ -184,5 +177,8 @@ export function useGoalSound(matchInProgress: boolean) {
   useEffect(() => {
     setStadiumActive.current(matchInProgress);
   }, [matchInProgress]);
-  return { play, playWhistle, enable, disable };
+  useEffect(() => {
+    setEnabled.current(soundsEnabled);
+  }, [soundsEnabled]);
+  return { play, playWhistle };
 }

@@ -36,6 +36,7 @@ import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
 import PublishingMatchEventDialog from "./components/PublishingMatchEventDialog";
 import DataTransferDialog from "./components/DataTransferDialog";
+import { readSoundPreference, saveSoundPreference } from "./soundPreference";
 import { useGoalSound } from "./features/matches/useGoalSound";
 import MatchEventSnackbar from "./features/matches/MatchEventSnackbar";
 import MatchBanner from "./features/matches/MatchBanner";
@@ -318,15 +319,12 @@ export default function App() {
     match.status === "in_progress" &&
     matchPhase(match, clockTime)?.label !== "HALF TIME"
   );
-  const { play: goalSound, playWhistle, enable: enableGoalSound, disable: disableGoalSound } = useGoalSound(stadiumShouldPlay);
-  const [goalSoundEnabled, setGoalSoundEnabled] = useState(false);
-  async function toggleGoalSound() {
-    if (goalSoundEnabled) {
-      disableGoalSound.current();
-      setGoalSoundEnabled(false);
-    } else if (await enableGoalSound.current()) {
-      setGoalSoundEnabled(true);
-    }
+  const [goalSoundEnabled, setGoalSoundEnabled] = useState(readSoundPreference);
+  const { play: goalSound, playWhistle } = useGoalSound(stadiumShouldPlay, goalSoundEnabled);
+  function toggleGoalSound() {
+    const enabled = !goalSoundEnabled;
+    saveSoundPreference(enabled);
+    setGoalSoundEnabled(enabled);
   }
   const currentEvents = useRef(sourceData.events);
   const currentMatches = useRef(sourceData.matches);
@@ -1253,6 +1251,9 @@ export default function App() {
         />
       )}
       <AdminPanel
+        soundsEnabled={goalSoundEnabled}
+        onSoundToggle={toggleGoalSound}
+        onPreviewGoal={() => goalSound.current()}
         open={adminBackupOpen}
         onClose={() => setAdminBackupOpen(false)}
         authenticated={adminAuthenticated}

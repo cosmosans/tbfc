@@ -1,4 +1,6 @@
+import { loadSound } from "../../loadSound";
 import { useEffect, useRef } from "react";
+import { readSoundPreference } from "../../soundPreference";
 import type { Board } from "../../model";
 import Kick1 from "../../audio/soccer-ball-kick.mp3";
 import Kick2 from "../../audio/soccer-ball-kick-2.mp3";
@@ -25,7 +27,7 @@ export function useBallMotion(
 
   function playKick() {
     const audio = kickAudio.current;
-    if (!audio?.buffers.length) return;
+    if (!readSoundPreference() || !audio?.buffers.length) return;
     const count = audio.buffers.length;
     const index = lastKick.current < 0
       ? Math.floor(Math.random() * count)
@@ -46,11 +48,7 @@ export function useBallMotion(
     const audio = { context, buffers: [] as AudioBuffer[] };
     kickAudio.current = audio;
     let active = true;
-    void Promise.all(KICK_SOUNDS.map(async (url) => {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Could not load kick sound: ${url}`);
-      return context.decodeAudioData(await response.arrayBuffer());
-    })).then((buffers) => {
+    void Promise.all(KICK_SOUNDS.map((url) => loadSound(context, url))).then((buffers) => {
       if (active) audio.buffers = buffers;
     }).catch(() => {});
     return () => {

@@ -5,14 +5,17 @@ import {
   ButtonBase,
   Card,
   CardContent,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   Stack,
   Typography,
 } from "@mui/material";
-import type { ClubData, Formation, Match, Player, Position } from "../../model";
+import type { ClubData, Formation, Match, Position } from "../../model";
+import { useState } from "react";
 import { defaultLineup } from "../../store";
 import { LineupGrid } from "../../components/layout";
 import {
@@ -34,6 +37,7 @@ export default function LineupEditor({
   match: Match;
   update: (data: ClubData) => void;
 }) {
+  const [activeSquadOnly, setActiveSquadOnly] = useState(false);
   const lineup =
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
   if (!canEditClub) {
@@ -106,15 +110,20 @@ export default function LineupEditor({
         lineup.bench.includes(player.id) &&
         !lineup.starters.includes(player.id),
     )
+    .sort((a, b) => {
+      const aFloats = !lineup.benchPositions?.[a.id];
+      const bFloats = !lineup.benchPositions?.[b.id];
+      return Number(aFloats) - Number(bFloats) || byPlayerNumber(a, b);
+    });
+  const eligiblePlayers = data.players
+    .filter((player) => !activeSquadOnly || player.active)
     .sort(byPlayerNumber);
-  const unassignedActivePlayers = data.players
+  const availablePlayers = eligiblePlayers
     .filter(
       (player) =>
-        player.active &&
         !lineup.starters.includes(player.id) &&
         !lineup.bench.includes(player.id),
-    )
-    .sort(byPlayerNumber);
+    );
   const duplicated = lineup.starters.filter(
     (id, index) => id && lineup.starters.indexOf(id) !== index,
   );
@@ -125,16 +134,6 @@ export default function LineupEditor({
     }
   });
   const slots = formationSlots[lineup.formation];
-  const candidatesFor = (position: Position) =>
-    [...data.players].sort((a, b) => {
-      const rank = (player: Player) =>
-        player.preferredPosition === position
-          ? 0
-          : player.secondaryPosition === position
-            ? 1
-            : 2;
-      return rank(a) - rank(b) || a.name.localeCompare(b.name);
-    });
   return (
     <Stack gap={2}>
       {missingStarters && (
@@ -182,6 +181,13 @@ export default function LineupEditor({
                 {lineup.starters.map((id, index) => {
                   const slot = slots[index];
                   const label = slot;
+                  const candidates = eligiblePlayers.filter(
+                    (player) => player.preferredPosition === slot || player.secondaryPosition === slot,
+                  );
+                  const hasUnlistedStarter = id && !candidates.some((player) => player.id === id);
+                  const savedPlayer = hasUnlistedStarter
+                    ? data.players.find((player) => player.id === id)
+                    : undefined;
                   return (
                     <FormControl key={index} size="small" fullWidth>
                       <InputLabel>{label}</InputLabel>
@@ -192,7 +198,12 @@ export default function LineupEditor({
                         onChange={(e) => assignStarter(index, e.target.value)}
                       >
                         <MenuItem value="">Empty</MenuItem>
-                        {candidatesFor(slot).map((p) => (
+                        {hasUnlistedStarter && (
+                          <MenuItem value={id} disabled sx={{ display: "none" }}>
+                            {savedPlayer ? `#${savedPlayer.number} ${savedPlayer.name}` : "Unknown player"}
+                          </MenuItem>
+                        )}
+                        {candidates.map((p) => (
                           <MenuItem key={p.id} value={p.id}>
                             #{p.number} {p.name}
                             {p.preferredPosition === slot
@@ -227,7 +238,6 @@ export default function LineupEditor({
                       sx={{
                         display: "flex",
                         gap: 1,
-                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
@@ -272,7 +282,7 @@ export default function LineupEditor({
                           />
                         </LineupNameplate>
                       </ButtonBase>
-                      <FormControl size="small" sx={{}}>
+                      <FormControl size="small" sx={{ flex: 1, minWidth: 0 }}>
                         <InputLabel id={`bench-position-${player.id}`}>
                           Substitute For
                         </InputLabel>
@@ -285,7 +295,7 @@ export default function LineupEditor({
                           disabled={!canEditClub}
                           onChange={(event) => {
                             const benchPositions = { ...lineup.benchPositions };
-                            if (event.target.value)
+                            if (event.target.value !== "Floater")
                               benchPositions[player.id] = event.target
                                 .value as Position;
                             else delete benchPositions[player.id];
@@ -328,11 +338,24 @@ export default function LineupEditor({
           />
           <Card>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Active Roster ({unassignedActivePlayers.length})
-              </Typography>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" sx={{ mb: 1 }}>
+                <Typography variant="h6">
+                  Available Players ({availablePlayers.length})
+                </Typography>
+                <FormControlLabel
+                  sx={{ ml: "auto", mr: 0 }}
+                  label="Active Squad Only"
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={activeSquadOnly}
+                      onChange={(_, checked) => setActiveSquadOnly(checked)}
+                    />
+                  }
+                />
+              </Stack>
               <Stack direction="row" gap={1} flexWrap="wrap">
-                {unassignedActivePlayers.map((player) => (
+                {availablePlayers.map((player) => (
                   <ButtonBase
                     key={player.id}
                     type="button"
@@ -368,9 +391,9 @@ export default function LineupEditor({
                     </LineupNameplate>
                   </ButtonBase>
                 ))}
-                {unassignedActivePlayers.length === 0 && (
+                {availablePlayers.length === 0 && (
                   <Typography color="text.secondary">
-                    All active players are assigned.
+                    All available players are assigned.
                   </Typography>
                 )}
               </Stack>

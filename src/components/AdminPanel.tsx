@@ -30,6 +30,9 @@ export default function AdminPanel({
   onAuthChange,
   onManageModeChange,
   onBackupTools,
+  soundsEnabled,
+  onSoundToggle,
+  onPreviewGoal,
 }: {
   open: boolean;
   onClose: () => void;
@@ -37,6 +40,9 @@ export default function AdminPanel({
   manageMode: boolean;
   onAuthChange: (authenticated: boolean) => void;
   onManageModeChange: (enabled: boolean) => Promise<void>;
+  soundsEnabled: boolean;
+  onSoundToggle: () => void;
+  onPreviewGoal: () => void;
   onBackupTools: () => void;
 }) {
   const [checking, setChecking] = useState(false);
@@ -180,6 +186,11 @@ export default function AdminPanel({
       <DialogTitle>Admin Panel</DialogTitle>
       <DialogContent>
         <Stack gap={2} sx={{ pt: 1 }}>
+          <FormControlLabel
+            label="App sounds"
+            control={<Switch checked={soundsEnabled} onChange={onSoundToggle} />}
+          />
+          <Button disabled={!soundsEnabled} onClick={onPreviewGoal}>Play goal sound</Button>
           {checking && (
             <Typography variant="body2">Checking access…</Typography>
           )}

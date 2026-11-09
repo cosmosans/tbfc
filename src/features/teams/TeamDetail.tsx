@@ -134,7 +134,7 @@ export default function TeamDetail({
       )}
       <section>
         <Typography variant="h5" sx={{ mb: 2 }}>
-          Match History · All Seasons
+          Match History
         </Typography>
         {played.length ? (
           <CardGrid>
