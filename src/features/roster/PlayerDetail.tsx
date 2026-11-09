@@ -27,9 +27,6 @@ import {
   PlayerCardInner,
   PlayerCardFront,
   PlayerPlaceholder,
-  PlayerName,
-  PlayerNumber,
-  PlayerPositions,
 } from "./PlayerCard.styles";
 import type { ClubData, Player } from "../../model";
 import { displayScore } from "../../model";
@@ -163,11 +160,13 @@ export default function PlayerDetail({
             }}
           >
             {player.photoUrl ? (
-              <img
+              <Box
+                component="img"
                 src={player.photoUrl}
                 alt={player.name}
-                style={{
-                  maxWidth: 125,
+                sx={{
+                  maxWidth: "min(185px, 100%)",
+                  height: "auto",
                 }}
               />
             ) : (
