@@ -58,6 +58,7 @@ export type Player = {
   number: string;
   active: boolean;
   captain: boolean;
+  dateJoined?: string;
   playerType?: PlayerType | "";
   photoUrl?: string;
   bio?: string;

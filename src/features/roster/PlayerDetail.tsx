@@ -7,6 +7,11 @@ import { careerEvents, playerStats } from "./playerStats";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Checkbox,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Box,
   Button,
   Card,
@@ -19,15 +24,10 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
+  Tooltip,
   Typography,
 } from "@mui/material";
-import PlayerSummary from "./PlayerSummary";
-import {
-  PlayerCardFrame,
-  PlayerCardInner,
-  PlayerCardFront,
-  PlayerPlaceholder,
-} from "./PlayerCard.styles";
+import { PlayerPlaceholder } from "./PlayerCard.styles";
 import type { ClubData, Player } from "../../model";
 import { displayScore } from "../../model";
 import moment from "moment";
@@ -48,6 +48,15 @@ type HistorySort =
   | "saves";
 const statIndex = { goals: 0, assists: 1, saves: 2, cards: 3 } as const;
 
+const filterLabels = {
+  goals: "Goals",
+  assists: "Assists",
+  cards: "Yellow Cards",
+  saves: "Penalty Saves",
+} as const;
+type StatFilter = keyof typeof filterLabels;
+const filterKeys = Object.keys(filterLabels) as StatFilter[];
+
 export default function PlayerDetail({
   player,
   data,
@@ -58,11 +67,15 @@ export default function PlayerDetail({
   update: (data: ClubData) => void;
 }) {
   const [bioOpen, setBioOpen] = useState(false);
+  const [filters, setFilters] = useState<StatFilter[]>([]);
   const [historySort, setHistorySort] = useState<HistorySort>("date");
   const [descending, setDescending] = useState(true);
+
   const isGoalkeeper =
     player.preferredPosition === "GK" || player.secondaryPosition === "GK";
-  const events = careerEvents(data).filter((event) => event.playerId === player.id);
+  const events = careerEvents(data).filter(
+    (event) => event.playerId === player.id,
+  );
   const counts = playerStats(player, events);
   const history = data.matches
     .filter(
@@ -88,6 +101,11 @@ export default function PlayerDetail({
         stats: playerStats(player, matchEvents),
       };
     })
+    .filter(
+      (row) =>
+        !filters.length ||
+        filters.some((key) => row.stats[statIndex[key]][1] > 0),
+    )
     .sort((a, b) => {
       const comparison =
         historySort === "date"
@@ -134,167 +152,177 @@ export default function PlayerDetail({
   const sortDirection = (key: HistorySort): "asc" | "desc" | false =>
     historySort === key ? (descending ? "desc" : "asc") : false;
   return (
-    <Stack gap={3}>
-      <PlayerCardFrame>
-        <PlayerCardInner flipped={false}>
-          <PlayerCardFront as="header" aria-label={player.name}>
-            <PlayerSummary player={player} events={events} />
-          </PlayerCardFront>
-        </PlayerCardInner>
-      </PlayerCardFrame>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: {
-            xs: "repeat(2, 1fr)",
-            sm: `repeat(${isGoalkeeper ? 4 : 3}, 1fr)`,
-          },
-          gap: 2,
-        }}
-      >
-        <Card>
-          <CardContent
+    <Stack gap={3} sx={{ pt: 3 }}>
+      <Card>
+        <CardContent
+          sx={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {player.photoUrl ? (
+            <Box
+              component="img"
+              src={player.photoUrl}
+              alt={player.name}
+              sx={{
+                marginRight: 2,
+                width: {
+                  xs: "75px",
+                  sm: "120px",
+                  md: "150px",
+                },
+                height: "auto",
+              }}
+            />
+          ) : (
+            <PlayerPlaceholder />
+          )}
+          <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
+              flex: 1,
             }}
           >
-            {player.photoUrl ? (
-              <Box
-                component="img"
-                src={player.photoUrl}
-                alt={player.name}
-                sx={{
-                  maxWidth: "min(185px, 100%)",
-                  height: "auto",
-                }}
-              />
-            ) : (
-              <PlayerPlaceholder />
-            )}
-
-            <Typography
-              sx={{
-                gridArea: "number",
-                color: "#d44f25",
-                fontSize: "122px",
-                lineHeight: 1,
-                letterSpacing: "-.07em",
-                fontWeight: 900,
-                marginRight: 2,
-              }}
-            >
-              {player.number}
-            </Typography>
-
-            <Box>
+            <Box sx={{ display: "flex" }}>
               <Typography
                 sx={{
-                  fontSize: 42,
-                  fontWeight: 800,
+                  gridArea: "number",
+                  color: "#d44f25",
+                  fontSize: { xs: 72, md: "100px" },
+                  lineHeight: 1,
+                  letterSpacing: "-.07em",
+                  fontWeight: 900,
+                  marginRight: 2,
+                  mb: {
+                    xs: -2,
+                    md: -3,
+                  },
+                  display: {
+                    sm: `block`,
+                  },
                 }}
               >
-                {player.name}
+                {player.number}
               </Typography>
-
+              <Box>
+                <Box>
+                  <Typography
+                    sx={{
+                      fontSize: {
+                        xs: 32,
+                        md: 42,
+                      },
+                      fontWeight: 800,
+                    }}
+                  >
+                    {player.name}
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: 16,
+                      textTransform: "uppercase",
+                      fontWeight: 700,
+                      mt: -1,
+                    }}
+                  >
+                    {player.playerType}{" "}
+                    <span style={{ fontWeight: "normal", opacity: 0.6 }}>
+                      / {player.preferredPosition}
+                    </span>
+                  </Typography>
+                  {player.dateJoined && (
+                    <Typography variant="body2" color="text.secondary">
+                      Joined{" "}
+                      <time dateTime={player.dateJoined}>
+                        {moment(player.dateJoined, "YYYY-MM-DD").format(
+                          "MMM D, YYYY",
+                        )}
+                      </time>
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                marginLeft: 0.5,
+              }}
+            >
               <Box
                 sx={{
                   display: "flex",
-                  alignItems: "center",
                   flexWrap: "wrap",
-                  mt: -1,
-                  gap: 1,
+                  gap: 5,
+                  transform: "translateY(5px)",
                 }}
               >
-                {player.playerType && (
-                  <Typography
-                    variant="body2"
-                    color="white"
-                    sx={{
-                      fontSize: 18,
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    {player.playerType}
-                  </Typography>
-                )}
+                {counts
+                  .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
+                  .map(([label, count]) => (
+                    <Tooltip
+                      key={label}
+                      title={label === "PK Saves" ? "Penalty Saves" : label}
+                      describeChild
+                      arrow
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mt: {
+                          xs: 0,
+                          sm: 1,
+                        },
+                      }}
+                    >
+                      <Box>
+                        {label === "Goals" ? (
+                          <img
+                            src={GoalIcon}
+                            alt="Goals"
+                            style={{
+                              marginRight: 8,
+                              width: 25,
+                              height: 25,
+                              transform: "translateY(-1px)",
+                            }}
+                          />
+                        ) : label === "Assists" ? (
+                          <img
+                            src={AssistIcon}
+                            alt="Assists"
+                            style={{ marginRight: 8, width: 20, height: 20 }}
+                          />
+                        ) : label === "PK Saves" ? (
+                          <img
+                            src={SaveIcon}
+                            alt="PK Saves"
+                            style={{ marginRight: 8, width: 20, height: 20 }}
+                          />
+                        ) : label === "Yellow Cards" ? (
+                          <img
+                            src={CardIcon}
+                            alt="Yellow Cards"
+                            style={{ marginRight: 8, width: 20, height: 20 }}
+                          />
+                        ) : null}
 
-                <Typography
-                  sx={{
-                    display: "block",
-                    color: "#777",
-                    fontSize: 18,
-                    textTransform: "uppercase",
-                    lineHeight: 1.2,
-                    fontWeight: 800,
-                  }}
-                >
-                  {[player.preferredPosition, player.secondaryPosition]
-                    .filter(Boolean)
-                    .join(" / ") || ""}
-                </Typography>
+                        <Typography
+                          variant="h4"
+                          color="primary"
+                          sx={{ paddingRight: 1 }}
+                        >
+                          {count}
+                        </Typography>
+                      </Box>
+                    </Tooltip>
+                  ))}
               </Box>
             </Box>
-          </CardContent>
-        </Card>
+          </Box>
+        </CardContent>
+      </Card>
 
-        {counts
-          .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
-          .map(([label, count]) => (
-            <Card key={label}>
-              <CardContent
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                {label === "Goals" ? (
-                  <img
-                    src={GoalIcon}
-                    alt="Goals"
-                    style={{ marginRight: 8, width: 30, height: 30 }}
-                  />
-                ) : label === "Assists" ? (
-                  <img
-                    src={AssistIcon}
-                    alt="Assists"
-                    style={{ marginRight: 8, width: 30, height: 30 }}
-                  />
-                ) : label === "PK Saves" ? (
-                  <img
-                    src={SaveIcon}
-                    alt="PK Saves"
-                    style={{ marginRight: 8, width: 30, height: 30 }}
-                  />
-                ) : label === "Yellow Cards" ? (
-                  <img
-                    src={CardIcon}
-                    alt="Yellow Cards"
-                    style={{ marginRight: 8, width: 30, height: 30 }}
-                  />
-                ) : null}
-
-                <Typography
-                  variant="h4"
-                  color="primary"
-                  sx={{ paddingRight: 1 }}
-                >
-                  {count}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  {label}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))}
-      </Box>
-      <Typography variant="body2" color="text.secondary">
-        Career totals count recorded events from live and completed matches.
-      </Typography>
       <Card>
         <CardContent>
           <Stack
@@ -325,13 +353,49 @@ export default function PlayerDetail({
         </CardContent>
       </Card>
       <Stack>
-        <PanelHeader
-          title="Match History"
-          context="Matches with a saved lineup selection or a recorded event."
-        />
+        <PanelHeader title="Match History">
+          <FormControl size="small" sx={{ width: { xs: "100%", sm: 280 } }}>
+            <InputLabel id="history-filter-label" shrink>
+              Only Matches With
+            </InputLabel>
+            <Select<StatFilter[]>
+              multiple
+              displayEmpty
+              notched
+              labelId="history-filter-label"
+              label="Only Matches With"
+              value={filters}
+              onChange={({ target: { value } }) => {
+                setFilters(
+                  typeof value === "string"
+                    ? filterKeys.filter((key) => value.split(",").includes(key))
+                    : value,
+                );
+              }}
+              renderValue={(keys) =>
+                keys.length
+                  ? keys.map((key) => filterLabels[key]).join(", ")
+                  : "All Matches"
+              }
+            >
+              {filterKeys.map((key) => (
+                <MenuItem key={key} value={key}>
+                  <Checkbox
+                    checked={filters.includes(key)}
+                    size="small"
+                    tabIndex={-1}
+                  />
+                  {filterLabels[key]}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </PanelHeader>
         {!history.length ? (
           <Typography color="text.secondary">
-            No match history recorded yet.
+            {filters.length
+              ? "No matches with the selected stats."
+              : "No match history recorded yet."}
           </Typography>
         ) : (
           <TableContainer
@@ -388,7 +452,14 @@ export default function PlayerDetail({
                     <TableRow
                       key={match.id}
                       hover
-                      sx={{ "&:last-child td": { borderBottom: 0 } }}
+                      sx={{
+                        position: "relative",
+                        "&:last-child td": { borderBottom: 0 },
+                        "& th a:not(.MuiButton-root)": {
+                          position: "relative",
+                          zIndex: 1,
+                        },
+                      }}
                     >
                       <TableCell sx={{ whiteSpace: "nowrap" }}>
                         <Typography
@@ -418,7 +489,19 @@ export default function PlayerDetail({
                           <Button
                             component={Link}
                             to={`/match/${encodeURIComponent(match.id)}`}
+                            aria-label={`Open match against ${opponentName(data, match)} on ${match.date || "date TBD"}`}
                             sx={{
+                              position: "static",
+                              "&::after": {
+                                content: '""',
+                                position: "absolute",
+                                inset: 0,
+                              },
+                              "&:focus-visible::after": {
+                                outline: "2px solid",
+                                outlineColor: "primary.main",
+                                outlineOffset: -2,
+                              },
                               color: "text.primary",
                               fontWeight: 700,
                               textAlign: "left",

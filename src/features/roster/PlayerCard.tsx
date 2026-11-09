@@ -145,6 +145,14 @@ export default function PlayerCard({
                 />
               </Box>
 
+              <TextField
+                label="Date Joined"
+                size="small"
+                type="date"
+                value={draft.dateJoined ?? ""}
+                onChange={(e) => setDraft({ ...draft, dateJoined: e.target.value || undefined })}
+                slotProps={{ inputLabel: { shrink: true } }}
+              />
               <PlayerTypeSelect value={draft.playerType ?? ""} onChange={(playerType) => setDraft({ ...draft, playerType })} />
               <FormControl size="small">
                 <InputLabel>Status</InputLabel>

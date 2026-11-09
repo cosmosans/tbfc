@@ -3,7 +3,7 @@ import GoalIcon from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
 import SaveIcon from "../../img/gloves.svg";
 import CardIcon from "../../img/cards.svg";
-import { Box, Typography } from "@mui/material";
+import { Box, Tooltip, Typography } from "@mui/material";
 import type { MatchEvent, Player } from "../../model";
 import {
   PlayerPhoto,
@@ -68,35 +68,35 @@ export default function PlayerSummary({
           }}
         >
           {playerStats(player, events).map(([label, count], index) => (
-            <Box
-              component="span"
-              key={label}
-              title={label}
-              aria-label={`${count} ${label}`}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 0.75,
-              }}
-            >
-              <Box
-                component="img"
-                src={[GoalIcon, AssistIcon, SaveIcon, CardIcon][index]}
-                alt=""
-                sx={{
-                  width: { xs: 16, md: 22 },
-                  height: { xs: 16, md: 22 },
-                  objectFit: "contain",
-                }}
-              />
+            <Tooltip key={label} title={label === "PK Saves" ? "Penalty Saves" : label} describeChild arrow>
               <Box
                 component="span"
-                sx={{ fontSize: { xs: 16, md: 24 }, fontWeight: 800 }}
+                aria-label={`${count} ${label}`}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 0.75,
+                }}
               >
-                {count}
+                <Box
+                  component="img"
+                  src={[GoalIcon, AssistIcon, SaveIcon, CardIcon][index]}
+                  alt=""
+                  sx={{
+                    width: { xs: 16, md: 22 },
+                    height: { xs: 16, md: 22 },
+                    objectFit: "contain",
+                  }}
+                />
+                <Box
+                  component="span"
+                  sx={{ fontSize: { xs: 16, md: 24 }, fontWeight: 800 }}
+                >
+                  {count}
+                </Box>
               </Box>
-            </Box>
+            </Tooltip>
           ))}
         </Box>
         <PlayerStatus active={player.active}>

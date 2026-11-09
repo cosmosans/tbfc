@@ -54,6 +54,7 @@ export default function Roster({
   data: ClubData;
   update: (data: ClubData) => void;
 }) {
+  const [dateJoined, setDateJoined] = useState("");
   const [playerType, setPlayerType] = useState<PlayerType | "">("");
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
@@ -120,6 +121,7 @@ export default function Roster({
     setAddOpen(false);
     setName("");
     setNumber("");
+    setDateJoined("");
     setPreferredPosition("");
     setPlayerType("");
   }
@@ -135,6 +137,7 @@ export default function Roster({
           number: number.trim(),
           active: true,
           captain: false,
+          dateJoined: dateJoined || undefined,
           playerType,
           preferredPosition,
           secondaryPosition: "",
@@ -185,6 +188,13 @@ export default function Roster({
                 fullWidth
                 value={number}
                 onChange={(e) => setNumber(e.target.value)}
+              />
+              <TextField
+                label="Date Joined"
+                type="date"
+                value={dateJoined}
+                onChange={(e) => setDateJoined(e.target.value)}
+                slotProps={{ inputLabel: { shrink: true } }}
               />
               <PlayerTypeSelect value={playerType} onChange={setPlayerType} />
               <PositionSelect
