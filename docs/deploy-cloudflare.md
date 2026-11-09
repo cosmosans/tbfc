@@ -23,7 +23,7 @@ The GitHub app installation has access to `cosmosans/tbfc`; pushes to `main` tri
 ## Private Scrapbook
 
 Match chats are now private. Public `GET /api/club` responses omit every match's
-`chat` field, even when a scrapbook session is present. The Admin Panel uses the club secret to create a host-specific session. Manage Mode allows publishing, and the private backup endpoint returns chats. Localhost uses the same flow through the Vite proxy.
+`chat` field, even when a scrapbook session is present. The Admin Panel uses the club secret to create a host-specific session. Manager Mode allows publishing, and the private backup endpoint returns chats. Localhost uses the same flow through the Vite proxy.
 
 Before deploying this version:
 

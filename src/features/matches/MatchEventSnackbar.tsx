@@ -20,6 +20,39 @@ type Props = {
   onDismiss: () => void;
 };
 
+export function PlayerNameNumberInline({ player }: { player: Player }) {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Typography
+        sx={(theme) => ({
+          color: theme.palette.primary.main,
+          fontWeight: 700,
+          fontSize: 22,
+        })}
+      >
+        #{player.number || ""}
+      </Typography>
+
+      <Typography
+        component="span"
+        sx={{
+          color: "white",
+          fontWeight: 700,
+          fontSize: 16,
+          paddingLeft: 0.5,
+        }}
+      >
+        {player.name}
+      </Typography>
+    </Box>
+  );
+}
+
 export default function MatchEventSnackbar({
   notice,
   player,
@@ -38,7 +71,9 @@ export default function MatchEventSnackbar({
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       sx={{
         boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
-        bottom: `calc(${publishBarVisible ? 150 : 68}px + env(safe-area-inset-bottom, 0px))`,
+        bottom: `calc(${publishBarVisible ? 150 : 45}px + env(safe-area-inset-bottom, 0px))`,
+        left: 25,
+        right: 25,
         justifyContent: "normal",
       }}
     >
@@ -184,20 +219,7 @@ export default function MatchEventSnackbar({
             }}
           >
             {!creditedToOpponent && player?.number && (
-              <>
-                #{player?.number || ""}{" "}
-                <Typography
-                  component="span"
-                  sx={{
-                    color: "white",
-                    fontWeight: 700,
-                    fontSize: 16,
-                    paddingLeft: 0.5,
-                  }}
-                >
-                  {player?.name}
-                </Typography>
-              </>
+              <PlayerNameNumberInline player={player} />
             )}
           </Typography>
         </Box>

@@ -1,4 +1,5 @@
 import TimelineMarker from "../../components/TimelineMarker";
+import AddIcon from "@mui/icons-material/Add";
 import { useState, type ReactNode } from "react";
 import { goalTotals, updateMatchEvents } from "./eventScore";
 import {
@@ -22,15 +23,17 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { getContrastRatio } from "@mui/material/styles";
 import type { ClubData, Match, MatchEvent } from "../../model";
+import OpponentCrest from "../../components/OpponentCrest";
 import { opponentFor, opponentName } from "../../clubView";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
+import WhistleIcon from "../../img/whistle.svg";
 import PenaltyKick from "../../img/penalty-kick.svg";
 import OwnGoalIcon from "../../img/bomb.svg";
 import YellowCardIcon from "../../img/cards.svg";
 import SaveIcon from "../../img/gloves.svg";
 import { canEditClub } from "../../editAccess";
+import { PlayerNameNumberInline } from "./MatchEventSnackbar";
 
 function TimelineCard({
   minute,
@@ -43,7 +46,7 @@ function TimelineCard({
     <Card sx={{ py: 0.5 }}>
       <CardContent sx={{ py: 2, "&:last-child": { pb: 2 } }}>
         <Stack direction="row" alignItems="flex-start" gap={2} flexWrap="wrap">
-          <TimelineMarker minute={minute} />
+          <TimelineMarker compact={true} minute={minute} />
           {children}
         </Stack>
       </CardContent>
@@ -51,7 +54,13 @@ function TimelineCard({
   );
 }
 
-function TimelineBoundary({ minute, label }: { minute: number; label: string }) {
+function TimelineBoundary({
+  minute,
+  label,
+}: {
+  minute: number;
+  label: string;
+}) {
   return (
     <TimelineCard minute={minute}>
       <Typography
@@ -61,9 +70,13 @@ function TimelineBoundary({ minute, label }: { minute: number; label: string }) 
           gap: 2,
           minHeight: 28,
           fontWeight: 700,
+          fontSize: {
+            xs: 12,
+            sm: 14,
+          },
         }}
       >
-        <img src={PenaltyKick} alt="" width={16} height={16} />
+        <img src={WhistleIcon} alt="" width={16} height={16} />
         {label}
       </Typography>
     </TimelineCard>
@@ -79,6 +92,7 @@ export default function Events({
   match: Match;
   update: (data: ClubData) => void;
 }) {
+  const [editorOpen, setEditorOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<MatchEvent | null>(null);
   const [kind, setKind] = useState<MatchEvent["kind"]>("goal");
   const [playerId, setPlayerId] = useState("");
@@ -112,12 +126,14 @@ export default function Events({
         }))
       : []),
   ];
+  const opponent = opponentFor(data, match);
   const events = data.events
     .filter((e) => e.matchId === match.id)
     .sort((a, b) => (a.minute ?? 999) - (b.minute ?? 999));
   const logged = goalTotals(events, match.id);
   function editEvent(event: MatchEvent) {
     setEditingEvent(event);
+    setEditorOpen(true);
     setKind(event.kind);
     setPlayerId(event.teamGoal ? "team" : (event.playerId ?? ""));
     setEventTeam(event.team ?? "tbfc");
@@ -126,6 +142,7 @@ export default function Events({
     setNote(event.note ?? "");
   }
   function closeEditor() {
+    setEditorOpen(false);
     setEditingEvent(null);
     setKind("goal");
     setPlayerId("");
@@ -165,14 +182,21 @@ export default function Events({
           : [...data.events, event],
       ),
     );
-    if (editingEvent) closeEditor();
-    setMinute("");
-    setNote("");
+    closeEditor();
   }
 
   const eventForm = (
-    <Card>
-      <CardContent>
+    <Card
+      sx={{
+        "& .MuiCardContent-root": {
+          paddingTop: `12px !important`,
+          paddingBottom: `12px !important`,
+        },
+      }}
+    >
+      <CardContent
+        sx={{ paddingTop: `12px !important`, paddingBottom: `12px !important` }}
+      >
         <Typography variant="h6" gutterBottom>
           {editingEvent ? "Edit Event" : "Add Event"}
         </Typography>
@@ -308,14 +332,12 @@ export default function Events({
               {note || "Add note"}
             </Typography>
           </Button>
-          {editingEvent && (
-            <Button
-              onClick={closeEditor}
-              sx={{ width: { xs: "100%", md: "auto" } }}
-            >
-              Cancel
-            </Button>
-          )}
+          <Button
+            onClick={closeEditor}
+            sx={{ width: { xs: "100%", md: "auto" } }}
+          >
+            Cancel
+          </Button>
           <Button
             variant="contained"
             onClick={addEvent}
@@ -340,7 +362,7 @@ export default function Events({
   );
 
   return (
-    <Stack gap={2}>
+    <Stack gap={1}>
       {canEditClub && (
         <Dialog
           open={noteOpen}
@@ -385,25 +407,50 @@ export default function Events({
           for, goal events control the score.
         </Alert>
       )}
-      {canEditClub &&
-        (editingEvent ? (
+      {canEditClub && (
+        <>
+          <Box
+            sx={{
+              position: "fixed",
+              bottom:
+                "calc(var(--event-button-bottom, 85px) + env(safe-area-inset-bottom, 0px))",
+              left: 0,
+              right: 0,
+              display: "flex",
+              justifyContent: "center",
+              zIndex: (theme) => theme.zIndex.appBar,
+              pointerEvents: "none",
+            }}
+          >
+            {!editorOpen && (
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                sx={{
+                  pointerEvents: "auto",
+                  boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.5)",
+                }}
+                onClick={() => setEditorOpen(true)}
+              >
+                Add Event
+              </Button>
+            )}
+          </Box>
+
           <Dialog
-            open
+            open={editorOpen}
             onClose={closeEditor}
             fullWidth
             maxWidth="md"
-            aria-label="Edit match event"
+            aria-label={editingEvent ? "Edit match event" : "Add match event"}
           >
             {eventForm}
           </Dialog>
-        ) : (
-          eventForm
-        ))}
+        </>
+      )}
       <TimelineBoundary minute={0} label="KICKOFF" />
       {events.map((event) => {
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
-        const number = targetPlayer?.number;
-        const name = targetPlayer?.name;
         const eventHasTeam =
           event.kind === "assist" ||
           event.kind === "goal" ||
@@ -414,16 +461,6 @@ export default function Events({
           event.team === "opponent"
             ? opponentName(data, match)
             : "Turf Burners FC";
-        const teamColor =
-          event.team === "opponent"
-            ? opponentFor(data, match)?.color || "#555"
-            : "#f47730";
-        const teamLabelBackground =
-          getContrastRatio(teamColor, "#000") >=
-          getContrastRatio(teamColor, "#fff")
-            ? "#000"
-            : "#fff";
-        const actor = name ? `${number ? `#${number} ` : ""}${name}` : "";
 
         return (
           <TimelineCard key={event.id} minute={event.minute}>
@@ -448,72 +485,132 @@ export default function Events({
                 style={{
                   width: 16,
                   height: 16,
-                  position: "relative",
-                  top: 6,
+                  alignSelf: "start",
+                  marginTop: 3,
                 }}
               />
-              <span
-                style={{
+              <Typography
+                sx={{
                   transform: "translateY(2px)",
                   textTransform: "uppercase",
                   fontWeight: "bold",
-                }}
-              >
-                {event.kind === "penalty_kick"
-                  ? "penalty"
-                  : event.kind.replaceAll("_", " ")}{" "}
-              </span>
-              {eventHasTeam ? (
-                <>
-                  <Typography
-                    component="span"
-                    sx={{
-                      color: event.team === "opponent" ? "#fff" : teamColor,
-                      bgcolor:
-                        event.team === "opponent"
-                          ? teamColor
-                          : teamLabelBackground,
-                      fontWeight: 700,
-
-                      px: 1,
-                      py: 0.25,
-                      borderRadius: 0,
-                      overflowWrap: "anywhere",
-                    }}
-                  >
-                    {teamName}
-                  </Typography>
-                  {actor && <Box sx={{ mt: "2px" }}>{`${actor}`}</Box>}{" "}
-                </>
-              ) : name ? (
-                actor
-              ) : (
-                ""
-              )}
-            </Typography>
-
-            {event.note && (
-              <Typography
-                sx={{
-                  flex: 1,
-                  minWidth: 0,
-                  order: 2,
+                  alignSelf: "start",
+                  display: "grid",
+                  flexShrink: 0,
+                  whiteSpace: "nowrap",
                   lineHeight: 1.2,
-                  fontSize: 14,
-                  mt: "5px",
-                  "@media (max-width: 1199px)": {
-                    flexBasis: "100%",
-                    order: 3,
+                  "&::before": {
+                    content: '"Penalty"',
+                    visibility: "hidden",
+                    gridArea: "1 / 1",
+                  },
+                  fontSize: {
+                    xs: 12,
+                    sm: 14,
                   },
                 }}
               >
-                {event.note}
+                <span style={{ gridArea: "1 / 1", whiteSpace: "pre-line" }}>
+                  {event.kind === "penalty_kick"
+                    ? "Penalty"
+                    : event.kind.replaceAll("_", "\n")}
+                </span>
               </Typography>
-            )}
+
+              <Box
+                sx={
+                  event.kind === "penalty_kick"
+                    ? {
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        minWidth: 0,
+                      }
+                    : undefined
+                }
+              >
+                {eventHasTeam && (
+                  <Box
+                    component="span"
+                    role="img"
+                    aria-label={teamName}
+                    title={teamName}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mt: event.kind === "penalty_kick" ? 0 : -0.8,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {event.team === "opponent" ? (
+                      <OpponentCrest url={opponent?.crestUrl} size={28} />
+                    ) : (
+                      <Box
+                        component="img"
+                        src="/crests/tbfc.png"
+                        alt=""
+                        sx={{ width: 25, height: 25, objectFit: "contain" }}
+                      />
+                    )}
+                    {event.team === "opponent" &&
+                      (event.kind === "goal" ||
+                        event.kind === "yellow_card") && (
+                        <Typography
+                          component="span"
+                          sx={{
+                            bgcolor: opponent?.color || "#555",
+                            color: "#fff",
+                            px: 1,
+                            py: 0.25,
+                            fontWeight: 700,
+                            fontSize: 14,
+                          }}
+                        >
+                          {teamName}
+                        </Typography>
+                      )}
+                    {targetPlayer && event.kind !== "penalty_kick" && (
+                      <PlayerNameNumberInline player={targetPlayer} />
+                    )}
+                    {event.ownGoal && (
+                      <Typography component="span" sx={{ fontWeight: "bold" }}>
+                        [OG]
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+
+                {event.note && (
+                  <Typography
+                    sx={{
+                      flex: 1,
+                      order: 2,
+                      lineHeight: 1.2,
+                      fontSize: 14,
+                      alignSelf:
+                        event.kind === "penalty_kick" ? "center" : "start",
+                      overflowWrap: "anywhere",
+                      opacity: 0.7,
+                      "@media (max-width: 1199px)": {
+                        flexBasis: "100%",
+                        order: 3,
+                      },
+                    }}
+                  >
+                    {event.note}
+                  </Typography>
+                )}
+              </Box>
+            </Typography>
+
             {canEditClub && (
               <Stack
                 direction="row"
                 sx={{
+                  flex: 1,
+                  display: "flex",
+                  justifyContent: "flex-end",
                   order: 3,
                   "@media (max-width: 1199px)": { order: 2 },
                 }}

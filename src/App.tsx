@@ -8,7 +8,7 @@ import { readDraft, writeDraft } from "./localDraft";
 import { backupMatchesLive } from "./backupCompare";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
 import PullToRefresh from "./components/PullToRefresh";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
   Link,
@@ -343,10 +343,29 @@ export default function App() {
     matchId: string;
     started: number;
   } | null>(null);
-  useEffect(() => {
+  const previewGoal = useCallback(() => {
     const matchId = viewedMatchId;
     if (!matchId) return;
-    const previewGoal = (key: KeyboardEvent) => {
+    const scorer =
+      data.players.find((player) => player.active && player.number) ??
+      data.players[0];
+    const started = performance.now();
+    const sample: MatchEvent = {
+      id: `preview-${started}`,
+      matchId,
+      kind: "goal",
+      team: "tbfc",
+      playerId: scorer?.id,
+      minute: 23,
+      note: "Preview goal — curled into the top corner.",
+    };
+    setNotices((queue) => [...queue, sample]);
+    goalSound.current();
+    setGoalBurst({ matchId, started });
+  }, [viewedMatchId, data.players, goalSound]);
+  useEffect(() => {
+    if (!viewedMatchId) return;
+    const handleKey = (key: KeyboardEvent) => {
       if (
         key.key.toLowerCase() !== "g" ||
         key.repeat ||
@@ -365,26 +384,11 @@ export default function App() {
           ))
       )
         return;
-      const scorer =
-        data.players.find((player) => player.active && player.number) ??
-        data.players[0];
-      const started = performance.now();
-      const sample: MatchEvent = {
-        id: `preview-${started}`,
-        matchId,
-        kind: "goal",
-        team: "tbfc",
-        playerId: scorer?.id,
-        minute: 23,
-        note: "Preview goal — curled into the top corner.",
-      };
-      setNotices((queue) => [...queue, sample]);
-      goalSound.current();
-      setGoalBurst({ matchId, started });
+      previewGoal();
     };
-    window.addEventListener("keydown", previewGoal);
-    return () => window.removeEventListener("keydown", previewGoal);
-  }, [viewedMatchId, data.players, goalSound]);
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [viewedMatchId, previewGoal]);
 
   console.log(notice);
   useEffect(() => {
@@ -712,6 +716,10 @@ export default function App() {
         disableGutters
         sx={{
           overflowX: "clip",
+          "--event-button-bottom": {
+            xs: canEditClub && dirty && !publishing ? "184px" : "85px",
+            sm: canEditClub && dirty && !publishing ? "150px" : "85px",
+          },
           pt: 0,
           pb: {
             xs: `calc(${canEditClub && dirty && !publishing ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
@@ -865,6 +873,7 @@ export default function App() {
         ) : selected ? (
           selected.status === "scheduled" ? (
             <MatchEventPage
+              onPreviewGoal={previewGoal}
               key={selected.id}
               goalSoundEnabled={goalSoundEnabled}
               onGoalSoundToggle={() => void toggleGoalSound()}
@@ -883,6 +892,7 @@ export default function App() {
           ) : (
             <>
               <MatchBanner
+                onPreviewGoal={previewGoal}
                 goalSoundEnabled={goalSoundEnabled}
                 onGoalSoundToggle={() => void toggleGoalSound()}
                 goalTime={

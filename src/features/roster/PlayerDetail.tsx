@@ -418,7 +418,7 @@ export default function PlayerDetail({
                   <TableCell>Score</TableCell>
                   <TableCell align="center">Result</TableCell>
                   <TableCell>Role</TableCell>
-                  <TableCell sx={{ minWidth: 260 }}>Events</TableCell>
+                  <TableCell sx={{ whiteSpace: "nowrap" }}>Events</TableCell>
                   <TableCell
                     align="center"
                     sortDirection={sortDirection("goals")}
@@ -550,12 +550,18 @@ export default function PlayerDetail({
                                 }}
                               >
                                 {event.minute != null && <><TimelineMarker minute={event.minute} compact />{" "}</>}
-                                <strong style={{ textTransform: "uppercase" }}>
-                                  {event.ownGoal
-                                    ? "Own Goal"
-                                    : event.kind.replaceAll("_", " ")}
-                                </strong>
-                                {event.note ? ` · ${event.note}` : ""}
+                                <Tooltip title={event.note?.trim() || ""} describeChild arrow>
+                                  <Box component="strong" tabIndex={event.note?.trim() ? 0 : undefined}
+                                    sx={{
+                                      textTransform: "uppercase",
+                                      ...(event.note?.trim() && {
+                                        position: "relative", zIndex: 1, cursor: "help",
+                                        textDecoration: "underline dotted", textUnderlineOffset: "3px",
+                                      }),
+                                    }}>
+                                    {event.ownGoal ? "Own Goal" : event.kind.replaceAll("_", " ")}
+                                  </Box>
+                                </Tooltip>
                               </Typography>
                             ))}
                           </Stack>

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -108,6 +108,7 @@ export default function MatchBanner({
   goalTime,
   goalSoundEnabled = false,
   onGoalSoundToggle,
+  onPreviewGoal,
 }: {
   data: ClubData;
   match: Match;
@@ -116,8 +117,10 @@ export default function MatchBanner({
   detail?: boolean;
   goalTime?: number;
   goalSoundEnabled?: boolean;
+  onPreviewGoal?: () => void;
   onGoalSoundToggle?: () => void;
 }) {
+  const press = useRef<{ id: number; start: number; x: number; y: number } | null>(null);
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
     if (match.status !== "in_progress") return;
@@ -516,6 +519,25 @@ export default function MatchBanner({
                             <HomeCrest
                               src="/crests/tbfc.png"
                               alt="TBFC crest"
+                              draggable={false}
+                              title={onPreviewGoal ? "Hold to preview a goal" : undefined}
+                              sx={onPreviewGoal ? { WebkitTouchCallout: "none", userSelect: "none", cursor: "pointer" } : undefined}
+                              onContextMenu={event => { if (onPreviewGoal) event.preventDefault(); }}
+                              onPointerDown={event => {
+                                if (!onPreviewGoal || !event.isPrimary || event.button !== 0) return;
+                                press.current = { id: event.pointerId, start: event.timeStamp, x: event.clientX, y: event.clientY };
+                              }}
+                              onPointerMove={event => {
+                                const held = press.current;
+                                if (held?.id === event.pointerId && Math.hypot(event.clientX - held.x, event.clientY - held.y) > 10) press.current = null;
+                              }}
+                              onPointerCancel={() => { press.current = null; }}
+                              onPointerLeave={() => { press.current = null; }}
+                              onPointerUp={event => {
+                                const held = press.current;
+                                press.current = null;
+                                if (held?.id === event.pointerId && event.timeStamp - held.start >= 550) onPreviewGoal?.();
+                              }}
                             />
                             {goalTime !== undefined && (
                               <GoalFire key={goalTime} started={goalTime} />

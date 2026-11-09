@@ -1,6 +1,9 @@
 import { Chip } from "@mui/material";
 
-export default function TimelineMarker({ minute, compact = false }: {
+export default function TimelineMarker({
+  minute,
+  compact = false,
+}: {
   minute?: number;
   compact?: boolean;
 }) {
@@ -8,7 +11,11 @@ export default function TimelineMarker({ minute, compact = false }: {
     <Chip
       component="span"
       size={compact ? "small" : "medium"}
-      sx={{ height: compact ? 20 : 28, flexShrink: 0 }}
+      sx={{
+        minWidth: 35,
+        height: compact ? 20 : 28,
+        flexShrink: 0,
+      }}
       label={minute == null ? "Time Unknown" : `${minute}′`}
     />
   );

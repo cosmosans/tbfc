@@ -116,7 +116,7 @@ export default function AdminPanel({
       setError(
         cause instanceof Error
           ? cause.message
-          : "Could not change Manage Mode.",
+          : "Could not change Manager Mode.",
       );
     } finally {
       setPendingAction(null);
@@ -188,9 +188,13 @@ export default function AdminPanel({
         <Stack gap={2} sx={{ pt: 1 }}>
           <FormControlLabel
             label="App sounds"
-            control={<Switch checked={soundsEnabled} onChange={onSoundToggle} />}
+            control={
+              <Switch checked={soundsEnabled} onChange={onSoundToggle} />
+            }
           />
-          <Button disabled={!soundsEnabled} onClick={onPreviewGoal}>Play goal sound</Button>
+          <Button disabled={!soundsEnabled} onClick={onPreviewGoal}>
+            Play goal sound
+          </Button>
           {checking && (
             <Typography variant="body2">Checking access…</Typography>
           )}
