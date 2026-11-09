@@ -1,3 +1,5 @@
+import RichTextDialog from "../../components/RichTextDialog";
+import { storyToHtml } from "../matches/matchStory";
 import MatchResultChip from "../../components/MatchResultChip";
 import { playerStats } from "./playerStats";
 import { useState } from "react";
@@ -7,10 +9,6 @@ import {
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Stack,
   Table,
   TableBody,
@@ -19,7 +17,6 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  TextField,
   Typography,
 } from "@mui/material";
 import PlayerSummary from "./PlayerSummary";
@@ -34,6 +31,10 @@ import moment from "moment";
 import OpponentCrest from "../../components/OpponentCrest";
 import { opponentFor, opponentName, seasonName } from "../../clubView";
 import { canEditClub } from "../../editAccess";
+import GoalIcon from "../../img/soccer-ball-variant.svg";
+import AssistIcon from "../../img/cleats.svg";
+import SaveIcon from "../../img/gloves.svg";
+import CardIcon from "../../img/cards.svg";
 
 type HistorySort = "date" | "goals" | "assists" | "cards" | "saves";
 const statIndex = { goals: 0, assists: 1, saves: 2, cards: 3 } as const;
@@ -48,7 +49,6 @@ export default function PlayerDetail({
   update: (data: ClubData) => void;
 }) {
   const [bioOpen, setBioOpen] = useState(false);
-  const [bio, setBio] = useState("");
   const [historySort, setHistorySort] = useState<HistorySort>("date");
   const [descending, setDescending] = useState(true);
   const isGoalkeeper =
@@ -138,11 +138,52 @@ export default function PlayerDetail({
           .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
           .map(([label, count]) => (
             <Card key={label}>
-              <CardContent>
-                <Typography variant="h4" color="primary">
+              <CardContent
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                {label === "Goals" ? (
+                  <img
+                    src={GoalIcon}
+                    alt="Goals"
+                    style={{ marginRight: 8, width: 30, height: 30 }}
+                  />
+                ) : label === "Assists" ? (
+                  <img
+                    src={AssistIcon}
+                    alt="Assists"
+                    style={{ marginRight: 8, width: 30, height: 30 }}
+                  />
+                ) : label === "PK Saves" ? (
+                  <img
+                    src={SaveIcon}
+                    alt="PK Saves"
+                    style={{ marginRight: 8, width: 30, height: 30 }}
+                  />
+                ) : label === "Yellow Cards" ? (
+                  <img
+                    src={CardIcon}
+                    alt="Yellow Cards"
+                    style={{ marginRight: 8, width: 30, height: 30 }}
+                  />
+                ) : null}
+
+                <Typography
+                  variant="h4"
+                  color="primary"
+                  sx={{ paddingRight: 1 }}
+                >
                   {count}
                 </Typography>
-                <Typography>{label}</Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  {label}
+                </Typography>
               </CardContent>
             </Card>
           ))}
@@ -163,7 +204,6 @@ export default function PlayerDetail({
             {canEditClub && (
               <Button
                 onClick={() => {
-                  setBio(player.bio ?? "");
                   setBioOpen(true);
                 }}
               >
@@ -171,13 +211,14 @@ export default function PlayerDetail({
               </Button>
             )}
           </Stack>
-          <Typography
-            variant="body2"
-            sx={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}
-            color={player.bio ? "text.primary" : "text.secondary"}
-          >
-            {player.bio || "No bio added yet."}
-          </Typography>
+          {player.bio ? (
+            <Box
+              sx={{ overflowWrap: "anywhere", "& p": { my: 1 } }}
+              dangerouslySetInnerHTML={{ __html: storyToHtml(player.bio) }}
+            />
+          ) : (
+            <Typography color="text.secondary">No bio added yet.</Typography>
+          )}
         </CardContent>
       </Card>
       <Stack gap={2}>
@@ -237,120 +278,135 @@ export default function PlayerDetail({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {history.map(({ match, opponent, matchEvents, lineup, stats }) => (
-                  <TableRow
-                    key={match.id}
-                    hover
-                    sx={{ "&:last-child td": { borderBottom: 0 } }}
-                  >
-                    <TableCell sx={{ whiteSpace: "nowrap" }}>
-                      <Typography component="span" variant="caption" color="text.secondary"
-                        sx={{ display: "block", letterSpacing: ".08em", textTransform: "uppercase" }}>
-                        {seasonName(data, match)}
-                      </Typography>
-                      {match.date && moment(match.date).isValid() ? moment(match.date).format("MMM D, YYYY") : "Date TBD"}
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      <Stack direction="row" alignItems="center" gap={1.5}>
-                        <OpponentCrest compact url={opponent?.crestUrl} teamId={opponent?.id} teamName={opponent?.name} />
-                        <Button component={Link} to={`/match/${encodeURIComponent(match.id)}`}
-                          sx={{ color: "text.primary", fontWeight: 700, textAlign: "left", textTransform: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
-                          {opponentName(data, match)}
-                        </Button>
-                      </Stack>
-                    </TableCell>
-                    <TableCell sx={{ whiteSpace: "nowrap", color: "primary.main", fontWeight: 700 }}>
-                      {displayScore(match)}
-                    </TableCell>
-                    <TableCell align="center"><MatchResultChip match={match} /></TableCell>
-                    <TableCell>
-                      {(lineup?.starters.includes(player.id) ||
-                        lineup?.bench.includes(player.id)) && (
-                        <Typography variant="body2" color="text.secondary">
-                          {lineup.starters.includes(player.id)
-                            ? "Starting VII"
-                            : "Bench"}
+                {history.map(
+                  ({ match, opponent, matchEvents, lineup, stats }) => (
+                    <TableRow
+                      key={match.id}
+                      hover
+                      sx={{ "&:last-child td": { borderBottom: 0 } }}
+                    >
+                      <TableCell sx={{ whiteSpace: "nowrap" }}>
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{
+                            display: "block",
+                            letterSpacing: ".08em",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          {seasonName(data, match)}
                         </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {matchEvents.length ? (
-                        <Stack gap={0.5}>
-                          {matchEvents.map((event) => (
-                            <Typography
-                              key={event.id}
-                              variant="body2"
-                              sx={{
-                                whiteSpace: "pre-wrap",
-                                overflowWrap: "anywhere",
-                              }}
-                            >
-                              <strong style={{ textTransform: "uppercase" }}>
-                                {event.minute != null
-                                  ? `${event.minute}′ · `
-                                  : ""}
-                                {event.ownGoal
-                                  ? "Own Goal"
-                                  : event.kind.replaceAll("_", " ")}
-                              </strong>
-                              {event.note ? ` · ${event.note}` : ""}
-                            </Typography>
-                          ))}
+                        {match.date && moment(match.date).isValid()
+                          ? moment(match.date).format("MMM D, YYYY")
+                          : "Date TBD"}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        <Stack direction="row" alignItems="center" gap={1.5}>
+                          <OpponentCrest
+                            compact
+                            url={opponent?.crestUrl}
+                            teamId={opponent?.id}
+                            teamName={opponent?.name}
+                          />
+                          <Button
+                            component={Link}
+                            to={`/match/${encodeURIComponent(match.id)}`}
+                            sx={{
+                              color: "text.primary",
+                              fontWeight: 700,
+                              textAlign: "left",
+                              textTransform: "none",
+                              whiteSpace: "nowrap",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {opponentName(data, match)}
+                          </Button>
                         </Stack>
-                      ) : (
-                        "—"
+                      </TableCell>
+                      <TableCell
+                        sx={{
+                          whiteSpace: "nowrap",
+                          color: "primary.main",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {displayScore(match)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <MatchResultChip match={match} />
+                      </TableCell>
+                      <TableCell>
+                        {(lineup?.starters.includes(player.id) ||
+                          lineup?.bench.includes(player.id)) && (
+                          <Typography variant="body2" color="text.secondary">
+                            {lineup.starters.includes(player.id)
+                              ? "Starting VII"
+                              : "Bench"}
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {matchEvents.length ? (
+                          <Stack gap={0.5}>
+                            {matchEvents.map((event) => (
+                              <Typography
+                                key={event.id}
+                                variant="body2"
+                                sx={{
+                                  whiteSpace: "pre-wrap",
+                                  overflowWrap: "anywhere",
+                                }}
+                              >
+                                <strong style={{ textTransform: "uppercase" }}>
+                                  {event.minute != null
+                                    ? `${event.minute}′ · `
+                                    : ""}
+                                  {event.ownGoal
+                                    ? "Own Goal"
+                                    : event.kind.replaceAll("_", " ")}
+                                </strong>
+                                {event.note ? ` · ${event.note}` : ""}
+                              </Typography>
+                            ))}
+                          </Stack>
+                        ) : (
+                          "—"
+                        )}
+                      </TableCell>
+                      <TableCell align="center">{stats[0][1]}</TableCell>
+                      <TableCell align="center">{stats[1][1]}</TableCell>
+                      <TableCell align="center">{stats[3][1]}</TableCell>
+                      {isGoalkeeper && (
+                        <TableCell align="center">{stats[2][1]}</TableCell>
                       )}
-                    </TableCell>
-                    <TableCell align="center">{stats[0][1]}</TableCell>
-                    <TableCell align="center">{stats[1][1]}</TableCell>
-                    <TableCell align="center">{stats[3][1]}</TableCell>
-                    {isGoalkeeper && (
-                      <TableCell align="center">{stats[2][1]}</TableCell>
-                    )}
-                  </TableRow>
-                ))}
+                    </TableRow>
+                  ),
+                )}
               </TableBody>
             </Table>
           </TableContainer>
         )}
       </Stack>
-      <Dialog
-        open={bioOpen}
-        onClose={() => setBioOpen(false)}
-        fullWidth
-        maxWidth="sm"
-      >
-        <DialogTitle>Player Bio</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            multiline
-            minRows={6}
-            fullWidth
-            label="Bio"
-            value={bio}
-            onChange={(event) => setBio(event.target.value)}
-            sx={{ mt: 1 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setBioOpen(false)}>Cancel</Button>
-          <Button
-            variant="contained"
-            onClick={() => {
-              update({
-                ...data,
-                players: data.players.map((item) =>
-                  item.id === player.id ? { ...item, bio: bio.trim() } : item,
-                ),
-              });
-              setBioOpen(false);
-            }}
-          >
-            Save Bio
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {canEditClub && bioOpen && (
+        <RichTextDialog
+          title="Player Bio"
+          value={player.bio ?? ""}
+          saveLabel="Save Bio"
+          onClose={() => setBioOpen(false)}
+          onSave={(bio) => {
+            update({
+              ...data,
+              players: data.players.map((item) =>
+                item.id === player.id ? { ...item, bio } : item,
+              ),
+            });
+            setBioOpen(false);
+          }}
+        />
+      )}
     </Stack>
   );
 }

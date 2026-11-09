@@ -7,6 +7,8 @@ import {
   Box,
   Button,
   FormControl,
+  FormControlLabel,
+  Switch,
   InputLabel,
   MenuItem,
   Select,
@@ -157,6 +159,9 @@ export default function PlayerCard({
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
+              <FormControlLabel label="Captain" control={
+                <Switch checked={draft.captain} onChange={(_, captain) => setDraft({ ...draft, captain })} />
+              } />
               <PositionSelect
                 label="Primary Position"
                 value={draft.preferredPosition ?? ""}

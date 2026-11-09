@@ -11,6 +11,6 @@ export const seedPlayers: Player[] = [
   ['13', 'Diego'], ['1', 'Sean Kirwin'],
   ['4', 'Jan Mooney'], ['47', 'Mandy Cline'],
 ].map(([number, name]) => ({
-  id: `player-${number}`, number: String(number), name: String(name), active: true,
+  id: `player-${number}`, number: String(number), name: String(name), active: true, captain: false,
   preferredPosition: '', secondaryPosition: '',
 }));

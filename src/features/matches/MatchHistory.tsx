@@ -5,18 +5,13 @@ import {
   Card,
   CardContent,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   Stack,
   Typography,
 } from "@mui/material";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import RichTextDialog from "../../components/RichTextDialog";
 import type { Match } from "../../model";
-import { saveStoryHtml, storyToHtml } from "./matchStory";
+import { storyToHtml } from "./matchStory";
 import { isTurfbotReport } from "./reportAttribution";
 
 export default function MatchHistory({
@@ -29,28 +24,10 @@ export default function MatchHistory({
   onAuditChange?: (complete: boolean) => void;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [, refreshToolbar] = useState(0);
   const reportHtml = useMemo(
     () => storyToHtml(match.report ?? ""),
     [match.report],
   );
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: storyToHtml(match.report ?? ""),
-    onSelectionUpdate: () => refreshToolbar((value) => value + 1),
-    onTransaction: () => refreshToolbar((value) => value + 1),
-  });
-
-  function openDialog() {
-    editor?.commands.setContent(storyToHtml(match.report ?? ""));
-    setDialogOpen(true);
-  }
-
-  function save() {
-    if (editor) onSaveReport?.(saveStoryHtml(editor.getHTML()));
-    setDialogOpen(false);
-  }
-
   return (
     <Stack gap={2}>
       <Card>
@@ -64,7 +41,7 @@ export default function MatchHistory({
           >
             <Typography variant="h6">{"Match Report"}</Typography>
             {onSaveReport && (
-              <Button variant="outlined" onClick={openDialog}>
+              <Button variant="outlined" onClick={() => setDialogOpen(true)}>
                 {match.report ? "Edit Report" : "Add Report"}
               </Button>
             )}
@@ -122,117 +99,9 @@ export default function MatchHistory({
           )}
         </CardContent>
       </Card>
-      <Dialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>{"Edit Match Report"}</DialogTitle>
-        <DialogContent>
-          <Stack direction="row" gap={1} flexWrap="wrap" sx={{ mt: 1, mb: 1 }}>
-            <Button
-              size="small"
-              variant={editor?.isActive("bold") ? "contained" : "outlined"}
-              onClick={() => editor?.chain().focus().toggleBold().run()}
-              aria-label="Bold"
-            >
-              Bold
-            </Button>
-            <Button
-              size="small"
-              variant={editor?.isActive("italic") ? "contained" : "outlined"}
-              onClick={() => editor?.chain().focus().toggleItalic().run()}
-              aria-label="Italic"
-            >
-              Italic
-            </Button>
-            <Button
-              size="small"
-              variant={
-                editor?.isActive("heading", { level: 2 })
-                  ? "contained"
-                  : "outlined"
-              }
-              onClick={() =>
-                editor?.chain().focus().toggleHeading({ level: 2 }).run()
-              }
-              aria-label="Heading"
-            >
-              Heading
-            </Button>
-            <Button
-              size="small"
-              variant={
-                editor?.isActive("bulletList") ? "contained" : "outlined"
-              }
-              onClick={() => editor?.chain().focus().toggleBulletList().run()}
-              aria-label="Bulleted list"
-            >
-              Bullets
-            </Button>
-            <Button
-              size="small"
-              variant={
-                editor?.isActive("orderedList") ? "contained" : "outlined"
-              }
-              onClick={() => editor?.chain().focus().toggleOrderedList().run()}
-              aria-label="Numbered list"
-            >
-              Numbers
-            </Button>
-            <Button
-              size="small"
-              variant={
-                editor?.isActive("blockquote") ? "contained" : "outlined"
-              }
-              onClick={() => editor?.chain().focus().toggleBlockquote().run()}
-              aria-label="Quote"
-            >
-              Quote
-            </Button>
-            <Button
-              size="small"
-              onClick={() => editor?.chain().focus().undo().run()}
-              disabled={!editor?.can().undo()}
-            >
-              Undo
-            </Button>
-            <Button
-              size="small"
-              onClick={() => editor?.chain().focus().redo().run()}
-              disabled={!editor?.can().redo()}
-            >
-              Redo
-            </Button>
-          </Stack>
-          <Box
-            sx={{
-              border: "1px solid",
-              borderColor: "primary.main",
-              bgcolor: "background.default",
-              minHeight: 240,
-              "& .tiptap": { minHeight: 240, p: 2, outline: "none" },
-              "& .tiptap p": { my: 0, mb: 1.5 },
-              "& .tiptap ul, & .tiptap ol": { pl: 3 },
-              "& .tiptap blockquote": {
-                borderLeft: "3px solid",
-                borderColor: "primary.main",
-                pl: 2,
-                ml: 0,
-              },
-            }}
-          >
-            <EditorContent editor={editor} aria-label={"Match Report"} />
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={save}>
-            Save Report
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {dialogOpen && onSaveReport && <RichTextDialog title="Edit Match Report" value={match.report ?? ""}
+        saveLabel="Save Report" onClose={() => setDialogOpen(false)}
+        onSave={value => { onSaveReport(value); setDialogOpen(false); }} />}
     </Stack>
   );
 }

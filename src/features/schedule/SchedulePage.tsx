@@ -103,7 +103,6 @@ export default function SchedulePage({
   setSeason,
   onOpen,
   onAddFixture,
-  onManageSeasons,
 }: Props) {
   const mobile = useMediaQuery("(width < 600px)");
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -223,9 +222,9 @@ export default function SchedulePage({
 
         {canEditClub && (
           <Stack direction="row" gap={1} flexWrap="wrap">
-            <Button variant="outlined" onClick={onManageSeasons}>
+            {/* <Button variant="outlined" onClick={onManageSeasons}>
               Manage Seasons
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               startIcon={<AddIcon />}

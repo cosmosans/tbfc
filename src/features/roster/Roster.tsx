@@ -112,7 +112,11 @@ export default function Roster({
   const savePlayer = (saved: Player) =>
     update({
       ...data,
-      players: data.players.map((p) => (p.id === saved.id ? saved : p)),
+      players: data.players.map(player => {
+        if (player.id === saved.id) return saved;
+        if (saved.captain && player.captain) return { ...player, captain: false };
+        return player;
+      }),
     });
   function closeAdd() {
     setAddOpen(false);
@@ -132,6 +136,7 @@ export default function Roster({
           name: name.trim(),
           number: number.trim(),
           active: true,
+          captain: false,
           playerType,
           preferredPosition,
           secondaryPosition: "",
