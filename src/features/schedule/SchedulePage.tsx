@@ -323,7 +323,7 @@ export default function SchedulePage({
         )}
       </Stack>
 
-      <section style={{ minWidth: 0, mt: 5, width: "100%" }}>
+      <section style={{ minWidth: 0, marginTop: 5, width: "100%" }}>
         <Stack
           direction="row"
           alignItems="center"
