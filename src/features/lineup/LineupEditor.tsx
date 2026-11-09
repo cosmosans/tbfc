@@ -26,6 +26,7 @@ import {
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { formationSlots } from "./formations";
+import ImportLineupDialog from "./ImportLineupDialog";
 import LineupPitch from "./LineupPitch";
 import { canEditClub } from "../../editAccess";
 import { byPlayerNumber } from "../../playerOrder";
@@ -39,6 +40,7 @@ export default function LineupEditor({
   match: Match;
   update: (data: ClubData) => void;
 }) {
+  const [importFor, setImportFor] = useState<string | null>(null);
   const [activeSquadOnly, setActiveSquadOnly] = useState(false);
   const lineup =
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
@@ -138,6 +140,11 @@ export default function LineupEditor({
   const slots = formationSlots[lineup.formation];
   return (
     <Stack gap={2}>
+      {importFor === match.id && (
+        <ImportLineupDialog data={data} match={match} onClose={() => setImportFor(null)}
+          onApply={next => { save(next); setImportFor(null); }}
+        />
+      )}
       {missingStarters && (
         <Alert severity="info">
           Choose seven starters. The matchboard loads this saved lineup and
@@ -167,9 +174,12 @@ export default function LineupEditor({
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
+                flexWrap="wrap"
+                gap={1}
               >
                 <Typography variant="h6">Starting VII</Typography>
-                <Stack direction="row" spacing={1}>
+                <Stack direction="row" gap={1} flexWrap="wrap">
+                  <Button size="small" variant="outlined" onClick={() => setImportFor(match.id)}>Import lineup</Button>
                   <Button size="small" variant="outlined" disabled={!canEditClub || !lineup.starters.some(Boolean)} onClick={() => save({ ...lineup, starters: lineup.starters.map(() => "") })}>
                     Clear
                   </Button>

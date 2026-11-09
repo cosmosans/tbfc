@@ -1,6 +1,6 @@
 import { tableHeading, tablePaddingX, sortLabelStyle } from "../../components/tableStyles";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import { playerStats } from "./playerStats";
+import { careerEvents, playerStats } from "./playerStats";
 import { PlayerInformation } from "./PlayerCard.styles";
 import PlayerTypeSelect from "./PlayerTypeSelect";
 import { useState } from "react";
@@ -62,9 +62,10 @@ export default function Roster({
   const [startersOpen, setStartersOpen] = useState(false);
   const [sortKey, setSortKey] = useState<SortKey>("number");
   const [descending, setDescending] = useState(false);
+  const playedEvents = careerEvents(data);
   const rows = data.players
     .map((player) => {
-      const events = data.events.filter(
+      const events = playedEvents.filter(
         (event) => event.playerId === player.id,
       );
       return { player, events, stats: playerStats(player, events) };

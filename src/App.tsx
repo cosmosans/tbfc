@@ -469,6 +469,7 @@ export default function App() {
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
+    const minimumDisplayTime = new Promise<void>(resolve => window.setTimeout(resolve, 600));
     const version = editVersion.current;
     try {
       await saveQueue.current;
@@ -484,6 +485,7 @@ export default function App() {
         error instanceof Error ? error.message : "Could not publish club data.",
       );
     } finally {
+      await minimumDisplayTime;
       setPublishing(false);
     }
   }

@@ -3,7 +3,7 @@ import PanelHeader from "../../components/PanelHeader";
 import RichTextDialog from "../../components/RichTextDialog";
 import { storyToHtml } from "../matches/matchStory";
 import MatchResultChip from "../../components/MatchResultChip";
-import { playerStats } from "./playerStats";
+import { careerEvents, playerStats } from "./playerStats";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -62,7 +62,7 @@ export default function PlayerDetail({
   const [descending, setDescending] = useState(true);
   const isGoalkeeper =
     player.preferredPosition === "GK" || player.secondaryPosition === "GK";
-  const events = data.events.filter((event) => event.playerId === player.id);
+  const events = careerEvents(data).filter((event) => event.playerId === player.id);
   const counts = playerStats(player, events);
   const history = data.matches
     .filter(
@@ -293,8 +293,7 @@ export default function PlayerDetail({
           ))}
       </Box>
       <Typography variant="body2" color="text.secondary">
-        Career totals include historical player totals and recorded match
-        events. Historical totals may not have individual match records.
+        Career totals count recorded events from live and completed matches.
       </Typography>
       <Card>
         <CardContent>

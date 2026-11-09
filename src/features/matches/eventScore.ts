@@ -14,7 +14,7 @@ export function goalTotals(events: MatchEvent[], matchId: string) {
 export function updateMatchEvents(data: ClubData, matchId: string, events: MatchEvent[]): ClubData {
   const before = goalTotals(data.events, matchId);
   const after = goalTotals(events, matchId);
-  // Preserve unaccounted historical goals while they are being backfilled.
+  // Keep the recorded match score while individual events are being entered.
   // Once a side's events cover its score, removals can decrease that score too.
   const reconcile = (score: number, previous: number, next: number) =>
     previous === next ? score : previous >= score ? next : Math.max(score, next);

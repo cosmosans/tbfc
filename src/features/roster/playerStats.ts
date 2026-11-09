@@ -1,4 +1,9 @@
-import type { Player, MatchEvent } from "../../model";
+import type { ClubData, Player, MatchEvent } from "../../model";
+
+export function careerEvents(data: ClubData) {
+  const played = new Set(data.matches.filter(match => match.status !== "scheduled").map(match => match.id));
+  return data.events.filter(event => played.has(event.matchId));
+}
 
 export function playerStats(player: Player, events: MatchEvent[]) {
   return [
