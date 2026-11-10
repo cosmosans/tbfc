@@ -126,7 +126,7 @@ export default function SchedulePage({
   const [kit, setKit] = useState("");
   const [uploadOpen, setUploadOpen] = useState(false);
   const seasons = useMemo(() => orderedSeasons(data, true), [data]);
-  const includes = (match: Match) =>
+  const matchesHistorySearchAndMedia = (match: Match) =>
     matchesMedia(match, media) &&
     `${opponentName(data, match)} ${matchLocation(match)} ${match.league ?? ""} ${match.competition}`
       .toLowerCase()
@@ -148,12 +148,11 @@ export default function SchedulePage({
   for (const match of data.matches) {
     if (!isMatchCompleted(match)) seasonHeadings.add(seasonName(data, match));
   }
-  const filtered = data.matches.filter(includes);
   const pastMatches = data.matches.filter(
     (match) => !seasonHeadings.has(seasonName(data, match)),
   );
   const history = pastMatches
-    .filter(includes)
+    .filter(matchesHistorySearchAndMedia)
     .filter(
       (match) =>
         (season === "All seasons" ||
@@ -348,7 +347,7 @@ export default function SchedulePage({
             </Typography>
           </Box>
           {Array.from(seasonHeadings, (name) => {
-            const matches = filtered
+            const matches = data.matches
               .filter((match) => seasonName(data, match) === name)
               .sort((a, b) => a.date.localeCompare(b.date));
             if (!matches.length) return null;

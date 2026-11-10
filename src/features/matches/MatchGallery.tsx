@@ -6,6 +6,8 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
+  FormControlLabel,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -180,6 +182,17 @@ export default function MatchGallery({
                   }}
                 />
               </Box>
+              {onSave && (
+                <FormControlLabel
+                  label="Cover Photo"
+                  control={<Checkbox size="small" checked={!!photo.cover} disabled={busy}
+                    onChange={(_, checked) => onSave(photos.map(item => {
+                      const cover = checked && item.id === photo.id;
+                      return cover === !!item.cover ? item : { ...item, cover };
+                    }))}
+                  />}
+                />
+              )}
               {order.handle(photo.id, photo.name)}
               {onSave && (
                 <Button

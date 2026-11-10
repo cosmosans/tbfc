@@ -1,4 +1,4 @@
-export type MatchPhoto = { id: string; src: string; name: string };
+export type MatchPhoto = { id: string; src: string; name: string; cover?: boolean };
 export type MatchVideo = { id: string; url: string; title: string };
 
 export type MatchChatReply = { id: string; playerId: string; text: string; senderName?: string; sentAt?: string };

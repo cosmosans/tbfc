@@ -147,6 +147,8 @@ export default function MatchBanner({
         item.name.toLowerCase() ===
         splitMatchLocation(match.venue).venue.toLowerCase(),
     );
+  const coverPhoto = match.photos?.find(photo => photo.cover && photo.src);
+  const backdrop = coverPhoto?.src || location?.imageUrl;
   const headToHead = record(
     data.matches.filter(
       (item) =>
@@ -255,7 +257,7 @@ export default function MatchBanner({
       <Panel
         sx={{
           border: 0,
-          ...(location?.imageUrl
+          ...(backdrop
             ? {
                 bgcolor: "background.default",
                 boxShadow: "none",
@@ -266,10 +268,10 @@ export default function MatchBanner({
                   inset: "0 0 3px",
                   zIndex: -1,
                   pointerEvents: "none",
-                  backgroundImage: `url(${JSON.stringify(location.imageUrl)})`,
+                  backgroundImage: `url(${JSON.stringify(backdrop)})`,
                   backgroundSize: "cover",
                   backgroundRepeat: "no-repeat",
-                  backgroundPosition: "center calc(100% + var(--backdrop-offset, 0px))",
+                  backgroundPosition: coverPhoto ? "center center" : "center calc(100% + var(--backdrop-offset, 0px))",
                   maskImage: "linear-gradient(to bottom, rgba(0,0,0,.4), transparent calc(100% - 4px))",
                 },
               }
