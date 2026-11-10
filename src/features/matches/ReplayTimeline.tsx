@@ -114,7 +114,7 @@ export default function ReplayTimeline({
           const label = [minute + "′ " + kind, teamLabel, playerLabel].filter(Boolean).join(" · ");
           const icon = event.ownGoal ? bomb : icons[event.kind];
           return (
-            <Tooltip key={event.id} arrow placement="bottom" disableInteractive
+            <Tooltip key={event.id} arrow placement="bottom"
               enterDelay={180}
               slotProps={{
                 tooltip: { sx: { bgcolor: "#202426", color: "#fff", p: 0,

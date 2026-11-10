@@ -134,6 +134,33 @@ export default function Events({
     .sort(compareMatchEvents);
   const timeline = [...events.filter(event => event.kind !== "clean_sheet"), null,
     ...events.filter(event => event.kind === "clean_sheet")];
+  const opponentGoals = new Map<string, { scoreline: string; note: string }>();
+  const opponentLabel = opponentName(data, match);
+  let goalsFor = 0;
+  let goalsAgainst = 0;
+  for (const event of events) {
+    if (event.kind !== "goal") continue;
+    if (event.team !== "opponent") {
+      goalsFor++;
+      continue;
+    }
+    goalsAgainst++;
+    let note = event.note?.trim() ?? "";
+    // Older goal notes may begin with the recorded score, including unlogged goals.
+    const prefix = /^Turf Burners FC\s+(\d+)\s*[-–]\s*(\d+)\s+/i.exec(note);
+    if (prefix) {
+      const rest = note.slice(prefix[0].length);
+      const tail = rest.slice(opponentLabel.length);
+      if (rest.toLowerCase().startsWith(opponentLabel.toLowerCase()) && /^(?:$|[.\s])/.test(tail)) {
+        goalsFor = Number(prefix[1]);
+        goalsAgainst = Number(prefix[2]);
+        note = tail.replace(/^\.?\s*/, "");
+      }
+    }
+    opponentGoals.set(event.id, {
+      scoreline: `Turf Burners FC ${goalsFor} - ${goalsAgainst} ${opponentLabel}`, note,
+    });
+  }
   const logged = goalTotals(events, match.id);
   function editEvent(event: MatchEvent) {
     setEditingEvent(event);
@@ -456,6 +483,8 @@ export default function Events({
       {timeline.map((event) => {
         if (!event) return <TimelineBoundary key="full-time-whistle" minute={50} label="FULL TIME" />;
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
+        const opponentGoal = opponentGoals.get(event.id);
+        const displayNote = opponentGoal?.note ?? event.note;
         const eventHasTeam =
           event.kind === "clean_sheet" ||
           event.kind === "assist" ||
@@ -539,7 +568,7 @@ export default function Events({
                 {eventHasTeam && (
                   <Box
                     component="span"
-                    role="img"
+                    role="group"
                     aria-label={teamName}
                     title={teamName}
                     sx={{
@@ -580,6 +609,11 @@ export default function Events({
                           {teamName}
                         </Typography>
                       )}
+                    {opponentGoal && (
+                      <Typography component="span" sx={{ fontSize: 14, lineHeight: 1.2, color: "text.secondary" }}>
+                        {opponentGoal.scoreline}
+                      </Typography>
+                    )}
                     {targetPlayer && event.kind !== "penalty_kick" && (
                       <PlayerNameNumberInline player={targetPlayer} />
                     )}
@@ -591,7 +625,7 @@ export default function Events({
                   </Box>
                 )}
 
-                {event.note && (
+                {displayNote && (
                   <Typography
                     sx={{
                       flex: 1,
@@ -609,7 +643,7 @@ export default function Events({
                       },
                     }}
                   >
-                    {event.note}
+                    {displayNote}
                   </Typography>
                 )}
               </Box>

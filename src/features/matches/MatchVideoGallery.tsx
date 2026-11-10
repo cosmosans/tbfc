@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
   Alert,
+  IconButton,
+  useMediaQuery,
   Box,
   Button,
   Card,
@@ -14,68 +16,78 @@ import {
   Typography,
 } from "@mui/material";
 import type { MatchVideo } from "../../model";
+import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 
-function googleDriveFileId(url: string): string | null {
+function driveVideo(url: string) {
   try {
-    const parsed = new URL(url);
-    if (parsed.hostname !== "drive.google.com") return null;
-    const fileId = parsed.pathname.match(/^\/file\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/)?.[1];
-    return fileId ?? null;
+    const source = new URL(url);
+    if (source.origin !== "https://drive.google.com") return null;
+    const id = source.pathname.match(/^\/file\/d\/([a-zA-Z0-9_-]+)(?:\/|$)/)?.[1]
+      ?? (["/open", "/uc"].includes(source.pathname) ? source.searchParams.get("id") : null);
+    if (!id || !/^[a-zA-Z0-9_-]+$/.test(id)) return null;
+    const preview = new URL(`https://drive.google.com/file/d/${id}/preview`);
+    const thumbnail = new URL("https://drive.google.com/thumbnail");
+    thumbnail.searchParams.set("id", id);
+    thumbnail.searchParams.set("sz", "w800");
+    const key = source.searchParams.get("resourcekey");
+    if (key) {
+      preview.searchParams.set("resourcekey", key);
+      thumbnail.searchParams.set("resourcekey", key);
+    }
+    return { preview: preview.href, thumbnail: thumbnail.href };
   } catch {
     return null;
   }
 }
 
-function DriveVideo({ fileId, title }: { fileId: string; title: string }) {
-  const [playing, setPlaying] = useState(false);
-  const [thumbnailFailed, setThumbnailFailed] = useState(false);
-  const previewUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-  if (playing || thumbnailFailed) {
-    return (
-      <Box
-        component="iframe"
-        src={previewUrl}
-        title={title}
-        allow="autoplay; fullscreen"
-        allowFullScreen
-        loading="lazy"
-        sx={{ display: "block", width: "100%", aspectRatio: "16 / 9", bgcolor: "#000", border: 0 }}
-      />
-    );
-  }
-  return (
-    <Box
-      component="button"
-      type="button"
-      aria-label={`Play ${title}`}
-      onClick={() => setPlaying(true)}
-      sx={{
-        position: "relative",
-        display: "grid",
-        placeItems: "center",
-        width: "100%",
-        aspectRatio: "16 / 9",
-        p: 0,
-        border: 0,
-        bgcolor: "#000",
-        cursor: "pointer",
-        overflow: "hidden",
-        "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main" },
-      }}
-    >
-      <Box
-        component="img"
-        src={`https://drive.google.com/thumbnail?id=${fileId}&sz=w1200`}
-        alt=""
-        onError={() => setThumbnailFailed(true)}
-        sx={{ width: "100%", height: "100%", objectFit: "contain" }}
-      />
-      <Box sx={{ position: "absolute", display: "grid", placeItems: "center", width: 64, height: 64, borderRadius: "50%", bgcolor: "#000b", color: "#fff" }}>
-        <PlayArrowIcon sx={{ fontSize: 42 }} />
-      </Box>
+function VideoThumbnail({ video, onPlay }: { video: MatchVideo; onPlay: () => void }) {
+  const drive = driveVideo(video.url);
+  const [failedUrl, setFailedUrl] = useState("");
+  return <Box component="button" type="button" aria-label={`Play ${video.title}`}
+    onClick={onPlay} sx={{
+      position: "relative", display: "grid", placeItems: "center", width: "100%",
+      aspectRatio: "16 / 9", p: 0, overflow: "hidden", border: "1px solid #ffffff26",
+      background: "linear-gradient(135deg, #263334, #141b1e 65%, #372820)", cursor: "pointer",
+      "&:hover .play-disc, &:focus-visible .play-disc": { bgcolor: "primary.main", color: "#101315" },
+      "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main" },
+    }}>
+    {drive && failedUrl !== video.url && <Box component="img"
+      src={drive.thumbnail} alt="" loading="lazy"
+      onError={() => setFailedUrl(video.url)} sx={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+    <Box className="play-disc" sx={{ position: "absolute", width: 48, height: 48,
+      borderRadius: "50%", bgcolor: "#101315d9", color: "#fff", border: "1px solid #ffffff70",
+      display: "grid", placeItems: "center" }}>
+      <PlayArrowIcon sx={{ fontSize: 32 }} />
     </Box>
-  );
+  </Box>;
+}
+
+function VideoPlayer({ video, onClose }: { video: MatchVideo; onClose: () => void }) {
+  const mobile = useMediaQuery("(max-width: 599px)");
+  const drive = driveVideo(video.url);
+  const [failed, setFailed] = useState(false);
+  return <Dialog open onClose={onClose} fullWidth maxWidth="lg" fullScreen={mobile}
+    aria-labelledby="match-video-title" slotProps={{ paper: { sx: { bgcolor: "#171b1d", color: "#fff" } } }}>
+    <Stack direction="row" alignItems="center" gap={1} sx={{ px: 2, py: 1 }}>
+      <DialogTitle id="match-video-title" sx={{ flex: 1, p: 0, overflowWrap: "anywhere" }}>{video.title}</DialogTitle>
+      <IconButton component="a" href={video.url} target="_blank" rel="noopener noreferrer"
+        aria-label="Open original video" title="Open original video"><OpenInNewIcon /></IconButton>
+      <IconButton onClick={onClose} aria-label="Close video player"><CloseIcon /></IconButton>
+    </Stack>
+    <Box sx={{ display: "grid", placeItems: "center", bgcolor: "#000", minHeight: 0,
+      width: "100%", aspectRatio: mobile ? undefined : "16 / 9", maxHeight: mobile ? undefined : "77dvh",
+      flex: mobile ? 1 : undefined }}>
+      {drive ? <Box component="iframe" title={video.title}
+        src={drive.preview} allow="autoplay; fullscreen" allowFullScreen
+        sx={{ border: 0, width: "100%", height: "100%", minHeight: 0 }} />
+        : failed ? <Alert severity="warning">This video couldn’t play here. Use “Open original video” to view it.</Alert>
+        : <Box component="video" src={video.url} aria-label={video.title} autoPlay controls playsInline
+          onError={() => setFailed(true)} sx={{ width: "100%", height: "100%", minHeight: 0, objectFit: "contain" }} />}
+    </Box>
+  </Dialog>;
 }
 
 export default function MatchVideoGallery({
@@ -85,6 +97,9 @@ export default function MatchVideoGallery({
   videos: MatchVideo[];
   onSave?: (videos: MatchVideo[]) => void;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selectedVideo = videos.find(video => video.id === selectedId);
+  const [rename, setRename] = useState<{ id: string; title: string } | null>(null);
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
@@ -94,14 +109,24 @@ export default function MatchVideoGallery({
     if (!onSave) return;
     try {
       const parsed = new URL(url.trim());
-      if (parsed.protocol !== "https:") throw new Error("Enter a secure HTTPS video URL.");
-      onSave([...videos, { id: crypto.randomUUID(), url: parsed.href, title: title.trim() || `Match video ${videos.length + 1}` }]);
+      if (!driveVideo(parsed.href))
+        throw new Error("Enter a Google Drive video file sharing link.");
+      onSave([
+        ...videos,
+        {
+          id: crypto.randomUUID(),
+          url: parsed.href,
+          title: title.trim() || `Match video ${videos.length + 1}`,
+        },
+      ]);
       setOpen(false);
       setUrl("");
       setTitle("");
       setError("");
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Enter a valid video URL.");
+      setError(
+        cause instanceof Error ? cause.message : "Enter a valid video URL.",
+      );
     }
   }
 
@@ -109,49 +134,125 @@ export default function MatchVideoGallery({
   return (
     <Card>
       <CardContent>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2} sx={{ mb: 2 }}>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+          gap={2}
+          sx={{ mb: 2 }}
+        >
           <Typography variant="h6">Videos</Typography>
-          {onSave && <Button variant="outlined" onClick={() => setOpen(true)}>+ Add Video URL</Button>}
+          {onSave && (
+            <Button variant="contained" onClick={() => setOpen(true)}>
+              + Add Video URL
+            </Button>
+          )}
         </Stack>
-        {!videos.length && <Typography color="text.secondary">Add a hosted video from this match.</Typography>}
-        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 2 }}>
+        {!videos.length && (
+          <Typography color="text.secondary">
+            Add a Google Drive video from this match.
+          </Typography>
+        )}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
+            gap: 2,
+          }}
+        >
           {videos.map((video) => (
             <Box key={video.id} sx={{ minWidth: 0 }}>
-              {googleDriveFileId(video.url) ? (
-                <DriveVideo fileId={googleDriveFileId(video.url)!} title={video.title} />
-              ) : (
-                <Box
-                  component="video"
-                  src={video.url}
-                  controls
-                  preload="metadata"
-                  playsInline
-                  sx={{ display: "block", width: "100%", aspectRatio: "16 / 9", bgcolor: "#000" }}
-                />
-              )}
-              <Stack direction="row" alignItems="center" justifyContent="space-between" gap={1}>
-                <Typography sx={{ overflowWrap: "anywhere" }}>{video.title}</Typography>
-                {onSave && <Button size="small" color="error" onClick={() => {
-                  if (window.confirm(`Remove “${video.title}” from this match?`))
-                    onSave(videos.filter((item) => item.id !== video.id));
-                }}>Remove</Button>}
+              <VideoThumbnail video={video} onPlay={() => setSelectedId(video.id)} />
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                gap={1}
+              >
+                <Typography sx={{ flex: 1, overflowWrap: "anywhere" }}>
+                  {video.title}
+                </Typography>
+                {onSave && <IconButton size="small" aria-label={`Edit title of ${video.title}`}
+                  title="Edit video title" onClick={() => setRename({ id: video.id, title: video.title })}>
+                  <EditIcon fontSize="small" />
+                </IconButton>}
+                {onSave && (
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() => {
+                      if (
+                        window.confirm(
+                          `Remove “${video.title}” from this match?`,
+                        )
+                      )
+                        onSave(videos.filter((item) => item.id !== video.id));
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
               </Stack>
             </Box>
           ))}
         </Box>
       </CardContent>
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+      {onSave && rename && videos.some(video => video.id === rename.id) && (
+        <Dialog open onClose={() => setRename(null)} fullWidth maxWidth="xs" aria-labelledby="rename-video-title">
+          <Box component="form" onSubmit={event => {
+            event.preventDefault();
+            const nextTitle = rename.title.trim();
+            if (!nextTitle) return;
+            onSave(videos.map(video => video.id === rename.id ? { ...video, title: nextTitle } : video));
+            setRename(null);
+          }}>
+            <DialogTitle id="rename-video-title">Edit video title</DialogTitle>
+            <DialogContent sx={{ pt: "8px !important" }}>
+              <TextField autoFocus fullWidth label="Video title" value={rename.title}
+                onChange={event => setRename({ ...rename, title: event.target.value })} />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setRename(null)}>Cancel</Button>
+              <Button type="submit" variant="contained" disabled={!rename.title.trim()}>Save title</Button>
+            </DialogActions>
+          </Box>
+        </Dialog>
+      )}
+      {selectedVideo && <VideoPlayer key={selectedVideo.id} video={selectedVideo} onClose={() => setSelectedId(null)} />}
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
         <DialogTitle>Add Video URL</DialogTitle>
         <DialogContent>
           <Stack gap={2} sx={{ pt: 1 }}>
-            <TextField autoFocus label="Video URL" type="url" fullWidth value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://drive.google.com/file/d/…/view" helperText="Paste a Google Drive sharing link or a direct HTTPS video file URL." />
-            <TextField label="Title (optional)" fullWidth value={title} onChange={(event) => setTitle(event.target.value)} />
+            <TextField
+              autoFocus
+              label="Video URL"
+              type="url"
+              fullWidth
+              value={url}
+              onChange={(event) => setUrl(event.target.value)}
+              placeholder="https://drive.google.com/file/d/…/view"
+              helperText="Paste the file sharing link from Google Drive."
+            />
+            <TextField
+              label="Title (optional)"
+              fullWidth
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+            />
             {error && <Alert severity="error">{error}</Alert>}
           </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
-          <Button variant="contained" disabled={!url.trim()} onClick={addVideo}>Add Video</Button>
+          <Button variant="contained" disabled={!url.trim()} onClick={addVideo}>
+            Add Video
+          </Button>
         </DialogActions>
       </Dialog>
     </Card>

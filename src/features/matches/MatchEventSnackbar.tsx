@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import TimelineMarker from "../../components/TimelineMarker";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
 import type { Match, MatchEvent, Player } from "../../model";
@@ -23,12 +24,19 @@ type Props = {
 export function PlayerNameNumberInline({ player }: { player: Player }) {
   return (
     <Box
+      component={Link}
+      to={`/player/${encodeURIComponent(player.id)}`}
+      onClick={event => event.stopPropagation()}
       sx={{
-        display: "flex",
+        display: "inline-flex",
+        color: "inherit",
+        textDecoration: "none",
+        "&:hover, &:focus-visible": { textDecoration: "underline" },
         alignItems: "center",
       }}
     >
       <Typography
+        component="span"
         sx={(theme) => ({
           color: theme.palette.primary.main,
           fontWeight: 700,

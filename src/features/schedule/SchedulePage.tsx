@@ -83,15 +83,15 @@ function filterOptions(values: string[]) {
     .map((value) => ({ value, label: value }));
 }
 
-const mediaOptions = ["Photos only", "Videos only", "Both"];
+const mediaOptions = ["Photos", "Videos", "Both"];
 
 function matchesMedia(match: Match, selected: string[]) {
   if (!selected.length) return true;
   const photos = Boolean(match.photos?.length);
   const videos = Boolean(match.videos?.length);
   if (photos && videos) return selected.includes("Both");
-  if (photos) return selected.includes("Photos only");
-  return videos && selected.includes("Videos only");
+  if (photos) return selected.includes("Photos");
+  return videos && selected.includes("Videos");
 }
 
 function venueName(match: Match) {
@@ -165,9 +165,13 @@ export default function SchedulePage({
         (!kit || match.kit === kit),
     )
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-  const activeCount = [season !== "All seasons", result, venue, kit, media.length].filter(
-    Boolean,
-  ).length;
+  const activeCount = [
+    season !== "All seasons",
+    result,
+    venue,
+    kit,
+    media.length,
+  ].filter(Boolean).length;
 
   const filterControls = (
     <>
@@ -210,14 +214,31 @@ export default function SchedulePage({
         options={filterOptions(pastMatches.map((match) => match.kit))}
       />
       <FormControl size="small" sx={{ minWidth: 150 }}>
-        <InputLabel id="history-media-label" shrink>Media</InputLabel>
-        <Select<string[]> multiple labelId="history-media-label" label="Media"
-          value={media} displayEmpty notched
-          renderValue={selected => selected.length ? selected.join(", ") : "All matches"}
-          onChange={({ target: { value } }) => setMedia(typeof value === "string" ? value.split(",") : value)}>
-          {mediaOptions.map(option => (
+        <InputLabel id="history-media-label" shrink>
+          Media
+        </InputLabel>
+        <Select<string[]>
+          multiple
+          labelId="history-media-label"
+          label="Media"
+          value={media}
+          displayEmpty
+          notched
+          renderValue={(selected) =>
+            selected.length ? selected.join(", ") : "All matches"
+          }
+          onChange={({ target: { value } }) =>
+            setMedia(typeof value === "string" ? value.split(",") : value)
+          }
+        >
+          {mediaOptions.map((option) => (
             <MenuItem key={option} value={option}>
-              <Checkbox checked={media.includes(option)} size="small" disableRipple tabIndex={-1} />
+              <Checkbox
+                checked={media.includes(option)}
+                size="small"
+                disableRipple
+                tabIndex={-1}
+              />
               {option}
             </MenuItem>
           ))}
