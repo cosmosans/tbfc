@@ -7,6 +7,8 @@ import { CardGrid } from "../../components/layout";
 import { MatchSummaryCard, UpcomingFixtureCard } from "../matches/MatchCards";
 import SoccerBallIcon from "../../img/soccer-ball-variant.svg";
 
+const teamImageShadow = "drop-shadow(2px 4px 6px rgba(0,0,0,.4))";
+
 export default function TeamDetail({
   data,
   team,
@@ -31,26 +33,60 @@ export default function TeamDetail({
 
   return (
     <Stack gap={3}>
-      <Card sx={{ bgcolor: "#171a1c", border: 0 }}>
+      <Card
+        sx={{
+          mx: { xs: 0, sm: -2, md: -3, lg: -4 },
+          bgcolor: team.color
+            ? `color-mix(in srgb, ${team.color} 62%, black)`
+            : "#171a1c",
+          border: 0,
+        }}
+      >
         <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
           <Stack
             direction="row"
             gap={{ xs: 1, sm: 2 }}
+            justifyContent="center"
             alignItems="center"
             sx={{ my: 2 }}
           >
-            <OpponentCrest url={team.crestUrl} size={100} />
+            <Box sx={{ display: "flex", "& img, & svg": { filter: teamImageShadow } }}>
+              <OpponentCrest url={team.crestUrl} size={100} mobileSize={56} />
+            </Box>
 
-            <Typography variant="h4" fontWeight={900} textAlign="center">
+            <Typography
+              variant="h4"
+              fontWeight={900}
+              textAlign="center"
+              sx={{ minWidth: 0, overflowWrap: "anywhere" }}
+            >
               {team.name}
             </Typography>
+
+            {team.kitImageUrl && (
+              <Box
+                component="img"
+                src={team.kitImageUrl}
+                alt={team.name + " kit"}
+                sx={{
+                  display: "block",
+                  width: { xs: 56, sm: 100 },
+                  height: { xs: 64, sm: 108 },
+                  flexShrink: 0,
+                  objectFit: "contain",
+                  filter: teamImageShadow,
+                }}
+              />
+            )}
           </Stack>
 
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              mt: `5px`,
+              maxWidth: 768,
+              mx: "auto",
+              mt: "5px",
               paddingInline: `5px`,
             }}
           >
@@ -73,6 +109,9 @@ export default function TeamDetail({
 
             <Box sx={{ flex: 1 }}>
               <RecordBar
+                key={team.id}
+                revealOnMount
+                opponentCrestUrl={team.crestUrl}
                 opponentWins={results.L}
                 draws={results.D}
                 tbfcWins={results.W}
@@ -92,22 +131,13 @@ export default function TeamDetail({
               {results.for}
             </Typography>
           </Box>
-          <Typography textAlign="center" color="text.secondary" sx={{ mt: 2 }}>
-            {results.played} Matches Played
+          <Typography
+            textAlign="center"
+            color="text.secondary"
+            sx={{ mt: 1, textTransform: "uppercase" }}
+          >
+            {results.played} Match{results.played === 1 ? "" : "es"} Played
           </Typography>
-          {team.kitImageUrl && (
-            <Box
-              component="img"
-              src={team.kitImageUrl}
-              alt={team.name + " kit"}
-              sx={{
-                display: "block",
-                maxWidth: "100%",
-                maxHeight: 240,
-                objectFit: "contain",
-              }}
-            />
-          )}
           {team.notes && (
             <Typography sx={{ mt: 2, whiteSpace: "pre-wrap" }}>
               {team.notes}

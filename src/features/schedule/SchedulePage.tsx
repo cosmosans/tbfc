@@ -128,10 +128,6 @@ export default function SchedulePage({
   const seasons = useMemo(() => orderedSeasons(data, true), [data]);
   const includes = (match: Match) =>
     matchesMedia(match, media) &&
-    (season === "All seasons" ||
-      match.seasonId === season ||
-      (!match.seasonId &&
-        match.season === seasons.find((item) => item.id === season)?.name)) &&
     `${opponentName(data, match)} ${matchLocation(match)} ${match.league ?? ""} ${match.competition}`
       .toLowerCase()
       .includes(search.toLowerCase());
@@ -160,6 +156,11 @@ export default function SchedulePage({
     .filter(includes)
     .filter(
       (match) =>
+        (season === "All seasons" ||
+          match.seasonId === season ||
+          (!match.seasonId &&
+            match.season ===
+              seasons.find((item) => item.id === season)?.name)) &&
         (!result || scoreResult(match) === result) &&
         (!venue || venueName(match) === venue) &&
         (!kit || match.kit === kit),
@@ -225,7 +226,7 @@ export default function SchedulePage({
           displayEmpty
           notched
           renderValue={(selected) =>
-            selected.length ? selected.join(", ") : "All matches"
+            selected.length ? selected.join(", ") : "All Matches"
           }
           onChange={({ target: { value } }) =>
             setMedia(typeof value === "string" ? value.split(",") : value)

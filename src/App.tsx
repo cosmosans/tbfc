@@ -830,6 +830,7 @@ export default function App() {
         )}
         {syncState === "loading" ? (
           <ClubDataSkeleton
+            teamCount={data.opponents.length}
             view={
               playerRoute
                 ? "player"

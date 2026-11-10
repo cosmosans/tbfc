@@ -254,11 +254,24 @@ export default function MatchBanner({
     >
       <Panel
         sx={{
+          border: 0,
           ...(location?.imageUrl
             ? {
-                backgroundImage: `linear-gradient(180deg, rgba(12, 14, 16, .6), rgba(12, 14, 16, .98)), url(${JSON.stringify(location.imageUrl)})`,
-                backgroundSize: "cover",
-                backgroundPosition: "bottom",
+                bgcolor: "background.default",
+                boxShadow: "none",
+                isolation: "isolate",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  inset: "0 0 3px",
+                  zIndex: -1,
+                  pointerEvents: "none",
+                  backgroundImage: `url(${JSON.stringify(location.imageUrl)})`,
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center calc(100% + var(--backdrop-offset, 0px))",
+                  maskImage: "linear-gradient(to bottom, rgba(0,0,0,.4), transparent calc(100% - 4px))",
+                },
               }
             : {}),
           ...(onOpen
@@ -621,6 +634,8 @@ export default function MatchBanner({
               sx={{ mt: 2, px: { xs: 1.5, sm: 0 } }}
             >
               <RecordBar
+                showCrests={!detail}
+                opponentCrestUrl={opponent?.crestUrl}
                 animationKey={match.id}
                 scoreKey={
                   match.status === "in_progress"

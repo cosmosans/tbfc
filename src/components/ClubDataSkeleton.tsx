@@ -1,7 +1,44 @@
 import { PlayerCardFrame, PlayerPhoto, PlayerInformation } from "../features/roster/PlayerCard.styles";
+import { FourColumnGrid } from "./layout";
 import PageHeading from "./PageHeading";
 import { canEditClub } from "../editAccess";
 import { Box, Card, CardContent, Skeleton, Stack } from "@mui/material";
+
+function TeamsPlaceholder({ count }: { count: number }) {
+  return (
+    <Stack gap={2}>
+      <PageHeading>Teams</PageHeading>
+      {canEditClub && (
+        <Stack direction="row" gap={2}>
+          <Skeleton variant="rectangular" height={40} sx={{ flex: 1 }} />
+          <Skeleton variant="rectangular" height={40} width={96} />
+        </Stack>
+      )}
+      <FourColumnGrid>
+        {Array.from({ length: count || 12 }, (_, index) => (
+          <Card key={index}>
+            <CardContent sx={{ pt: 2.5, px: 2.5 }}>
+              <Stack direction="row" alignItems="center" gap={2}>
+                <Skeleton variant="circular" width={58} height={58} />
+                <Box sx={{ flex: 1 }}><Skeleton width="75%" height={28} /></Box>
+                <Skeleton variant="rounded" width={48} height={54} />
+              </Stack>
+              <Stack direction="row" alignItems="center" gap={0.75} sx={{ mt: "5px", px: "5px", height: 28 }}>
+                <Skeleton width={18} /><Skeleton variant="circular" width={20} height={20} />
+                <Skeleton variant="rectangular" height={24} sx={{ flex: 1, transform: "skewX(-10deg)" }} />
+                <Skeleton variant="circular" width={20} height={20} /><Skeleton width={18} />
+              </Stack>
+              <Stack direction="row" justifyContent="space-between" sx={{ mt: 3, mb: -1 }}>
+                {canEditClub && <Skeleton variant="rectangular" width={64} height={36} />}
+                <Skeleton variant="rectangular" width={102} height={36} />
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+      </FourColumnGrid>
+    </Stack>
+  );
+}
 
 function RosterPlaceholder() {
   return <Stack gap={2}>
@@ -101,8 +138,8 @@ function MatchPlaceholder() {
   );
 }
 
-export default function ClubDataSkeleton({ view }: { view: string }) {
-  const cards = view === "player" || view === "teams" || view === "locations";
+export default function ClubDataSkeleton({ view, teamCount = 0 }: { view: string; teamCount?: number }) {
+  const cards = view === "player" || view === "locations";
   const stats = view === "stats" || view === "seasons";
   return (
     <Box
@@ -116,7 +153,7 @@ export default function ClubDataSkeleton({ view }: { view: string }) {
       }}
     >
       <Stack gap={3} aria-hidden="true">
-        {view === "roster" ? <RosterPlaceholder /> : view === "schedule" ? (
+        {view === "teams" ? <TeamsPlaceholder count={teamCount} /> : view === "roster" ? <RosterPlaceholder /> : view === "schedule" ? (
           <>
             <Stack direction="row" gap={2}>
               <Skeleton variant="rectangular" height={40} sx={{ flex: 1 }} />

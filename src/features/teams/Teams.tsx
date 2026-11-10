@@ -208,6 +208,7 @@ export default function Teams({
 
                     <Box sx={{ flex: 1 }}>
                       <RecordBar
+                opponentCrestUrl={opponent.crestUrl}
                         opponentWins={r.L}
                         draws={r.D}
                         tbfcWins={r.W}

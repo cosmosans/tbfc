@@ -1,6 +1,10 @@
 import { useLayoutEffect, useRef } from "react";
 import { Box, Typography } from "@mui/material";
+import OpponentCrest from "./OpponentCrest";
+import { keyframes } from "@emotion/react";
 import { styled } from "@mui/material/styles";
+
+const revealRecord = keyframes`from { flex-grow: var(--equal-share); }`;
 
 const Bar = styled(Box)({
   display: "flex",
@@ -63,6 +67,9 @@ type HeadToHeadProps = {
   draws: number;
   tbfcWins: number;
   opponentColor?: string;
+  opponentCrestUrl?: string;
+  showCrests?: boolean;
+  revealOnMount?: boolean;
   reverse?: boolean;
   animationKey?: string;
   scoreKey?: string;
@@ -75,17 +82,26 @@ type ResultsProps = {
 };
 
 export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
-  const previous = useRef<{ animationKey?: string; scoreKey?: string } | null>(null);
+  const previous = useRef<{ animationKey?: string; scoreKey?: string } | null>(
+    null,
+  );
   const animationEndsAt = useRef(0);
-  const animationKey = props.variant === "results" ? undefined : props.animationKey;
+  const animationKey =
+    props.variant === "results" ? undefined : props.animationKey;
   const scoreKey = props.variant === "results" ? undefined : props.scoreKey;
-  const scoreChanged = !!scoreKey && previous.current?.animationKey === animationKey &&
-    !!previous.current?.scoreKey && previous.current.scoreKey !== scoreKey;
-  const animate = scoreChanged ||
-    (previous.current?.animationKey === animationKey && Date.now() < animationEndsAt.current);
+  const scoreChanged =
+    !!scoreKey &&
+    previous.current?.animationKey === animationKey &&
+    !!previous.current?.scoreKey &&
+    previous.current.scoreKey !== scoreKey;
+  const animate =
+    scoreChanged ||
+    (previous.current?.animationKey === animationKey &&
+      Date.now() < animationEndsAt.current);
   useLayoutEffect(() => {
     if (scoreChanged) animationEndsAt.current = Date.now() + 4000;
-    else if (previous.current?.animationKey !== animationKey) animationEndsAt.current = 0;
+    else if (previous.current?.animationKey !== animationKey)
+      animationEndsAt.current = 0;
     previous.current = { animationKey, scoreKey };
   }, [animationKey, scoreKey, scoreChanged]);
   const results = props.variant === "results";
@@ -98,15 +114,44 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
   const total = counts.reduce((sum, count) => sum + count, 0);
   const sizes = total ? counts : [1, 1, 1];
   const segmentTransition = animate ? "flex-grow 4s ease" : "none";
+  const showCrests = !results && props.showCrests !== false;
+  const opponentCrest = showCrests && (
+    <OpponentCrest url={props.opponentCrestUrl} size={35} />
+  );
+  const clubCrest = showCrests && (
+    <Box
+      component="img"
+      src="/crests/tbfc.png"
+      alt="Turf Burners FC"
+      sx={{ width: 35, height: 35, objectFit: "contain", flexShrink: 0 }}
+    />
+  );
   return (
     <Box
+      sx={{
+        width: "100%",
+        maxWidth: 768,
+        mx: "auto",
+        display: "flex",
+        alignItems: "center",
+        gap: 0.5,
+      }}
       aria-label={
         results
           ? `Record: ${props.wins} wins, ${props.draws} draws, ${props.losses} losses`
           : `Head to head: opponent ${props.opponentWins} wins, ${props.draws} draws, TBFC ${props.tbfcWins} wins`
       }
     >
-      <Bar>
+      {reverse ? clubCrest : opponentCrest}
+      <Bar sx={{
+        flex: 1, minWidth: 0,
+        ...(!results && props.revealOnMount && total > 0 && {
+          "--equal-share": total / 3,
+          "@media (prefers-reduced-motion: no-preference)": {
+            "& > div": { animation: `${revealRecord} 3s ease-in-out 120ms backwards` },
+          },
+        }),
+      }}>
         <Segment
           tone={results ? "win" : reverse ? "tbfc" : "opponent"}
           opponentColor={results ? undefined : props.opponentColor}
@@ -119,7 +164,10 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
             {counts[0]}W
           </Typography>
         </Segment>
-        <Segment tone={results ? "resultDraw" : "draw"} sx={{ flex: sizes[1], transition: segmentTransition }}>
+        <Segment
+          tone={results ? "resultDraw" : "draw"}
+          sx={{ flex: sizes[1], transition: segmentTransition }}
+        >
           <Typography
             variant="caption"
             sx={{ fontWeight: 700, transform: "skewX(10deg)" }}
@@ -142,6 +190,7 @@ export default function RecordBar(props: HeadToHeadProps | ResultsProps) {
           </Typography>
         </Segment>
       </Bar>
+      {reverse ? opponentCrest : clubCrest}
     </Box>
   );
 }
