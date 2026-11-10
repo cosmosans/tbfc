@@ -185,6 +185,7 @@ export default function MatchGallery({
               {onSave && (
                 <FormControlLabel
                   label="Cover Photo"
+                  slotProps={{ typography: { variant: "body2" } }}
                   control={<Checkbox size="small" checked={!!photo.cover} disabled={busy}
                     onChange={(_, checked) => onSave(photos.map(item => {
                       const cover = checked && item.id === photo.id;

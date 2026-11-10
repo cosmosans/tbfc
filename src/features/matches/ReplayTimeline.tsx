@@ -118,10 +118,10 @@ export default function ReplayTimeline({
             <Tooltip key={event.id} arrow placement="bottom"
               enterDelay={180}
               slotProps={{
-                tooltip: { sx: { bgcolor: "#202426", color: "#fff", p: 0,
+                tooltip: { sx: { bgcolor: "#060606", color: "#fff", p: 0,
                   borderRadius: 1,
                   boxShadow: "0 4px 14px #0007" } },
-                arrow: { sx: { color: teamLabel ? accent : "#202426" } },
+                arrow: { sx: { color: teamLabel ? accent : "#060606" } },
               }}
               title={<>
                 {teamLabel && <Box sx={{ px: 1.25, py: 0.5, bgcolor: accent,

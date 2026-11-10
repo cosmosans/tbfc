@@ -241,6 +241,13 @@ export default function AppHeader({
           borderTop: "1px solid #333",
           pb: "env(safe-area-inset-bottom, 0px)",
           boxShadow: "0 -4px 18px #0008",
+          "@media (width > 1200px)": {
+            top: 0, right: "auto", width: "var(--nav-rail-width)",
+            gridTemplateColumns: "1fr", gridAutoRows: "min-content",
+            alignContent: "start", overflowY: "auto",
+            pt: "env(safe-area-inset-top, 0px)",
+            borderTop: 0, borderRight: "1px solid #333", boxShadow: "none",
+          },
         }}
       >
         {primaryItems.map((item) => {

@@ -667,7 +667,12 @@ export default function App() {
   }
 
   return (
-    <>
+    <Box sx={{
+      "--nav-rail-width": "0px",
+      "--nav-bottom-height": "63px",
+      "@media (width > 1200px)": { "--nav-rail-width": "88px", "--nav-bottom-height": "0px" },
+      pl: "var(--nav-rail-width)",
+    }}>
       <AppHeader
         matchTab={
           selected
@@ -724,6 +729,10 @@ export default function App() {
             xs: `calc(${canEditClub && dirty && !publishing ? 220 : 82}px + env(safe-area-inset-bottom, 0px))`,
             sm: `calc(${canEditClub && dirty && !publishing ? 164 : 82}px + env(safe-area-inset-bottom, 0px))`,
           },
+          "@media (width > 1200px)": {
+            pb: canEditClub && dirty && !publishing ? 12 : 3,
+            "--event-button-bottom": canEditClub && dirty && !publishing ? "88px" : "22px",
+          },
           px: { xs: 0, sm: 2, md: 3, lg: 4 },
         }}
       >
@@ -733,9 +742,9 @@ export default function App() {
             aria-label="Unpublished changes"
             sx={{
               position: "fixed",
-              left: 0,
+              left: "var(--nav-rail-width)",
               right: 0,
-              bottom: "calc(63px + env(safe-area-inset-bottom, 0px))",
+              bottom: "calc(var(--nav-bottom-height) + env(safe-area-inset-bottom, 0px))",
               zIndex: (theme) => theme.zIndex.appBar + 1,
               bgcolor: "#ffad45",
               color: "#21150a",
@@ -1310,6 +1319,6 @@ export default function App() {
           }}
         />
       )}
-    </>
+    </Box>
   );
 }

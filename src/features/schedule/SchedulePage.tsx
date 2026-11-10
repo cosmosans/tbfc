@@ -338,7 +338,7 @@ export default function SchedulePage({
               }}
               color="text.secondary"
             >
-              Current Season
+              {currentSeason || "Season Schedule"}
             </Typography>
             <Typography
               variant="body2"

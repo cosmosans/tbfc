@@ -186,7 +186,7 @@ export default function MatchVideoGallery({
                 justifyContent="space-between"
                 gap={1}
               >
-                <Typography sx={{ flex: 1, overflowWrap: "anywhere" }}>
+                <Typography variant="body2" sx={{ flex: 1, overflowWrap: "anywhere" }}>
                   {video.title}
                 </Typography>
               {order.handle(video.id, video.title)}
