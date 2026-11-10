@@ -252,7 +252,7 @@ export default function MatchBanner({
     <Box
       ref={bannerRef}
       className={detail ? "match-banner-detail" : undefined}
-      sx={{ minWidth: 0 }}
+      sx={{ minWidth: 0, mx: { xs: 0, sm: -2, md: -3, lg: -4 } }}
     >
       <Panel
         sx={{
