@@ -33,8 +33,8 @@ export default function MatchEventPage({
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={2}>
-      <MatchBanner onPreviewGoal={onPreviewGoal} goalTime={goalTime} goalSoundEnabled={goalSoundEnabled} onGoalSoundToggle={onGoalSoundToggle} data={data} match={match} detail onEdit={onEdit} />
       <MatchNavigation matches={data.matches} match={match} />
+      <MatchBanner onPreviewGoal={onPreviewGoal} goalTime={goalTime} goalSoundEnabled={goalSoundEnabled} onGoalSoundToggle={onGoalSoundToggle} data={data} match={match} detail onEdit={onEdit} />
       {match.report && (
         <Box
           sx={{ "& p": { my: 0, mb: 2 }, "& p:last-child": { mb: 0 } }}

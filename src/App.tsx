@@ -900,6 +900,7 @@ export default function App() {
             />
           ) : (
             <>
+              <MatchNavigation matches={data.matches} match={selected} />
               <MatchReplay key={selected.id + String(manageMode)} data={data} match={selected}
                 enabled={manageMode && selected.status === "completed"}
                 publishBarVisible={canEditClub && dirty && !publishing}
@@ -912,7 +913,6 @@ export default function App() {
                   onEdit: canEditClub ? () => setEditing({ ...selected }) : undefined,
                 }}
               />
-              <MatchNavigation matches={data.matches} match={selected} />
               {opponentFor(data, selected)?.notes && (
                 <Alert severity="info" sx={{ mt: 2 }}>
                   <strong>Team intel:</strong>{" "}
