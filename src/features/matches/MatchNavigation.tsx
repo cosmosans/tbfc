@@ -1,8 +1,9 @@
-import { Button, Stack } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Link, useSearchParams } from "react-router-dom";
-import type { Match } from "../../model";
+import { seasonName } from "../../clubView";
+import type { ClubData, Match } from "../../model";
 import { normalizeMatchTab } from "./matchTabs";
 
 function kickoffMinutes(value: string) {
@@ -15,14 +16,14 @@ function kickoffMinutes(value: string) {
 }
 
 export default function MatchNavigation({
-  matches,
+  data,
   match,
 }: {
-  matches: Match[];
+  data: ClubData;
   match: Match;
 }) {
   const [params] = useSearchParams();
-  const ordered = [...matches].sort(
+  const ordered = [...data.matches].sort(
     (a, b) =>
       a.date.localeCompare(b.date) ||
       kickoffMinutes(a.kickoff ?? "") - kickoffMinutes(b.kickoff ?? "") ||
@@ -31,30 +32,41 @@ export default function MatchNavigation({
   const index = ordered.findIndex((item) => item.id === match.id);
   const previous = index > 0 ? ordered[index - 1] : undefined;
   const next = index >= 0 ? ordered[index + 1] : undefined;
+  const season = seasonName(data, match);
+  const matchSuffix = <Box component="span" sx={{ display: { xs: "none", sm: "inline" }, ml: "0.25em" }}>Match</Box>;
   const route = (target: Match) =>
     `/match/${encodeURIComponent(target.id)}?tab=${normalizeMatchTab(params.get("tab"), target.status === "scheduled")}`;
   return (
-    <Stack direction="row" justifyContent="space-between" gap={2} sx={{ m: 2 }}>
+    <Box sx={{ display: "grid", gridTemplateColumns: "1fr minmax(0, auto) 1fr",
+      alignItems: "center", gap: { xs: 1, sm: 2 }, m: { xs: 1, sm: 2 } }}>
       <Button
         component={Link}
         to={previous ? route(previous) : "#"}
         disabled={!previous}
+        sx={{ justifySelf: "start" }}
         startIcon={<ArrowBackIcon />}
         variant="outlined"
         title={previous ? `${previous.date} · ${previous.opponent}` : undefined}
       >
-        Previous Match
+        Previous{matchSuffix}
       </Button>
+      <Typography className="match-nav-season-competition" variant="caption" align="center"
+        sx={{ textTransform: "uppercase", fontWeight: "normal", opacity: 0.7, lineHeight: { xs: 1.33, sm: 1.66 }, letterSpacing: ".06em" }}>
+        {season && <span>{season}</span>}
+        {season && match.competition && <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}> • </Box>}
+        {match.competition && <Box component="span" sx={{ display: { xs: "block", sm: "inline" } }}>{match.competition}</Box>}
+      </Typography>
       <Button
         component={Link}
         to={next ? route(next) : "#"}
         disabled={!next}
+        sx={{ justifySelf: "end" }}
         endIcon={<ArrowForwardIcon />}
         variant="outlined"
         title={next ? `${next.date} · ${next.opponent}` : undefined}
       >
-        Next Match
+        Next{matchSuffix}
       </Button>
-    </Stack>
+    </Box>
   );
 }

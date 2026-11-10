@@ -900,7 +900,7 @@ export default function App() {
             />
           ) : (
             <>
-              <MatchNavigation matches={data.matches} match={selected} />
+              <MatchNavigation data={data} match={selected} />
               <MatchReplay key={selected.id + String(manageMode)} data={data} match={selected}
                 enabled={manageMode && selected.status === "completed"}
                 publishBarVisible={canEditClub && dirty && !publishing}
