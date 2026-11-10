@@ -108,6 +108,7 @@ export default function MatchBanner({
   onOpen,
   onEdit,
   detail = false,
+  children,
   replaySeconds,
   goalTime,
   goalSoundEnabled = false,
@@ -119,6 +120,7 @@ export default function MatchBanner({
   onOpen?: () => void;
   onEdit?: () => void;
   detail?: boolean;
+  children?: React.ReactNode;
   replaySeconds?: number;
   goalTime?: number;
   goalSoundEnabled?: boolean;
@@ -631,6 +633,7 @@ export default function MatchBanner({
                 opponentColor={opponent?.color}
                 reverse={match.homeAway === "away"}
               />
+              {children}
             </Box>
           </Box>
         </CardContent>

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import {
   Alert,
   Badge,
+  Checkbox,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -82,6 +83,17 @@ function filterOptions(values: string[]) {
     .map((value) => ({ value, label: value }));
 }
 
+const mediaOptions = ["Photos only", "Videos only", "Both"];
+
+function matchesMedia(match: Match, selected: string[]) {
+  if (!selected.length) return true;
+  const photos = Boolean(match.photos?.length);
+  const videos = Boolean(match.videos?.length);
+  if (photos && videos) return selected.includes("Both");
+  if (photos) return selected.includes("Photos only");
+  return videos && selected.includes("Videos only");
+}
+
 function venueName(match: Match) {
   return splitMatchLocation(match.venue, match.pitch).venue;
 }
@@ -110,10 +122,12 @@ export default function SchedulePage({
   const [search, setSearch] = useState("");
   const [result, setResult] = useState("");
   const [venue, setVenue] = useState("");
+  const [media, setMedia] = useState<string[]>([]);
   const [kit, setKit] = useState("");
   const [uploadOpen, setUploadOpen] = useState(false);
   const seasons = useMemo(() => orderedSeasons(data, true), [data]);
   const includes = (match: Match) =>
+    matchesMedia(match, media) &&
     (season === "All seasons" ||
       match.seasonId === season ||
       (!match.seasonId &&
@@ -151,7 +165,7 @@ export default function SchedulePage({
         (!kit || match.kit === kit),
     )
     .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-  const activeCount = [season !== "All seasons", result, venue, kit].filter(
+  const activeCount = [season !== "All seasons", result, venue, kit, media.length].filter(
     Boolean,
   ).length;
 
@@ -195,9 +209,24 @@ export default function SchedulePage({
         onChange={setKit}
         options={filterOptions(pastMatches.map((match) => match.kit))}
       />
+      <FormControl size="small" sx={{ minWidth: 150 }}>
+        <InputLabel id="history-media-label" shrink>Media</InputLabel>
+        <Select<string[]> multiple labelId="history-media-label" label="Media"
+          value={media} displayEmpty notched
+          renderValue={selected => selected.length ? selected.join(", ") : "All matches"}
+          onChange={({ target: { value } }) => setMedia(typeof value === "string" ? value.split(",") : value)}>
+          {mediaOptions.map(option => (
+            <MenuItem key={option} value={option}>
+              <Checkbox checked={media.includes(option)} size="small" disableRipple tabIndex={-1} />
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Button
         variant="outlined"
         onClick={() => {
+          setMedia([]);
           setSearch("");
           setSeason("All seasons");
           setResult("");
