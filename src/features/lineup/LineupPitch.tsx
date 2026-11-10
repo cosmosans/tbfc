@@ -223,6 +223,7 @@ export default function LineupPitch({
               >
                 <MenuItem value="1-2-3-1">1-2-3-1</MenuItem>
                 <MenuItem value="1-3-3">1-3-3</MenuItem>
+                <MenuItem value="1-3-1-2">1-3-1-2</MenuItem>
               </Select>
             </FormControl>
           ) : (

@@ -17,6 +17,8 @@ import {
 } from "@mui/material";
 import type { MatchVideo } from "../../model";
 import EditIcon from "@mui/icons-material/Edit";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -65,10 +67,13 @@ function VideoThumbnail({ video, onPlay }: { video: MatchVideo; onPlay: () => vo
   </Box>;
 }
 
-function VideoPlayer({ video, onClose }: { video: MatchVideo; onClose: () => void }) {
+function VideoPlayer({ videos, index, onSelect, onClose }: {
+  videos: MatchVideo[]; index: number; onSelect: (id: string) => void; onClose: () => void;
+}) {
+  const video = videos[index];
   const mobile = useMediaQuery("(max-width: 599px)");
   const drive = driveVideo(video.url);
-  const [failed, setFailed] = useState(false);
+  const [failedUrl, setFailedUrl] = useState("");
   return <Dialog open onClose={onClose} fullWidth maxWidth="lg" fullScreen={mobile}
     aria-labelledby="match-video-title" slotProps={{ paper: { sx: { bgcolor: "#171b1d", color: "#fff" } } }}>
     <Stack direction="row" alignItems="center" gap={1} sx={{ px: 2, py: 1 }}>
@@ -83,10 +88,17 @@ function VideoPlayer({ video, onClose }: { video: MatchVideo; onClose: () => voi
       {drive ? <Box component="iframe" title={video.title}
         src={drive.preview} allow="autoplay; fullscreen" allowFullScreen
         sx={{ border: 0, width: "100%", height: "100%", minHeight: 0 }} />
-        : failed ? <Alert severity="warning">This video couldn’t play here. Use “Open original video” to view it.</Alert>
+        : failedUrl === video.url ? <Alert severity="warning">This video couldn’t play here. Use “Open original video” to view it.</Alert>
         : <Box component="video" src={video.url} aria-label={video.title} autoPlay controls playsInline
-          onError={() => setFailed(true)} sx={{ width: "100%", height: "100%", minHeight: 0, objectFit: "contain" }} />}
+          onError={() => setFailedUrl(video.url)} sx={{ width: "100%", height: "100%", minHeight: 0, objectFit: "contain" }} />}
     </Box>
+    {videos.length > 1 && <Stack direction="row" justifyContent="center" alignItems="center" spacing={2} sx={{ py: 0.5 }}>
+      <IconButton aria-label="Previous clip" disabled={index === 0}
+        onClick={() => onSelect(videos[index - 1].id)}><ChevronLeftIcon /></IconButton>
+      <Typography variant="caption" aria-live="polite">Clip {index + 1} of {videos.length}</Typography>
+      <IconButton aria-label="Next clip" disabled={index === videos.length - 1}
+        onClick={() => onSelect(videos[index + 1].id)}><ChevronRightIcon /></IconButton>
+    </Stack>}
   </Dialog>;
 }
 
@@ -98,7 +110,7 @@ export default function MatchVideoGallery({
   onSave?: (videos: MatchVideo[]) => void;
 }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const selectedVideo = videos.find(video => video.id === selectedId);
+  const selectedIndex = videos.findIndex(video => video.id === selectedId);
   const [rename, setRename] = useState<{ id: string; title: string } | null>(null);
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
@@ -219,7 +231,7 @@ export default function MatchVideoGallery({
           </Box>
         </Dialog>
       )}
-      {selectedVideo && <VideoPlayer key={selectedVideo.id} video={selectedVideo} onClose={() => setSelectedId(null)} />}
+      {selectedIndex >= 0 && <VideoPlayer videos={videos} index={selectedIndex} onSelect={setSelectedId} onClose={() => setSelectedId(null)} />}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}

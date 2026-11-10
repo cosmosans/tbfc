@@ -128,7 +128,7 @@ export function loadData(): ClubData {
         firstChoice: data.firstChoice ?? {},
         lineups: (data.lineups ?? []).filter(lineup => !excludedMatchIds.has(lineup.matchId)).map(lineup => ({
           ...lineup,
-          formation: lineup.formation === '1-3-3' ? '1-3-3' : '1-2-3-1',
+          formation: Object.hasOwn(formationPoints, lineup.formation) ? lineup.formation : '1-2-3-1',
         })),
         boards: (data.boards ?? []).filter(board => !excludedMatchIds.has(board.matchId)),
         standings: data.standings ?? seed.standings,
