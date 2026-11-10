@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import rosterJersey from "../../img/nav/squad-active.svg";
 
 const face = {
   position: "absolute" as const,
@@ -68,9 +68,15 @@ export const PlayerPhoto = styled("div")({
     objectFit: "cover",
   },
 });
-export const PlayerPlaceholder = styled(PersonOutlineIcon)({
-  fontSize: "110px !important",
-  color: "#707b7d",
+export const PlayerPlaceholder = styled("span")({
+  display: "block",
+  width: 110,
+  maxWidth: "100%",
+  aspectRatio: "1",
+  flexShrink: 0,
+  backgroundColor: "#fff",
+  mask: `url(${rosterJersey}) center / 65% auto no-repeat`,
+  opacity: 0.3,
 });
 export const PlayerInformation = styled("span")({
   flex: 1,

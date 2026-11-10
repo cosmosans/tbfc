@@ -189,7 +189,7 @@ export default function PlayerDetail({
               }}
             />
           ) : (
-            <PlayerPlaceholder />
+            <PlayerPlaceholder sx={{ width: { xs: 75, sm: 120, md: 150 }, mr: 2 }} />
           )}
           <Box
             sx={{

@@ -22,22 +22,27 @@ export default function PlayerSummary({
   player: Player;
   events: MatchEvent[];
 }) {
+  if (player.name.includes("Wet")) {
+    console.log(player);
+  }
   return (
     <>
-      <PlayerPhoto sx={{
-        position: "relative",
-        "&::after": {
-          content: player.active ? 'none' : '""',
-          position: "absolute",
-          top: 0,
-          right: 0,
-          width: 20,
-          height: 20,
-          bgcolor: "orange",
-          clipPath: "polygon(0 0, 100% 0, 100% 100%)",
-          pointerEvents: "none",
-        },
-      }}>
+      <PlayerPhoto
+        sx={{
+          position: "relative",
+          "&::after": {
+            content: player.active ? "none" : '""',
+            position: "absolute",
+            top: 0,
+            right: 0,
+            width: 20,
+            height: 20,
+            bgcolor: "orange",
+            clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+            pointerEvents: "none",
+          },
+        }}
+      >
         {player.photoUrl ? (
           <img src={player.photoUrl} alt="" />
         ) : (
@@ -47,8 +52,42 @@ export default function PlayerSummary({
       <PlayerInformation>
         <PlayerNumber>{player.number || "—"}</PlayerNumber>
         <PlayerIdentity>
-          <PlayerName>{player.name}</PlayerName>
-
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {player.captain && (
+              <Typography
+                sx={(theme) => ({
+                  fontWeight: "bold",
+                  color: theme.palette.primary.main,
+                  fontSize: 16,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: `2px solid ${theme.palette.primary.main}`,
+                  //  backgroundColor: theme.palette.primary.main,
+                  width: 25,
+                  height: 25,
+                  position: "relative",
+                  top: -1,
+                })}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    top: `1px`,
+                  }}
+                >
+                  C
+                </span>
+              </Typography>
+            )}
+            <PlayerName>{player.name}</PlayerName>
+          </Box>
           <Box
             sx={{
               display: "flex",

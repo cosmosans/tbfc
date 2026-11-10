@@ -1,10 +1,7 @@
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
 import CardIcon from "../../img/cards.svg";
-import {
-  tableHeading,
-  sortLabelStyle,
-} from "../../components/tableStyles";
+import { tableHeading, sortLabelStyle } from "../../components/tableStyles";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { careerEvents, rosterStats } from "./playerStats";
 import { PlayerInformation } from "./PlayerCard.styles";
@@ -102,7 +99,14 @@ export default function Roster({
         aria-label={`Sort by ${label}${active ? (descending ? ", descending" : ", ascending") : ""}`}
         sx={{ ...sortLabelStyle, whiteSpace: "nowrap" }}
       >
-        {icon && <Box component="img" src={icon} alt="" sx={{ width: 20, height: 20, objectFit: "contain", mr: 0.75 }} />}
+        {icon && (
+          <Box
+            component="img"
+            src={icon}
+            alt=""
+            sx={{ width: 20, height: 20, objectFit: "contain", mr: 0.75 }}
+          />
+        )}
         {label}
       </TableSortLabel>
     );
@@ -283,9 +287,16 @@ export default function Roster({
         </DialogActions>
       </Dialog>
 
-      {[{ title: "Active Roster", active: true }, { title: "Retired Roster", active: false }].map(({ title, active }) => (
-        <Box key={title} component="section" aria-label={title}
-          sx={{ bgcolor: "background.paper", overflow: "hidden" }}>
+      {[
+        { title: "Active", active: true },
+        { title: "Inactive", active: false },
+      ].map(({ title, active }) => (
+        <Box
+          key={title}
+          component="section"
+          aria-label={title}
+          sx={{ bgcolor: "background.paper", overflow: "hidden" }}
+        >
           <PanelHeader title={title} />
           <Box
             sx={{
@@ -332,14 +343,16 @@ export default function Roster({
             </PlayerInformation>
           </Box>
           <Stack gap={0}>
-            {rows.filter(({ player }) => Boolean(player.active) === active).map(({ player, events }) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                events={events}
-                onSave={savePlayer}
-              />
-            ))}
+            {rows
+              .filter(({ player }) => Boolean(player.active) === active)
+              .map(({ player, events }) => (
+                <PlayerCard
+                  key={player.id}
+                  player={player}
+                  events={events}
+                  onSave={savePlayer}
+                />
+              ))}
           </Stack>
         </Box>
       ))}
