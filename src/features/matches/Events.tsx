@@ -483,7 +483,7 @@ export default function Events({
               position: "fixed",
               bottom:
                 "calc(var(--event-button-bottom, 85px) + env(safe-area-inset-bottom, 0px))",
-              left: 0,
+              left: `90px`,
               right: 0,
               display: "flex",
               justifyContent: "center",
