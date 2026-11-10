@@ -616,7 +616,9 @@ export default function Events({
                     ? "penalty"
                     : event.kind === "penalty_save"
                       ? "PK save"
-                      : event.kind.replaceAll("_", " ")}{" "}
+                      : event.kind === "yellow_card"
+                        ? "Card"
+                        : event.kind.replaceAll("_", " ")}{" "}
                 </span>
               </Typography>
 
