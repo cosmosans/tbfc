@@ -132,6 +132,8 @@ export default function Events({
   const events = data.events
     .filter((e) => e.matchId === match.id)
     .sort(compareMatchEvents);
+  const timeline = [...events.filter(event => event.kind !== "clean_sheet"), null,
+    ...events.filter(event => event.kind === "clean_sheet")];
   const logged = goalTotals(events, match.id);
   function editEvent(event: MatchEvent) {
     setEditingEvent(event);
@@ -451,7 +453,8 @@ export default function Events({
         </>
       )}
       <TimelineBoundary minute={0} label="KICKOFF" />
-      {events.map((event) => {
+      {timeline.map((event) => {
+        if (!event) return <TimelineBoundary key="full-time-whistle" minute={50} label="FULL TIME" />;
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
         const eventHasTeam =
           event.kind === "clean_sheet" ||
@@ -466,7 +469,7 @@ export default function Events({
             : "Turf Burners FC";
 
         return (
-          <TimelineCard key={event.id} minute={event.kind === "clean_sheet" ? "50′+1" : event.minute}>
+          <TimelineCard key={event.id} minute={event.minute}>
             <Box sx={{ minWidth: 0, display: { xs: "grid", sm: "flex" }, gap: { xs: 0.75, sm: 2 },
               gridTemplateColumns: "16px auto minmax(0, 1fr)" }}>
               <img
@@ -648,7 +651,6 @@ export default function Events({
           </TimelineCard>
         );
       })}
-      <TimelineBoundary minute={50} label="FULL TIME" />
     </Stack>
   );
 }

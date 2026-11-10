@@ -550,7 +550,7 @@ export default function PlayerDetail({
                                   overflowWrap: "anywhere",
                                 }}
                               >
-                                {event.minute != null && <><TimelineMarker minute={event.kind === "clean_sheet" ? "50′+1" : event.minute} compact />{" "}</>}
+                                {event.minute != null && <><TimelineMarker minute={event.minute} compact />{" "}</>}
                                 <Tooltip title={event.note?.trim() || ""} describeChild arrow>
                                   <Box component="strong" tabIndex={event.note?.trim() ? 0 : undefined}
                                     sx={{

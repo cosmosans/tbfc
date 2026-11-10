@@ -159,7 +159,7 @@ export default function MatchEventSnackbar({
             mb: 1,
           }}
         >
-          <TimelineMarker minute={notice.kind === "clean_sheet" ? "50′+1" : notice.minute} />
+          <TimelineMarker minute={notice.minute} />
 
           <Box
             sx={{

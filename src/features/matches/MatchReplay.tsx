@@ -88,6 +88,7 @@ function Playback({
 }: Props & { started: number; stop: () => void }) {
   const events = useTimelineEvents(data, match);
   const duration = Math.max(50, ...events.map((event) => event.minute!)) * 60;
+  const eventTime = (event: MatchEvent) => event.kind === "clean_sheet" ? duration : event.minute! * 60;
   const [seconds, setSeconds] = useState(0);
   const [clock, setClock] = useState({ since: started, offset: 0, speed: 5 });
   function changeSpeed(speed: number) {
@@ -114,12 +115,12 @@ function Playback({
   useEffect(() => {
     const due = events.filter(
       (event) =>
-        event.minute! * 60 <= seconds && !delivered.current.has(event.id),
+        (event.kind === "clean_sheet" ? finished : event.minute! * 60 <= seconds) && !delivered.current.has(event.id),
     );
     if (!due.length) return;
     for (const event of due) delivered.current.add(event.id);
     setQueue((previous) => [...previous, ...due]);
-  }, [events, seconds]);
+  }, [events, seconds, finished]);
   useEffect(() => { playWhistle.current(); }, [playWhistle]);
   useEffect(() => { if (finished) playWhistle.current(); }, [finished, playWhistle]);
   const notice = queue[0];
@@ -127,8 +128,8 @@ function Playback({
   const [goalTime, setGoalTime] = useState<number>();
   const presented = useRef(new Set<string>());
   function seek(target: number) {
-    const before = events.filter(event => event.minute! * 60 < target);
-    const atTarget = events.filter(event => event.minute! * 60 === target);
+    const before = events.filter(event => eventTime(event) < target);
+    const atTarget = events.filter(event => eventTime(event) === target);
     const nextScore = { goalsFor: 0, goalsAgainst: 0 };
     for (const event of before) {
       if (event.kind === "goal") nextScore[event.team === "opponent" ? "goalsAgainst" : "goalsFor"]++;

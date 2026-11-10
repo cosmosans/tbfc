@@ -13,7 +13,7 @@ export function withCleanSheets(data: ClubData): ClubData {
     if (!players.has(keeper)) continue;
     const event: MatchEvent = {
       id: "clean-sheet-" + match.id, matchId: match.id, playerId: keeper,
-      kind: "clean_sheet", team: "tbfc", minute: 51,
+      kind: "clean_sheet", team: "tbfc", minute: 50,
     };
     events.push(event);
   }
