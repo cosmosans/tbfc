@@ -1,5 +1,6 @@
 import { PlayerCardFrame, PlayerPhoto, PlayerInformation } from "../features/roster/PlayerCard.styles";
 import { FourColumnGrid } from "./layout";
+import PanelHeader from "./PanelHeader";
 import PageHeading from "./PageHeading";
 import { canEditClub } from "../editAccess";
 import { Box, Card, CardContent, Skeleton, Stack } from "@mui/material";
@@ -49,28 +50,31 @@ function RosterPlaceholder() {
         <Skeleton variant="rectangular" width={110} height={36} />
       </Stack>}
     </Stack>
-    <Box sx={{ bgcolor: "background.paper" }}>
-      {Array.from({ length: 7 }, (_, index) => {
-        const header = index === 0;
-        return <PlayerCardFrame key={index} as="div" style={header ? { height: "auto" } : undefined}>
-          <Box sx={{ display: header ? { xs: "none", sm: "flex" } : "flex",
-            height: "100%", bgcolor: header ? "action.hover" : undefined }}>
-            <PlayerPhoto>{header ? <Skeleton width={40} /> : <Skeleton variant="rectangular" width="100%" height="100%" />}</PlayerPhoto>
-            <PlayerInformation as="div">
-              <Skeleton sx={{ gridArea: "number" }} width={header ? 46 : 40} height={header ? 24 : 64} />
-              <Box sx={{ gridArea: "identity" }}>
-                <Skeleton width={header ? 40 : "65%"} sx={{ maxWidth: 160 }} />
-                {!header && <Skeleton width="40%" sx={{ maxWidth: 100 }} />}
-              </Box>
-              <Box sx={{ gridArea: "stats", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: { xs: 1, md: 2 }, justifyItems: { xs: "center", sm: "start" } }}>
-                {[0, 1, 2].map(stat => <Skeleton key={stat} width={header ? 60 : 22} />)}
-              </Box>
-              <Skeleton sx={{ gridArea: "status", justifySelf: "end" }} width={48} />
-            </PlayerInformation>
-          </Box>
-        </PlayerCardFrame>;
-      })}
-    </Box>
+    {["Active Roster", "Retired Roster"].map((title, index) => (
+      <Box key={title} sx={{ bgcolor: "background.paper" }}>
+        <PanelHeader title={title} />
+        {Array.from({ length: index === 0 ? 5 : 3 }, (_, index) => {
+          const header = index === 0;
+          return <PlayerCardFrame key={index} as="div" style={header ? { height: "auto" } : undefined}>
+            <Box sx={{ display: header ? { xs: "none", sm: "flex" } : "flex",
+              height: "100%", bgcolor: header ? "action.hover" : undefined }}>
+              <PlayerPhoto>{header ? <Skeleton width={40} /> : <Skeleton variant="rectangular" width="100%" height="100%" />}</PlayerPhoto>
+              <PlayerInformation as="div">
+                <Skeleton sx={{ gridArea: "number" }} width={header ? 46 : 40} height={header ? 24 : 64} />
+                <Box sx={{ gridArea: "identity" }}>
+                  <Skeleton width={header ? 40 : "65%"} sx={{ maxWidth: 160 }} />
+                  {!header && <Skeleton width="40%" sx={{ maxWidth: 100 }} />}
+                </Box>
+                <Box sx={{ gridArea: "stats", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: { xs: 1, md: 2 }, justifyItems: { xs: "center", sm: "start" } }}>
+                  {[0, 1, 2].map(stat => <Skeleton key={stat} width={header ? 60 : 22} />)}
+                </Box>
+                <Skeleton sx={{ gridArea: "status", justifySelf: "end" }} width={48} />
+              </PlayerInformation>
+            </Box>
+          </PlayerCardFrame>;
+        })}
+      </Box>
+    ))}
   </Stack>;
 }
 

@@ -1,6 +1,6 @@
 import WhiteKit from "../../img/white-front.png";
 import BlackKit from "../../img/black-front.png";
-import PanelHeader from "../../components/PanelHeader";
+import PanelHeader, { panelBorder } from "../../components/PanelHeader";
 import { useState } from "react";
 import {
   Box,
@@ -35,7 +35,7 @@ import { isMatchCompleted, record } from "../../model";
 import { opponentFor, opponentName, orderedSeasons } from "../../clubView";
 import PageHeading from "../../components/PageHeading";
 
-const panelBorder = { borderTop: "3px solid", borderTopColor: "primary.main" };
+
 
 function TeamCrestTick({
   x = 0,
@@ -317,7 +317,7 @@ export default function Stats({
           </Box>
         </Card>
 
-        <Card sx={{ minWidth: 0, width: "100%", border: 0, ...panelBorder }}>
+        <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
           <PanelHeader
             title="Opponents"
             context={
@@ -510,7 +510,6 @@ export default function Stats({
           sx={{
             minWidth: 0,
             border: 0,
-            ...panelBorder,
             width: "100%",
           }}
         >
@@ -746,7 +745,7 @@ export default function Stats({
 
         <Card
           component="section"
-          sx={{ width: "100%", minWidth: 0, ...panelBorder }}
+          sx={{ width: "100%", minWidth: 0 }}
         >
           <PanelHeader title="Kit Record" />
           <Box

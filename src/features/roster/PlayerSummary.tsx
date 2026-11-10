@@ -24,7 +24,20 @@ export default function PlayerSummary({
 }) {
   return (
     <>
-      <PlayerPhoto>
+      <PlayerPhoto sx={{
+        position: "relative",
+        "&::after": {
+          content: player.active ? 'none' : '""',
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 20,
+          height: 20,
+          bgcolor: "orange",
+          clipPath: "polygon(0 0, 100% 0, 100% 100%)",
+          pointerEvents: "none",
+        },
+      }}>
         {player.photoUrl ? (
           <img src={player.photoUrl} alt="" />
         ) : (

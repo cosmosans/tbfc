@@ -1,6 +1,8 @@
 import { Stack, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
+export const panelBorder = { borderTop: "3px solid", borderTopColor: "primary.main" };
+
 export default function PanelHeader({ title, context, children }: {
   title: string;
   context?: string;
@@ -8,7 +10,7 @@ export default function PanelHeader({ title, context, children }: {
 }) {
   return (
     <Stack component="header" direction="row" alignItems="center" flexWrap="wrap"
-      gap={2} sx={{ bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}>
+      gap={2} sx={{ ...panelBorder, bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}>
       <Typography component="h2" variant="h5" color="text.secondary" sx={{ flex: 1, fontWeight: 700 }}>
         {title}
       </Typography>

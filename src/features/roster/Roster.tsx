@@ -36,6 +36,7 @@ import {
   type Position,
 } from "../../model";
 import PlayerCard, { PositionSelect } from "./PlayerCard";
+import PanelHeader from "../../components/PanelHeader";
 import PageHeading from "../../components/PageHeading";
 
 type SortKey = "number" | "name" | "goals" | "assists" | "cards" | "status";
@@ -282,62 +283,66 @@ export default function Roster({
         </DialogActions>
       </Dialog>
 
-      <Box sx={{ bgcolor: "background.paper", overflow: "hidden" }}>
-        <Box
-          sx={{
-            display: { xs: "none", sm: "flex" },
-            alignItems: "center",
-            bgcolor: "action.hover",
-            ...tableHeading,
-            borderBottom: "1px solid rgba(255,255,255,.2)",
-          }}
-        >
+      {[{ title: "Active Roster", active: true }, { title: "Retired Roster", active: false }].map(({ title, active }) => (
+        <Box key={title} component="section" aria-label={title}
+          sx={{ bgcolor: "background.paper", overflow: "hidden" }}>
+          <PanelHeader title={title} />
           <Box
             sx={{
-              flex: { xs: "0 0 100px", sm: "0 0 180px" },
-              textAlign: "center",
+              display: { xs: "none", sm: "flex" },
+              alignItems: "center",
+              bgcolor: "action.hover",
               ...tableHeading,
+              borderBottom: "1px solid rgba(255,255,255,.2)",
             }}
           >
-            Photo
-          </Box>
-          <PlayerInformation as="div">
-            <Box sx={{ gridArea: "number" }}>
-              {sortHeader("number", "Number")}
-            </Box>
-            <Box sx={{ gridArea: "identity" }}>
-              {sortHeader("name", "Name")}
-            </Box>
             <Box
               sx={{
-                gridArea: "stats",
-                display: "grid",
-                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                gap: { xs: 1, md: 2 },
+                flex: { xs: "0 0 100px", sm: "0 0 180px" },
+                textAlign: "center",
+                ...tableHeading,
               }}
             >
-              {statColumns.map(([key, label, icon]) => (
-                <Box key={key} sx={{ textAlign: "left" }}>
-                  {sortHeader(key, label, icon)}
-                </Box>
-              ))}
+              Photo
             </Box>
-            <Box sx={{ gridArea: "status", textAlign: "right" }}>
-              {sortHeader("status", "Status")}
-            </Box>
-          </PlayerInformation>
+            <PlayerInformation as="div">
+              <Box sx={{ gridArea: "number" }}>
+                {sortHeader("number", "Number")}
+              </Box>
+              <Box sx={{ gridArea: "identity" }}>
+                {sortHeader("name", "Name")}
+              </Box>
+              <Box
+                sx={{
+                  gridArea: "stats",
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                  gap: { xs: 1, md: 2 },
+                }}
+              >
+                {statColumns.map(([key, label, icon]) => (
+                  <Box key={key} sx={{ textAlign: "left" }}>
+                    {sortHeader(key, label, icon)}
+                  </Box>
+                ))}
+              </Box>
+              <Box sx={{ gridArea: "status", textAlign: "right" }}>
+                {sortHeader("status", "Status")}
+              </Box>
+            </PlayerInformation>
+          </Box>
+          <Stack gap={0}>
+            {rows.filter(({ player }) => Boolean(player.active) === active).map(({ player, events }) => (
+              <PlayerCard
+                key={player.id}
+                player={player}
+                events={events}
+                onSave={savePlayer}
+              />
+            ))}
+          </Stack>
         </Box>
-        <Stack gap={0}>
-          {rows.map(({ player, events }) => (
-            <PlayerCard
-              key={player.id}
-              player={player}
-              events={events}
-              onSave={savePlayer}
-            />
-          ))}
-        </Stack>
-      </Box>
+      ))}
     </Stack>
   );
 }

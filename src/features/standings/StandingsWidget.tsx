@@ -1,3 +1,4 @@
+import { panelBorder } from "../../components/PanelHeader";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -101,7 +102,7 @@ export default function StandingsWidget({
   return (
     <Card
       component="section"
-      sx={{ bgcolor: "background.paper", border: 0, minWidth: 0 }}
+      sx={{ bgcolor: "background.paper", border: 0, ...panelBorder, minWidth: 0 }}
     >
       <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
         <Stack
@@ -121,7 +122,7 @@ export default function StandingsWidget({
             }}
           >
             <Typography
-              variant="h5"
+              component="h2" variant="h5"
               sx={{
                 fontWeight: 700,
                 flex: 1,

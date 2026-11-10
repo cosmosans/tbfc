@@ -1,3 +1,4 @@
+import { panelBorder } from "../../components/PanelHeader";
 import { useMemo, useState } from "react";
 import {
   Alert,
@@ -321,13 +322,14 @@ export default function SchedulePage({
               alignItems: "center",
               bgcolor: "background.paper",
               p: { xs: 2, sm: 3 },
+              ...panelBorder,
               minHeight: { md: canEditClub ? 84 : 80 },
               gap: 1,
               flexWrap: "wrap",
             }}
           >
             <Typography
-              variant="h5"
+              component="h2" variant="h5"
               sx={{
                 fontWeight: 700,
                 flex: 1,
@@ -378,10 +380,10 @@ export default function SchedulePage({
           alignItems="center"
           flexWrap="wrap"
           gap={{ xs: 1, sm: 2 }}
-          sx={{ bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}
+          sx={{ ...panelBorder, bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}
         >
           <Typography
-            variant="h5"
+            component="h2" variant="h5"
             color="text.secondary"
             sx={{
               flex: 1,

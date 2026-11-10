@@ -100,13 +100,22 @@ export default function LineupEditor({
   }
   function loadFirstChoice() {
     const used = new Set<string>();
-    const starters = slots.map(position => {
+    const starters = slots.map((position) => {
       const id = data.firstChoice?.[position] ?? "";
-      if (!id || used.has(id) || !data.players.some(player => player.id === id && player.active)) return "";
+      if (
+        !id ||
+        used.has(id) ||
+        !data.players.some((player) => player.id === id && player.active)
+      )
+        return "";
       used.add(id);
       return id;
     });
-    save({ ...lineup, starters, bench: lineup.bench.filter(id => !used.has(id)) });
+    save({
+      ...lineup,
+      starters,
+      bench: lineup.bench.filter((id) => !used.has(id)),
+    });
   }
   const benchPlayers = data.players
     .filter(
@@ -122,12 +131,10 @@ export default function LineupEditor({
   const eligiblePlayers = data.players
     .filter((player) => !activeSquadOnly || player.active)
     .sort(byPlayerNumber);
-  const availablePlayers = eligiblePlayers
-    .filter(
-      (player) =>
-        !lineup.starters.includes(player.id) &&
-        !lineup.bench.includes(player.id),
-    );
+  const availablePlayers = eligiblePlayers.filter(
+    (player) =>
+      !lineup.starters.includes(player.id) && !lineup.bench.includes(player.id),
+  );
   const duplicated = lineup.starters.filter(
     (id, index) => id && lineup.starters.indexOf(id) !== index,
   );
@@ -141,8 +148,14 @@ export default function LineupEditor({
   return (
     <Stack gap={2}>
       {importFor === match.id && (
-        <ImportLineupDialog data={data} match={match} onClose={() => setImportFor(null)}
-          onApply={next => { save(next); setImportFor(null); }}
+        <ImportLineupDialog
+          data={data}
+          match={match}
+          onClose={() => setImportFor(null)}
+          onApply={(next) => {
+            save(next);
+            setImportFor(null);
+          }}
         />
       )}
       {missingStarters && (
@@ -179,11 +192,36 @@ export default function LineupEditor({
               >
                 <Typography variant="h6">Starting VII</Typography>
                 <Stack direction="row" gap={1} flexWrap="wrap">
-                  <Button size="small" variant="outlined" onClick={() => setImportFor(match.id)}>Import lineup</Button>
-                  <Button size="small" variant="outlined" disabled={!canEditClub || !lineup.starters.some(Boolean)} onClick={() => save({ ...lineup, starters: lineup.starters.map(() => "") })}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => setImportFor(match.id)}
+                  >
+                    Import lineup
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    disabled={!canEditClub || !lineup.starters.some(Boolean)}
+                    onClick={() =>
+                      save({
+                        ...lineup,
+                        starters: lineup.starters.map(() => ""),
+                      })
+                    }
+                  >
                     Clear
                   </Button>
-                  <Button size="small" variant="contained" disabled={!canEditClub || !data.firstChoice || !Object.values(data.firstChoice).some(Boolean)} onClick={loadFirstChoice}>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    disabled={
+                      !canEditClub ||
+                      !data.firstChoice ||
+                      !Object.values(data.firstChoice).some(Boolean)
+                    }
+                    onClick={loadFirstChoice}
+                  >
                     Load First Choice VII
                   </Button>
                 </Stack>
@@ -192,7 +230,9 @@ export default function LineupEditor({
               <LineupGrid sx={{ mt: 2 }}>
                 {lineup.starters.map((id, index) => {
                   const slot = slots[index];
-                  const selected = data.players.find(player => player.id === id);
+                  const selected = data.players.find(
+                    (player) => player.id === id,
+                  );
                   const options = [...data.players].sort(byPlayerNumber);
                   const playerLabel = (player: (typeof options)[number]) =>
                     `#${player.number} ${player.name}`;
@@ -205,27 +245,41 @@ export default function LineupEditor({
                       options={options}
                       value={selected ?? null}
                       getOptionLabel={playerLabel}
-                      getOptionKey={player => player.id}
-                      isOptionEqualToValue={(player, value) => player.id === value.id}
+                      getOptionKey={(player) => player.id}
+                      isOptionEqualToValue={(player, value) =>
+                        player.id === value.id
+                      }
                       filterOptions={(players, { inputValue }) => {
                         const query = inputValue.trim().toLocaleLowerCase();
-                        if (query) return players.filter(player =>
-                          playerLabel(player).toLocaleLowerCase().includes(query),
-                        );
-                        return eligiblePlayers.filter(player =>
-                          player.preferredPosition === slot || player.secondaryPosition === slot,
+                        if (query)
+                          return players.filter((player) =>
+                            playerLabel(player)
+                              .toLocaleLowerCase()
+                              .includes(query),
+                          );
+                        return eligiblePlayers.filter(
+                          (player) =>
+                            player.preferredPosition === slot ||
+                            player.secondaryPosition === slot,
                         );
                       }}
-                      onChange={(_, player) => assignStarter(index, player?.id ?? "")}
+                      onChange={(_, player) =>
+                        assignStarter(index, player?.id ?? "")
+                      }
                       renderOption={({ key, ...props }, player) => (
                         <li key={key} {...props}>
                           {playerLabel(player)}
-                          {player.preferredPosition === slot ? " (Primary)" :
-                            player.secondaryPosition === slot ? " (Secondary)" : ""}
+                          {player.preferredPosition === slot
+                            ? " (Primary)"
+                            : player.secondaryPosition === slot
+                              ? " (Secondary)"
+                              : ""}
                         </li>
                       )}
                       noOptionsText="No matches. Search by name or number."
-                      renderInput={params => <TextField {...params} label={slot} />}
+                      renderInput={(params) => (
+                        <TextField {...params} label={slot} />
+                      )}
                     />
                   );
                 })}
@@ -350,13 +404,19 @@ export default function LineupEditor({
           />
           <Card>
             <CardContent>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" sx={{ mb: 1 }}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                flexWrap="wrap"
+                sx={{ mb: 1 }}
+              >
                 <Typography variant="h6">
                   Available Players ({availablePlayers.length})
                 </Typography>
                 <FormControlLabel
                   sx={{ ml: "auto", mr: 0 }}
-                  label="Active Squad Only"
+                  label="Active Roster Only"
                   control={
                     <Checkbox
                       size="small"
