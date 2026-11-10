@@ -979,7 +979,12 @@ export default function App() {
               )}
               {activeDetailTab === 4 && (
                 <MatchMedia
+                  key={selected.id}
                   match={selected}
+                  onSaveFullMatch={canEditClub ? fullMatchYouTubeId => update({
+                    ...data,
+                    matches: data.matches.map(match => match.id === selected.id ? { ...match, fullMatchYouTubeId } : match),
+                  }) : undefined}
                   onSavePhotos={
                     canEditClub
                       ? (photos) =>

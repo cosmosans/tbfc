@@ -89,7 +89,7 @@ const mediaOptions = ["Photos", "Videos", "Both"];
 function matchesMedia(match: Match, selected: string[]) {
   if (!selected.length) return true;
   const photos = Boolean(match.photos?.length);
-  const videos = Boolean(match.videos?.length);
+  const videos = Boolean(match.videos?.length || match.fullMatchYouTubeId);
   if (photos && videos) return selected.includes("Both");
   if (photos) return selected.includes("Photos");
   return videos && selected.includes("Videos");

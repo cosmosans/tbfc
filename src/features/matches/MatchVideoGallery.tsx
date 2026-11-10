@@ -1,3 +1,4 @@
+import { panelBorder } from "../../components/PanelHeader";
 import { useMediaOrder } from "./useMediaOrder";
 import { useState } from "react";
 import {
@@ -148,7 +149,7 @@ export default function MatchVideoGallery({
   const order = useMediaOrder(videos, onSave);
   if (!onSave && !videos.length) return null;
   return (
-    <Card>
+    <Card sx={panelBorder}>
       <CardContent>
         <Stack
           direction="row"

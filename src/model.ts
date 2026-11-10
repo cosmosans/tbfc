@@ -34,6 +34,7 @@ export type Match = {
   reportAuthor?: "turfbot";
   photos?: MatchPhoto[];
   videos?: MatchVideo[];
+  fullMatchYouTubeId?: string;
   chat?: MatchChatMessage[];
   sourceRow?: number;
 };

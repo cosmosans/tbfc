@@ -1,3 +1,4 @@
+import { panelBorder } from "../../components/PanelHeader";
 import { useMediaOrder } from "./useMediaOrder";
 import { useRef, useState } from "react";
 import {
@@ -103,7 +104,7 @@ export default function MatchGallery({
   const order = useMediaOrder(photos, busy ? undefined : onSave);
   if (!onSave && !photos.length) return null;
   return (
-    <Card>
+    <Card sx={panelBorder}>
       <CardContent>
         <Stack
           direction="row"
