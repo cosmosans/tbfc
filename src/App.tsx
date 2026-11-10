@@ -688,13 +688,9 @@ export default function App() {
           if (index >= 0) setActiveDetailTab(index);
         }}
         onBack={
-          playerRoute
-            ? () => navigate("/roster")
-            : teamRoute
-              ? () => navigate("/teams")
-              : matchRoute
-                ? () => navigate("/schedule")
-                : undefined
+          (playerRoute || teamRoute || matchRoute) && window.history.length > 1
+            ? () => navigate(-1)
+            : undefined
         }
         page={
           playerRoute

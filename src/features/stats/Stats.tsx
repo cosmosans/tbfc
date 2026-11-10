@@ -121,7 +121,7 @@ export default function Stats({
     "results",
   );
   const [opponentMetric, setOpponentMetric] = useState<
-    "teamGoals" | "goalsFor" | "goalsAgainst"
+    "teamGoals" | "goalsFor" | "goalsAgainst" | "gdPerMatch"
   >("teamGoals");
   const totals = record(data.matches);
   const allTimeStats = [
@@ -198,11 +198,13 @@ export default function Stats({
   const teams = [...opponentCounts.values()].sort(
     (a, b) => b.played - a.played || a.team.localeCompare(b.team),
   );
-  const sortField =
-    opponentMetric === "goalsAgainst" ? "goalsAgainst" : "goalsFor";
-  const chartTeams = [...teams].sort(
-    (a, b) => b[sortField] - a[sortField] || a.team.localeCompare(b.team),
-  );
+  const adjusted = opponentMetric === "gdPerMatch";
+  const sortField = opponentMetric === "teamGoals" ? "goalsFor" : opponentMetric;
+  const chartTeams = teams
+    .filter(team => !adjusted || team.goalsFor > team.goalsAgainst)
+    .map(team => ({ ...team, gdPerMatch: (team.goalsFor - team.goalsAgainst) / team.played }))
+    .sort((a, b) => b[sortField] - a[sortField] || a.team.localeCompare(b.team));
+  const metricName = adjusted ? "GD Per Match" : opponentMetric === "goalsAgainst" ? "Goals Allowed" : "TBFC Goals Scored";
   const horizontalBars = useMediaQuery(theme.breakpoints.down("sm"));
   const seasonsOnLeft = horizontalBars && metric !== "points";
   const seasonData = metric === "points" ? seasonPoints : seasons;
@@ -319,7 +321,7 @@ export default function Stats({
           <PanelHeader
             title="Opponents"
             context={
-              opponentMetric === "teamGoals"
+              adjusted ? "Positive goal differential divided by completed matches against each opponent." : opponentMetric === "teamGoals"
                 ? "Goals across all seasons. Turf Burners first, opponent second."
                 : opponentMetric === "goalsFor"
                   ? "Goals scored by TBFC against each opponent across all seasons."
@@ -334,19 +336,20 @@ export default function Stats({
                   event.target.value as
                     | "teamGoals"
                     | "goalsFor"
-                    | "goalsAgainst",
+                    | "goalsAgainst" | "gdPerMatch",
                 )
               }
               inputProps={{ "aria-label": "Opponent chart metric" }}
               sx={{ minWidth: 145, fontSize: ".875rem" }}
             >
               <MenuItem value="teamGoals">Goal Differential</MenuItem>
+              <MenuItem value="gdPerMatch">GD Per Match</MenuItem>
               <MenuItem value="goalsFor">Goals Scored</MenuItem>
               <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
             </Select>
           </PanelHeader>
           <CardContent>
-            {teams.length ? (
+            {chartTeams.length ? (
               <Box
                 sx={{
                   width: "100%",
@@ -359,7 +362,7 @@ export default function Stats({
                       ? 0
                       : Math.max(
                           600,
-                          teams.length *
+                          chartTeams.length *
                             (opponentMetric === "teamGoals" ? 80 : 64),
                         ),
                     height: horizontalBars ? chartTeams.length * 52 + 60 : 400,
@@ -388,7 +391,7 @@ export default function Stats({
                       {horizontalBars ? (
                         <XAxis
                           type="number"
-                          allowDecimals={false}
+                          allowDecimals={adjusted}
                           stroke="#a7afb1"
                         />
                       ) : (
@@ -414,11 +417,12 @@ export default function Stats({
                       ) : (
                         <YAxis
                           type="number"
-                          allowDecimals={false}
+                          allowDecimals={adjusted}
                           stroke="#a7afb1"
                         />
                       )}
                       <Tooltip
+                        formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
                         cursor={{ fill: "#38383880" }}
                         contentStyle={{
                           background: "#1b2022",
@@ -471,16 +475,8 @@ export default function Stats({
                           minPointSize={3}
                           cursor="pointer"
                           onClick={(entry) => openTeam(entry.payload?.id)}
-                          dataKey={
-                            opponentMetric === "goalsFor"
-                              ? "goalsFor"
-                              : "goalsAgainst"
-                          }
-                          name={
-                            opponentMetric === "goalsFor"
-                              ? "TBFC Goals Scored"
-                              : "Goals Allowed"
-                          }
+                          dataKey={sortField}
+                          name={metricName}
                           fill={theme.palette.primary.main}
                           isAnimationActive={false}
                         >
@@ -491,11 +487,8 @@ export default function Stats({
                             />
                           ))}
                           <LabelList
-                            dataKey={
-                              opponentMetric === "goalsFor"
-                                ? "goalsFor"
-                                : "goalsAgainst"
-                            }
+                            formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
+                            dataKey={sortField}
                             position={horizontalBars ? "right" : "top"}
                             fill="#fff"
                             fontWeight={800}
@@ -508,7 +501,7 @@ export default function Stats({
               </Box>
             ) : (
               <Typography color="text.secondary">
-                No completed matches yet.
+                {adjusted ? "No opponents with a positive goal differential yet." : "No completed matches yet."}
               </Typography>
             )}
           </CardContent>
