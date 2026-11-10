@@ -32,7 +32,7 @@ export function PlayerNameNumberInline({ player }: { player: Player }) {
         display: "inline-flex",
         color: "inherit",
         textDecoration: "none",
-        "&:hover, &:focus-visible": { textDecoration: "underline" },
+        "&:hover, &:focus-visible": { opacity: 0.7 },
         alignItems: "center",
       }}
     >

@@ -25,7 +25,12 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { isMatchCompleted, type ClubData, type Match, type MatchEvent } from "../../model";
+import {
+  isMatchCompleted,
+  type ClubData,
+  type Match,
+  type MatchEvent,
+} from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
 import { opponentFor, opponentName } from "../../clubView";
 import AssistIcon from "../../img/cleats.svg";
@@ -48,19 +53,20 @@ function TimelineCard({
   return (
     <Card sx={{ py: 0.5 }}>
       <CardContent sx={{ py: 2, "&:last-child": { pb: 2 } }}>
-        <Stack
-          direction="row"
-          alignItems="flex-start"
-          gap={{ xs: 1, sm: 2 }}
-          flexWrap="wrap"
+        <Box
           sx={{
-            display: { xs: "grid", sm: "flex" },
-            gridTemplateColumns: "auto minmax(0, 1fr)",
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "auto minmax(0, 1fr)",
+              lg: "auto minmax(0, 1fr) auto",
+            },
+            alignItems: "start",
+            gap: { xs: 1, sm: 2 },
           }}
         >
           <TimelineMarker compact={true} minute={minute} />
           {children}
-        </Stack>
+        </Box>
       </CardContent>
     </Card>
   );
@@ -78,23 +84,35 @@ function TimelineBoundary({
   return (
     <TimelineCard minute={minute}>
       <Box sx={{ minWidth: 0 }}>
-      <Typography
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-          minHeight: 28,
-          fontWeight: 700,
-          fontSize: {
-            xs: 12,
-            sm: 14,
-          },
-        }}
-      >
-        <img src={WhistleIcon} alt="" width={16} height={16} />
-        {label}
-      </Typography>
-      {note && <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>{note}</Typography>}
+        <Typography
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            minHeight: 28,
+            fontWeight: 700,
+            fontSize: {
+              xs: 12,
+              sm: 14,
+            },
+          }}
+        >
+          <img
+            src={WhistleIcon}
+            alt=""
+            width={16}
+            height={16}
+            style={{
+              transform: "translateY(-4px)",
+            }}
+          />
+          {label}
+        </Typography>
+        {note && (
+          <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>
+            {note}
+          </Typography>
+        )}
       </Box>
     </TimelineCard>
   );
@@ -507,7 +525,11 @@ export default function Events({
               key="full-time-whistle"
               minute={50}
               label="FULL TIME"
-              note={isMatchCompleted(match) ? `Turf Burners FC ${match.goalsFor}-${match.goalsAgainst} ${opponentLabel}` : undefined}
+              note={
+                isMatchCompleted(match)
+                  ? `Turf Burners FC ${match.goalsFor}-${match.goalsAgainst} ${opponentLabel}`
+                  : undefined
+              }
             />
           );
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
@@ -531,7 +553,7 @@ export default function Events({
                 minWidth: 0,
                 display: { xs: "grid", sm: "flex" },
                 gap: { xs: 0.75, sm: 2 },
-                gridTemplateColumns: "16px auto minmax(0, 1fr)",
+                gridTemplateColumns: "16px minmax(0, 1fr)",
               }}
             >
               <img
@@ -540,11 +562,15 @@ export default function Events({
                     ? PenaltyKick
                     : event.kind === "yellow_card"
                       ? YellowCardIcon
-                      : event.kind === "clean_sheet" ? CleanSheetIcon : event.kind === "penalty_save"
-                        ? SaveIcon
-                        : event.ownGoal
-                          ? OwnGoalIcon
-                          : event.kind === "assist" ? AssistIcon : GoalIcon
+                      : event.kind === "clean_sheet"
+                        ? CleanSheetIcon
+                        : event.kind === "penalty_save"
+                          ? SaveIcon
+                          : event.ownGoal
+                            ? OwnGoalIcon
+                            : event.kind === "assist"
+                              ? AssistIcon
+                              : GoalIcon
                 }
                 alt={
                   event.kind === "penalty_kick"
@@ -579,27 +605,29 @@ export default function Events({
                   },
                 }}
               >
-                <span style={{ gridArea: "1 / 1", whiteSpace: "normal" }}>
-                  {event.kind.replaceAll("_", " ")}
+                <span
+                  style={{
+                    gridArea: "1 / 1",
+                    justifySelf: "start",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {event.kind === "penalty_kick"
+                    ? "penalty"
+                    : event.kind === "penalty_save"
+                      ? "PK save"
+                      : event.kind.replaceAll("_", " ")}{" "}
                 </span>
               </Typography>
 
               <Box
-                sx={
-                  event.kind === "penalty_kick"
-                    ? {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        minWidth: 0,
-                      }
-                    : {
-                        display:
-                          event.kind === "goal" && event.team === "opponent"
-                            ? "block"
-                            : { xs: "contents", sm: "block" },
-                      }
-                }
+                sx={{
+                  minWidth: 0,
+                  gridColumn: "1 / -1",
+                  display: event.kind === "penalty_kick" ? "flex" : "block",
+                  alignItems: "center",
+                  gap: 1,
+                }}
               >
                 {eventHasTeam && (
                   <Box
@@ -611,7 +639,10 @@ export default function Events({
                       display: "flex",
                       alignItems: "center",
                       gap: 1,
-                      mt: event.kind === "penalty_kick" ? 0 : -0.8,
+                      mt: {
+                        xs: 0,
+                        sm: event.kind === "penalty_kick" ? 0 : -0.8,
+                      },
                       minWidth: 0,
                       flexShrink: 0,
                       "& > div": { minWidth: 0 },
@@ -662,7 +693,10 @@ export default function Events({
                       flex: 1,
                       order: 2,
                       lineHeight: 1.2,
-                      mt: opponentGoalNotes.get(event.id) ? 1 : 0,
+                      mt:
+                        opponentGoalNotes.get(event.id) || event.ownGoal
+                          ? 1
+                          : 0,
                       fontSize: 14,
                       alignSelf:
                         event.kind === "penalty_kick" ? "center" : "start",
@@ -688,7 +722,7 @@ export default function Events({
                   flex: 1,
                   display: "flex",
                   justifyContent: "flex-end",
-                  gridColumn: "1 / -1",
+                  gridColumn: { xs: "1 / -1", lg: "auto" },
                   order: 3,
                   "@media (max-width: 1199px)": { order: 2 },
                 }}
