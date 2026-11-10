@@ -1,3 +1,4 @@
+import { useMediaOrder } from "./useMediaOrder";
 import { useState } from "react";
 import {
   Alert,
@@ -39,7 +40,9 @@ function driveVideo(url: string) {
       preview.searchParams.set("resourcekey", key);
       thumbnail.searchParams.set("resourcekey", key);
     }
-    return { preview: preview.href, thumbnail: thumbnail.href };
+    const image = new URL(`https://lh3.googleusercontent.com/d/${id}=w800`);
+    if (key) image.searchParams.set("resourcekey", key);
+    return { preview: preview.href, thumbnail: thumbnail.href, image: image.href };
   } catch {
     return null;
   }
@@ -57,8 +60,8 @@ function VideoThumbnail({ video, onPlay }: { video: MatchVideo; onPlay: () => vo
       "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main" },
     }}>
     {drive && failedUrl !== video.url && <Box component="img"
-      src={drive.thumbnail} alt="" loading="lazy"
-      onError={() => setFailedUrl(video.url)} sx={{ width: "100%", height: "100%", objectFit: "cover" }} />}
+      src={failedUrl === drive.image ? drive.thumbnail : drive.image} alt="" referrerPolicy="no-referrer"
+      onError={() => setFailedUrl(failedUrl === drive.image ? video.url : drive.image)} sx={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }} />}
     <Box className="play-disc" sx={{ position: "absolute", width: 48, height: 48,
       borderRadius: "50%", bgcolor: "#101315d9", color: "#fff", border: "1px solid #ffffff70",
       display: "grid", placeItems: "center" }}>
@@ -142,6 +145,7 @@ export default function MatchVideoGallery({
     }
   }
 
+  const order = useMediaOrder(videos, onSave);
   if (!onSave && !videos.length) return null;
   return (
     <Card>
@@ -165,7 +169,7 @@ export default function MatchVideoGallery({
             Add a Google Drive video from this match.
           </Typography>
         )}
-        <Box
+        <Box ref={order.grid}
           sx={{
             display: "grid",
             gridTemplateColumns:
@@ -174,7 +178,7 @@ export default function MatchVideoGallery({
           }}
         >
           {videos.map((video) => (
-            <Box key={video.id} sx={{ minWidth: 0 }}>
+            <Box key={video.id} data-media-id={video.id} sx={{ outline: order.target === video.id ? "2px solid" : undefined, outlineColor: "primary.main", minWidth: 0 }}>
               <VideoThumbnail video={video} onPlay={() => setSelectedId(video.id)} />
               <Stack
                 direction="row"
@@ -185,6 +189,7 @@ export default function MatchVideoGallery({
                 <Typography sx={{ flex: 1, overflowWrap: "anywhere" }}>
                   {video.title}
                 </Typography>
+              {order.handle(video.id, video.title)}
                 {onSave && <IconButton size="small" aria-label={`Edit title of ${video.title}`}
                   title="Edit video title" onClick={() => setRename({ id: video.id, title: video.title })}>
                   <EditIcon fontSize="small" />

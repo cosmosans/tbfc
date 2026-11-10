@@ -47,15 +47,34 @@ export default function LineupPitch({
 }) {
   const points = formationPoints[lineup.formation];
   const slots = formationSlots[lineup.formation];
+  const benchPlayers = data.players.filter(player =>
+    lineup.bench.includes(player.id) && !lineup.starters.includes(player.id));
+  const subsBySlot = slots.map(role =>
+    benchPlayers.filter(player => lineup.benchPositions?.[player.id] === role));
+  let minPitchHeight = lineup.bench.length ? 450 : 280;
+  if (lineup.formation === "1-3-1-2") {
+    // At the maximum plate width (180px), each plate is at most 40px tall.
+    // Reserve the two facing half-stacks plus the lower role's label and a gap.
+    const rows = new Map<number, number>();
+    points.forEach(([, y], index) => {
+      const stackHeight = 40 + subsBySlot[index].length * 44;
+      rows.set(y, Math.max(rows.get(y) ?? 0, stackHeight));
+    });
+    const sortedRows = [...rows].sort(([a], [b]) => a - b);
+    sortedRows.forEach(([y, height], index) => {
+      const previous = sortedRows[index - 1];
+      const required = previous
+        ? ((previous[1] + height) / 2 + 34) * 100 / (y - previous[0])
+        : (height / 2 + 34) * 100 / y;
+      minPitchHeight = Math.max(minPitchHeight, Math.ceil(required));
+    });
+    const [bottom, height] = sortedRows[sortedRows.length - 1];
+    minPitchHeight = Math.max(minPitchHeight, Math.ceil((height / 2 + 8) * 100 / (100 - bottom)));
+  }
   // Reserve vertical space for a starter and two substitutes in each central role.
   const centralRoleY: Partial<Record<string, number>> =
     lineup.formation === "1-2-3-1" ? { ST: 22, CAM: 53, GK: 84 } : {};
-  const floaters = data.players.filter(
-    (player) =>
-      lineup.bench.includes(player.id) &&
-      !lineup.starters.includes(player.id) &&
-      !lineup.benchPositions?.[player.id],
-  );
+  const floaters = benchPlayers.filter(player => !lineup.benchPositions?.[player.id]);
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 
   return (
@@ -63,7 +82,7 @@ export default function LineupPitch({
       <Pitch
         sx={{
           aspectRatio: "1.65",
-          minHeight: lineup.bench.length ? 450 : 280,
+          minHeight: minPitchHeight,
           touchAction: "auto",
         }}
         aria-label={`${lineup.formation} lineup with substitutes`}
@@ -81,12 +100,7 @@ export default function LineupPitch({
             const player = data.players.find(
               (item) => item.id === lineup.starters[index],
             );
-            const substitutes = data.players.filter(
-              (p) =>
-                lineup.bench.includes(p.id) &&
-                !lineup.starters.includes(p.id) &&
-                lineup.benchPositions?.[p.id] === slots[index],
-            );
+            const substitutes = subsBySlot[index];
             return (
               <Stack
                 key={`${lineup.formation}-${index}`}

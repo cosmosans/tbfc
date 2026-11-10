@@ -27,6 +27,7 @@ import {
 import type { ClubData, Match, MatchEvent } from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
 import { opponentFor, opponentName } from "../../clubView";
+import AssistIcon from "../../img/cleats.svg";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import WhistleIcon from "../../img/whistle.svg";
 import PenaltyKick from "../../img/penalty-kick.svg";
@@ -46,8 +47,16 @@ function TimelineCard({
   return (
     <Card sx={{ py: 0.5 }}>
       <CardContent sx={{ py: 2, "&:last-child": { pb: 2 } }}>
-        <Stack direction="row" alignItems="flex-start" gap={{ xs: 1, sm: 2 }} flexWrap="wrap"
-          sx={{ display: { xs: "grid", sm: "flex" }, gridTemplateColumns: "auto minmax(0, 1fr)" }}>
+        <Stack
+          direction="row"
+          alignItems="flex-start"
+          gap={{ xs: 1, sm: 2 }}
+          flexWrap="wrap"
+          sx={{
+            display: { xs: "grid", sm: "flex" },
+            gridTemplateColumns: "auto minmax(0, 1fr)",
+          }}
+        >
           <TimelineMarker compact={true} minute={minute} />
           {children}
         </Stack>
@@ -132,9 +141,12 @@ export default function Events({
   const events = data.events
     .filter((e) => e.matchId === match.id)
     .sort(compareMatchEvents);
-  const timeline = [...events.filter(event => event.kind !== "clean_sheet"), null,
-    ...events.filter(event => event.kind === "clean_sheet")];
-  const opponentGoals = new Map<string, { scoreline: string; note: string }>();
+  const timeline = [
+    ...events.filter((event) => event.kind !== "clean_sheet"),
+    null,
+    ...events.filter((event) => event.kind === "clean_sheet"),
+  ];
+  const opponentGoalNotes = new Map<string, string>();
   const opponentLabel = opponentName(data, match);
   let goalsFor = 0;
   let goalsAgainst = 0;
@@ -151,15 +163,17 @@ export default function Events({
     if (prefix) {
       const rest = note.slice(prefix[0].length);
       const tail = rest.slice(opponentLabel.length);
-      if (rest.toLowerCase().startsWith(opponentLabel.toLowerCase()) && /^(?:$|[.\s])/.test(tail)) {
+      if (
+        rest.toLowerCase().startsWith(opponentLabel.toLowerCase()) &&
+        /^(?:$|[.\s])/.test(tail)
+      ) {
         goalsFor = Number(prefix[1]);
         goalsAgainst = Number(prefix[2]);
         note = tail.replace(/^\.?\s*/, "");
       }
     }
-    opponentGoals.set(event.id, {
-      scoreline: `Turf Burners FC ${goalsFor} - ${goalsAgainst} ${opponentLabel}`, note,
-    });
+    const scoreline = `Turf Burners FC ${goalsFor} - ${goalsAgainst} ${opponentLabel}.`;
+    opponentGoalNotes.set(event.id, note ? `${scoreline} ${note}` : scoreline);
   }
   const logged = goalTotals(events, match.id);
   function editEvent(event: MatchEvent) {
@@ -481,10 +495,16 @@ export default function Events({
       )}
       <TimelineBoundary minute={0} label="KICKOFF" />
       {timeline.map((event) => {
-        if (!event) return <TimelineBoundary key="full-time-whistle" minute={50} label="FULL TIME" />;
+        if (!event)
+          return (
+            <TimelineBoundary
+              key="full-time-whistle"
+              minute={50}
+              label="FULL TIME"
+            />
+          );
         const targetPlayer = data.players.find((p) => p.id === event.playerId);
-        const opponentGoal = opponentGoals.get(event.id);
-        const displayNote = opponentGoal?.note ?? event.note;
+        const displayNote = opponentGoalNotes.get(event.id) ?? event.note;
         const eventHasTeam =
           event.kind === "clean_sheet" ||
           event.kind === "assist" ||
@@ -499,19 +519,26 @@ export default function Events({
 
         return (
           <TimelineCard key={event.id} minute={event.minute}>
-            <Box sx={{ minWidth: 0, display: { xs: "grid", sm: "flex" }, gap: { xs: 0.75, sm: 2 },
-              gridTemplateColumns: "16px auto minmax(0, 1fr)" }}>
+            <Box
+              sx={{
+                minWidth: 0,
+                display: { xs: "grid", sm: "flex" },
+                gap: { xs: 0.75, sm: 2 },
+                gridTemplateColumns: "16px auto minmax(0, 1fr)",
+              }}
+            >
               <img
                 src={
                   event.kind === "penalty_kick"
                     ? PenaltyKick
                     : event.kind === "yellow_card"
                       ? YellowCardIcon
-                      : event.kind === "penalty_save" || event.kind === "clean_sheet"
+                      : event.kind === "penalty_save" ||
+                          event.kind === "clean_sheet"
                         ? SaveIcon
                         : event.ownGoal
                           ? OwnGoalIcon
-                          : GoalIcon
+                          : event.kind === "assist" ? AssistIcon : GoalIcon
                 }
                 alt={
                   event.kind === "penalty_kick"
@@ -562,7 +589,12 @@ export default function Events({
                         gap: 1,
                         minWidth: 0,
                       }
-                    : { display: { xs: "contents", sm: "block" } }
+                    : {
+                        display:
+                          event.kind === "goal" && event.team === "opponent"
+                            ? "block"
+                            : { xs: "contents", sm: "block" },
+                      }
                 }
               >
                 {eventHasTeam && (
@@ -609,11 +641,6 @@ export default function Events({
                           {teamName}
                         </Typography>
                       )}
-                    {opponentGoal && (
-                      <Typography component="span" sx={{ fontSize: 14, lineHeight: 1.2, color: "text.secondary" }}>
-                        {opponentGoal.scoreline}
-                      </Typography>
-                    )}
                     {targetPlayer && event.kind !== "penalty_kick" && (
                       <PlayerNameNumberInline player={targetPlayer} />
                     )}
@@ -631,6 +658,7 @@ export default function Events({
                       flex: 1,
                       order: 2,
                       lineHeight: 1.2,
+                      mt: opponentGoalNotes.get(event.id) ? 1 : 0,
                       fontSize: 14,
                       alignSelf:
                         event.kind === "penalty_kick" ? "center" : "start",

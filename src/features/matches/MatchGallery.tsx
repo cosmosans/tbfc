@@ -1,3 +1,4 @@
+import { useMediaOrder } from "./useMediaOrder";
 import { useRef, useState } from "react";
 import {
   Alert,
@@ -97,6 +98,7 @@ export default function MatchGallery({
       setBusy(false);
     }
   }
+  const order = useMediaOrder(photos, busy ? undefined : onSave);
   if (!onSave && !photos.length) return null;
   return (
     <Card>
@@ -136,7 +138,7 @@ export default function MatchGallery({
             Add photos from this match.
           </Typography>
         )}
-        <Box
+        <Box ref={order.grid}
           sx={{
             display: "grid",
             gridTemplateColumns:
@@ -145,7 +147,7 @@ export default function MatchGallery({
           }}
         >
           {photos.map((photo, index) => (
-            <Box key={photo.id} sx={{ maxWidth: 360 }}>
+            <Box key={photo.id} data-media-id={photo.id} sx={{ outline: order.target === photo.id ? "2px solid" : undefined, outlineColor: "primary.main", maxWidth: 360 }}>
               <Box
                 component="button"
                 type="button"
@@ -178,6 +180,7 @@ export default function MatchGallery({
                   }}
                 />
               </Box>
+              {order.handle(photo.id, photo.name)}
               {onSave && (
                 <Button
                   size="small"
