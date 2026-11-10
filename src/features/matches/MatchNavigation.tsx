@@ -33,12 +33,26 @@ export default function MatchNavigation({
   const previous = index > 0 ? ordered[index - 1] : undefined;
   const next = index >= 0 ? ordered[index + 1] : undefined;
   const season = seasonName(data, match);
-  const matchSuffix = <Box component="span" sx={{ display: { xs: "none", sm: "inline" }, ml: "0.25em" }}>Match</Box>;
+  const matchSuffix = (
+    <Box
+      component="span"
+      sx={{ display: { xs: "none", sm: "inline" }, ml: "0.25em" }}
+    >
+      Match
+    </Box>
+  );
   const route = (target: Match) =>
     `/match/${encodeURIComponent(target.id)}?tab=${normalizeMatchTab(params.get("tab"), target.status === "scheduled")}`;
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "1fr minmax(0, auto) 1fr",
-      alignItems: "center", gap: { xs: 1, sm: 2 }, m: { xs: 1, sm: 2 } }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "1fr minmax(0, auto) 1fr",
+        alignItems: "center",
+        gap: { xs: 1, sm: 2 },
+        m: { xs: 1, sm: 2 },
+      }}
+    >
       <Button
         component={Link}
         to={previous ? route(previous) : "#"}
@@ -50,11 +64,30 @@ export default function MatchNavigation({
       >
         Previous{matchSuffix}
       </Button>
-      <Typography className="match-nav-season-competition" variant="caption" align="center"
-        sx={{ textTransform: "uppercase", fontWeight: "normal", opacity: 0.7, lineHeight: { xs: 1.33, sm: 1.66 }, letterSpacing: ".06em" }}>
+      <Typography
+        className="match-nav-season-competition"
+        variant="caption"
+        align="center"
+        sx={{
+          textTransform: "uppercase",
+          fontWeight: "normal",
+          opacity: 0.7,
+          lineHeight: { xs: 1.33, sm: 1.66 },
+          letterSpacing: ".06em",
+        }}
+      >
         {season && <span>{season}</span>}
-        {season && match.competition && <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}> • </Box>}
-        {match.competition && <Box component="span" sx={{ display: { xs: "block", sm: "inline" } }}>{match.competition}</Box>}
+        {season && match.competition && (
+          <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+            {" "}
+            •{" "}
+          </Box>
+        )}
+        {match.competition && (
+          <Box component="span" sx={{ display: { xs: "block", sm: "inline" } }}>
+            {match.competition}
+          </Box>
+        )}
       </Typography>
       <Button
         component={Link}
