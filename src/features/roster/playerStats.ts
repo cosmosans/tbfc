@@ -30,3 +30,8 @@ export function playerStats(player: Player, events: MatchEvent[]) {
     ["Clean Sheets", events.filter(e => e.kind === "clean_sheet" && e.playerId === player.id && e.team === "tbfc").length],
   ] as const;
 }
+
+export function rosterStats(player: Player, events: MatchEvent[]) {
+  return playerStats(player, events).filter(([label]) =>
+    label === "Goals" || label === "Assists" || label === "Yellow Cards");
+}

@@ -1,3 +1,4 @@
+import CleanSheetIcon from "../../img/clean.svg";
 import { compareMatchEvents } from "./matchEventOrder";
 import TimelineMarker from "../../components/TimelineMarker";
 import AddIcon from "@mui/icons-material/Add";
@@ -533,8 +534,7 @@ export default function Events({
                     ? PenaltyKick
                     : event.kind === "yellow_card"
                       ? YellowCardIcon
-                      : event.kind === "penalty_save" ||
-                          event.kind === "clean_sheet"
+                      : event.kind === "clean_sheet" ? CleanSheetIcon : event.kind === "penalty_save"
                         ? SaveIcon
                         : event.ownGoal
                           ? OwnGoalIcon
@@ -573,10 +573,8 @@ export default function Events({
                   },
                 }}
               >
-                <span style={{ gridArea: "1 / 1", whiteSpace: "pre-line" }}>
-                  {event.kind === "penalty_kick"
-                    ? "Penalty"
-                    : event.kind.replaceAll("_", "\n")}
+                <span style={{ gridArea: "1 / 1", whiteSpace: "normal" }}>
+                  {event.kind.replaceAll("_", " ")}
                 </span>
               </Typography>
 

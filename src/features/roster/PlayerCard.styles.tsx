@@ -47,7 +47,6 @@ export const PlayerCardFront = styled("button")({
 });
 export const PlayerCardBack = styled(Card)({
   ...face,
-
 });
 export const PlayerCardBackContent = styled(CardContent)({
   height: "auto",
@@ -86,14 +85,14 @@ export const PlayerInformation = styled("span")({
     gridTemplateAreas: '"number identity status" "stats stats stats"',
   },
   padding: "16px 24px",
-  "@media (max-width: 599.95px)": { padding: "10px", gap: 8,  },
+  "@media (max-width: 599.95px)": { padding: "10px", gap: 8 },
   background: "transparent",
   fontFamily: "Oxanium, ui-sans-serif, system-ui, sans-serif",
 });
 export const PlayerNumber = styled("span")({
   gridArea: "number",
   color: "#d44f25",
-  fontSize: "clamp(2rem, 4vw, 5.5rem)",
+  fontSize: 90,
   lineHeight: 1,
   letterSpacing: "-.07em",
   fontWeight: 900,

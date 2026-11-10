@@ -1,7 +1,6 @@
-import { playerStats } from "./playerStats";
+import { rosterStats } from "./playerStats";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
-import SaveIcon from "../../img/gloves.svg";
 import CardIcon from "../../img/cards.svg";
 import { Box, Tooltip, Typography } from "@mui/material";
 import type { MatchEvent, Player } from "../../model";
@@ -62,13 +61,13 @@ export default function PlayerSummary({
           component="span"
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
             gap: { xs: 1, md: 2 },
             gridArea: "stats",
           }}
         >
-          {playerStats(player, events).filter(([label]) => label !== "Clean Sheets" || player.playerType === "Goal Keeper").map(([label, count], index) => (
-            <Tooltip key={label} title={label === "PK Saves" ? "Penalty Saves" : label} describeChild arrow>
+          {rosterStats(player, events).map(([label, count], index) => (
+            <Tooltip key={label} title={label} describeChild arrow>
               <Box
                 component="span"
                 aria-label={`${count} ${label}`}
@@ -81,7 +80,7 @@ export default function PlayerSummary({
               >
                 <Box
                   component="img"
-                  src={[GoalIcon, AssistIcon, SaveIcon, CardIcon, SaveIcon][index]}
+                  src={[GoalIcon, AssistIcon, CardIcon][index]}
                   alt=""
                   sx={{
                     width: { xs: 16, md: 22 },

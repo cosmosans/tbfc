@@ -1,3 +1,4 @@
+import CleanSheetIcon from "../../img/clean.svg";
 import { Link } from "react-router-dom";
 import TimelineMarker from "../../components/TimelineMarker";
 import { Alert, Box, Button, Snackbar, Typography } from "@mui/material";
@@ -196,10 +197,10 @@ export default function MatchEventSnackbar({
                 }}
               />
             )}
-            {notice.kind === "assist" && (
+            {(notice.kind === "assist" || notice.kind === "clean_sheet") && (
               <img
-                src={AssistIcon}
-                alt="Assist"
+                src={notice.kind === "assist" ? AssistIcon : CleanSheetIcon}
+                alt=""
                 style={{
                   width: 15,
                   height: 15,

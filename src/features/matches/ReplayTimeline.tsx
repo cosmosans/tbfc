@@ -1,3 +1,4 @@
+import CleanSheetIcon from "../../img/clean.svg";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Box, Tooltip, Typography } from "@mui/material";
 import TimelineMarker from "../../components/TimelineMarker";
@@ -17,7 +18,7 @@ const icons = {
   assist,
   yellow_card: card,
   penalty_kick: penalty,
-  clean_sheet: gloves,
+  clean_sheet: CleanSheetIcon,
   penalty_save: gloves,
   note: null,
 };

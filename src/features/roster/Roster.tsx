@@ -1,6 +1,6 @@
 import { tableHeading, tablePaddingX, sortLabelStyle } from "../../components/tableStyles";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import { careerEvents, playerStats } from "./playerStats";
+import { careerEvents, rosterStats } from "./playerStats";
 import { PlayerInformation } from "./PlayerCard.styles";
 import PlayerTypeSelect from "./PlayerTypeSelect";
 import { useState } from "react";
@@ -37,13 +37,11 @@ type SortKey =
   | "name"
   | "goals"
   | "assists"
-  | "saves"
   | "cards"
   | "status";
 const statColumns = [
   ["goals", "Goals"],
   ["assists", "Assists"],
-  ["saves", "PK Saves"],
   ["cards", "Yellow Cards"],
 ] as const;
 
@@ -69,7 +67,7 @@ export default function Roster({
       const events = playedEvents.filter(
         (event) => event.playerId === player.id,
       );
-      return { player, events, stats: playerStats(player, events) };
+      return { player, events, stats: rosterStats(player, events) };
     })
     .sort((a, b) => {
       let comparison: number;
@@ -312,7 +310,7 @@ export default function Roster({
               sx={{
                 gridArea: "stats",
                 display: "grid",
-                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
                 gap: { xs: 1, md: 2 },
               }}
             >

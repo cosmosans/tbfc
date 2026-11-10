@@ -37,8 +37,17 @@ import { opponentFor, opponentName, seasonName } from "../../clubView";
 import { canEditClub } from "../../editAccess";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
+import CleanSheetIcon from "../../img/clean.svg";
 import SaveIcon from "../../img/gloves.svg";
 import CardIcon from "../../img/cards.svg";
+
+const profileStatIcons = {
+  Goals: GoalIcon,
+  Assists: AssistIcon,
+  "PK Saves": SaveIcon,
+  "Yellow Cards": CardIcon,
+  "Clean Sheets": CleanSheetIcon,
+};
 
 type HistorySort =
   | "date"
@@ -56,7 +65,7 @@ const filterLabels = {
   saves: "Penalty Saves",
 } as const;
 type StatFilter = keyof typeof filterLabels;
-const filterKeys = Object.keys(filterLabels) as StatFilter[];
+const allFilterKeys = Object.keys(filterLabels) as StatFilter[];
 
 export default function PlayerDetail({
   player,
@@ -68,12 +77,13 @@ export default function PlayerDetail({
   update: (data: ClubData) => void;
 }) {
   const [bioOpen, setBioOpen] = useState(false);
-  const [filters, setFilters] = useState<StatFilter[]>([]);
+  const [selectedFilters, setFilters] = useState<StatFilter[]>([]);
   const [historySort, setHistorySort] = useState<HistorySort>("date");
   const [descending, setDescending] = useState(true);
 
-  const isGoalkeeper =
-    player.preferredPosition === "GK" || player.secondaryPosition === "GK";
+  const isGoalkeeper = player.playerType === "Goal Keeper";
+  const filterKeys = allFilterKeys.filter(key => isGoalkeeper || key !== "saves");
+  const filters = selectedFilters.filter(key => filterKeys.includes(key));
   const events = careerEvents(data).filter(
     (event) => event.playerId === player.id,
   );
@@ -260,8 +270,7 @@ export default function PlayerDetail({
                 }}
               >
                 {counts
-                  .filter(([label]) => label !== "Clean Sheets" || player.playerType === "Goal Keeper")
-                  .filter(([label]) => label !== "PK Saves" || isGoalkeeper)
+                  .filter(([label]) => isGoalkeeper || (label !== "Clean Sheets" && label !== "PK Saves"))
                   .map(([label, count]) => (
                     <Tooltip
                       key={label}
@@ -278,36 +287,16 @@ export default function PlayerDetail({
                       }}
                     >
                       <Box>
-                        {label === "Goals" ? (
-                          <img
-                            src={GoalIcon}
-                            alt="Goals"
-                            style={{
-                              marginRight: 8,
-                              width: 25,
-                              height: 25,
-                              transform: "translateY(-1px)",
-                            }}
-                          />
-                        ) : label === "Assists" ? (
-                          <img
-                            src={AssistIcon}
-                            alt="Assists"
-                            style={{ marginRight: 8, width: 20, height: 20 }}
-                          />
-                        ) : label === "PK Saves" ? (
-                          <img
-                            src={SaveIcon}
-                            alt="PK Saves"
-                            style={{ marginRight: 8, width: 20, height: 20 }}
-                          />
-                        ) : label === "Yellow Cards" ? (
-                          <img
-                            src={CardIcon}
-                            alt="Yellow Cards"
-                            style={{ marginRight: 8, width: 20, height: 20 }}
-                          />
-                        ) : label === "Clean Sheets" ? <Typography component="span" variant="caption">Clean Sheets</Typography> : null}
+                        <img
+                          src={profileStatIcons[label]}
+                          alt={label}
+                          style={{
+                            marginRight: 8,
+                            width: label === "Goals" ? 25 : 20,
+                            height: label === "Goals" ? 25 : 20,
+                            transform: label === "Goals" ? "translateY(-1px)" : undefined,
+                          }}
+                        />
 
                         <Typography
                           variant="h4"
@@ -560,6 +549,7 @@ export default function PlayerDetail({
                                         textDecoration: "underline dotted", textUnderlineOffset: "3px",
                                       }),
                                     }}>
+                                    {event.kind === "clean_sheet" && <img src={CleanSheetIcon} alt="" width={16} height={16} style={{ verticalAlign: "middle", marginRight: 4 }} />}
                                     {event.ownGoal ? "Own Goal" : event.kind.replaceAll("_", " ")}
                                   </Box>
                                 </Tooltip>
