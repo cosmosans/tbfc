@@ -35,6 +35,8 @@ import { isMatchCompleted, record } from "../../model";
 import { opponentFor, opponentName, orderedSeasons } from "../../clubView";
 import PageHeading from "../../components/PageHeading";
 
+const panelBorder = { borderTop: "3px solid", borderTopColor: "primary.main" };
+
 function TeamCrestTick({
   x = 0,
   y = 0,
@@ -229,8 +231,7 @@ export default function Stats({
           aria-labelledby="all-time-title"
           sx={{
             width: "100%",
-            borderTop: "3px solid",
-            borderTopColor: "primary.main",
+            ...panelBorder,
           }}
         >
           <Box
@@ -313,108 +314,8 @@ export default function Stats({
             ))}
           </Box>
         </Card>
-        <Card component="section" sx={{ width: "100%", minWidth: 0 }}>
-          <PanelHeader title="Kit Record" />
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-              pb: 3,
-              px: { xs: 1, sm: 3 },
-              maxWidth: 900,
-              mx: "auto",
-            }}
-          >
-            {kits.map((kit) => (
-              <Stack key={kit.name} alignItems="center" spacing={1}>
-                <Typography component="h3" variant="subtitle1" fontWeight={700}>
-                  {kit.name} Kit
-                </Typography>
-                <Box
-                  sx={{
-                    width: "100%",
-                    maxWidth: 250,
-                    aspectRatio: "1",
-                    position: "relative",
-                  }}
-                >
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={
-                          kit.played
-                            ? kit.slices
-                            : [
-                                {
-                                  name: "No Matches",
-                                  value: 1,
-                                  fill: theme.palette.divider,
-                                },
-                              ]
-                        }
-                        dataKey="value"
-                        innerRadius="68%"
-                        outerRadius="95%"
-                        startAngle={90}
-                        endAngle={-270}
-                        stroke={theme.palette.background.paper}
-                        strokeWidth={2}
-                        isAnimationActive={false}
-                      />
-                      {kit.played > 0 && <Tooltip />}
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <Box
-                    component="img"
-                    src={kit.shirt}
-                    alt=""
-                    sx={{
-                      position: "absolute",
-                      inset: "26%",
-                      width: "48%",
-                      height: "48%",
-                      objectFit: "contain",
-                      pointerEvents: "none",
-                    }}
-                  />
-                </Box>
-                <Stack
-                  direction="row"
-                  flexWrap="wrap"
-                  justifyContent="center"
-                  gap={1}
-                >
-                  {kit.slices.map((slice) => (
-                    <Typography
-                      key={slice.name}
-                      variant="caption"
-                      aria-label={`${slice.value} ${slice.name}`}
-                      sx={{
-                        display: "inline-flex",
-                        gap: 0.5,
-                        alignItems: "center",
-                        fontWeight: 700,
-                      }}
-                    >
-                      <Box
-                        component="span"
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          bgcolor: slice.fill,
-                        }}
-                      />
-                      {slice.value}
-                      {slice.name[0]}
-                    </Typography>
-                  ))}
-                </Stack>
-              </Stack>
-            ))}
-          </Box>
-        </Card>
-        <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
+
+        <Card sx={{ minWidth: 0, width: "100%", border: 0, ...panelBorder }}>
           <PanelHeader
             title="Opponents"
             context={
@@ -616,6 +517,7 @@ export default function Stats({
           sx={{
             minWidth: 0,
             border: 0,
+            ...panelBorder,
             width: "100%",
           }}
         >
@@ -847,6 +749,110 @@ export default function Stats({
               </Box>
             </Box>
           </CardContent>
+        </Card>
+
+        <Card
+          component="section"
+          sx={{ width: "100%", minWidth: 0, ...panelBorder }}
+        >
+          <PanelHeader title="Kit Record" />
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              pb: 3,
+              px: { xs: 1, sm: 3 },
+              maxWidth: 900,
+              mx: "auto",
+            }}
+          >
+            {kits.map((kit) => (
+              <Stack key={kit.name} alignItems="center" spacing={1}>
+                <Typography component="h3" variant="subtitle1" fontWeight={700}>
+                  {kit.name} Kit
+                </Typography>
+                <Box
+                  sx={{
+                    width: "100%",
+                    maxWidth: 250,
+                    aspectRatio: "1",
+                    position: "relative",
+                  }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={
+                          kit.played
+                            ? kit.slices
+                            : [
+                                {
+                                  name: "No Matches",
+                                  value: 1,
+                                  fill: theme.palette.divider,
+                                },
+                              ]
+                        }
+                        dataKey="value"
+                        innerRadius="68%"
+                        outerRadius="95%"
+                        startAngle={90}
+                        endAngle={-270}
+                        stroke={theme.palette.background.paper}
+                        strokeWidth={2}
+                        isAnimationActive={false}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <Box
+                    component="img"
+                    src={kit.shirt}
+                    alt=""
+                    sx={{
+                      position: "absolute",
+                      inset: "26%",
+                      width: "48%",
+                      height: "48%",
+                      objectFit: "contain",
+                      pointerEvents: "none",
+                    }}
+                  />
+                </Box>
+                <Stack
+                  direction="row"
+                  flexWrap="wrap"
+                  justifyContent="center"
+                  gap={1}
+                >
+                  {kit.slices.map((slice) => (
+                    <Typography
+                      key={slice.name}
+                      variant="caption"
+                      aria-label={`${slice.value} ${slice.name}`}
+                      sx={{
+                        display: "inline-flex",
+                        gap: 0.5,
+                        alignItems: "center",
+                        fontWeight: 700,
+                      }}
+                    >
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
+                          bgcolor: slice.fill,
+                        }}
+                      />
+                      {slice.value}
+                      {slice.name[0]}
+                    </Typography>
+                  ))}
+                </Stack>
+              </Stack>
+            ))}
+          </Box>
         </Card>
       </Box>
     </Stack>
