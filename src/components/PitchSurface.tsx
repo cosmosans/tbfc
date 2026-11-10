@@ -30,7 +30,7 @@ const Markings = styled("div")({
   pointerEvents: "none",
 });
 
-export default function PitchSurface() {
+export function PitchArtwork() {
   return (
     <>
       <Artwork src={PitchOverlay} alt="" sx={{ opacity: 0.8, zIndex: 1 }} />
@@ -39,6 +39,14 @@ export default function PitchSurface() {
         alt=""
         sx={{ filter: "grayscale(10%)", opacity: 0.5, zIndex: 1 }}
       />
+    </>
+  );
+}
+
+export default function PitchSurface({ showArtwork = true }: { showArtwork?: boolean }) {
+  return (
+    <>
+      {showArtwork && <PitchArtwork />}
       <Markings>
         <CenterLine />
         <CenterCircle />

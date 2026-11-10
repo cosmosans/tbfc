@@ -9,13 +9,24 @@ import {
 } from "@mui/material";
 import type { ClubData, Formation, Lineup } from "../../model";
 import { Pitch } from "../board/Matchboard.styles";
-import PitchSurface from "../../components/PitchSurface";
+import PitchSurface, { PitchArtwork } from "../../components/PitchSurface";
 import {
   LineupNameplate,
   NameplateText,
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { formationPoints, formationSlots } from "./formations";
+const roleLabelStyle = {
+  color: "#fff",
+  fontFamily: "Oxanium, sans-serif",
+  fontSize: "clamp(10px, 10cqw, 16px)",
+  fontWeight: 700,
+  lineHeight: 1.2,
+  letterSpacing: ".16em",
+  textAlign: "center",
+  textShadow: "0 1px 4px rgba(0,0,0,.85)",
+} as const;
+
 const plateStyle = {
   minHeight: 0,
   padding: "0 7%",
@@ -79,6 +90,8 @@ export default function LineupPitch({
 
   return (
     <Box className="lineup-pitch" sx={{ width: "100%", minWidth: 0 }}>
+      <Box sx={{ position: "relative", isolation: "isolate" }}>
+        <PitchArtwork />
       <Pitch
         sx={{
           aspectRatio: "1.65",
@@ -87,7 +100,7 @@ export default function LineupPitch({
         }}
         aria-label={`${lineup.formation} lineup with substitutes`}
       >
-        <PitchSurface />
+        <PitchSurface showArtwork={false} />
 
         <Box
           sx={{
@@ -123,14 +136,7 @@ export default function LineupPitch({
                     left: 0,
                     width: "100%",
                     pb: 0.75,
-                    color: "#fff",
-                    fontFamily: "Oxanium, sans-serif",
-                    fontSize: "clamp(10px, 10cqw, 16px)",
-                    fontWeight: 700,
-                    lineHeight: 1.2,
-                    letterSpacing: ".16em",
-                    textAlign: "center",
-                    textShadow: "0 1px 4px rgba(0,0,0,.85)",
+                    ...roleLabelStyle,
                     pointerEvents: "none",
                   }}
                 >
@@ -154,69 +160,69 @@ export default function LineupPitch({
               </Stack>
             );
           })}
-          {floaters.length > 0 && (
-            <Stack
-              component="section"
-              aria-label="Floaters"
-              gap={0.5}
-              sx={{
-                position: "absolute",
-                right: "30px",
-                bottom: "23px",
-                width: "28%",
-                maxWidth: 170,
-                maxHeight: "22%",
-                overflowY: "auto",
-                containerType: "inline-size",
-                p: 2,
-                paddingTop: 1.5,
-                bgcolor: "rgba(202, 81, 38, 0.75)",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <img
-                  src={RubberDuckIcon}
-                  alt="Rubber Duck"
-                  style={{
-                    width: 15,
-                    height: 15,
-                    marginRight: 5,
-                    transform: "translateY(-1px)",
-                  }}
-                />
-                <Typography
-                  variant="caption"
-                  align="center"
-                  color="white"
-                  sx={{ letterSpacing: 1 }}
-                >
-                  FLOATERS
-                </Typography>
-              </Box>
-
-              {floaters.map((player) => (
-                <LineupNameplate
-                  key={player.id}
-                  kit={kit}
-                  sx={{ ...plateStyle, flexShrink: 0 }}
-                  aria-label={`Floater: #${player.number} ${player.name}`}
-                >
-                  <NameplateText
-                    number={player.number}
-                    name={player.name.split(" ")[0]}
-                  />
-                </LineupNameplate>
-              ))}
-            </Stack>
-          )}
         </Box>
       </Pitch>
+      {floaters.length > 0 && (
+        <Stack
+          component="section"
+          aria-label="Floaters"
+          gap={0.5}
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            alignItems: "center",
+            p: 2,
+            pt: 0.5,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "26%",
+              maxWidth: 180,
+              containerType: "inline-size",
+            }}
+          >
+            <img
+              src={RubberDuckIcon}
+              alt="Rubber Duck"
+              style={{
+                width: 15,
+                height: 15,
+                marginRight: 5,
+                transform: "translateY(-1px)",
+              }}
+            />
+            <Typography
+              variant="caption"
+              align="center"
+              color="white"
+              sx={roleLabelStyle}
+            >
+              FLOATERS
+            </Typography>
+          </Box>
+
+          <Stack direction="row" flexWrap="wrap" justifyContent="center" gap={1} sx={{ width: "100%" }}>
+          {floaters.map((player) => (
+            <LineupNameplate
+              key={player.id}
+              kit={kit}
+              sx={{ ...plateStyle, width: 150, maxWidth: "100%", containerType: "inline-size", px: 1 }}
+              aria-label={`Floater: #${player.number} ${player.name}`}
+            >
+              <NameplateText
+                number={player.number}
+                name={player.name.split(" ")[0]}
+              />
+            </LineupNameplate>
+          ))}
+          </Stack>
+        </Stack>
+      )}
+      </Box>
       {(onFormationChange || showTitle) && (
         <Stack
           direction="row"
