@@ -45,7 +45,11 @@ export default function PlayerSummary({
             }}
           >
             {player.playerType && (
-              <Typography variant="body2" color="white">
+              <Typography
+                variant="body2"
+                color="white"
+                sx={{ textTransform: "uppercase", fontSize: 16 }}
+              >
                 {player.playerType}
               </Typography>
             )}
@@ -74,7 +78,7 @@ export default function PlayerSummary({
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
+                  justifyContent: { xs: "center", sm: "flex-start" },
                   gap: 0.75,
                 }}
               >
@@ -83,8 +87,9 @@ export default function PlayerSummary({
                   src={[GoalIcon, AssistIcon, CardIcon][index]}
                   alt=""
                   sx={{
-                    width: { xs: 16, md: 22 },
-                    height: { xs: 16, md: 22 },
+                    display: { xs: "block", sm: "none" },
+                    width: 20,
+                    height: 20,
                     objectFit: "contain",
                   }}
                 />

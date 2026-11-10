@@ -280,7 +280,7 @@ export default function SchedulePage({
               startIcon={<AddIcon />}
               onClick={() => setUploadOpen(true)}
             >
-              Upload Season Schedule
+              Upload Schedule
             </Button>
             <Button
               variant="contained"

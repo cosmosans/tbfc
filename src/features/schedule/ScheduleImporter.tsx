@@ -1,5 +1,20 @@
 import { useState } from "react";
-import { Alert, Box, Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Typography,
+} from "@mui/material";
 import type { ClubData, Match } from "../../model";
 import { opponentName, orderedSeasons } from "../../clubView";
 import { parseScheduleCsv } from "../../scheduleImport";
@@ -76,9 +91,16 @@ export default function ScheduleImporter({
         };
         teams.push(team);
       }
-      let location = locations.find(item => item.name.toLowerCase() === row.venue.toLowerCase());
+      let location = locations.find(
+        (item) => item.name.toLowerCase() === row.venue.toLowerCase(),
+      );
       if (!location && row.venue) {
-        location = { id: crypto.randomUUID(), name: row.venue, address: '', imageUrl: '' };
+        location = {
+          id: crypto.randomUUID(),
+          name: row.venue,
+          address: "",
+          imageUrl: "",
+        };
         locations.push(location);
       }
       return {
@@ -121,14 +143,14 @@ export default function ScheduleImporter({
   }
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Upload Season Schedule</DialogTitle>
+      <DialogTitle>Upload Schedule</DialogTitle>
       <DialogContent>
         <Stack gap={2}>
           <Box>
             <Typography variant="body2" color="text.secondary">
               Choose a season and CSV. Date and Opponent are required; Time,
-              Location, Pitch, Competition, Kit Color, and Home/Away are optional. Review the
-              matches before adding them.
+              Location, Pitch, Competition, Kit Color, and Home/Away are
+              optional. Review the matches before adding them.
             </Typography>
             <Button
               component="a"
@@ -146,9 +168,13 @@ export default function ScheduleImporter({
             >
               Download Excel Version
             </Button>
-            <Typography variant="caption" color="text.secondary" display="block">
-              The examples contain fictional matches. Edit the rows before importing;
-              save the Excel version as CSV to upload it here.
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              display="block"
+            >
+              The examples contain fictional matches. Edit the rows before
+              importing; save the Excel version as CSV to upload it here.
             </Typography>
           </Box>
           <Stack
@@ -240,14 +266,16 @@ export default function ScheduleImporter({
                 disabled={!seasonId || ready.length === 0}
                 onClick={importRows}
               >
-                Add {ready.length} Upcoming Match{ready.length === 1 ? "" : "es"}
+                Add {ready.length} Upcoming Match
+                {ready.length === 1 ? "" : "es"}
               </Button>
             </>
           )}
         </Stack>
       </DialogContent>
-      <DialogActions><Button onClick={onClose}>Close</Button></DialogActions>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
     </Dialog>
   );
 }
-

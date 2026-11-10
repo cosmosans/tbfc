@@ -82,8 +82,10 @@ export default function PlayerDetail({
   const [descending, setDescending] = useState(true);
 
   const isGoalkeeper = player.playerType === "Goal Keeper";
-  const filterKeys = allFilterKeys.filter(key => isGoalkeeper || key !== "saves");
-  const filters = selectedFilters.filter(key => filterKeys.includes(key));
+  const filterKeys = allFilterKeys.filter(
+    (key) => isGoalkeeper || key !== "saves",
+  );
+  const filters = selectedFilters.filter((key) => filterKeys.includes(key));
   const events = careerEvents(data).filter(
     (event) => event.playerId === player.id,
   );
@@ -222,6 +224,7 @@ export default function PlayerDetail({
                       fontSize: {
                         xs: 32,
                         md: 42,
+                        letterSpacing: "-2.5px",
                       },
                       fontWeight: 800,
                     }}
@@ -270,7 +273,11 @@ export default function PlayerDetail({
                 }}
               >
                 {counts
-                  .filter(([label]) => isGoalkeeper || (label !== "Clean Sheets" && label !== "PK Saves"))
+                  .filter(
+                    ([label]) =>
+                      isGoalkeeper ||
+                      (label !== "Clean Sheets" && label !== "PK Saves"),
+                  )
                   .map(([label, count]) => (
                     <Tooltip
                       key={label}
@@ -294,7 +301,10 @@ export default function PlayerDetail({
                             marginRight: 8,
                             width: label === "Goals" ? 25 : 20,
                             height: label === "Goals" ? 25 : 20,
-                            transform: label === "Goals" ? "translateY(-1px)" : undefined,
+                            transform:
+                              label === "Goals"
+                                ? "translateY(-1px)"
+                                : undefined,
                           }}
                         />
 
@@ -539,18 +549,50 @@ export default function PlayerDetail({
                                   overflowWrap: "anywhere",
                                 }}
                               >
-                                {event.minute != null && <><TimelineMarker minute={event.minute} compact />{" "}</>}
-                                <Tooltip title={event.note?.trim() || ""} describeChild arrow>
-                                  <Box component="strong" tabIndex={event.note?.trim() ? 0 : undefined}
+                                {event.minute != null && (
+                                  <>
+                                    <TimelineMarker
+                                      minute={event.minute}
+                                      compact
+                                    />{" "}
+                                  </>
+                                )}
+                                <Tooltip
+                                  title={event.note?.trim() || ""}
+                                  describeChild
+                                  arrow
+                                >
+                                  <Box
+                                    component="strong"
+                                    tabIndex={
+                                      event.note?.trim() ? 0 : undefined
+                                    }
                                     sx={{
                                       textTransform: "uppercase",
                                       ...(event.note?.trim() && {
-                                        position: "relative", zIndex: 1, cursor: "help",
-                                        textDecoration: "underline dotted", textUnderlineOffset: "3px",
+                                        position: "relative",
+                                        zIndex: 1,
+                                        cursor: "help",
+                                        textDecoration: "underline dotted",
+                                        textUnderlineOffset: "3px",
                                       }),
-                                    }}>
-                                    {event.kind === "clean_sheet" && <img src={CleanSheetIcon} alt="" width={16} height={16} style={{ verticalAlign: "middle", marginRight: 4 }} />}
-                                    {event.ownGoal ? "Own Goal" : event.kind.replaceAll("_", " ")}
+                                    }}
+                                  >
+                                    {event.kind === "clean_sheet" && (
+                                      <img
+                                        src={CleanSheetIcon}
+                                        alt=""
+                                        width={16}
+                                        height={16}
+                                        style={{
+                                          verticalAlign: "middle",
+                                          marginRight: 4,
+                                        }}
+                                      />
+                                    )}
+                                    {event.ownGoal
+                                      ? "Own Goal"
+                                      : event.kind.replaceAll("_", " ")}
                                   </Box>
                                 </Tooltip>
                               </Typography>

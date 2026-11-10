@@ -77,7 +77,7 @@ export const PlayerInformation = styled("span")({
   minWidth: 0,
   display: "grid",
   alignItems: "center",
-  gridTemplateColumns: "90px minmax(0, 1fr) minmax(280px, 36%) 80px",
+  gridTemplateColumns: "90px minmax(0, 1fr) minmax(420px, 36%) 80px",
   gridTemplateAreas: '"number identity stats status"',
   gap: 12,
   "@media (max-width: 899.95px)": {
@@ -89,33 +89,35 @@ export const PlayerInformation = styled("span")({
   background: "transparent",
   fontFamily: "Oxanium, ui-sans-serif, system-ui, sans-serif",
 });
-export const PlayerNumber = styled("span")({
+export const PlayerNumber = styled("span")(() => ({
   gridArea: "number",
+  justifySelf: "center",
   color: "#d44f25",
   fontSize: 90,
-  lineHeight: 1,
+  marginLeft: -20,
   letterSpacing: "-.07em",
   fontWeight: 900,
-});
+}));
 export const PlayerIdentity = styled("span")({
   gridArea: "identity",
   display: "flex",
   flexDirection: "column",
   minWidth: 0,
   flex: 1,
+  marginLeft: -5,
 });
 export const PlayerName = styled("span")({
   display: "block",
-  fontSize: "clamp(1.1rem, 1.2vw, 2rem)",
+  fontSize: 32,
   fontWeight: 900,
   lineHeight: 1.2,
-  letterSpacing: "-.045em",
+  letterSpacing: "-2.5px",
   overflowWrap: "anywhere",
 });
 export const PlayerPositions = styled("span")({
   display: "block",
   color: "#777",
-  fontSize: ".9rem",
+  fontSize: 16,
   lineHeight: 1.2,
 });
 export const PlayerStatus = styled("span", {

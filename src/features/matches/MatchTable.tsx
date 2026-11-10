@@ -199,7 +199,7 @@ export default function MatchTable({
                       }),
                 }}
               >
-                <TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>
                   {!seasonSchedule && (
                     <Typography
                       component="span"

@@ -25,7 +25,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import type { ClubData, Match, MatchEvent } from "../../model";
+import { isMatchCompleted, type ClubData, type Match, type MatchEvent } from "../../model";
 import OpponentCrest from "../../components/OpponentCrest";
 import { opponentFor, opponentName } from "../../clubView";
 import AssistIcon from "../../img/cleats.svg";
@@ -69,12 +69,15 @@ function TimelineCard({
 function TimelineBoundary({
   minute,
   label,
+  note,
 }: {
   minute: number;
   label: string;
+  note?: string;
 }) {
   return (
     <TimelineCard minute={minute}>
+      <Box sx={{ minWidth: 0 }}>
       <Typography
         sx={{
           display: "flex",
@@ -91,6 +94,8 @@ function TimelineBoundary({
         <img src={WhistleIcon} alt="" width={16} height={16} />
         {label}
       </Typography>
+      {note && <Typography variant="body2" color="text.secondary" sx={{ ml: 4 }}>{note}</Typography>}
+      </Box>
     </TimelineCard>
   );
 }
@@ -502,6 +507,7 @@ export default function Events({
               key="full-time-whistle"
               minute={50}
               label="FULL TIME"
+              note={isMatchCompleted(match) ? `Turf Burners FC ${match.goalsFor}-${match.goalsAgainst} ${opponentLabel}` : undefined}
             />
           );
         const targetPlayer = data.players.find((p) => p.id === event.playerId);

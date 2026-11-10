@@ -836,7 +836,7 @@ export default function App() {
           <ClubDataSkeleton
             view={
               playerRoute
-                ? "roster"
+                ? "player"
                 : matchRoute
                   ? "match"
                   : teamRoute

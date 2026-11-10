@@ -75,7 +75,7 @@ const primaryItems = [
   },
   {
     page: "roster",
-    label: "Squad",
+    label: "Roster",
     active: squadActiveIcon,
     inactive: squadIcon,
   },

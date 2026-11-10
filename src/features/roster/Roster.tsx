@@ -1,4 +1,10 @@
-import { tableHeading, tablePaddingX, sortLabelStyle } from "../../components/tableStyles";
+import GoalIcon from "../../img/soccer-ball-variant.svg";
+import AssistIcon from "../../img/cleats.svg";
+import CardIcon from "../../img/cards.svg";
+import {
+  tableHeading,
+  sortLabelStyle,
+} from "../../components/tableStyles";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { careerEvents, rosterStats } from "./playerStats";
 import { PlayerInformation } from "./PlayerCard.styles";
@@ -32,17 +38,11 @@ import {
 import PlayerCard, { PositionSelect } from "./PlayerCard";
 import PageHeading from "../../components/PageHeading";
 
-type SortKey =
-  | "number"
-  | "name"
-  | "goals"
-  | "assists"
-  | "cards"
-  | "status";
+type SortKey = "number" | "name" | "goals" | "assists" | "cards" | "status";
 const statColumns = [
-  ["goals", "Goals"],
-  ["assists", "Assists"],
-  ["cards", "Yellow Cards"],
+  ["goals", "Goals", GoalIcon],
+  ["assists", "Assists", AssistIcon],
+  ["cards", "Yellow Cards", CardIcon],
 ] as const;
 
 export default function Roster({
@@ -85,7 +85,7 @@ export default function Roster({
         byPlayerNumber(a.player, b.player)
       );
     });
-  function sortHeader(key: SortKey, label: string) {
+  function sortHeader(key: SortKey, label: string, icon?: string) {
     const active = sortKey === key;
     return (
       <TableSortLabel
@@ -99,8 +99,9 @@ export default function Roster({
           }
         }}
         aria-label={`Sort by ${label}${active ? (descending ? ", descending" : ", ascending") : ""}`}
-        sx={sortLabelStyle}
+        sx={{ ...sortLabelStyle, whiteSpace: "nowrap" }}
       >
+        {icon && <Box component="img" src={icon} alt="" sx={{ width: 20, height: 20, objectFit: "contain", mr: 0.75 }} />}
         {label}
       </TableSortLabel>
     );
@@ -109,9 +110,10 @@ export default function Roster({
   const savePlayer = (saved: Player) =>
     update({
       ...data,
-      players: data.players.map(player => {
+      players: data.players.map((player) => {
         if (player.id === saved.id) return saved;
-        if (saved.captain && player.captain) return { ...player, captain: false };
+        if (saved.captain && player.captain)
+          return { ...player, captain: false };
         return player;
       }),
     });
@@ -299,7 +301,7 @@ export default function Roster({
           >
             Photo
           </Box>
-          <PlayerInformation as="div" sx={{ py: 2, px: tablePaddingX }}>
+          <PlayerInformation as="div">
             <Box sx={{ gridArea: "number" }}>
               {sortHeader("number", "Number")}
             </Box>
@@ -314,9 +316,9 @@ export default function Roster({
                 gap: { xs: 1, md: 2 },
               }}
             >
-              {statColumns.map(([key, label]) => (
-                <Box key={key} sx={{ textAlign: "center" }}>
-                  {sortHeader(key, label)}
+              {statColumns.map(([key, label, icon]) => (
+                <Box key={key} sx={{ textAlign: "left" }}>
+                  {sortHeader(key, label, icon)}
                 </Box>
               ))}
             </Box>

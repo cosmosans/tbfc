@@ -23,7 +23,7 @@ The app starts with 52 accepted source rows imported from `TBFC STATS - Matchlog
 
 To move existing browser data into D1, open the browser containing those records on localhost and click **Publish this browser’s data** while the database is empty. If the records live in a different browser, use **Backup → Download backup JSON** there, then **Backup → Restore backup** in your localhost browser before publishing. Keep a backup before replacing shared data.
 
-For a new season, create it under **Schedule → Manage seasons**, then use **Upload Season Schedule** to open the CSV import dialog. The upload accepts `Date` and `Opponent` columns, plus optional `Time`, `Location`, `Pitch`, `Competition`, `Kit Color`, and `Home/Away` (the original matchlog column names also work). Dates may be `YYYY-MM-DD` or `MM/DD/YYYY`. Review the preview, then add the valid rows as upcoming fixtures. Existing fixtures with the same season, date, opponent, and kickoff are skipped. New opponent names become editable Teams with empty crest and notes.
+For a new season, create it under **Schedule → Manage seasons**, then use **Upload Schedule** to open the CSV import dialog. The upload accepts `Date` and `Opponent` columns, plus optional `Time`, `Location`, `Pitch`, `Competition`, `Kit Color`, and `Home/Away` (the original matchlog column names also work). Dates may be `YYYY-MM-DD` or `MM/DD/YYYY`. Review the preview, then add the valid rows as upcoming fixtures. Existing fixtures with the same season, date, opponent, and kickoff are skipped. New opponent names become editable Teams with empty crest and notes.
 
 ## Shareable routes
 
