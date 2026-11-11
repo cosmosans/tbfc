@@ -1,3 +1,4 @@
+import NotesIcon from "@mui/icons-material/Notes";
 import CleanSheetIcon from "../../img/clean.svg";
 import { compareMatchEvents } from "./matchEventOrder";
 import TimelineMarker from "../../components/TimelineMarker";
@@ -566,34 +567,38 @@ export default function Events({
                 gridTemplateColumns: "16px minmax(0, 1fr)",
               }}
             >
-              <img
-                src={
-                  event.kind === "penalty_kick" || event.kind === "missed_penalty"
-                    ? PenaltyKick
-                    : event.kind === "yellow_card"
-                      ? YellowCardIcon
-                      : event.kind === "clean_sheet"
-                        ? CleanSheetIcon
-                        : event.kind === "penalty_save"
-                          ? SaveIcon
-                          : event.ownGoal
-                            ? OwnGoalIcon
-                            : event.kind === "assist"
-                              ? AssistIcon
-                              : GoalIcon
-                }
-                alt={
-                  event.kind === "penalty_kick"
-                    ? "penalty"
-                    : event.kind.replaceAll("_", " ")
-                }
-                style={{
-                  width: 16,
-                  height: 16,
-                  alignSelf: "start",
-                  marginTop: 3,
-                }}
-              />
+              {event.kind === "note" ? (
+                <NotesIcon aria-hidden sx={{ fontSize: 16, alignSelf: "start", mt: "3px" }} />
+              ) : (
+                <img
+                  src={
+                    event.kind === "penalty_kick" || event.kind === "missed_penalty"
+                      ? PenaltyKick
+                      : event.kind === "yellow_card"
+                        ? YellowCardIcon
+                        : event.kind === "clean_sheet"
+                          ? CleanSheetIcon
+                          : event.kind === "penalty_save"
+                            ? SaveIcon
+                            : event.ownGoal
+                              ? OwnGoalIcon
+                              : event.kind === "assist"
+                                ? AssistIcon
+                                : GoalIcon
+                  }
+                  alt={
+                    event.kind === "penalty_kick"
+                      ? "penalty"
+                      : event.kind.replaceAll("_", " ")
+                  }
+                  style={{
+                    width: 16,
+                    height: 16,
+                    alignSelf: "start",
+                    marginTop: 3,
+                  }}
+                />
+              )}
               <Typography
                 sx={{
                   transform: "translateY(2px)",

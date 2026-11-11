@@ -18,7 +18,6 @@ import type { ClubData, Match } from "../../model";
 import { record } from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
 import CheckIcon from "@mui/icons-material/Check";
-import { canEditClub } from "../../editAccess";
 import GoalFire from "./GoalFire";
 import OpponentCrest from "../../components/OpponentCrest";
 import RecordBar from "../../components/RecordBar";
@@ -304,7 +303,7 @@ export default function MatchBanner({
           }
         }}
       >
-        {canEditClub && match.matchAuditComplete === true && (
+        {match.matchAuditComplete === true && (
           <Tooltip title="Match audit complete">
             <CheckIcon
               titleAccess="Match audit complete"
