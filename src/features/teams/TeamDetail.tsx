@@ -50,7 +50,12 @@ export default function TeamDetail({
             alignItems="center"
             sx={{ my: 2 }}
           >
-            <Box sx={{ display: "flex", "& img, & svg": { filter: teamImageShadow } }}>
+            <Box
+              sx={{
+                display: "flex",
+                "& img, & svg": { filter: teamImageShadow },
+              }}
+            >
               <OpponentCrest url={team.crestUrl} size={100} mobileSize={56} />
             </Box>
 
@@ -133,8 +138,7 @@ export default function TeamDetail({
           </Box>
           <Typography
             textAlign="center"
-            color="text.secondary"
-            sx={{ mt: 1, textTransform: "uppercase" }}
+            sx={{ mt: 1, textTransform: "uppercase", fontSize: 12 }}
           >
             {results.played} Match{results.played === 1 ? "" : "es"} Played
           </Typography>

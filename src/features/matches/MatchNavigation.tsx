@@ -50,7 +50,7 @@ export default function MatchNavigation({
         gridTemplateColumns: "1fr minmax(0, auto) 1fr",
         alignItems: "center",
         gap: { xs: 1, sm: 2 },
-        m: { xs: 1, sm: 2 },
+        my: 1.5,
       }}
     >
       <Button

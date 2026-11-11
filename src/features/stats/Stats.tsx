@@ -1,3 +1,4 @@
+import { goalsByKickoff } from "./goalsByKickoff";
 import WhiteKit from "../../img/white-front.png";
 import BlackKit from "../../img/black-front.png";
 import PanelHeader, { panelBorder } from "../../components/PanelHeader";
@@ -123,6 +124,7 @@ export default function Stats({
   const [opponentMetric, setOpponentMetric] = useState<
     "teamGoals" | "goalsFor" | "goalsAgainst" | "gdPerMatch"
   >("teamGoals");
+  const kickoffData = goalsByKickoff(data.matches);
   const totals = record(data.matches);
   const allTimeStats = [
     ["Matches Played", totals.played],
@@ -317,195 +319,11 @@ export default function Stats({
           </Box>
         </Card>
 
-        <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
-          <PanelHeader
-            title="Opponents"
-            context={
-              adjusted ? "Positive goal differential divided by completed matches against each opponent." : opponentMetric === "teamGoals"
-                ? "Goals across all seasons. Turf Burners first, opponent second."
-                : opponentMetric === "goalsFor"
-                  ? "Goals scored by TBFC against each opponent across all seasons."
-                  : "Goals scored against TBFC by each opponent across all seasons."
-            }
-          >
-            <Select
-              size="small"
-              value={opponentMetric}
-              onChange={(event) =>
-                setOpponentMetric(
-                  event.target.value as
-                    | "teamGoals"
-                    | "goalsFor"
-                    | "goalsAgainst" | "gdPerMatch",
-                )
-              }
-              inputProps={{ "aria-label": "Opponent chart metric" }}
-              sx={{ minWidth: 145, fontSize: ".875rem" }}
-            >
-              <MenuItem value="teamGoals">Goal Differential</MenuItem>
-              <MenuItem value="gdPerMatch">GD Per Match</MenuItem>
-              <MenuItem value="goalsFor">Goals Scored</MenuItem>
-              <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
-            </Select>
-          </PanelHeader>
-          <CardContent>
-            {chartTeams.length ? (
-              <Box
-                sx={{
-                  width: "100%",
-                  overflowX: "auto",
-                }}
-              >
-                <Box
-                  sx={{
-                    minWidth: horizontalBars
-                      ? 0
-                      : Math.max(
-                          600,
-                          chartTeams.length *
-                            (opponentMetric === "teamGoals" ? 80 : 64),
-                        ),
-                    height: horizontalBars ? chartTeams.length * 52 + 60 : 400,
-                  }}
-                >
-                  <ResponsiveContainer>
-                    <BarChart
-                      key={opponentMetric}
-                      layout={horizontalBars ? "vertical" : "horizontal"}
-                      data={chartTeams}
-                      accessibilityLayer
-                      margin={{
-                        top: 24,
-                        right: horizontalBars ? 36 : 16,
-                        left: 0,
-                        bottom: 8,
-                      }}
-                      barSize={opponentMetric === "teamGoals" ? 12 : 24}
-                      barGap={4}
-                    >
-                      <CartesianGrid
-                        stroke="#394144"
-                        vertical={horizontalBars}
-                        horizontal={!horizontalBars}
-                      />
-                      {horizontalBars ? (
-                        <XAxis
-                          type="number"
-                          allowDecimals={adjusted}
-                          stroke="#a7afb1"
-                        />
-                      ) : (
-                        <XAxis
-                          dataKey="team"
-                          height={60}
-                          interval={0}
-                          tickLine={false}
-                          stroke="#a7afb1"
-                          tick={crestTick}
-                        />
-                      )}
-                      {horizontalBars ? (
-                        <YAxis
-                          type="category"
-                          dataKey="team"
-                          width={48}
-                          interval={0}
-                          tickLine={false}
-                          stroke="#a7afb1"
-                          tick={crestTick}
-                        />
-                      ) : (
-                        <YAxis
-                          type="number"
-                          allowDecimals={adjusted}
-                          stroke="#a7afb1"
-                        />
-                      )}
-                      <Tooltip
-                        formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
-                        cursor={{ fill: "#38383880" }}
-                        contentStyle={{
-                          background: "#1b2022",
-                          border: "1px solid #394144",
-                        }}
-                      />
-                      {opponentMetric === "teamGoals" ? (
-                        <>
-                          <Bar
-                            minPointSize={3}
-                            dataKey="goalsFor"
-                            name="Turf Burners FC Goals"
-                            fill={theme.palette.primary.main}
-                            isAnimationActive={false}
-                            cursor="pointer"
-                            onClick={(entry) => openTeam(entry.payload?.id)}
-                          >
-                            <LabelList
-                              dataKey="goalsFor"
-                              position={horizontalBars ? "right" : "top"}
-                              fill="#fff"
-                              fontWeight={800}
-                            />
-                          </Bar>
-                          <Bar
-                            minPointSize={3}
-                            dataKey="goalsAgainst"
-                            name="Opponent Goals"
-                            fill="#a7afb1"
-                            isAnimationActive={false}
-                            cursor="pointer"
-                            onClick={(entry) => openTeam(entry.payload?.id)}
-                          >
-                            {chartTeams.map((team) => (
-                              <Cell
-                                key={team.team}
-                                fill={team.color || "#a7afb1"}
-                              />
-                            ))}
-                            <LabelList
-                              dataKey="goalsAgainst"
-                              position={horizontalBars ? "right" : "top"}
-                              fill="#fff"
-                              fontWeight={800}
-                            />
-                          </Bar>
-                        </>
-                      ) : (
-                        <Bar
-                          minPointSize={3}
-                          cursor="pointer"
-                          onClick={(entry) => openTeam(entry.payload?.id)}
-                          dataKey={sortField}
-                          name={metricName}
-                          fill={theme.palette.primary.main}
-                          isAnimationActive={false}
-                        >
-                          {chartTeams.map((team) => (
-                            <Cell
-                              key={team.team}
-                              fill={team.color || theme.palette.primary.main}
-                            />
-                          ))}
-                          <LabelList
-                            formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
-                            dataKey={sortField}
-                            position={horizontalBars ? "right" : "top"}
-                            fill="#fff"
-                            fontWeight={800}
-                          />
-                        </Bar>
-                      )}
-                    </BarChart>
-                  </ResponsiveContainer>
-                </Box>
-              </Box>
-            ) : (
-              <Typography color="text.secondary">
-                {adjusted ? "No opponents with a positive goal differential yet." : "No completed matches yet."}
-              </Typography>
-            )}
-          </CardContent>
-        </Card>
+        <Box sx={{
+          display: "grid", width: "100%", minWidth: 0, gap: "26px", mt: "10px",
+          gridTemplateColumns: "minmax(0, 1fr)",
+          "@media (width > 1200px)": { gridTemplateColumns: "repeat(2, minmax(0, 1fr))" },
+        }}>
         <Card
           sx={{
             minWidth: 0,
@@ -742,6 +560,223 @@ export default function Stats({
             </Box>
           </CardContent>
         </Card>
+        <Card component="section" sx={{ width: "100%", minWidth: 0 }}>
+          <PanelHeader title="Goals Scored" context="Total Turf Burners goals across all seasons, grouped by match start time.">
+            <Select size="small" defaultValue="kickoff" inputProps={{ "aria-label": "Goals Scored grouping" }}>
+              <MenuItem value="kickoff">By Kickoff Time</MenuItem>
+            </Select>
+          </PanelHeader>
+          <CardContent>
+            {kickoffData.length ? (
+              <Box sx={{ overflowX: "auto" }}>
+                <Box sx={{ height: 340, minWidth: 80 + kickoffData.length * 78 }}>
+                  <ResponsiveContainer>
+                    <BarChart data={kickoffData} maxBarSize={64} margin={{ top: 28, right: 36, bottom: 12, left: 0 }} accessibilityLayer>
+                      <CartesianGrid stroke="#394144" vertical={false} />
+                      <XAxis dataKey="time" interval={0} stroke="#a7afb1" tick={{ fontSize: 12 }}
+                        padding={{ left: 20, right: 12 }} />
+                      <YAxis allowDecimals={false} stroke="#a7afb1" width={42} />
+                      <Tooltip contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
+                      <Bar dataKey="goals" name="Goals Scored" fill={theme.palette.primary.main} isAnimationActive={false}>
+                        <LabelList dataKey="goals" position="top" fill="#fff" fontWeight={800} fontSize={13} />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Box>
+              </Box>
+            ) : <Typography color="text.secondary">No recorded kickoff times yet.</Typography>}
+          </CardContent>
+        </Card>
+
+        <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
+          <PanelHeader
+            title="Opponents"
+            context={
+              adjusted ? "Positive goal differential divided by completed matches against each opponent." : opponentMetric === "teamGoals"
+                ? "Goals across all seasons. Turf Burners first, opponent second."
+                : opponentMetric === "goalsFor"
+                  ? "Goals scored by TBFC against each opponent across all seasons."
+                  : "Goals scored against TBFC by each opponent across all seasons."
+            }
+          >
+            <Select
+              size="small"
+              value={opponentMetric}
+              onChange={(event) =>
+                setOpponentMetric(
+                  event.target.value as
+                    | "teamGoals"
+                    | "goalsFor"
+                    | "goalsAgainst" | "gdPerMatch",
+                )
+              }
+              inputProps={{ "aria-label": "Opponent chart metric" }}
+              sx={{ minWidth: 145, fontSize: ".875rem" }}
+            >
+              <MenuItem value="teamGoals">Goal Differential</MenuItem>
+              <MenuItem value="gdPerMatch">GD Per Match</MenuItem>
+              <MenuItem value="goalsFor">Goals Scored</MenuItem>
+              <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
+            </Select>
+          </PanelHeader>
+          <CardContent>
+            {chartTeams.length ? (
+              <Box
+                sx={{
+                  width: "100%",
+                  overflowX: "auto",
+                }}
+              >
+                <Box
+                  sx={{
+                    minWidth: horizontalBars
+                      ? 0
+                      : Math.max(
+                          600,
+                          chartTeams.length *
+                            (opponentMetric === "teamGoals" ? 80 : 64),
+                        ),
+                    height: horizontalBars ? chartTeams.length * 52 + 60 : 400,
+                  }}
+                >
+                  <ResponsiveContainer>
+                    <BarChart
+                      key={opponentMetric}
+                      layout={horizontalBars ? "vertical" : "horizontal"}
+                      data={chartTeams}
+                      accessibilityLayer
+                      margin={{
+                        top: 24,
+                        right: horizontalBars ? 36 : 16,
+                        left: 0,
+                        bottom: 8,
+                      }}
+                      barSize={opponentMetric === "teamGoals" ? 12 : 24}
+                      barGap={4}
+                    >
+                      <CartesianGrid
+                        stroke="#394144"
+                        vertical={horizontalBars}
+                        horizontal={!horizontalBars}
+                      />
+                      {horizontalBars ? (
+                        <XAxis
+                          type="number"
+                          allowDecimals={adjusted}
+                          stroke="#a7afb1"
+                        />
+                      ) : (
+                        <XAxis
+                          dataKey="team"
+                          height={60}
+                          interval={0}
+                          tickLine={false}
+                          stroke="#a7afb1"
+                          tick={crestTick}
+                        />
+                      )}
+                      {horizontalBars ? (
+                        <YAxis
+                          type="category"
+                          dataKey="team"
+                          width={48}
+                          interval={0}
+                          tickLine={false}
+                          stroke="#a7afb1"
+                          tick={crestTick}
+                        />
+                      ) : (
+                        <YAxis
+                          type="number"
+                          allowDecimals={adjusted}
+                          stroke="#a7afb1"
+                        />
+                      )}
+                      <Tooltip
+                        formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
+                        cursor={{ fill: "#38383880" }}
+                        contentStyle={{
+                          background: "#1b2022",
+                          border: "1px solid #394144",
+                        }}
+                      />
+                      {opponentMetric === "teamGoals" ? (
+                        <>
+                          <Bar
+                            minPointSize={3}
+                            dataKey="goalsFor"
+                            name="Turf Burners FC Goals"
+                            fill={theme.palette.primary.main}
+                            isAnimationActive={false}
+                            cursor="pointer"
+                            onClick={(entry) => openTeam(entry.payload?.id)}
+                          >
+                            <LabelList
+                              dataKey="goalsFor"
+                              position={horizontalBars ? "right" : "top"}
+                              fill="#fff"
+                              fontWeight={800}
+                            />
+                          </Bar>
+                          <Bar
+                            minPointSize={3}
+                            dataKey="goalsAgainst"
+                            name="Opponent Goals"
+                            fill="#a7afb1"
+                            isAnimationActive={false}
+                            cursor="pointer"
+                            onClick={(entry) => openTeam(entry.payload?.id)}
+                          >
+                            {chartTeams.map((team) => (
+                              <Cell
+                                key={team.team}
+                                fill={team.color || "#a7afb1"}
+                              />
+                            ))}
+                            <LabelList
+                              dataKey="goalsAgainst"
+                              position={horizontalBars ? "right" : "top"}
+                              fill="#fff"
+                              fontWeight={800}
+                            />
+                          </Bar>
+                        </>
+                      ) : (
+                        <Bar
+                          minPointSize={3}
+                          cursor="pointer"
+                          onClick={(entry) => openTeam(entry.payload?.id)}
+                          dataKey={sortField}
+                          name={metricName}
+                          fill={theme.palette.primary.main}
+                          isAnimationActive={false}
+                        >
+                          {chartTeams.map((team) => (
+                            <Cell
+                              key={team.team}
+                              fill={team.color || theme.palette.primary.main}
+                            />
+                          ))}
+                          <LabelList
+                            formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
+                            dataKey={sortField}
+                            position={horizontalBars ? "right" : "top"}
+                            fill="#fff"
+                            fontWeight={800}
+                          />
+                        </Bar>
+                      )}
+                    </BarChart>
+                  </ResponsiveContainer>
+                </Box>
+              </Box>
+            ) : (
+              <Typography color="text.secondary">
+                {adjusted ? "No opponents with a positive goal differential yet." : "No completed matches yet."}
+              </Typography>
+            )}
+          </CardContent>
+        </Card>
 
         <Card
           component="section"
@@ -846,6 +881,7 @@ export default function Stats({
             ))}
           </Box>
         </Card>
+        </Box>
       </Box>
     </Stack>
   );

@@ -32,9 +32,18 @@ export default function MatchEventPage({
   const view = normalizeMatchTab(searchParams.get("tab"), true);
   const opponent = opponentFor(data, match);
   return (
-    <Stack gap={2}>
+    <Stack gap={0}>
       <MatchNavigation data={data} match={match} />
-      <MatchBanner onPreviewGoal={onPreviewGoal} goalTime={goalTime} goalSoundEnabled={goalSoundEnabled} onGoalSoundToggle={onGoalSoundToggle} data={data} match={match} detail onEdit={onEdit} />
+      <MatchBanner
+        onPreviewGoal={onPreviewGoal}
+        goalTime={goalTime}
+        goalSoundEnabled={goalSoundEnabled}
+        onGoalSoundToggle={onGoalSoundToggle}
+        data={data}
+        match={match}
+        detail
+        onEdit={onEdit}
+      />
       {match.report && (
         <Box
           sx={{ "& p": { my: 0, mb: 2 }, "& p:last-child": { mb: 0 } }}

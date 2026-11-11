@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import { Box, CardContent, Chip, Stack, Typography } from "@mui/material";
 import type { ClubData, Match } from "../../model";
 import { issues, scoreResult } from "../../model";
@@ -39,7 +39,7 @@ function FixtureDetails({ match }: { match: Match }) {
   );
 }
 
-export function MatchSummaryCard({ data, match, onOpen }: Props) {
+export function MatchSummaryCard({ data, match, onOpen, children }: Props & { children?: ReactNode }) {
   const result = scoreResult(match);
   const opponent = opponentFor(data, match);
   const clubRow = <Fragment key="club">
@@ -105,6 +105,7 @@ export function MatchSummaryCard({ data, match, onOpen }: Props) {
             sx={{ mt: 1 }}
           />
         )}
+        {children}
       </CardContent>
     </InteractiveCard>
   );

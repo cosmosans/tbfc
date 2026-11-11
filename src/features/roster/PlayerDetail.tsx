@@ -1,3 +1,4 @@
+import { MatchSummaryCard } from "../matches/MatchCards";
 import TimelineMarker from "../../components/TimelineMarker";
 import { tableStyles } from "../../components/tableStyles";
 import PanelHeader from "../../components/PanelHeader";
@@ -6,8 +7,9 @@ import { storyToHtml } from "../matches/matchStory";
 import MatchResultChip from "../../components/MatchResultChip";
 import { careerEvents, playerStats } from "./playerStats";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
+  useMediaQuery,
   Checkbox,
   FormControl,
   InputLabel,
@@ -29,7 +31,7 @@ import {
   Typography,
 } from "@mui/material";
 import { PlayerPlaceholder } from "./PlayerCard.styles";
-import type { ClubData, Player } from "../../model";
+import type { ClubData, MatchEvent, Player } from "../../model";
 import { displayScore } from "../../model";
 import moment from "moment";
 import OpponentCrest from "../../components/OpponentCrest";
@@ -67,6 +69,72 @@ const filterLabels = {
 type StatFilter = keyof typeof filterLabels;
 const allFilterKeys = Object.keys(filterLabels) as StatFilter[];
 
+function PlayerMatchEvents({ matchEvents }: { matchEvents: MatchEvent[] }) {
+  return matchEvents.length ? (
+    <Stack gap={0.5}>
+      {matchEvents.map((event) => (
+        <Typography
+          key={event.id}
+          variant="body2"
+          sx={{
+            whiteSpace: "pre-wrap",
+            overflowWrap: "anywhere",
+          }}
+        >
+          {event.minute != null && (
+            <>
+              <TimelineMarker
+                minute={event.minute}
+                compact
+              />{" "}
+            </>
+          )}
+          <Tooltip
+            title={event.note?.trim() || ""}
+            describeChild
+            arrow
+          >
+            <Box
+              component="strong"
+              tabIndex={
+                event.note?.trim() ? 0 : undefined
+              }
+              sx={{
+                textTransform: "uppercase",
+                ...(event.note?.trim() && {
+                  position: "relative",
+                  zIndex: 1,
+                  cursor: "help",
+                  textDecoration: "underline dotted",
+                  textUnderlineOffset: "3px",
+                }),
+              }}
+            >
+              {event.kind === "clean_sheet" && (
+                <img
+                  src={CleanSheetIcon}
+                  alt=""
+                  width={16}
+                  height={16}
+                  style={{
+                    verticalAlign: "middle",
+                    marginRight: 4,
+                  }}
+                />
+              )}
+              {event.ownGoal
+                ? "Own Goal"
+                : event.kind.replaceAll("_", " ")}
+            </Box>
+          </Tooltip>
+        </Typography>
+      ))}
+    </Stack>
+  ) : (
+    "—"
+  );
+}
+
 export default function PlayerDetail({
   player,
   data,
@@ -76,6 +144,8 @@ export default function PlayerDetail({
   data: ClubData;
   update: (data: ClubData) => void;
 }) {
+  const phone = useMediaQuery("(max-width: 599.95px)");
+  const navigate = useNavigate();
   const [bioOpen, setBioOpen] = useState(false);
   const [selectedFilters, setFilters] = useState<StatFilter[]>([]);
   const [historySort, setHistorySort] = useState<HistorySort>("date");
@@ -398,6 +468,26 @@ export default function PlayerDetail({
               ? "No matches with the selected stats."
               : "No match history recorded yet."}
           </Typography>
+        ) : phone ? (
+          <Stack gap={2}>
+            {history.map(({ match, lineup, matchEvents, stats }) => (
+              <MatchSummaryCard key={match.id} data={data} match={match}
+                onOpen={() => navigate(`/match/${encodeURIComponent(match.id)}`)}>
+                <Stack gap={1} sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
+                  <Typography variant="body2">
+                    Role · {lineup?.starters.includes(player.id) ? "Starting VII" :
+                      lineup?.bench.includes(player.id) ? "Bench" : "Unrecorded"}
+                  </Typography>
+                  <Stack direction="row" flexWrap="wrap" gap={1.5}>
+                    {filterKeys.map(key => <Typography key={key} variant="body2">
+                      {key === "saves" ? "PK Saves" : filterLabels[key]} <strong>{stats[statIndex[key]][1]}</strong>
+                    </Typography>)}
+                  </Stack>
+                  {matchEvents.length > 0 && <PlayerMatchEvents matchEvents={matchEvents} />}
+                </Stack>
+              </MatchSummaryCard>
+            ))}
+          </Stack>
         ) : (
           <TableContainer
             component={Box}
@@ -538,69 +628,7 @@ export default function PlayerDetail({
                         )}
                       </TableCell>
                       <TableCell>
-                        {matchEvents.length ? (
-                          <Stack gap={0.5}>
-                            {matchEvents.map((event) => (
-                              <Typography
-                                key={event.id}
-                                variant="body2"
-                                sx={{
-                                  whiteSpace: "pre-wrap",
-                                  overflowWrap: "anywhere",
-                                }}
-                              >
-                                {event.minute != null && (
-                                  <>
-                                    <TimelineMarker
-                                      minute={event.minute}
-                                      compact
-                                    />{" "}
-                                  </>
-                                )}
-                                <Tooltip
-                                  title={event.note?.trim() || ""}
-                                  describeChild
-                                  arrow
-                                >
-                                  <Box
-                                    component="strong"
-                                    tabIndex={
-                                      event.note?.trim() ? 0 : undefined
-                                    }
-                                    sx={{
-                                      textTransform: "uppercase",
-                                      ...(event.note?.trim() && {
-                                        position: "relative",
-                                        zIndex: 1,
-                                        cursor: "help",
-                                        textDecoration: "underline dotted",
-                                        textUnderlineOffset: "3px",
-                                      }),
-                                    }}
-                                  >
-                                    {event.kind === "clean_sheet" && (
-                                      <img
-                                        src={CleanSheetIcon}
-                                        alt=""
-                                        width={16}
-                                        height={16}
-                                        style={{
-                                          verticalAlign: "middle",
-                                          marginRight: 4,
-                                        }}
-                                      />
-                                    )}
-                                    {event.ownGoal
-                                      ? "Own Goal"
-                                      : event.kind.replaceAll("_", " ")}
-                                  </Box>
-                                </Tooltip>
-                              </Typography>
-                            ))}
-                          </Stack>
-                        ) : (
-                          "—"
-                        )}
+                        <PlayerMatchEvents matchEvents={matchEvents} />
                       </TableCell>
                       <TableCell align="center">{stats[0][1]}</TableCell>
                       <TableCell align="center">{stats[1][1]}</TableCell>
