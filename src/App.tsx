@@ -11,7 +11,6 @@ import PullToRefresh from "./components/PullToRefresh";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import {
   Navigate,
-  Link,
   matchPath,
   useLocation,
   useNavigate,
@@ -30,7 +29,7 @@ import {
 } from "@mui/material";
 import type { ClubData, Match, MatchEvent } from "./model";
 import { issues, removeMatch } from "./model";
-import { defaultLineup, exportData, loadData } from "./store";
+import { exportData, loadData } from "./store";
 import { opponentFor, opponentName, orderedSeasons } from "./clubView";
 import AppHeader from "./components/AppHeader";
 import AdminPanel from "./components/AdminPanel";
@@ -51,7 +50,6 @@ import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchCl
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import LineupEditor from "./features/lineup/LineupEditor";
-import LineupPitch from "./features/lineup/LineupPitch";
 import StandingsWidget from "./features/standings/StandingsWidget";
 import Matchboard from "./features/board/Matchboard";
 import Stats from "./features/stats/Stats";
@@ -605,10 +603,6 @@ export default function App() {
     };
   }, [monitoredMatchId, playWhistle]);
   const noticeMatch = selected ?? (page === "matches" ? liveMatch : undefined);
-  const nextLineup = nextMatch
-    ? (data.lineups.find((lineup) => lineup.matchId === nextMatch.id) ??
-      defaultLineup(nextMatch.id))
-    : null;
   const tacticsMatches = [
     ...(nextMatch ? [nextMatch] : []),
     ...data.matches
@@ -1037,37 +1031,6 @@ export default function App() {
                       navigate(`/match/${encodeURIComponent(nextMatch.id)}`)
                     }
                   />
-                )}
-                {nextMatch && nextLineup && (
-                  <Box
-                    component={Link}
-                    to={`/match/${encodeURIComponent(nextMatch.id)}?tab=lineup`}
-                    aria-label={`Open lineup for ${opponentName(data, nextMatch)}`}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "stretch",
-                      width: "100%",
-                      minWidth: 0,
-                      textDecoration: "none",
-                      p: 0,
-                      border: 0,
-                      bgcolor: "transparent",
-                      color: "inherit",
-                      cursor: "pointer",
-                      textAlign: "left",
-                      "&:focus-visible": {
-                        outline: "3px solid #f47730",
-                        outlineOffset: 3,
-                      },
-                    }}
-                  >
-                    <LineupPitch
-                      data={data}
-                      lineup={nextLineup}
-                      showTitle={false}
-                    />
-                  </Box>
                 )}
                 <StandingsWidget
                   data={data}

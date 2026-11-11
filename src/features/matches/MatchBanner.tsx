@@ -547,7 +547,7 @@ export default function MatchBanner({
                             url={opponent?.crestUrl}
                             size={165}
                             mobileSize={64}
-                            teamId={opponent?.id}
+                            teamId={onOpen ? undefined : opponent?.id}
                             teamName={opponent?.name}
                           />
                         ) : (
