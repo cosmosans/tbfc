@@ -25,8 +25,8 @@ import {
   NameplateText,
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
+import { fullStrength } from "./fullStrength";
 import { formationSlots } from "./formations";
-import ImportLineupDialog from "./ImportLineupDialog";
 import LineupPitch from "./LineupPitch";
 import { canEditClub } from "../../editAccess";
 import { byPlayerNumber } from "../../playerOrder";
@@ -40,7 +40,6 @@ export default function LineupEditor({
   match: Match;
   update: (data: ClubData) => void;
 }) {
-  const [importFor, setImportFor] = useState<string | null>(null);
   const [activeSquadOnly, setActiveSquadOnly] = useState(false);
   const lineup =
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
@@ -91,31 +90,25 @@ export default function LineupEditor({
     const displaced = lineup.starters.filter(
       (id) => id && !starters.includes(id),
     );
+    const empty = nextRoles.findIndex(role => !previousRoles.includes(role));
+    if (empty >= 0 && displaced.length) starters[empty] = displaced.shift()!;
+    const benchPositions = { ...lineup.benchPositions };
+    for (const [id, role] of Object.entries(benchPositions)) {
+      if (nextRoles.includes(role)) continue;
+      const player = data.players.find(candidate => candidate.id === id);
+      benchPositions[id] = player?.secondaryPosition && nextRoles.includes(player.secondaryPosition)
+        ? player.secondaryPosition : "CAM";
+    }
     save({
       ...lineup,
       formation,
       starters,
+      benchPositions,
       bench: [...lineup.bench, ...displaced],
     });
   }
   function loadFirstChoice() {
-    const used = new Set<string>();
-    const starters = slots.map((position) => {
-      const id = data.firstChoice?.[position] ?? "";
-      if (
-        !id ||
-        used.has(id) ||
-        !data.players.some((player) => player.id === id && player.active)
-      )
-        return "";
-      used.add(id);
-      return id;
-    });
-    save({
-      ...lineup,
-      starters,
-      bench: lineup.bench.filter((id) => !used.has(id)),
-    });
+    save({ ...lineup, ...fullStrength(data, lineup.formation) });
   }
   const benchPlayers = data.players
     .filter(
@@ -147,17 +140,6 @@ export default function LineupEditor({
   const slots = formationSlots[lineup.formation];
   return (
     <Stack gap={2}>
-      {importFor === match.id && (
-        <ImportLineupDialog
-          data={data}
-          match={match}
-          onClose={() => setImportFor(null)}
-          onApply={(next) => {
-            save(next);
-            setImportFor(null);
-          }}
-        />
-      )}
       {missingStarters && (
         <Alert severity="info">
           Choose seven starters. The matchboard loads this saved lineup and
@@ -190,15 +172,8 @@ export default function LineupEditor({
                 flexWrap="wrap"
                 gap={1}
               >
-                <Typography variant="h6">Starting VII</Typography>
+                <Typography variant="h6">Full Strength Lineup</Typography>
                 <Stack direction="row" gap={1} flexWrap="wrap">
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => setImportFor(match.id)}
-                  >
-                    Import lineup
-                  </Button>
                   <Button
                     size="small"
                     variant="outlined"
@@ -217,12 +192,11 @@ export default function LineupEditor({
                     variant="contained"
                     disabled={
                       !canEditClub ||
-                      !data.firstChoice ||
-                      !Object.values(data.firstChoice).some(Boolean)
+                      !data.players.some(player => player.active)
                     }
                     onClick={loadFirstChoice}
                   >
-                    Load First Choice VII
+                    Load Full Strength
                   </Button>
                 </Stack>
               </Stack>

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
   Alert,
@@ -130,7 +131,10 @@ export default function Teams({
             return (
               <Card
                 key={opponent.id}
+                component={canEditClub ? "div" : Link}
+                {...(!canEditClub && { to: `/team/${encodeURIComponent(opponent.id)}`, "aria-label": opponent.name })}
                 sx={{
+                  textDecoration: "none",
                   backgroundColor: opponent.color
                     ? `${opponent.color}77`
                     : "transparent",
@@ -151,7 +155,7 @@ export default function Teams({
                       size={teamCardImageSize}
                       key={opponent.crestUrl}
                       url={opponent.crestUrl}
-                      teamId={opponent.id}
+                      teamId={canEditClub ? opponent.id : undefined}
                       teamName={opponent.name}
                     />
                     <Typography
@@ -241,12 +245,12 @@ export default function Teams({
                       {opponent.notes}
                     </Typography>
                   )}
+                  {canEditClub && (
                   <Stack
                     direction="row"
                     gap={1}
                     sx={{ justifyContent: "space-between", mt: 3, mb: -1 }}
                   >
-                    {canEditClub && (
                       <Button
                         variant="outlined"
                         sx={{ borderColor: "white", color: "white" }}
@@ -254,7 +258,6 @@ export default function Teams({
                       >
                         Edit
                       </Button>
-                    )}
                     <Button
                       variant="contained"
                       onClick={() => onOpen(opponent)}
@@ -262,6 +265,7 @@ export default function Teams({
                       View Team
                     </Button>
                   </Stack>
+                  )}
                 </CardContent>
               </Card>
             );

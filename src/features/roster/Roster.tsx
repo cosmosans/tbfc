@@ -163,7 +163,7 @@ export default function Roster({
         {canEditClub && (
           <Stack direction="row" gap={2}>
             <Button variant="outlined" onClick={() => setStartersOpen(true)}>
-              Starting XII
+              Full Strength Lineup
             </Button>
             <Button
               variant="contained"
@@ -227,11 +227,10 @@ export default function Roster({
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>Starting XII</DialogTitle>
+        <DialogTitle>Full Strength Lineup</DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Set the full strength starter for each position. Load these picks
-            into a match from the lineup page.
+            Choose starters by position. Load Full Strength includes every active player and places substitutes under their preferred position.
           </Typography>
           <Box
             sx={{
@@ -250,7 +249,7 @@ export default function Roster({
                 <InputLabel>{position}</InputLabel>
                 <Select
                   label={position}
-                  value={data.firstChoice?.[position] ?? ""}
+                  value={data.players.some(player => player.active && player.id === data.firstChoice?.[position]) ? data.firstChoice?.[position] : ""}
                   disabled={!canEditClub}
                   onChange={(event) =>
                     update({
@@ -263,7 +262,7 @@ export default function Roster({
                   }
                 >
                   <MenuItem value="">None</MenuItem>
-                  {[...data.players]
+                  {data.players.filter(player => player.active)
                     .sort(
                       (a, b) =>
                         Number(b.preferredPosition === position) -
@@ -281,6 +280,18 @@ export default function Roster({
               </FormControl>
             ))}
           </Box>
+          <Typography variant="h6" sx={{ mt: 3 }}>Preferred Positions</Typography>
+          <Stack gap={1} sx={{ mt: 1 }}>
+            {data.players.filter(player => player.active).sort(byPlayerNumber).map(player => (
+              <Stack key={player.id} alignItems="center" gap={1}
+                sx={{ display: "grid", gridTemplateColumns: { xs: "minmax(0, 1fr)", sm: "minmax(0, 1fr) minmax(170px, 1fr)" } }}>
+                <Typography sx={{ flex: 1 }}>#{player.number} {player.name}</Typography>
+                <PositionSelect label="Preferred Position" value={player.preferredPosition || ""}
+                  onChange={preferredPosition => update({ ...data, players: data.players.map(item =>
+                    item.id === player.id ? { ...item, preferredPosition } : item) })} />
+              </Stack>
+            ))}
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setStartersOpen(false)}>Done</Button>
