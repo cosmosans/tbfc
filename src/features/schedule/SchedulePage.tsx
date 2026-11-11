@@ -1,3 +1,4 @@
+import { kickoffTime } from "../matches/matchClock";
 import { panelBorder } from "../../components/PanelHeader";
 import { useMemo, useState } from "react";
 import {
@@ -136,6 +137,10 @@ export default function SchedulePage({
   const liveMatch = data.matches.find(
     (match) => match.status === "in_progress",
   );
+  const highlightedMatch = liveMatch ?? data.matches
+    .filter(match => match.status === "scheduled" && match.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date) ||
+      (kickoffTime(a) ?? Infinity) - (kickoffTime(b) ?? Infinity))[0];
   const startedSeason = seasons.find((item) => {
     const start = seasonDate(data, item);
     return start && start <= today;
@@ -361,6 +366,7 @@ export default function SchedulePage({
                   matches={matches}
                   forceCompact={showStandings}
                   seasonSchedule
+                  highlightedMatchId={highlightedMatch?.id}
                   label={name || "Season schedule"}
                   onOpen={onOpen}
                 />

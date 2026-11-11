@@ -1,3 +1,4 @@
+import OpponentCrest from "../../components/OpponentCrest";
 import GoalTimeline from "./GoalTimeline";
 import { timedGoals, minuteBuckets } from "./timedGoals";
 import { careerEvents, playerStats } from "../roster/playerStats";
@@ -112,6 +113,30 @@ function TeamCrestTick({
 const barHoverStyle = { fill: "#38383880" };
 const statNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 const formatStat = (value: unknown) => statNumber.format(Number(value));
+
+function OpponentChartTooltip({ active, payload }: {
+  active?: boolean;
+  payload?: readonly { name?: unknown; value?: unknown; payload?: { team?: string; color?: string; crestUrl?: string } }[];
+}) {
+  const team = payload?.[0]?.payload;
+  if (!active || !team?.team) return null;
+  return (
+    <Box sx={{ bgcolor: "#060606", color: "#fff", borderRadius: 1, overflow: "hidden", boxShadow: "0 4px 14px #0007" }}>
+      <Stack direction="row" alignItems="center" gap={1} sx={{ bgcolor: team.color || "#444", px: 1.25, py: 0.5 }}>
+        <OpponentCrest size={26} url={team.crestUrl} teamName={team.team} />
+        <Typography variant="body2" fontWeight={700} sx={{ textShadow: "0 1px 3px #0009" }}>{team.team}</Typography>
+      </Stack>
+      <Stack spacing={0.5} sx={{ px: 1.25, py: 1 }}>
+        {payload?.map(item => (
+          <Stack key={String(item.name)} direction="row" justifyContent="space-between" gap={2}>
+            <Typography variant="body2">{String(item.name)}</Typography>
+            <Typography variant="body2" fontWeight={700}>{formatStat(item.value)}</Typography>
+          </Stack>
+        ))}
+      </Stack>
+    </Box>
+  );
+}
 
 export default function Stats({
   data,
@@ -460,41 +485,36 @@ export default function Stats({
                     )}
                     <Legend verticalAlign="top" height={32} itemSorter={null} />
                     <Tooltip
-                      content={
-                        metric === "points"
-                          ? ({ active, payload, label }) => {
-                              const season = payload?.[0]?.payload as
-                                | (typeof seasonPoints)[number]
-                                | undefined;
-                              if (!active || !season) return null;
-                              return (
-                                <Box
-                                  sx={{
-                                    bgcolor: "#1b2022",
-                                    border: "1px solid #394144",
-                                    p: 1.5,
-                                  }}
-                                >
-                                  <Typography sx={{ mb: 0.5 }}>
-                                    {label}
+                      filterNull
+                      content={({ active, payload, label }) => {
+                        const season = payload?.[0]?.payload;
+                        if (!active || !season) return null;
+                        const rows = metric === "points"
+                          ? [
+                              { name: "Total Points", value: season.points, color: theme.palette.primary.main },
+                              { name: "Points Per Game", value: season.ppg, color: theme.palette.primary.main },
+                            ]
+                          : payload.map(({ name, value, color }) => ({ name, value, color }));
+                        return (
+                          <Box sx={{ minWidth: 158, bgcolor: "#060606", color: "#fff", borderRadius: 1, overflow: "hidden", boxShadow: "0 4px 14px #0007" }}>
+                            <Typography variant="subtitle2" sx={{ px: 1.5, py: 0.75, bgcolor: "primary.main", color: "#080808", fontWeight: 700 }}>
+                              {label}
+                            </Typography>
+                            <Stack spacing={0.75} sx={{ px: 1.5, py: 1.25 }}>
+                              {rows.map(row => (
+                                <Stack key={String(row.name)} direction="row" alignItems="center" gap={1}>
+                                  <Box sx={{ width: 9, height: 9, borderRadius: "50%", bgcolor: row.color }} />
+                                  <Typography variant="body2" sx={{ flex: 1, fontWeight: 500 }}>{row.name}</Typography>
+                                  <Typography variant="body2" sx={{ ml: 1.5, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
+                                    {formatStat(row.value)}
                                   </Typography>
-                                  <Typography color="primary.main">
-                                    Total Points: {season.points}
-                                  </Typography>
-                                  <Typography color="primary.main">
-                                    Points Per Game:{" "}
-                                    {formatStat(season.ppg)}
-                                  </Typography>
-                                </Box>
-                              );
-                            }
-                          : undefined
-                      }
-                      cursor={barHoverStyle}
-                      contentStyle={{
-                        background: "#1b2022",
-                        border: "1px solid #394144",
+                                </Stack>
+                              ))}
+                            </Stack>
+                          </Box>
+                        );
                       }}
+                      cursor={barHoverStyle}
                     />
                     {metric === "results" ? (
                       (
@@ -604,7 +624,7 @@ export default function Stats({
                       </> : <><XAxis dataKey="label" tickFormatter={byPlayer ? name => String(name).trim().split(" ")[0] : undefined} angle={byPlayer ? -40 : 0} height={byPlayer ? 100 : byOpponent ? 60 : 30} textAnchor={byPlayer ? "end" : "middle"} interval={0} stroke="#a7afb1" tick={byOpponent ? crestTick : { fontSize: 12 }}
                         padding={{ left: byPlayer ? 0 : 20, right: 12 }} />
                       <YAxis tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" width={42} /></>}
-                      <Tooltip cursor={barHoverStyle} formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
+                      <Tooltip content={byOpponent ? props => <OpponentChartTooltip {...props} /> : undefined} cursor={barHoverStyle} formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
                       <Bar cursor={byOpponent ? "pointer" : undefined} onClick={byOpponent ? entry => openTeam(entry.payload?.id) : undefined} barSize={horizontalBars && byPlayer ? 14 : undefined} dataKey="goals" name={histogram && perMatch ? "Goals Per Match" : "Goals Scored"} fill={theme.palette.primary.main} isAnimationActive={false}>
                         {opponentGoals.map(team => <Cell key={team.id ?? team.label} fill={team.color || theme.palette.primary.main} />)}
                         {horizontalBars && byPlayer && (
@@ -731,12 +751,8 @@ export default function Stats({
                         />
                       )}
                       <Tooltip
-                        formatter={adjusted ? formatStat : undefined}
+                        content={props => <OpponentChartTooltip {...props} />}
                         cursor={barHoverStyle}
-                        contentStyle={{
-                          background: "#1b2022",
-                          border: "1px solid #394144",
-                        }}
                       />
                       {opponentMetric === "teamGoals" ? (
                         <>

@@ -33,6 +33,7 @@ export default function MatchTable({
   data,
   matches,
   seasonSchedule = false,
+  highlightedMatchId,
   forceCompact = false,
   label = "Match history",
   showSeasonDividers = false,
@@ -42,6 +43,7 @@ export default function MatchTable({
   data: ClubData;
   matches: Match[];
   seasonSchedule?: boolean;
+  highlightedMatchId?: string;
   forceCompact?: boolean;
   label?: string;
   showSeasonDividers?: boolean;
@@ -199,7 +201,13 @@ export default function MatchTable({
                       }),
                 }}
               >
-                <TableCell sx={{ whiteSpace: "nowrap" }}>
+                <TableCell sx={{
+                  whiteSpace: "nowrap",
+                  ...(match.id === highlightedMatchId && {
+                    borderLeft: "5px solid",
+                    borderLeftColor: "primary.main",
+                  }),
+                }}>
                   {!seasonSchedule && (
                     <Typography
                       component="span"
