@@ -109,6 +109,7 @@ function TeamCrestTick({
   );
 }
 
+const barHoverStyle = { fill: "#38383880" };
 const statNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 const formatStat = (value: unknown) => statNumber.format(Number(value));
 
@@ -489,7 +490,7 @@ export default function Stats({
                             }
                           : undefined
                       }
-                      cursor={{ fill: "#38383880" }}
+                      cursor={barHoverStyle}
                       contentStyle={{
                         background: "#1b2022",
                         border: "1px solid #394144",
@@ -603,7 +604,7 @@ export default function Stats({
                       </> : <><XAxis dataKey="label" tickFormatter={byPlayer ? name => String(name).trim().split(" ")[0] : undefined} angle={byPlayer ? -40 : 0} height={byPlayer ? 100 : byOpponent ? 60 : 30} textAnchor={byPlayer ? "end" : "middle"} interval={0} stroke="#a7afb1" tick={byOpponent ? crestTick : { fontSize: 12 }}
                         padding={{ left: byPlayer ? 0 : 20, right: 12 }} />
                       <YAxis tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" width={42} /></>}
-                      <Tooltip formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
+                      <Tooltip cursor={barHoverStyle} formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
                       <Bar cursor={byOpponent ? "pointer" : undefined} onClick={byOpponent ? entry => openTeam(entry.payload?.id) : undefined} barSize={horizontalBars && byPlayer ? 14 : undefined} dataKey="goals" name={histogram && perMatch ? "Goals Per Match" : "Goals Scored"} fill={theme.palette.primary.main} isAnimationActive={false}>
                         {opponentGoals.map(team => <Cell key={team.id ?? team.label} fill={team.color || theme.palette.primary.main} />)}
                         {horizontalBars && byPlayer && (
@@ -620,7 +621,7 @@ export default function Stats({
                 </Box>
               </Box>
             ) : <Typography color="text.secondary">{byOpponent ? "No completed matches against opponents yet." : byPlayer ? "No goals credited to players yet." : "No recorded kickoff times yet."}</Typography>}
-            {histogram && <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}><Select size="small" value={perMatch ? "rate" : "total"} inputProps={{ "aria-label": "Histogram units" }}
+            {histogram && <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}><Select size="small" sx={{ fontSize: ".875rem" }} value={perMatch ? "rate" : "total"} inputProps={{ "aria-label": "Histogram units" }}
               onChange={e => setPerMatch(e.target.value === "rate")}>
               <MenuItem value="total">Total Goals</MenuItem><MenuItem value="rate">Goals Per Match</MenuItem>
             </Select></Stack>}
@@ -731,7 +732,7 @@ export default function Stats({
                       )}
                       <Tooltip
                         formatter={adjusted ? formatStat : undefined}
-                        cursor={{ fill: "#38383880" }}
+                        cursor={barHoverStyle}
                         contentStyle={{
                           background: "#1b2022",
                           border: "1px solid #394144",
@@ -914,6 +915,9 @@ export default function Stats({
                     </Typography>
                   ))}
                 </Stack>
+                <Typography variant="caption" color="text.secondary">
+                  {kit.played} {kit.played === 1 ? "Match Played" : "Matches Played"}
+                </Typography>
               </Stack>
             ))}
           </Box>
