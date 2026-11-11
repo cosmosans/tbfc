@@ -329,7 +329,8 @@ export default function SchedulePage({
             }}
           >
             <Typography
-              component="h2" variant="h5"
+              component="h2"
+              variant="h5"
               sx={{
                 fontWeight: 700,
                 flex: 1,
@@ -345,7 +346,7 @@ export default function SchedulePage({
               color="text.secondary"
               sx={{ textTransform: "uppercase", fontSize: 12 }}
             >
-              Updated just now
+              Updated {moment("Octtober 29, 2026").fromNow()}
             </Typography>
           </Box>
           {Array.from(seasonHeadings, (name) => {
@@ -380,10 +381,15 @@ export default function SchedulePage({
           alignItems="center"
           flexWrap="wrap"
           gap={{ xs: 1, sm: 2 }}
-          sx={{ ...panelBorder, bgcolor: "background.paper", p: { xs: 2, sm: 3 } }}
+          sx={{
+            ...panelBorder,
+            bgcolor: "background.paper",
+            p: { xs: 2, sm: 3 },
+          }}
         >
           <Typography
-            component="h2" variant="h5"
+            component="h2"
+            variant="h5"
             color="text.secondary"
             sx={{
               flex: 1,

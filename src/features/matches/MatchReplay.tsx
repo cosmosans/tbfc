@@ -2,7 +2,7 @@ import { matchPhase } from "./matchClock";
 import { compareMatchEvents } from "./matchEventOrder";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReplayTimeline from "./ReplayTimeline";
-import { Button, NativeSelect, Stack, Typography } from "@mui/material";
+import { Button, NativeSelect, Stack } from "@mui/material";
 import {
   isMatchCompleted,
   type ClubData,

@@ -901,7 +901,7 @@ export default function App() {
           ) : (
             <>
               <MatchNavigation data={data} match={selected} />
-              <MatchReplay key={selected.id} data={data} match={selected}
+              <MatchReplay key={`replay-${selected.id}`} data={data} match={selected}
                 publishBarVisible={canEditClub && dirty && !publishing}
                 bannerProps={{
                   detail: true,
