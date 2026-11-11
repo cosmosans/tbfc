@@ -26,7 +26,7 @@ import {
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
 import { fullStrength } from "./fullStrength";
-import { formationSlots } from "./formations";
+import { formationSlots, normalizeLineupRoles } from "./formations";
 import LineupPitch from "./LineupPitch";
 import { canEditClub } from "../../editAccess";
 import { byPlayerNumber } from "../../playerOrder";
@@ -41,8 +41,8 @@ export default function LineupEditor({
   update: (data: ClubData) => void;
 }) {
   const [activeSquadOnly, setActiveSquadOnly] = useState(false);
-  const lineup =
-    data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id);
+  const lineup = normalizeLineupRoles(
+    data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id));
   if (!canEditClub) {
     return <LineupPitch data={data} lineup={lineup} showTitle={false} />;
   }
@@ -97,7 +97,7 @@ export default function LineupEditor({
       if (nextRoles.includes(role)) continue;
       const player = data.players.find(candidate => candidate.id === id);
       benchPositions[id] = player?.secondaryPosition && nextRoles.includes(player.secondaryPosition)
-        ? player.secondaryPosition : nextRoles.includes("CAM") ? "CAM" : "CDM";
+        ? player.secondaryPosition : "CAM";
     }
     save({
       ...lineup,

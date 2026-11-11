@@ -15,7 +15,7 @@ import {
   NameplateText,
   goalkeeperPlate,
 } from "../../components/LineupNameplate";
-import { formationPoints, formationSlots } from "./formations";
+import { formationPoints, formationSlots, normalizeLineupRoles } from "./formations";
 const roleLabelStyle = {
   color: "#fff",
   fontFamily: "Oxanium, sans-serif",
@@ -47,7 +47,7 @@ import RubberDuckIcon from "../../img/rubber-duck.svg";
 
 export default function LineupPitch({
   data,
-  lineup,
+  lineup: savedLineup,
   showTitle = true,
   onFormationChange,
 }: {
@@ -56,6 +56,7 @@ export default function LineupPitch({
   showTitle?: boolean;
   onFormationChange?: (formation: Formation) => void;
 }) {
+  const lineup = normalizeLineupRoles(savedLineup);
   const points = formationPoints[lineup.formation];
   const slots = formationSlots[lineup.formation];
   const benchPlayers = data.players.filter(player =>
@@ -63,7 +64,7 @@ export default function LineupPitch({
   const subsBySlot = slots.map(role =>
     benchPlayers.filter(player => lineup.benchPositions?.[player.id] === role));
   let minPitchHeight = lineup.bench.length ? 450 : 280;
-  if (lineup.formation === "1-3-1-2" || lineup.formation === "1-2-1-2-1") {
+  if (lineup.formation === "1-3-1-2" || lineup.formation === "1-2-1-2-1" || lineup.formation === "1-2-1-3") {
     // At the maximum plate width (180px), each plate is at most 40px tall.
     // Reserve the two facing half-stacks plus the lower role's label and a gap.
     const rows = new Map<number, number>();

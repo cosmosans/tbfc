@@ -131,7 +131,7 @@ export type Board = {
   notes: string;
   annotations?: Point[][];
 };
-export type Formation = "1-2-3-1" | "1-3-3" | "1-3-1-2" | "1-2-1-2-1";
+export type Formation = "1-2-3-1" | "1-3-3" | "1-3-1-2" | "1-2-1-2-1" | "1-2-1-3";
 export type Lineup = {
   matchId: string;
   formation: Formation;

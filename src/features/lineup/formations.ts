@@ -1,9 +1,10 @@
-import type { Formation, Position } from "../../model";
+import type { Formation, Lineup, Position } from "../../model";
 
 export const formationSlots: Record<Formation, readonly Position[]> = {
   "1-2-3-1": ["GK", "LB", "RB", "LW", "CAM", "RW", "ST"],
   "1-3-3": ["GK", "LB", "CDM", "RB", "LW", "CAM", "RW"],
-  "1-2-1-2-1": ["GK", "LB", "RB", "CDM", "LW", "RW", "ST"],
+  "1-2-1-2-1": ["GK", "LB", "RB", "CAM", "LW", "RW", "ST"],
+  "1-2-1-3": ["GK", "LB", "RB", "CAM", "LW", "ST", "RW"],
   "1-3-1-2": ["GK", "LB", "CDM", "RB", "CAM", "LW", "RW"],
 };
 
@@ -38,6 +39,15 @@ export const formationPoints: Record<
     [76, 34],
     [50, 16],
   ],
+  "1-2-1-3": [
+    [50, 88],
+    [26, 66],
+    [74, 66],
+    [50, 44],
+    [18, 22],
+    [50, 22],
+    [82, 22],
+  ],
   "1-3-1-2": [
     [50, 88],
     [20, 66.33],
@@ -48,3 +58,12 @@ export const formationPoints: Record<
     [70, 23],
   ],
 };
+
+export function normalizeLineupRoles(lineup: Lineup): Lineup {
+  if (lineup.formation !== "1-2-1-2-1" || !Object.values(lineup.benchPositions ?? {}).includes("CDM")) return lineup;
+  const benchPositions = { ...lineup.benchPositions };
+  for (const id of Object.keys(benchPositions)) {
+    if (benchPositions[id] === "CDM") benchPositions[id] = "CAM";
+  }
+  return { ...lineup, benchPositions };
+}
