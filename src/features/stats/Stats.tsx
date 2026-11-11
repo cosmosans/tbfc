@@ -1,3 +1,6 @@
+import GoalTimeline from "./GoalTimeline";
+import { timedGoals, minuteBuckets } from "./timedGoals";
+import { careerEvents, playerStats } from "../roster/playerStats";
 import { goalsByKickoff } from "./goalsByKickoff";
 import WhiteKit from "../../img/white-front.png";
 import BlackKit from "../../img/black-front.png";
@@ -106,6 +109,9 @@ function TeamCrestTick({
   );
 }
 
+const statNumber = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const formatStat = (value: unknown) => statNumber.format(Number(value));
+
 export default function Stats({
   data,
 }: {
@@ -122,9 +128,15 @@ export default function Stats({
     "results",
   );
   const [opponentMetric, setOpponentMetric] = useState<
-    "teamGoals" | "goalsFor" | "goalsAgainst" | "gdPerMatch"
+    "teamGoals" | "goalsAgainst" | "gdPerMatch"
   >("teamGoals");
-  const kickoffData = goalsByKickoff(data.matches);
+  const [goalGrouping, setGoalGrouping] = useState("kickoff");
+  const byPlayer = goalGrouping === "player";
+  const events = careerEvents(data);
+  const [perMatch, setPerMatch] = useState(false);
+  const histogram = goalGrouping === "minutes";
+  const timeline = goalGrouping === "timeline";
+  const timed = histogram || timeline ? timedGoals(data) : [];
   const totals = record(data.matches);
   const allTimeStats = [
     ["Matches Played", totals.played],
@@ -200,6 +212,14 @@ export default function Stats({
   const teams = [...opponentCounts.values()].sort(
     (a, b) => b.played - a.played || a.team.localeCompare(b.team),
   );
+  const byOpponent = goalGrouping === "opponent";
+  const opponentGoals = byOpponent ? teams.map(team => ({ ...team, label: team.team, goals: team.goalsFor }))
+    .sort((a, b) => b.goals - a.goals || a.label.localeCompare(b.label)) : [];
+  const goalData = byOpponent ? opponentGoals : histogram ? minuteBuckets(timed, record(data.matches).played, perMatch) : byPlayer
+    ? data.players.map(player => ({ label: player.name, goals: playerStats(player, events)[0][1] }))
+        .filter(player => player.goals > 0)
+        .sort((a, b) => b.goals - a.goals || a.label.localeCompare(b.label))
+    : goalsByKickoff(data.matches).map(({ time, goals }) => ({ label: time, goals }));
   const adjusted = opponentMetric === "gdPerMatch";
   const sortField = opponentMetric === "teamGoals" ? "goalsFor" : opponentMetric;
   const chartTeams = teams
@@ -333,10 +353,10 @@ export default function Stats({
         >
           <PanelHeader
             title="Seasons"
-            context={
+            subtitle={
               metric === "points"
                 ? "Points per season (3 × wins + draws). Only completed matches count."
-                : undefined
+                : metric === "results" ? "Wins, draws, and losses from completed matches in each season." : "Goals scored and allowed in completed matches, grouped by season."
             }
           >
             <Select
@@ -462,7 +482,7 @@ export default function Stats({
                                   </Typography>
                                   <Typography color="primary.main">
                                     Points Per Game:{" "}
-                                    {Number(season.ppg.toFixed(2))}
+                                    {formatStat(season.ppg)}
                                   </Typography>
                                 </Box>
                               );
@@ -561,42 +581,59 @@ export default function Stats({
           </CardContent>
         </Card>
         <Card component="section" sx={{ width: "100%", minWidth: 0 }}>
-          <PanelHeader title="Goals Scored" context="Total Turf Burners goals across all seasons, grouped by match start time.">
-            <Select size="small" defaultValue="kickoff" inputProps={{ "aria-label": "Goals Scored grouping" }}>
+          <PanelHeader title="Goals Scored" subtitle={byOpponent ? "Total Turf Burners goals against each opponent in completed matches." : timeline ? "Each dot is a recorded Turf Burners goal in a completed match." : histogram ? "Timed goals in five-minute intervals. Per-match values use all completed matches." : byPlayer ? "Goals credited to each player across all seasons." : "Total Turf Burners goals across all seasons, grouped by match start time."}>
+            <Select size="small" sx={{ fontSize: ".875rem" }} value={goalGrouping} onChange={event => setGoalGrouping(event.target.value)} inputProps={{ "aria-label": "Goals Scored grouping" }}>
               <MenuItem value="kickoff">By Kickoff Time</MenuItem>
+              <MenuItem value="opponent">By Opponent</MenuItem>
+              <MenuItem value="player">By Player</MenuItem>
+              <MenuItem value="timeline">Goal Timeline</MenuItem>
+              <MenuItem value="minutes">By Minute</MenuItem>
             </Select>
           </PanelHeader>
           <CardContent>
-            {kickoffData.length ? (
+            {timeline ? <GoalTimeline goals={timed} /> : goalData.length ? (
               <Box sx={{ overflowX: "auto" }}>
-                <Box sx={{ height: 340, minWidth: 80 + kickoffData.length * 78 }}>
+                <Box sx={{ height: horizontalBars ? goalData.length * (byPlayer || byOpponent ? 54 : 36) + 60 : 340, minWidth: horizontalBars ? 0 : 80 + goalData.length * 78 }}>
                   <ResponsiveContainer>
-                    <BarChart data={kickoffData} maxBarSize={64} margin={{ top: 28, right: 36, bottom: 12, left: 0 }} accessibilityLayer>
-                      <CartesianGrid stroke="#394144" vertical={false} />
-                      <XAxis dataKey="time" interval={0} stroke="#a7afb1" tick={{ fontSize: 12 }}
-                        padding={{ left: 20, right: 12 }} />
-                      <YAxis allowDecimals={false} stroke="#a7afb1" width={42} />
-                      <Tooltip contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
-                      <Bar dataKey="goals" name="Goals Scored" fill={theme.palette.primary.main} isAnimationActive={false}>
-                        <LabelList dataKey="goals" position="top" fill="#fff" fontWeight={800} fontSize={13} />
+                    <BarChart layout={horizontalBars ? "vertical" : "horizontal"} data={goalData} maxBarSize={64} margin={{ top: 28, right: 36, bottom: 12, left: 0 }} accessibilityLayer>
+                      <CartesianGrid stroke="#394144" vertical={horizontalBars} horizontal={!horizontalBars} />
+                      {horizontalBars ? <>
+                        <XAxis type="number" tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" />
+                        <YAxis type="category" dataKey="label" hide={byPlayer} width={byPlayer ? 0 : 70} interval={0} tick={byOpponent ? crestTick : {fontSize: 12}} stroke="#a7afb1" />
+                      </> : <><XAxis dataKey="label" tickFormatter={byPlayer ? name => String(name).trim().split(" ")[0] : undefined} angle={byPlayer ? -40 : 0} height={byPlayer ? 100 : byOpponent ? 60 : 30} textAnchor={byPlayer ? "end" : "middle"} interval={0} stroke="#a7afb1" tick={byOpponent ? crestTick : { fontSize: 12 }}
+                        padding={{ left: byPlayer ? 0 : 20, right: 12 }} />
+                      <YAxis tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" width={42} /></>}
+                      <Tooltip formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
+                      <Bar cursor={byOpponent ? "pointer" : undefined} onClick={byOpponent ? entry => openTeam(entry.payload?.id) : undefined} barSize={horizontalBars && byPlayer ? 14 : undefined} dataKey="goals" name={histogram && perMatch ? "Goals Per Match" : "Goals Scored"} fill={theme.palette.primary.main} isAnimationActive={false}>
+                        {opponentGoals.map(team => <Cell key={team.id ?? team.label} fill={team.color || theme.palette.primary.main} />)}
+                        {horizontalBars && byPlayer && (
+                          <LabelList dataKey="label" content={({ viewBox, value }) => viewBox && "x" in viewBox ? (
+                            <text x={viewBox.x} y={Number(viewBox.y) - 5} fill="#fff" fontSize={13} fontWeight={700}>
+                              {String(value).trim().split(" ")[0]}
+                            </text>
+                          ) : null} />
+                        )}
+                        <LabelList formatter={formatStat} dataKey="goals" position={horizontalBars ? "right" : "top"} fill="#fff" fontWeight={800} fontSize={13} />
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
                 </Box>
               </Box>
-            ) : <Typography color="text.secondary">No recorded kickoff times yet.</Typography>}
+            ) : <Typography color="text.secondary">{byOpponent ? "No completed matches against opponents yet." : byPlayer ? "No goals credited to players yet." : "No recorded kickoff times yet."}</Typography>}
+            {histogram && <Stack direction="row" justifyContent="center" sx={{ mt: 2 }}><Select size="small" value={perMatch ? "rate" : "total"} inputProps={{ "aria-label": "Histogram units" }}
+              onChange={e => setPerMatch(e.target.value === "rate")}>
+              <MenuItem value="total">Total Goals</MenuItem><MenuItem value="rate">Goals Per Match</MenuItem>
+            </Select></Stack>}
           </CardContent>
         </Card>
 
         <Card sx={{ minWidth: 0, width: "100%", border: 0 }}>
           <PanelHeader
             title="Opponents"
-            context={
+            subtitle={
               adjusted ? "Positive goal differential divided by completed matches against each opponent." : opponentMetric === "teamGoals"
                 ? "Goals across all seasons. Turf Burners first, opponent second."
-                : opponentMetric === "goalsFor"
-                  ? "Goals scored by TBFC against each opponent across all seasons."
-                  : "Goals scored against TBFC by each opponent across all seasons."
+                : "Goals scored against TBFC by each opponent across all seasons."
             }
           >
             <Select
@@ -606,7 +643,6 @@ export default function Stats({
                 setOpponentMetric(
                   event.target.value as
                     | "teamGoals"
-                    | "goalsFor"
                     | "goalsAgainst" | "gdPerMatch",
                 )
               }
@@ -615,7 +651,6 @@ export default function Stats({
             >
               <MenuItem value="teamGoals">Goal Differential</MenuItem>
               <MenuItem value="gdPerMatch">GD Per Match</MenuItem>
-              <MenuItem value="goalsFor">Goals Scored</MenuItem>
               <MenuItem value="goalsAgainst">Goals Allowed</MenuItem>
             </Select>
           </PanelHeader>
@@ -662,6 +697,7 @@ export default function Stats({
                       {horizontalBars ? (
                         <XAxis
                           type="number"
+                          tickFormatter={formatStat}
                           allowDecimals={adjusted}
                           stroke="#a7afb1"
                         />
@@ -688,12 +724,13 @@ export default function Stats({
                       ) : (
                         <YAxis
                           type="number"
+                          tickFormatter={formatStat}
                           allowDecimals={adjusted}
                           stroke="#a7afb1"
                         />
                       )}
                       <Tooltip
-                        formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
+                        formatter={adjusted ? formatStat : undefined}
                         cursor={{ fill: "#38383880" }}
                         contentStyle={{
                           background: "#1b2022",
@@ -758,7 +795,7 @@ export default function Stats({
                             />
                           ))}
                           <LabelList
-                            formatter={adjusted ? value => Number(value).toFixed(2) : undefined}
+                            formatter={adjusted ? formatStat : undefined}
                             dataKey={sortField}
                             position={horizontalBars ? "right" : "top"}
                             fill="#fff"
@@ -782,7 +819,7 @@ export default function Stats({
           component="section"
           sx={{ width: "100%", minWidth: 0 }}
         >
-          <PanelHeader title="Kit Record" />
+          <PanelHeader title="Kit Record" subtitle="Wins, draws, and losses in completed matches wearing each kit." />
           <Box
             sx={{
               display: "grid",
