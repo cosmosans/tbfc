@@ -18,6 +18,7 @@ const icons = {
   assist,
   yellow_card: card,
   penalty_kick: penalty,
+  missed_penalty: penalty,
   clean_sheet: CleanSheetIcon,
   penalty_save: gloves,
   note: null,
@@ -108,7 +109,7 @@ export default function ReplayTimeline({
         {markersForMinute.map(({ event, showCrest, crestOffset }) => {
           const team = event.team ?? (event.kind === "note" ? undefined : "tbfc");
           const player = players.find(player => player.id === event.playerId);
-          const playerLabel = player && [player.number && "#" + player.number, player.name].filter(Boolean).join(" ");
+          const playerLabel = event.opponentPlayerName || player && [player.number && "#" + player.number, player.name].filter(Boolean).join(" ");
           const kind = event.ownGoal ? "own goal" : event.kind.replaceAll("_", " ");
           const teamLabel = team && (team === "tbfc" ? "Turf Burners FC" : opponentName);
           const accent = team === "opponent" ? opponentColor || "#828892" : "primary.main";
@@ -133,6 +134,7 @@ export default function ReplayTimeline({
                   <Typography component="div" sx={{ display: "flex", alignItems: "center", gap: 0.75, fontSize: 13, fontWeight: 700 }}>
                     <TimelineMarker minute={minute} compact /> {kind.toUpperCase()}
                   </Typography>
+                  {event.opponentPlayerName && <Typography>{event.opponentPlayerName}</Typography>}
                   {player && <Box sx={{ mt: 0.5 }}>
                     <PlayerNameNumberInline player={player} />
                   </Box>}

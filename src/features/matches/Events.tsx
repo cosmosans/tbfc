@@ -132,6 +132,7 @@ export default function Events({
   const [kind, setKind] = useState<MatchEvent["kind"]>("goal");
   const [playerId, setPlayerId] = useState("");
   const [eventTeam, setEventTeam] = useState<"tbfc" | "opponent">("tbfc");
+  const [opponentPlayerName, setOpponentPlayerName] = useState("");
   const [ownGoal, setOwnGoal] = useState(false);
   const [minute, setMinute] = useState("");
   const [note, setNote] = useState("");
@@ -140,6 +141,7 @@ export default function Events({
   const hasTeam =
     kind === "goal" ||
     kind === "yellow_card" ||
+    kind === "missed_penalty" ||
     kind === "penalty_kick" ||
     kind === "penalty_save";
   const canSelectTbfcPlayer =
@@ -204,6 +206,7 @@ export default function Events({
     setEditingEvent(event);
     setEditorOpen(true);
     setKind(event.kind);
+    setOpponentPlayerName(event.opponentPlayerName ?? "");
     setPlayerId(event.teamGoal ? "team" : (event.playerId ?? ""));
     setEventTeam(event.team ?? "tbfc");
     setOwnGoal(event.ownGoal ?? false);
@@ -214,6 +217,7 @@ export default function Events({
     setEditorOpen(false);
     setEditingEvent(null);
     setKind("goal");
+    setOpponentPlayerName("");
     setPlayerId("");
     setEventTeam("tbfc");
     setOwnGoal(false);
@@ -236,6 +240,7 @@ export default function Events({
       team: kind === "assist" ? "tbfc" : hasTeam ? eventTeam : undefined,
       ownGoal: kind === "goal" ? ownGoal : undefined,
       teamGoal: kind === "goal" && playerId === "team" ? true : undefined,
+      opponentPlayerName: kind === "missed_penalty" && eventTeam === "opponent" ? opponentPlayerName.trim() || undefined : undefined,
       playerId: playerId && playerId !== "team" ? playerId : undefined,
       minute: minute ? Number(minute) : undefined,
       note: note || undefined,
@@ -295,6 +300,7 @@ export default function Events({
                   "yellow_card",
                   "penalty_kick",
                   "penalty_save",
+                  "missed_penalty",
                   "note",
                 ] as const
               ).map((k) => (
@@ -339,7 +345,10 @@ export default function Events({
               </Select>
             </FormControl>
           )}
-          <Autocomplete
+          {kind === "missed_penalty" && eventTeam === "opponent" ? (
+            <TextField size="small" label="Penalty Taker" placeholder="Unknown" value={opponentPlayerName}
+              onChange={event => setOpponentPlayerName(event.target.value)} />
+          ) : <Autocomplete
             size="small"
             sx={{ width: { xs: "100%", md: 220 } }}
             openOnFocus
@@ -357,7 +366,7 @@ export default function Events({
                 label={kind === "goal" ? "Scorer" : "Player"}
               />
             )}
-          />
+          />}
           {kind === "goal" && (
             <FormControlLabel
               sx={{ width: { xs: "100%", md: "auto" }, m: 0 }}
@@ -422,7 +431,7 @@ export default function Events({
         {kind === "penalty_kick" && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>
             Record a penalty awarded during the match and describe the foul in
-            the note. Add a separate Goal, Penalty Save, or Note for the
+            the note. Add a separate Goal, Penalty Save, or Missed Penalty for the
             outcome. This event does not change goal totals.
           </Typography>
         )}
@@ -539,6 +548,7 @@ export default function Events({
           event.kind === "assist" ||
           event.kind === "goal" ||
           event.kind === "yellow_card" ||
+          event.kind === "missed_penalty" ||
           event.kind === "penalty_save" ||
           event.kind === "penalty_kick";
         const teamName =
@@ -558,7 +568,7 @@ export default function Events({
             >
               <img
                 src={
-                  event.kind === "penalty_kick"
+                  event.kind === "penalty_kick" || event.kind === "missed_penalty"
                     ? PenaltyKick
                     : event.kind === "yellow_card"
                       ? YellowCardIcon
@@ -662,7 +672,7 @@ export default function Events({
                       />
                     )}
                     {event.team === "opponent" &&
-                      (event.kind === "goal" ||
+                      (event.kind === "goal" || event.kind === "missed_penalty" ||
                         event.kind === "yellow_card") && (
                         <Typography
                           component="span"
@@ -678,6 +688,7 @@ export default function Events({
                           {teamName}
                         </Typography>
                       )}
+                    {event.opponentPlayerName && <Typography>{event.opponentPlayerName}</Typography>}
                     {targetPlayer && event.kind !== "penalty_kick" && (
                       <PlayerNameNumberInline player={targetPlayer} />
                     )}

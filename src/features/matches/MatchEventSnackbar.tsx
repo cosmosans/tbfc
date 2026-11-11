@@ -176,7 +176,7 @@ export default function MatchEventSnackbar({
               transform: "translateY(2px)",
             }}
           >
-            {notice.kind === "penalty_kick" && (
+            {(notice.kind === "penalty_kick" || notice.kind === "missed_penalty") && (
               <img
                 src={PenaltyIcon}
                 alt="Penalty"
@@ -229,7 +229,8 @@ export default function MatchEventSnackbar({
               alignItems: "center",
             }}
           >
-            {!creditedToOpponent && player?.number && (
+            {notice.opponentPlayerName}
+            {!creditedToOpponent && player && (
               <PlayerNameNumberInline player={player} />
             )}
           </Typography>
