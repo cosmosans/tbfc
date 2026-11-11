@@ -3,7 +3,12 @@ import { compareMatchEvents } from "./matchEventOrder";
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReplayTimeline from "./ReplayTimeline";
 import { Button, NativeSelect, Stack, Typography } from "@mui/material";
-import type { ClubData, Match, MatchEvent } from "../../model";
+import {
+  isMatchCompleted,
+  type ClubData,
+  type Match,
+  type MatchEvent,
+} from "../../model";
 import { opponentFor, opponentName } from "../../clubView";
 import MatchBanner from "./MatchBanner";
 import type { ComponentProps } from "react";
@@ -12,7 +17,6 @@ import { useGoalSound } from "./useGoalSound";
 type Props = {
   data: ClubData;
   match: Match;
-  enabled: boolean;
   bannerProps: Omit<ComponentProps<typeof MatchBanner>, "data" | "match">;
   publishBarVisible: boolean;
 };
@@ -22,9 +26,13 @@ export default function MatchReplay(props: Props) {
   if (props.match.status === "in_progress") return <LiveMatch {...props} />;
   return started === null ? (
     <MatchBanner data={props.data} match={props.match} {...props.bannerProps}>
-      {props.enabled && <Stack alignItems="center" sx={{ mt: 1 }}><Button size="small" onClick={() => setStarted(performance.now())}>
-        Simulate Match
-      </Button></Stack>}
+      {isMatchCompleted(props.match) && (
+        <Stack alignItems="center" sx={{ mt: 1 }}>
+          <Button size="small" onClick={() => setStarted(performance.now())}>
+            Simulate Match
+          </Button>
+        </Stack>
+      )}
     </MatchBanner>
   ) : (
     <Playback {...props} started={started} stop={() => setStarted(null)} />
@@ -66,16 +74,33 @@ function LiveMatch({ data, match, bannerProps }: Props) {
     }
     displayedMatch = { ...match, ...score };
   }
-  return <MatchBanner {...bannerProps} data={data} match={displayedMatch}
-    goalTime={position === null ? bannerProps.goalTime : undefined}
-    replaySeconds={position ?? undefined}>
-    <ReplayTimeline opponentName={opponentName(data, match)} players={data.players} events={events} opponentColor={opponentFor(data, match)?.color} opponentCrestUrl={opponentFor(data, match)?.crestUrl}
-      seconds={position ?? liveTime} duration={Math.max(50 * 60, liveTime)}
-      onSeek={target => setPosition(target >= liveTime ? null : target)} />
-    {position !== null && <Stack alignItems="center" sx={{ mt: 1 }}>
-      <Button size="small" onClick={() => setPosition(null)}>Go to live</Button>
-    </Stack>}
-  </MatchBanner>;
+  return (
+    <MatchBanner
+      {...bannerProps}
+      data={data}
+      match={displayedMatch}
+      goalTime={position === null ? bannerProps.goalTime : undefined}
+      replaySeconds={position ?? undefined}
+    >
+      <ReplayTimeline
+        opponentName={opponentName(data, match)}
+        players={data.players}
+        events={events}
+        opponentColor={opponentFor(data, match)?.color}
+        opponentCrestUrl={opponentFor(data, match)?.crestUrl}
+        seconds={position ?? liveTime}
+        duration={Math.max(50 * 60, liveTime)}
+        onSeek={(target) => setPosition(target >= liveTime ? null : target)}
+      />
+      {position !== null && (
+        <Stack alignItems="center" sx={{ mt: 1 }}>
+          <Button size="small" onClick={() => setPosition(null)}>
+            Go to live
+          </Button>
+        </Stack>
+      )}
+    </MatchBanner>
+  );
 }
 
 function Playback({
@@ -88,25 +113,36 @@ function Playback({
 }: Props & { started: number; stop: () => void }) {
   const events = useTimelineEvents(data, match);
   const duration = Math.max(50, ...events.map((event) => event.minute!)) * 60;
-  const eventTime = (event: MatchEvent) => event.kind === "clean_sheet" ? duration : event.minute! * 60;
+  const eventTime = (event: MatchEvent) =>
+    event.kind === "clean_sheet" ? duration : event.minute! * 60;
   const [seconds, setSeconds] = useState(0);
   const [clock, setClock] = useState({ since: started, offset: 0, speed: 5 });
   function changeSpeed(speed: number) {
     const now = performance.now();
-    setClock(previous => ({ since: now, speed,
-      offset: previous.offset + (now - previous.since) * previous.speed / 1000 }));
+    setClock((previous) => ({
+      since: now,
+      speed,
+      offset:
+        previous.offset + ((now - previous.since) * previous.speed) / 1000,
+    }));
   }
   const [queue, setQueue] = useState<MatchEvent[]>([]);
   const delivered = useRef(new Set<string>());
   const finished = seconds >= duration;
-  const { play, playWhistle } = useGoalSound(!finished, !!bannerProps.goalSoundEnabled);
+  const { play, playWhistle } = useGoalSound(
+    !finished,
+    !!bannerProps.goalSoundEnabled,
+  );
   useEffect(() => {
     if (finished) return;
     const timer = window.setInterval(() => {
       setSeconds(
         Math.min(
           duration,
-          Math.floor(clock.offset + (performance.now() - clock.since) * clock.speed / 1000),
+          Math.floor(
+            clock.offset +
+              ((performance.now() - clock.since) * clock.speed) / 1000,
+          ),
         ),
       );
     }, 150);
@@ -115,32 +151,42 @@ function Playback({
   useEffect(() => {
     const due = events.filter(
       (event) =>
-        (event.kind === "clean_sheet" ? finished : event.minute! * 60 <= seconds) && !delivered.current.has(event.id),
+        (event.kind === "clean_sheet"
+          ? finished
+          : event.minute! * 60 <= seconds) && !delivered.current.has(event.id),
     );
     if (!due.length) return;
     for (const event of due) delivered.current.add(event.id);
     setQueue((previous) => [...previous, ...due]);
   }, [events, seconds, finished]);
-  useEffect(() => { playWhistle.current(); }, [playWhistle]);
-  useEffect(() => { if (finished) playWhistle.current(); }, [finished, playWhistle]);
+  useEffect(() => {
+    playWhistle.current();
+  }, [playWhistle]);
+  useEffect(() => {
+    if (finished) playWhistle.current();
+  }, [finished, playWhistle]);
   const notice = queue[0];
   const [score, setScore] = useState({ goalsFor: 0, goalsAgainst: 0 });
   const [goalTime, setGoalTime] = useState<number>();
   const presented = useRef(new Set<string>());
   function seek(target: number) {
-    const before = events.filter(event => eventTime(event) < target);
-    const atTarget = events.filter(event => eventTime(event) === target);
+    const before = events.filter((event) => eventTime(event) < target);
+    const atTarget = events.filter((event) => eventTime(event) === target);
     const nextScore = { goalsFor: 0, goalsAgainst: 0 };
     for (const event of before) {
-      if (event.kind === "goal") nextScore[event.team === "opponent" ? "goalsAgainst" : "goalsFor"]++;
+      if (event.kind === "goal")
+        nextScore[event.team === "opponent" ? "goalsAgainst" : "goalsFor"]++;
     }
-    presented.current = new Set(before.map(event => event.id));
-    delivered.current = new Set([...presented.current, ...atTarget.map(event => event.id)]);
+    presented.current = new Set(before.map((event) => event.id));
+    delivered.current = new Set([
+      ...presented.current,
+      ...atTarget.map((event) => event.id),
+    ]);
     setScore(nextScore);
     setGoalTime(undefined);
     setQueue(atTarget);
     const since = performance.now();
-    setClock(previous => ({ ...previous, since, offset: target }));
+    setClock((previous) => ({ ...previous, since, offset: target }));
     setSeconds(target);
   }
   useEffect(() => {
@@ -149,7 +195,7 @@ function Playback({
     if (notice.kind === "penalty_kick") playWhistle.current();
     if (notice.kind !== "goal") return;
     const field = notice.team === "opponent" ? "goalsAgainst" : "goalsFor";
-    setScore(previous => ({ ...previous, [field]: previous[field] + 1 }));
+    setScore((previous) => ({ ...previous, [field]: previous[field] + 1 }));
     if (field === "goalsFor") {
       setGoalTime(performance.now());
       play.current();
@@ -169,50 +215,76 @@ function Playback({
   const opponent = opponentFor(data, match);
   return (
     <>
-      <MatchBanner {...bannerProps} data={data}
-        match={finished && !notice && presented.current.size === events.length
-          ? match : { ...match, ...score, status: "in_progress" }}
-        replaySeconds={seconds} goalTime={goalTime}>
-        <ReplayTimeline opponentName={opponentName(data, match)} players={data.players} opponentColor={opponent?.color} opponentCrestUrl={opponent?.crestUrl} events={events} seconds={seconds} duration={duration} onSeek={seek} />
-      <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ mt: 1 }}>
-        <Typography variant="caption" sx={{ fontVariantNumeric: "tabular-nums" }}>
-          {finished ? "Full time" : "Replay"} · {Math.floor(seconds / 60)}:
-          {String(seconds % 60).padStart(2, "0")}
-        </Typography>
-        {!finished && <NativeSelect value={clock.speed} inputProps={{ "aria-label": "Replay speed" }}
-          onChange={event => changeSpeed(Number(event.target.value))}>
-          {[5, 10, 20].map(speed => <option key={speed} value={speed}>{speed}×</option>)}
-        </NativeSelect>}
-        <Button size="small" onClick={stop}>
-          End Simulation
-        </Button>
-
-      </Stack>
+      <MatchBanner
+        {...bannerProps}
+        data={data}
+        match={
+          finished && !notice && presented.current.size === events.length
+            ? match
+            : { ...match, ...score, status: "in_progress" }
+        }
+        replaySeconds={seconds}
+        goalTime={goalTime}
+      >
+        <ReplayTimeline
+          opponentName={opponentName(data, match)}
+          players={data.players}
+          opponentColor={opponent?.color}
+          opponentCrestUrl={opponent?.crestUrl}
+          events={events}
+          seconds={seconds}
+          duration={duration}
+          onSeek={seek}
+        />
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={1}
+          sx={{ mt: 1 }}
+        >
+          {!finished && (
+            <NativeSelect
+              value={clock.speed}
+              inputProps={{ "aria-label": "Replay speed" }}
+              onChange={(event) => changeSpeed(Number(event.target.value))}
+            >
+              {[5, 10, 20].map((speed) => (
+                <option key={speed} value={speed}>
+                  {speed}×
+                </option>
+              ))}
+            </NativeSelect>
+          )}
+          <Button size="small" onClick={stop}>
+            End Simulation
+          </Button>
+        </Stack>
       </MatchBanner>
 
-        {notice && (
-          <MatchEventSnackbar
-            key={notice.id}
-            notice={notice}
-            player={data.players.find((player) => player.id === notice.playerId)}
-            opponent={opponentName(data, match)}
-            opponentCrestUrl={opponent?.crestUrl}
-            creditedTeamColor={
-              notice.team === "opponent"
-                ? opponent?.color || "#828892"
-                : "#CA5126"
-            }
-            match={match}
-            events={events}
-            remaining={queue.length - 1}
-            publishBarVisible={publishBarVisible}
-            onDismiss={() =>
-              setQueue((previous) =>
-                previous.filter((event) => event.id !== notice.id),
-              )
-            }
-          />
-        )}
+      {notice && (
+        <MatchEventSnackbar
+          key={notice.id}
+          notice={notice}
+          player={data.players.find((player) => player.id === notice.playerId)}
+          opponent={opponentName(data, match)}
+          opponentCrestUrl={opponent?.crestUrl}
+          creditedTeamColor={
+            notice.team === "opponent"
+              ? opponent?.color || "#828892"
+              : "#CA5126"
+          }
+          match={match}
+          events={events}
+          remaining={queue.length - 1}
+          publishBarVisible={publishBarVisible}
+          onDismiss={() =>
+            setQueue((previous) =>
+              previous.filter((event) => event.id !== notice.id),
+            )
+          }
+        />
+      )}
     </>
   );
 }
