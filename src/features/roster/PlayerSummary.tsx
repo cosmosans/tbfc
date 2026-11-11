@@ -59,6 +59,7 @@ export default function PlayerSummary({
               gap: 1,
             }}
           >
+            <PlayerName>{player.name}</PlayerName>
             {player.captain && (
               <Typography
                 sx={(theme) => ({
@@ -86,7 +87,6 @@ export default function PlayerSummary({
                 </span>
               </Typography>
             )}
-            <PlayerName>{player.name}</PlayerName>
           </Box>
           <Box
             sx={{
@@ -100,7 +100,10 @@ export default function PlayerSummary({
               <Typography
                 variant="body2"
                 color="white"
-                sx={{ textTransform: "uppercase", fontSize: { xs: 12, sm: 16 } }}
+                sx={{
+                  textTransform: "uppercase",
+                  fontSize: { xs: 12, sm: 16 },
+                }}
               >
                 {player.playerType}
               </Typography>
@@ -118,7 +121,7 @@ export default function PlayerSummary({
           sx={{
             display: "grid",
             gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: { xs: 1, md: 2 },
+            gap: { xs: 1, md: 2, marginTop: -15 },
             gridArea: "stats",
           }}
         >
@@ -130,7 +133,7 @@ export default function PlayerSummary({
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: { xs: "center", sm: "flex-start" },
+                  justifyContent: "flex-start",
                   gap: 0.75,
                 }}
               >
@@ -139,6 +142,7 @@ export default function PlayerSummary({
                   src={[GoalIcon, AssistIcon, CardIcon][index]}
                   alt=""
                   sx={{
+                    opacity: 0.5,
                     display: { xs: "block", sm: "none" },
                     width: 20,
                     height: 20,
@@ -147,7 +151,11 @@ export default function PlayerSummary({
                 />
                 <Box
                   component="span"
-                  sx={{ fontSize: { xs: 16, md: 24 }, fontWeight: 800 }}
+                  sx={{
+                    fontSize: { xs: 16, md: 24 },
+                    fontWeight: 800,
+                    opacity: 0.5,
+                  }}
                 >
                   {count}
                 </Box>

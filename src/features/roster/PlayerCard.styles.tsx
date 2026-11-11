@@ -92,9 +92,9 @@ export const PlayerInformation = styled("span")({
   },
   padding: "16px 24px",
   "@media (max-width: 599.95px)": {
-    gridTemplateColumns: "42px minmax(0, 1fr) 48px",
+    gridTemplateColumns: "max-content minmax(0, 1fr) 48px",
     padding: "8px",
-    gap: 6,
+    gap: 8,
   },
   background: "transparent",
   fontFamily: "Oxanium, ui-sans-serif, system-ui, sans-serif",
@@ -104,12 +104,12 @@ export const PlayerNumber = styled("span")(() => ({
   justifySelf: "center",
   color: "#d44f25",
   fontSize: 90,
-  marginLeft: 30,
   letterSpacing: "-.07em",
   fontWeight: 900,
   "@media (max-width: 599.95px)": {
+    justifySelf: "start",
     fontSize: 48,
-    marginLeft: 0,
+    lineHeight: 1,
     letterSpacing: "-.05em",
   },
 }));

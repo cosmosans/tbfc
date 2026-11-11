@@ -83,22 +83,13 @@ function PlayerMatchEvents({ matchEvents }: { matchEvents: MatchEvent[] }) {
         >
           {event.minute != null && (
             <>
-              <TimelineMarker
-                minute={event.minute}
-                compact
-              />{" "}
+              <TimelineMarker minute={event.minute} compact />{" "}
             </>
           )}
-          <Tooltip
-            title={event.note?.trim() || ""}
-            describeChild
-            arrow
-          >
+          <Tooltip title={event.note?.trim() || ""} describeChild arrow>
             <Box
               component="strong"
-              tabIndex={
-                event.note?.trim() ? 0 : undefined
-              }
+              tabIndex={event.note?.trim() ? 0 : undefined}
               sx={{
                 textTransform: "uppercase",
                 ...(event.note?.trim() && {
@@ -122,9 +113,7 @@ function PlayerMatchEvents({ matchEvents }: { matchEvents: MatchEvent[] }) {
                   }}
                 />
               )}
-              {event.ownGoal
-                ? "Own Goal"
-                : event.kind.replaceAll("_", " ")}
+              {event.ownGoal ? "Own Goal" : event.kind.replaceAll("_", " ")}
             </Box>
           </Tooltip>
         </Typography>
@@ -259,7 +248,9 @@ export default function PlayerDetail({
               }}
             />
           ) : (
-            <PlayerPlaceholder sx={{ width: { xs: 75, sm: 120, md: 150 }, mr: 2 }} />
+            <PlayerPlaceholder
+              sx={{ width: { xs: 75, sm: 120, md: 150 }, mr: 2 }}
+            />
           )}
           <Box
             sx={{
@@ -297,13 +288,14 @@ export default function PlayerDetail({
                         letterSpacing: "-2.5px",
                       },
                       fontWeight: 800,
+                      whiteSpace: "nowrap",
                     }}
                   >
                     {player.name}
                   </Typography>
                   <Typography
                     sx={{
-                      fontSize: 16,
+                      fontSize: 12,
                       textTransform: "uppercase",
                       fontWeight: 700,
                       mt: -1,
@@ -337,8 +329,10 @@ export default function PlayerDetail({
               <Box
                 sx={{
                   display: "flex",
-                  flexWrap: "wrap",
-                  gap: 5,
+                  flexWrap: "nowrap",
+                  justifyContent: "flex-start",
+                  gap: { xs: 2, sm: 3, md: 5 },
+                  width: "100%",
                   transform: "translateY(5px)",
                 }}
               >
@@ -363,14 +357,23 @@ export default function PlayerDetail({
                         },
                       }}
                     >
-                      <Box>
-                        <img
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          whiteSpace: "nowrap",
+                          minWidth: 0,
+                        }}
+                      >
+                        <Box
+                          component="img"
                           src={profileStatIcons[label]}
                           alt={label}
-                          style={{
-                            marginRight: 8,
-                            width: label === "Goals" ? 25 : 20,
-                            height: label === "Goals" ? 25 : 20,
+                          sx={{
+                            mr: { xs: 0.5, sm: 1 },
+                            width: { xs: 15, sm: label === "Goals" ? 25 : 20 },
+                            height: { xs: 15, sm: label === "Goals" ? 25 : 20 },
+                            flexShrink: 0,
                             transform:
                               label === "Goals"
                                 ? "translateY(-1px)"
@@ -381,7 +384,11 @@ export default function PlayerDetail({
                         <Typography
                           variant="h4"
                           color="primary"
-                          sx={{ paddingRight: 1 }}
+                          sx={{
+                            fontSize: { xs: 20, sm: 34 },
+                            lineHeight: 1,
+                            flexShrink: 0,
+                          }}
                         >
                           {count}
                         </Typography>
@@ -415,7 +422,7 @@ export default function PlayerDetail({
           </Stack>
           {player.bio ? (
             <Box
-              sx={{ overflowWrap: "anywhere", "& p": { my: 1 } }}
+              sx={{ overflowWrap: "anywhere", "& p": { my: 1, fontSize: 14 } }}
               dangerouslySetInnerHTML={{ __html: storyToHtml(player.bio) }}
             />
           ) : (
@@ -471,19 +478,48 @@ export default function PlayerDetail({
         ) : phone ? (
           <Stack gap={2}>
             {history.map(({ match, lineup, matchEvents, stats }) => (
-              <MatchSummaryCard key={match.id} data={data} match={match}
-                onOpen={() => navigate(`/match/${encodeURIComponent(match.id)}`)}>
-                <Stack gap={1} sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
-                  <Typography variant="body2">
-                    Role · {lineup?.starters.includes(player.id) ? "Starting VII" :
-                      lineup?.bench.includes(player.id) ? "Bench" : "Unrecorded"}
-                  </Typography>
-                  <Stack direction="row" flexWrap="wrap" gap={1.5}>
-                    {filterKeys.map(key => <Typography key={key} variant="body2">
-                      {key === "saves" ? "PK Saves" : filterLabels[key]} <strong>{stats[statIndex[key]][1]}</strong>
-                    </Typography>)}
-                  </Stack>
-                  {matchEvents.length > 0 && <PlayerMatchEvents matchEvents={matchEvents} />}
+              <MatchSummaryCard
+                key={match.id}
+                data={data}
+                match={match}
+                onOpen={() =>
+                  navigate(`/match/${encodeURIComponent(match.id)}`)
+                }
+              >
+                <Stack
+                  gap={1}
+                  sx={{ mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}
+                >
+                  <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>
+                    <Typography variant="body2" sx={{ fontWeight: 700, textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                      {lineup?.starters.includes(player.id)
+                        ? "Starting VII"
+                        : lineup?.bench.includes(player.id)
+                          ? "Bench"
+                          : "Unrecorded"}
+                    </Typography>
+                    <Stack direction="row" flexWrap="nowrap" gap={1} sx={{ flexShrink: 0 }}>
+                      {filterKeys.map((key) => {
+                        const label = key === "saves" ? "PK Saves" : filterLabels[key];
+                        const count = stats[statIndex[key]][1];
+                        return (
+                          <Tooltip key={key} title={label} arrow>
+                            <Box
+                              component="span"
+                              aria-label={`${label}: ${count}`}
+                              sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, whiteSpace: "nowrap" }}
+                            >
+                              <Box component="img" src={profileStatIcons[label]} alt="" sx={{ width: 16, height: 16, objectFit: "contain" }} />
+                              <Typography component="span" variant="body2" fontWeight={700}>{count}</Typography>
+                            </Box>
+                          </Tooltip>
+                        );
+                      })}
+                    </Stack>
+                  </Box>
+                  {matchEvents.length > 0 && (
+                    <PlayerMatchEvents matchEvents={matchEvents} />
+                  )}
                 </Stack>
               </MatchSummaryCard>
             ))}
