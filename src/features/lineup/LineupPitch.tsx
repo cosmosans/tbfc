@@ -63,7 +63,7 @@ export default function LineupPitch({
   const subsBySlot = slots.map(role =>
     benchPlayers.filter(player => lineup.benchPositions?.[player.id] === role));
   let minPitchHeight = lineup.bench.length ? 450 : 280;
-  if (lineup.formation === "1-3-1-2") {
+  if (lineup.formation === "1-3-1-2" || lineup.formation === "1-2-1-2-1") {
     // At the maximum plate width (180px), each plate is at most 40px tall.
     // Reserve the two facing half-stacks plus the lower role's label and a gap.
     const rows = new Map<number, number>();
@@ -241,9 +241,9 @@ export default function LineupPitch({
                   onFormationChange(event.target.value as Formation)
                 }
               >
-                <MenuItem value="1-2-3-1">1-2-3-1</MenuItem>
-                <MenuItem value="1-3-3">1-3-3</MenuItem>
-                <MenuItem value="1-3-1-2">1-3-1-2</MenuItem>
+                {Object.keys(formationSlots).map(formation => (
+                  <MenuItem key={formation} value={formation}>{formation}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           ) : (

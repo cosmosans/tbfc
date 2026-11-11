@@ -10,7 +10,7 @@ function roleOrder(player: Player, assigned?: Position): Position[] {
   const primary = assigned || player.preferredPosition || player.secondaryPosition ||
     defaultRoles[player.playerType || "Midfielder"];
   const equivalents: Partial<Record<Position, Position[]>> = {
-    ST: ["CAM", "LW", "RW"], CDM: ["CAM", "LB", "RB"],
+    CAM: ["CDM", "ST"], ST: ["CAM", "LW", "RW"], CDM: ["CAM", "LB", "RB"],
   };
   return [...new Set([primary, player.preferredPosition, player.secondaryPosition,
     ...(equivalents[primary] ?? []), "CAM", "LW", "RW", "CDM", "LB", "RB", "ST", "GK"]

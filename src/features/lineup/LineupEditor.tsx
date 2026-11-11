@@ -97,7 +97,7 @@ export default function LineupEditor({
       if (nextRoles.includes(role)) continue;
       const player = data.players.find(candidate => candidate.id === id);
       benchPositions[id] = player?.secondaryPosition && nextRoles.includes(player.secondaryPosition)
-        ? player.secondaryPosition : "CAM";
+        ? player.secondaryPosition : nextRoles.includes("CAM") ? "CAM" : "CDM";
     }
     save({
       ...lineup,
