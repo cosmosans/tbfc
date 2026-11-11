@@ -15,7 +15,7 @@ const face = {
 
 export const PlayerCardFrame = styled("div")({
   height: 180,
-  "@media (max-width: 599.95px)": { height: 120 },
+  "@media (max-width: 599.95px)": { height: 106 },
   "&[data-editing='true']": {
     height: "auto",
     "& > div": { height: "auto" },
@@ -57,7 +57,7 @@ export const PlayerPhoto = styled("div")({
   placeItems: "center",
   flex: "0 0 180px",
   width: 180,
-  "@media (max-width: 599.95px)": { flexBasis: 100, width: 100 },
+  "@media (max-width: 599.95px)": { flexBasis: 86, width: 86 },
   minHeight: 0,
   background: "#252c2e",
   overflow: "hidden",
@@ -91,7 +91,11 @@ export const PlayerInformation = styled("span")({
     gridTemplateAreas: '"number identity status" "stats stats stats"',
   },
   padding: "16px 24px",
-  "@media (max-width: 599.95px)": { padding: "10px", gap: 8 },
+  "@media (max-width: 599.95px)": {
+    gridTemplateColumns: "42px minmax(0, 1fr) 48px",
+    padding: "8px",
+    gap: 6,
+  },
   background: "transparent",
   fontFamily: "Oxanium, ui-sans-serif, system-ui, sans-serif",
 });
@@ -100,9 +104,14 @@ export const PlayerNumber = styled("span")(() => ({
   justifySelf: "center",
   color: "#d44f25",
   fontSize: 90,
-  marginLeft: -20,
+  marginLeft: 30,
   letterSpacing: "-.07em",
   fontWeight: 900,
+  "@media (max-width: 599.95px)": {
+    fontSize: 48,
+    marginLeft: 0,
+    letterSpacing: "-.05em",
+  },
 }));
 export const PlayerIdentity = styled("span")({
   gridArea: "identity",
@@ -110,7 +119,8 @@ export const PlayerIdentity = styled("span")({
   flexDirection: "column",
   minWidth: 0,
   flex: 1,
-  marginLeft: -5,
+  marginLeft: 40,
+  "@media (max-width: 599.95px)": { marginLeft: 0 },
 });
 export const PlayerName = styled("span")({
   display: "block",
@@ -119,12 +129,18 @@ export const PlayerName = styled("span")({
   lineHeight: 1.2,
   letterSpacing: "-2.5px",
   overflowWrap: "anywhere",
+  "@media (max-width: 599.95px)": {
+    fontSize: 19,
+    letterSpacing: "-.6px",
+    lineHeight: 1.1,
+  },
 });
 export const PlayerPositions = styled("span")({
   display: "block",
   color: "#777",
   fontSize: 16,
   lineHeight: 1.2,
+  "@media (max-width: 599.95px)": { fontSize: 12 },
 });
 export const PlayerStatus = styled("span", {
   shouldForwardProp: (prop) => prop !== "active",
@@ -136,4 +152,5 @@ export const PlayerStatus = styled("span", {
   fontSize: ".85rem",
   fontWeight: 900,
   whiteSpace: "nowrap",
+  "@media (max-width: 599.95px)": { fontSize: 11 },
 }));

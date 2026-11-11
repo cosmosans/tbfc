@@ -45,7 +45,7 @@ import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
 import MatchMedia from "./features/matches/MatchMedia";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
-import { matchTabs, normalizeMatchTab } from "./features/matches/matchTabs";
+import { matchTabs, normalizeMatchTab, visibleMatchTabs } from "./features/matches/matchTabs";
 import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
@@ -206,7 +206,7 @@ export default function App() {
   const matchSeasons = useMemo(() => orderedSeasons(sourceData, true), [sourceData]);
   const requestedTab = new URLSearchParams(location.search).get("tab");
   const activeDetailTab = matchTabs.indexOf(
-    !canEditClub && requestedTab === "chat" ? "lineup" : normalizeMatchTab(requestedTab),
+    normalizeMatchTab(requestedTab, false, canEditClub),
   );
   function setActiveDetailTab(index: number) {
     navigate(
@@ -543,11 +543,11 @@ export default function App() {
   const selected = data.matches.find((m) => m.id === matchRoute?.params.id);
   useEffect(() => {
     if (!selected || !requestedTab) return;
-    const normalized = normalizeMatchTab(
+    const canonical = normalizeMatchTab(
       requestedTab,
       selected.status === "scheduled",
+      canEditClub,
     );
-    const canonical = !canEditClub && normalized === "chat" ? "lineup" : normalized;
     if (requestedTab === canonical) return;
     const params = new URLSearchParams(location.search);
     params.set("tab", canonical);
@@ -668,20 +668,8 @@ export default function App() {
       pl: "var(--nav-rail-width)",
     }}>
       <AppHeader
-        matchTab={
-          selected
-            ? (!canEditClub && requestedTab === "chat"
-                ? "lineup"
-                : normalizeMatchTab(requestedTab, selected.status === "scheduled"))
-            : undefined
-        }
-        matchTabOptions={
-          selected?.status === "scheduled"
-            ? ["lineup", "matchboard"]
-            : selected
-              ? canEditClub ? matchTabs : matchTabs.filter((tab) => tab !== "chat")
-              : undefined
-        }
+        matchTab={selected ? normalizeMatchTab(requestedTab, selected.status === "scheduled", canEditClub) : undefined}
+        matchTabOptions={selected ? visibleMatchTabs(selected.status === "scheduled", canEditClub) : undefined}
         onMatchTabChange={(tab) => {
           const index = matchTabs.indexOf(tab);
           if (index >= 0) setActiveDetailTab(index);
@@ -1056,7 +1044,8 @@ export default function App() {
                 onManageSeasons={() => navigate("/stats")}
               />
             )}
-            {page === "tactics" && (
+            {page === "tactics" && !canEditClub && <Navigate to="/" replace />}
+            {page === "tactics" && canEditClub && (
               <Stack gap={2}>
                 <Typography
                   variant="h5"

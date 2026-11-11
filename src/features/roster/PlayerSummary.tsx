@@ -64,14 +64,14 @@ export default function PlayerSummary({
                 sx={(theme) => ({
                   fontWeight: "bold",
                   color: theme.palette.primary.main,
-                  fontSize: 16,
+                  fontSize: { xs: 11, sm: 16 },
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   border: `2px solid ${theme.palette.primary.main}`,
                   //  backgroundColor: theme.palette.primary.main,
-                  width: 25,
-                  height: 25,
+                  width: { xs: 18, sm: 25 },
+                  height: { xs: 18, sm: 25 },
                   position: "relative",
                   top: -1,
                 })}
@@ -100,7 +100,7 @@ export default function PlayerSummary({
               <Typography
                 variant="body2"
                 color="white"
-                sx={{ textTransform: "uppercase", fontSize: 16 }}
+                sx={{ textTransform: "uppercase", fontSize: { xs: 12, sm: 16 } }}
               >
                 {player.playerType}
               </Typography>

@@ -1,3 +1,4 @@
+import { canEditClub } from "../../editAccess";
 import { Box, Button, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -42,7 +43,7 @@ export default function MatchNavigation({
     </Box>
   );
   const route = (target: Match) =>
-    `/match/${encodeURIComponent(target.id)}?tab=${normalizeMatchTab(params.get("tab"), target.status === "scheduled")}`;
+    `/match/${encodeURIComponent(target.id)}?tab=${normalizeMatchTab(params.get("tab"), target.status === "scheduled", canEditClub)}`;
   return (
     <Box
       sx={{

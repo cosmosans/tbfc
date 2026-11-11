@@ -137,10 +137,15 @@ export default function SchedulePage({
   const liveMatch = data.matches.find(
     (match) => match.status === "in_progress",
   );
-  const highlightedMatch = liveMatch ?? data.matches
-    .filter(match => match.status === "scheduled" && match.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date) ||
-      (kickoffTime(a) ?? Infinity) - (kickoffTime(b) ?? Infinity))[0];
+  const highlightedMatch =
+    liveMatch ??
+    data.matches
+      .filter((match) => match.status === "scheduled" && match.date >= today)
+      .sort(
+        (a, b) =>
+          a.date.localeCompare(b.date) ||
+          (kickoffTime(a) ?? Infinity) - (kickoffTime(b) ?? Infinity),
+      )[0];
   const startedSeason = seasons.find((item) => {
     const start = seasonDate(data, item);
     return start && start <= today;
@@ -178,6 +183,22 @@ export default function SchedulePage({
     kit,
     media.length,
   ].filter(Boolean).length;
+
+  const clearButton = (
+    <Button
+      variant="outlined"
+      onClick={() => {
+        setMedia([]);
+        setSearch("");
+        setSeason("All seasons");
+        setResult("");
+        setVenue("");
+        setKit("");
+      }}
+    >
+      CLEAR
+    </Button>
+  );
 
   const filterControls = (
     <>
@@ -250,19 +271,6 @@ export default function SchedulePage({
           ))}
         </Select>
       </FormControl>
-      <Button
-        variant="outlined"
-        onClick={() => {
-          setMedia([]);
-          setSearch("");
-          setSeason("All seasons");
-          setResult("");
-          setVenue("");
-          setKit("");
-        }}
-      >
-        CLEAR
-      </Button>
     </>
   );
 
@@ -414,7 +422,7 @@ export default function SchedulePage({
               setSearch(event.target.value);
               if (event.target.value) setSeason("All seasons");
             }}
-            sx={{ width: { xs: 128, sm: 200 }, maxWidth: 200, minWidth: 0 }}
+            sx={{ maxWidth: 200, minWidth: 0 }}
           />
           {mobile ? (
             <IconButton
@@ -429,7 +437,7 @@ export default function SchedulePage({
               </Badge>
             </IconButton>
           ) : (
-            filterControls
+            <>{filterControls}{clearButton}</>
           )}
         </Stack>
         {mobile && (
@@ -448,7 +456,8 @@ export default function SchedulePage({
                 {filterControls}
               </Stack>
             </DialogContent>
-            <DialogActions>
+            <DialogActions disableSpacing sx={{ px: 3, pb: 2, gap: 1, "& > button": { flex: 1, textTransform: "uppercase" } }}>
+              {clearButton}
               <Button variant="contained" onClick={() => setFiltersOpen(false)}>
                 Show {history.length}{" "}
                 {history.length === 1 ? "match" : "matches"}

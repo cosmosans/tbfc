@@ -7,6 +7,7 @@ import LineupEditor from "../lineup/LineupEditor";
 import Matchboard from "../board/Matchboard";
 import MatchBanner from "./MatchBanner";
 import { storyToHtml } from "./matchStory";
+import { canEditClub } from "../../editAccess";
 import { normalizeMatchTab } from "./matchTabs";
 
 export default function MatchEventPage({
@@ -29,7 +30,7 @@ export default function MatchEventPage({
   onEdit?: () => void;
 }) {
   const [searchParams] = useSearchParams();
-  const view = normalizeMatchTab(searchParams.get("tab"), true);
+  const view = normalizeMatchTab(searchParams.get("tab"), true, canEditClub);
   const opponent = opponentFor(data, match);
   return (
     <Stack gap={0}>
