@@ -1,3 +1,4 @@
+import cheer from './audio/goal-crowd.mp3?inline'
 import stadium from './audio/stadium.mp3?inline'
 import goal from './audio/tbfc-goal.mp3?inline'
 import whistle from './audio/whistle.mp3?inline'
@@ -6,7 +7,7 @@ import kick2 from './audio/soccer-ball-kick-2.mp3?inline'
 import kick3 from './audio/soccer-ball-kick-3.mp3?inline'
 import kick4 from './audio/soccer-ball-kick-4.mp3?inline'
 
-const recordings={stadium,goal,whistle,kick1,kick2,kick3,kick4}
+const recordings={stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 type Sound=keyof typeof recordings|Impact
 

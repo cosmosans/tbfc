@@ -1,0 +1,18 @@
+#team-select{position:fixed;inset:0;z-index:20;display:grid;place-items:center;overflow:auto;color:#fff4e9;background:radial-gradient(ellipse at 50% 95%,#281a15,transparent 64%),#060606;font:18px Upheaval,monospace}
+.ts-wrap{width:min(94vw,1080px);margin:auto;padding:clamp(10px,3vh,32px) 0}
+.ts-wrap h1{font-size:clamp(28px,5vw,58px);line-height:1;margin:0 0 clamp(12px,3vh,28px)}
+.ts-match{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,4vw,48px)}
+.ts-match article{min-width:0;text-align:center;padding:clamp(10px,2vw,24px) 5px;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--club) 20%,#161414),#141212 75%);border:1px solid #483730;border-top:4px solid var(--club)}
+.ts-match article[data-active=true]{outline:2px solid #ffb477;outline-offset:3px}
+.ts-side{color:var(--club);letter-spacing:.12em;font:700 14px var(--ui-font);text-transform:uppercase}
+.ts-crest{display:grid;grid-template-rows:auto minmax(0,1fr) auto;justify-items:center;align-items:center;gap:0;margin:4px auto}
+.ts-crest img{width:100%;height:clamp(85px,28vh,240px);object-fit:contain;filter:drop-shadow(0 5px 5px #0009)}
+.ts-crest button{background:transparent;border:0;color:#fff1df;font:32px var(--ui-font);padding:0;width:clamp(32px,4vw,48px);min-height:32px;line-height:1}
+.ts-crest button:focus{outline:none}.ts-next:focus-visible{outline:2px solid #ffb477;outline-offset:-2px}
+.ts-match h2{font-size:clamp(18px,3.2vw,38px);line-height:1;margin:12px 2px 6px;text-wrap:balance}
+.ts-stars{color:#927f61;font:clamp(15px,2vw,25px) system-ui;letter-spacing:.08em}.ts-stars span{color:#ffbe59}
+.ts-vs{position:absolute;z-index:1;top:47%;left:50%;transform:translate(-50%,-50%);background:#0d0c0b;border:1px solid #6b4c39;color:#ffcb8e;padding:4px 7px}
+.ts-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:clamp(12px,3vh,28px)}.ts-foot span{font:13px var(--ui-font);color:#d2c5ba}.ts-next{font:inherit;background:#b84c22;border:1px solid #f18952}
+@media(max-width:520px){.ts-foot{flex-direction:column-reverse}.ts-next{width:100%}.ts-crest button{width:26px}.ts-match h2{min-height:2em}}
+
+.ts-heading{position:static;display:flex;align-items:baseline;justify-content:space-between;gap:12px}.ts-pad{font:12px var(--ui-font);color:#d9c6b4}

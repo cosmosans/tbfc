@@ -17,7 +17,8 @@ export function frameAction(camera:T.PerspectiveCamera,angle:typeof strikerView,
 const angles=[
   {label:'Touchline',along:-6,side:17,height:9,fov:45},
   {...strikerView,label:'Scorer cam'},
-  {label:'Goal Cam',along:1.24,side:1.8,height:.72,fov:84}
+  {label:'Goal Cam',along:1.24,side:1.8,height:.72,fov:84},
+  {label:'Celebration cam',along:5,side:1,height:2.2,fov:38}
 ]
 
 export class GoalReplay {
@@ -52,7 +53,7 @@ export class GoalReplay {
         u:map.offset.x,v:map.offset.y,w:map.repeat.x,h:map.repeat.y}
     })
     this.frames.push({time:this.time,poses,netTime})
-    while(this.frames.length>2&&this.frames[1].time<this.time-leadIn-1)this.frames.shift()
+    while(this.frames.length>2&&this.frames[1].time<(this.goal>0?this.goal:this.time)-leadIn-1)this.frames.shift()
   }
   begin(){
     if(this.frames.length<2)return false
@@ -68,16 +69,17 @@ export class GoalReplay {
     try{renderer.render(scene,this.camera)}
     finally{this.sprites.forEach((sprite,i)=>sprite.scale.setScalar(liveSizes[i]))}
   }
-  get label(){return 'REPLAY '+(this.cut+1)+'/3 · '+angles[this.cut].label}
+  get label(){return 'REPLAY '+(this.cut+1)+'/'+angles.length+' · '+angles[this.cut].label}
   advance(dt:number){
     const slow=Math.abs(this.cursor-this.strike)<.3||Math.abs(this.cursor-this.goal)<.17
-    this.cursor+=dt*(slow?.34:1.35)
-    if(this.cursor<=this.frames[this.frames.length-1].time)return true
+    this.cursor+=dt*(this.cut===3?.55:slow?.34:1.35)
+    const end=this.frames[this.frames.length-1].time
+    if(this.cursor<=(this.cut===3?end:Math.min(end,this.goal+.52)))return true
     return this.nextAngle()
   }
   nextAngle(){
     this.cut++
-    this.cursor=this.start
+    this.cursor=this.cut===3?Math.max(this.goal,this.frames[this.frames.length-1].time-2.55):this.start
     return this.cut<angles.length
   }
   draw(aspect:number,direction:number,poseNet:(time:number)=>void){
@@ -101,6 +103,16 @@ export class GoalReplay {
       this.camera.updateProjectionMatrix()
       cameraX=direction*(5+angle.along);cameraZ=z-lookZ
     }
+    if(this.cut===3&&this.scorer){
+      const subject=b.poses[this.sprites.indexOf(this.scorer)].position
+      const progress=T.MathUtils.clamp(1-(this.frames[this.frames.length-1].time-this.cursor)/2.55,0,1)
+      const yaw=Math.atan2(subject.x||direction*.01,subject.z)+.48-.32*progress
+      const distance=6.7-2*progress
+      cameraX=Math.sin(yaw)*distance;cameraZ=Math.cos(yaw)*distance
+      this.camera.position.set(subject.x+cameraX,2.7-.4*progress,subject.z+cameraZ)
+      this.camera.lookAt(subject.x,1,subject.z)
+      this.camera.aspect=aspect;this.camera.fov=38;this.camera.updateProjectionMatrix()
+    }
     const yaw=Math.round(Math.atan2(cameraX,cameraZ)/(Math.PI/4))
     for(const [i,sprite] of this.sprites.entries()){
       const prev=a.poses[i],next=b.poses[i],pose=f<.5?prev:next
@@ -111,13 +123,13 @@ export class GoalReplay {
       const actor=this.actors[i]
       if(actor){
         const facing=(pose.face-yaw+8)%8
-        if(pose.mode===0)pose.map.offset.x=facing*pose.w
+        if(pose.mode===0||pose.map.userData.directionalIdle)pose.map.offset.x=facing*pose.w
         else if(pose.mode===1)pose.map.offset.y=1-(facing+1)*pose.h
         else if(pose.mode===2&&facing!==0&&facing!==4)pose.map.offset.y=1-((facing<4?0:pose.westKickRow)+1)*pose.h
       }
     }
     poseNet(Number.isFinite(a.netTime)&&Number.isFinite(b.netTime)?T.MathUtils.lerp(a.netTime,b.netTime,f):b.netTime)
-    if(this.cut!==2){
+    if(this.cut<2){
       const subject=this.cut===1&&this.scorer?this.scorer:this.ball
       frameAction(this.camera,angle,subject.position,aspect,direction)
     }

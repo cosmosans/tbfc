@@ -9,6 +9,10 @@ npm install
 npm run dev
 ```
 
+## TBFC Arcade
+
+The header gamepad opens `/arcade`. Edit the game in `tbfc-arcade/src/` and its page in `tbfc-arcade/play.html`. The app's normal `npm run dev` and `npm run build` commands serve and build both pages. The original art, sprite packages, and design documents live in `tbfc-arcade/art/`, `tbfc-arcade/sprites/`, and `tbfc-arcade/docs/`.
+
 ## Code layout
 
 - `src/App.tsx` maps React Router URLs to pages and handles shared data updates.

@@ -1,0 +1,33 @@
+{
+  "frameSize": [
+    24,
+    24
+  ],
+  "rowOrder": [
+    "S",
+    "SE",
+    "E",
+    "NE",
+    "N",
+    "NW",
+    "W",
+    "SW"
+  ],
+  "run": {
+    "frames": 4,
+    "metresPerFrame": 0.28
+  },
+  "kick": {
+    "frames": [
+      "windup",
+      "contact",
+      "follow-through"
+    ],
+    "durationsMs": [
+      120,
+      80,
+      170
+    ],
+    "releaseMs": 120
+  }
+}

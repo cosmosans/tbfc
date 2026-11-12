@@ -6,6 +6,11 @@ export default defineConfig(({ mode }) => {
   const target = env.TBFC_API_ORIGIN || 'https://turfburnersfc.soccer';
   return {
     plugins: [react()],
+    build: {
+      rollupOptions: {
+        input: { club: 'index.html', arcade: 'tbfc-arcade/play.html' },
+      },
+    },
     server: {
       host: '127.0.0.1',
       proxy: {
