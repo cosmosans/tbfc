@@ -139,6 +139,7 @@ export type Lineup = {
   starters: string[];
   bench: string[];
   benchPositions?: Record<string, Position>;
+  confirmedOutIds?: string[];
 };
 export type ClubData = {
   matches: Match[];

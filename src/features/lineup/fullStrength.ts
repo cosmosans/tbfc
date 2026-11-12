@@ -17,9 +17,9 @@ function roleOrder(player: Player, assigned?: Position): Position[] {
     .filter((role): role is Position => Boolean(role)))];
 }
 
-export function fullStrength(data: ClubData, formation: Formation) {
+export function fullStrength(data: ClubData, formation: Formation, confirmedOutIds: ReadonlySet<string> = new Set()) {
   const slots = formationSlots[formation];
-  const active = data.players.filter(player => player.active).sort(byPlayerNumber);
+  const active = data.players.filter(player => player.active && !confirmedOutIds.has(player.id)).sort(byPlayerNumber);
   const remaining = new Set(active);
   const starters = slots.map(role => {
     const pick = active.find(player => player.id === data.firstChoice?.[role]);

@@ -43,6 +43,7 @@ export default function LineupEditor({
   const [activeSquadOnly, setActiveSquadOnly] = useState(false);
   const lineup = normalizeLineupRoles(
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id));
+  const confirmedOutIds = new Set(lineup.confirmedOutIds ?? []);
   if (!canEditClub) {
     return <LineupPitch data={data} lineup={lineup} showTitle={false} />;
   }
@@ -108,7 +109,13 @@ export default function LineupEditor({
     });
   }
   function loadFirstChoice() {
-    save({ ...lineup, ...fullStrength(data, lineup.formation) });
+    save({ ...lineup, ...fullStrength(data, lineup.formation, confirmedOutIds) });
+  }
+  function toggleConfirmedOut(playerId: string) {
+    const next = new Set(confirmedOutIds);
+    if (next.has(playerId)) next.delete(playerId);
+    else next.add(playerId);
+    save({ ...lineup, confirmedOutIds: [...next] });
   }
   const benchPlayers = data.players
     .filter(
@@ -121,10 +128,11 @@ export default function LineupEditor({
       const bFloats = !lineup.benchPositions?.[b.id];
       return Number(aFloats) - Number(bFloats) || byPlayerNumber(a, b);
     });
-  const eligiblePlayers = data.players
+  const visiblePlayers = data.players
     .filter((player) => !activeSquadOnly || player.active)
     .sort(byPlayerNumber);
-  const availablePlayers = eligiblePlayers.filter(
+  const eligiblePlayers = visiblePlayers.filter(player => !confirmedOutIds.has(player.id));
+  const availablePlayers = visiblePlayers.filter(
     (player) =>
       !lineup.starters.includes(player.id) && !lineup.bench.includes(player.id),
   );
@@ -192,7 +200,7 @@ export default function LineupEditor({
                     variant="contained"
                     disabled={
                       !canEditClub ||
-                      !data.players.some(player => player.active)
+                      !data.players.some(player => player.active && !confirmedOutIds.has(player.id))
                     }
                     onClick={loadFirstChoice}
                   >
@@ -207,7 +215,7 @@ export default function LineupEditor({
                   const selected = data.players.find(
                     (player) => player.id === id,
                   );
-                  const options = [...data.players].sort(byPlayerNumber);
+                  const options = data.players.filter(player => !confirmedOutIds.has(player.id)).sort(byPlayerNumber);
                   const playerLabel = (player: (typeof options)[number]) =>
                     `#${player.number} ${player.name}`;
                   return (
@@ -386,7 +394,7 @@ export default function LineupEditor({
                 sx={{ mb: 1 }}
               >
                 <Typography variant="h6">
-                  Available Players ({availablePlayers.length})
+                  Available Players ({availablePlayers.filter(player => !confirmedOutIds.has(player.id)).length})
                 </Typography>
                 <FormControlLabel
                   sx={{ ml: "auto", mr: 0 }}
@@ -401,42 +409,92 @@ export default function LineupEditor({
                 />
               </Stack>
               <Stack direction="row" gap={1} flexWrap="wrap">
-                {availablePlayers.map((player) => (
-                  <ButtonBase
-                    key={player.id}
-                    type="button"
-                    disabled={!canEditClub}
-                    aria-label={`Move #${player.number} ${player.name} to Bench`}
-                    title={`#${player.number} ${player.name}`}
-                    sx={{
-                      width: 180,
-                      maxWidth: "100%",
-                      flexShrink: 0,
-                      cursor: canEditClub ? "pointer" : "default",
-                      "&:focus-visible": {
-                        outline: "2px solid",
-                        outlineColor: "primary.main",
-                        outlineOffset: 2,
-                      },
-                    }}
-                    onClick={
-                      canEditClub
-                        ? () =>
-                            save({
-                              ...lineup,
-                              bench: [...lineup.bench, player.id],
-                            })
-                        : undefined
-                    }
-                  >
-                    <LineupNameplate kit={match.kit} sx={{ width: "100%" }}>
-                      <NameplateText
-                        number={player.number}
-                        name={player.name.split(" ")[0]}
-                      />
-                    </LineupNameplate>
-                  </ButtonBase>
-                ))}
+                {availablePlayers.map((player) => {
+                  const isOut = confirmedOutIds.has(player.id);
+                  return (
+                    <Box
+                      key={player.id}
+                      sx={{
+                        width: 180,
+                        maxWidth: "100%",
+                        flexShrink: 0,
+                        position: "relative",
+                        pt: 2,
+                        "&:hover .out-toggle, &:focus-within .out-toggle": {
+                          opacity: 1,
+                          transform: "translateY(0)",
+                          pointerEvents: "auto",
+                        },
+                        "@media (hover: none)": {
+                          "& .out-toggle": {
+                            opacity: 1,
+                            transform: "translateY(0)",
+                            pointerEvents: "auto",
+                          },
+                        },
+                      }}
+                    >
+                      <Button
+                        className="out-toggle"
+                        size="small"
+                        variant={isOut ? "contained" : "outlined"}
+                        aria-label={`${isOut ? "Restore" : "Mark"} #${player.number} ${player.name} ${isOut ? "to available players" : "as confirmed out"}`}
+                        aria-pressed={isOut}
+                        onClick={() => toggleConfirmedOut(player.id)}
+                        sx={{
+                          position: "absolute",
+                          top: 0,
+                          right: 8,
+                          zIndex: 1,
+                          minWidth: 48,
+                          height: 20,
+                          px: 0.5,
+                          py: 0,
+                          fontSize: 10,
+                          lineHeight: 1,
+                          color: isOut ? "#111" : "#fff",
+                          borderColor: "#fff",
+                          bgcolor: isOut ? "#fff" : "#111",
+                          "&:hover": {
+                            borderColor: "#fff",
+                            bgcolor: isOut ? "#eee" : "#333",
+                          },
+                          opacity: isOut ? 1 : 0,
+                          transform: isOut ? "translateY(0)" : "translateY(8px)",
+                          pointerEvents: isOut ? "auto" : "none",
+                          transition: "opacity .18s ease, transform .18s ease",
+                        }}
+                      >
+                        Out
+                      </Button>
+                      <ButtonBase
+                        type="button"
+                        disabled={isOut}
+                        aria-label={`Move #${player.number} ${player.name} to Bench`}
+                        title={isOut ? `${player.name} is confirmed out` : `#${player.number} ${player.name}`}
+                        sx={{
+                          width: "100%",
+                          cursor: isOut ? "default" : "pointer",
+                          opacity: isOut ? 0.35 : 1,
+                          transition: "opacity .18s ease",
+                          "&:focus-visible": {
+                            outline: "2px solid",
+                            outlineColor: "primary.main",
+                            outlineOffset: 2,
+                          },
+                        }}
+                        onClick={() => save({ ...lineup, bench: [...lineup.bench, player.id] })}
+                      >
+                        <LineupNameplate kit={match.kit} sx={{ width: "100%" }}>
+                          <NameplateText
+                            number={player.number}
+                            name={player.name.split(" ")[0]}
+                          />
+                        </LineupNameplate>
+                      </ButtonBase>
+                    </Box>
+                  );
+                })}
                 {availablePlayers.length === 0 && (
                   <Typography color="text.secondary">
                     All available players are assigned.
