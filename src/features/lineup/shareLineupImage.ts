@@ -13,6 +13,7 @@ import GreenLabel from "../../img/lineup-label-gk-green.png";
 import WhiteKit from "../../img/white-front.png";
 import BlackKit from "../../img/black-front.png";
 import { goalkeeperPlate } from "../../components/LineupNameplate";
+import { splitMatchLocation } from "../../matchLocation";
 
 const W = 1080;
 const H = 1920;
@@ -69,7 +70,8 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
   await document.fonts.load("700 32px Oxanium");
   const lineup = normalizeLineupRoles(savedLineup);
   const opponent = opponentFor(data, match);
-  const location = data.locations.find(item => item.id === match.locationId);
+  const location = data.locations.find(item => item.id === match.locationId) ??
+    data.locations.find(item => item.name.toLowerCase() === splitMatchLocation(match.venue).venue.toLowerCase());
   const coverPhoto = match.photos?.find(photo => photo.cover && photo.src);
   const [background, tbfcCrest, opponentCrest, tbfcKit, opponentKit, pitchImage, pitchOverlay, whitePlate, blackPlate, pinkPlate, bluePlate, greenPlate] = await Promise.all([
     image(coverPhoto?.src || location?.imageUrl), image("/crests/tbfc.png"), image(opponent?.crestUrl),
@@ -100,7 +102,32 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
   const seasonAndCompetition = [seasonName(data, match), match.competition].filter(Boolean).join("  •  ").toUpperCase();
   label(ctx, seasonAndCompetition, W / 2, 57, 970, 30, MUTED, 700);
   label(ctx, `${moment(match.date).format("MMMM Do YYYY")}  ${match.kickoff || "TBD"}`, W / 2, 113, 970, 34);
-  label(ctx, [match.venue || "Venue TBD", match.pitch ? `Pitch ${match.pitch}` : ""].filter(Boolean).join("  •  "), W / 2, 155, 970, 25, MUTED, 500);
+  const venue = match.venue || "Venue TBD";
+  if (match.pitch) {
+    const pitchText = `Pitch ${match.pitch}`;
+    ctx.font = "500 25px Oxanium, sans-serif";
+    const venueWidth = ctx.measureText(venue).width;
+    const pitchWidth = ctx.measureText(pitchText).width;
+    const indicatorWidth = 48;
+    const gap = 18;
+    const start = (W - venueWidth - gap * 2 - indicatorWidth - pitchWidth) / 2;
+    label(ctx, venue, start, 155, venueWidth, 25, MUTED, 500, "left");
+    const indicatorX = start + venueWidth + gap;
+    [1, 2, 3].forEach(lane => {
+      const x = indicatorX + (lane - 1) * 16;
+      ctx.fillStyle = match.pitch === String(lane) ? "#db6337" : "#b6b6b6";
+      ctx.beginPath();
+      ctx.moveTo(x + 4, 143);
+      ctx.lineTo(x + 15, 143);
+      ctx.lineTo(x + 11, 166);
+      ctx.lineTo(x, 166);
+      ctx.closePath();
+      ctx.fill();
+    });
+    label(ctx, pitchText, indicatorX + indicatorWidth + gap, 155, pitchWidth, 25, MUTED, 500, "left");
+  } else {
+    label(ctx, venue, W / 2, 155, 970, 25, MUTED, 500);
+  }
   const awayIsTbfc = match.homeAway === "away";
   const leftName = awayIsTbfc ? "Turf Burners FC" : opponentName(data, match);
   const rightName = awayIsTbfc ? opponentName(data, match) : "Turf Burners FC";
@@ -118,7 +145,10 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
   label(ctx, score, W / 2, 301, 255, 92, WHITE, 800);
   if (isMatchCompleted(match)) label(ctx, match.resultLabel === "W" ? "WIN" : match.resultLabel === "L" ? "LOSS" : "DRAW", W / 2, 358, 180, 23, match.resultLabel === "W" ? "#70c778" : match.resultLabel === "L" ? "#ff514a" : MUTED);
 
-  const h2h = record(data.matches.filter(item => item.opponentId === match.opponentId && item.opponentId));
+  const h2h = record(data.matches.filter(item =>
+    (opponent && item.opponentId === opponent.id) ||
+    (!!match.opponent && item.opponent === match.opponent)
+  ));
   const counts = awayIsTbfc ? [h2h.W, h2h.D, h2h.L] : [h2h.L, h2h.D, h2h.W];
   const total = counts.reduce((sum, count) => sum + count, 0);
   const shares = total ? counts.map(count => count / total) : [1 / 3, 1 / 3, 1 / 3];
@@ -128,18 +158,18 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
     const width = index === 2 ? barX + barW - cursor : barW * share;
     ctx.fillStyle = index === 1 ? "#aeb0b1" : (awayIsTbfc ? index === 0 : index === 2) ? ORANGE : opponent?.color || "#465260";
     ctx.fillRect(cursor, barY, width, barH);
-    if (width > 40) label(ctx, `${counts[index]}${index === 1 ? "D" : (awayIsTbfc ? index === 0 : index === 2) ? "W" : "W"}`, cursor + width / 2, barY + barH / 2, width - 8, 18, index === 1 ? "#111" : WHITE, 700);
+    if (width > 40) label(ctx, `${counts[index]}${index === 1 ? "D" : "W"}`, cursor + width / 2, barY + barH / 2, width - 8, 18, index === 1 ? "#111" : WHITE, 700);
     cursor += width;
   });
 
   // Portrait pitch. The saved formation points stay in their match positions.
   label(ctx, "STARTING VII", 60, 649, 500, 38, WHITE, 800, "left");
   label(ctx, lineup.formation, 1020, 649, 300, 30, MUTED, 700, "right");
-  const px = 60, py = 682, pw = 960, ph = 886;
+  const px = 60, py = 682, pw = 960, ph = 1150;
   ctx.fillStyle = "#173021";
   ctx.fillRect(px, py, pw, ph);
-  if (pitchImage) { ctx.globalAlpha = 0.56; cover(ctx, pitchImage, px, py, pw, ph); ctx.globalAlpha = 1; }
-  if (pitchOverlay) { ctx.globalAlpha = 0.66; cover(ctx, pitchOverlay, px, py, pw, ph); ctx.globalAlpha = 1; }
+  if (pitchImage) { ctx.globalAlpha = 0.56; ctx.drawImage(pitchImage, px, py, pw, ph); ctx.globalAlpha = 1; }
+  if (pitchOverlay) { ctx.globalAlpha = 0.66; ctx.drawImage(pitchOverlay, px, py, pw, ph); ctx.globalAlpha = 1; }
   ctx.strokeStyle = "#ffffffad";
   ctx.lineWidth = 3;
   ctx.strokeRect(px + 24, py + 24, pw - 48, ph - 48);
@@ -149,32 +179,43 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
   ctx.strokeRect(px + pw * .34, py + ph - 112, pw * .32, 88);
   const slots = formationSlots[lineup.formation];
   const plates = { white: whitePlate, black: blackPlate, pink: pinkPlate, blue: bluePlate, green: greenPlate };
+  const bench = data.players.filter(player => lineup.bench.includes(player.id) && !lineup.starters.includes(player.id));
+  const subsBySlot = slots.map(role => bench.filter(player => {
+    const assigned = lineup.benchPositions?.[player.id];
+    const preferred = [assigned, player.preferredPosition, player.secondaryPosition]
+      .find(position => position && slots.includes(position));
+    return preferred === role;
+  }));
+  const unassigned = bench.filter(player => !subsBySlot.some(players => players.includes(player)));
+  unassigned.forEach((player, index) => subsBySlot[index % slots.length].push(player));
+  const rowValues = [...new Set(formationPoints[lineup.formation].map(([, y]) => y))].sort((a, b) => a - b);
+  const rowPositions = new Map<number, number>();
+  const minRow = rowValues[0], maxRow = rowValues[rowValues.length - 1];
+  let minimum = py + 60;
+  rowValues.forEach(row => {
+    const desired = py + ph * (0.2 + 0.62 * (row - minRow) / (maxRow - minRow || 1));
+    const start = Math.max(desired, minimum);
+    rowPositions.set(row, start);
+    const longestStack = Math.max(...formationPoints[lineup.formation]
+      .map(([, y], index) => y === row ? subsBySlot[index].length : 0));
+    minimum = start + 78 + longestStack * 50;
+  });
+  const overflow = Math.max(0, minimum - 78 - (py + ph - 38));
+  if (overflow) rowPositions.forEach((position, row) => rowPositions.set(row, position - overflow));
   formationPoints[lineup.formation].forEach(([x, y], index) => {
     const player = data.players.find(item => item.id === lineup.starters[index]);
-    const cx = px + pw * x / 100, cy = py + ph * y / 100;
+    const cx = px + pw * x / 100, cy = rowPositions.get(y)!;
     const role = slots[index];
     label(ctx, role, cx, cy - 41, 220, 22, WHITE, 800);
-    const gk = goalkeeperPlate(player?.id, role);
-    const plate = gk ? plates[gk] : match.kit === "White" ? plates.white : plates.black;
-    if (plate) contain(ctx, plate, cx - 126, cy - 15, 252, 57);
-    else { ctx.fillStyle = "#111"; ctx.fillRect(cx - 124, cy - 12, 248, 50); }
-    const name = player ? `${player.number} ${player.name.split(" ")[0]}` : "—";
-    label(ctx, name.toUpperCase(), cx, cy + 12, 210, 24, gk ? WHITE : match.kit === "White" ? "#ed623e" : "#f47730", 800);
-  });
-
-  // All saved substitutes remain visible on a phone-sized image.
-  const bench = data.players.filter(player => lineup.bench.includes(player.id) && !lineup.starters.includes(player.id));
-  label(ctx, "SUBSTITUTES", 60, 1625, 500, 38, WHITE, 800, "left");
-  if (!bench.length) label(ctx, "No substitutes selected", 60, 1687, 800, 26, MUTED, 500, "left");
-  const columns = 3;
-  const rows = Math.max(1, Math.ceil(bench.length / columns));
-  const rowHeight = Math.min(64, 220 / rows);
-  bench.forEach((player, index) => {
-    const x = 60 + (index % columns) * 324;
-    const y = 1667 + Math.floor(index / columns) * rowHeight;
-    const role = lineup.benchPositions?.[player.id] || player.preferredPosition || "SUB";
-    label(ctx, `${player.number} ${player.name.split(" ")[0]}`.toUpperCase(), x, y, 285, 25, WHITE, 700, "left");
-    label(ctx, role, x + 282, y, 40, 18, "#f47730", 700, "right");
+    [player, ...subsBySlot[index]].forEach((person, row) => {
+      const plateY = cy + row * 50;
+      const gk = goalkeeperPlate(person?.id, role);
+      const plate = gk ? plates[gk] : match.kit === "White" ? plates.white : plates.black;
+      if (plate) contain(ctx, plate, cx - 126, plateY - 15, 252, 45);
+      else { ctx.fillStyle = "#111"; ctx.fillRect(cx - 124, plateY - 12, 248, 40); }
+      const name = person ? `${person.number} ${person.name.split(" ")[0]}` : "—";
+      label(ctx, name.toUpperCase(), cx, plateY + 8, 210, 22, gk ? WHITE : match.kit === "White" ? "#ed623e" : "#f47730", 800);
+    });
   });
   label(ctx, "TURF BURNERS FC", W / 2, 1880, 800, 24, MUTED, 800);
   ctx.fillStyle = ORANGE;
