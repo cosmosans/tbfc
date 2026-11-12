@@ -69,6 +69,7 @@ kbd[data-pad=A]{background:linear-gradient(#3b994c,#24642e)}kbd[data-pad=B]{back
 kbd.pad-hint:is([data-pad=RB],[data-pad=LB],[data-pad=RT]){border-radius:8px 8px 3px 3px}
 html[data-broadcast] main{width:100vw;height:100dvh;aspect-ratio:auto}
 html[data-broadcast] main>:not(canvas){display:none!important}
+main[data-paused]>canvas{filter:brightness(.55)}
 main[data-loading]{visibility:hidden}
 #pitchError{position:fixed;inset:0;place-content:center;text-align:center;padding:20px;background:#000}
 #pitchError:not([hidden]){display:grid}

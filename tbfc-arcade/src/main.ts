@@ -3,7 +3,7 @@ import {broadcastDirector,broadcastShirt,broadcastStarters} from './menuBroadcas
 import {hint,reveal} from './screenUI'
 import {createChipBins} from './chipBins'
 import {drills,warmupPanel,shotPoints} from './warmup'
-import {startMenuMusic} from './menuMusic'
+import {startMenuMusic,type MenuMusic} from './menuMusic'
 import {mainMenu,mountMenuBackdrop} from './mainMenu'
 import {goalCannons} from './goalCannons'
 import {kneelingPose} from './kneelingPose'
@@ -109,6 +109,8 @@ async function start(){
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
  let fixture:Fixture|undefined,lineup:Selection|null=null,portraits=burnerPortraits
  audio.state(true,false)
+ let music:MenuMusic|undefined
+ let standalonePractice=false
  let celebrationLab=false
  const broadcast=new URLSearchParams(location.search).get('broadcast')==='1'
  if(broadcast){
@@ -117,7 +119,7 @@ async function start(){
   fixture={home:burners,away:clubs[1+Math.floor(Math.random()*(clubs.length-1))]}
   lineup={shape:'1-3-3',starters:broadcastStarters(Object.keys(kits),burners.keeper,burnerEligibility),bench:[]}
  }else{
-  const music=startMenuMusic(!audio.muted,on=>audio.setMuted(!on))
+  music=startMenuMusic(!audio.muted,on=>audio.setMuted(!on))
   const returning=history.state?.arcadeMenu===true
   if(returning){
    history.replaceState({...history.state,arcadeMenu:false},'')
@@ -132,7 +134,7 @@ async function start(){
     lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[]}
     break
    }
-   if(destination==='practice'){fixture={home:burners,away:clubs[clubs.length-1]};lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[...burners.bench],warmup:true};break}
+   if(destination==='practice'){standalonePractice=true;fixture={home:burners,away:clubs[clubs.length-1]};lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[...burners.bench],warmup:true};break}
    const selected=await selectTeams(fixture)
    if(!selected){destination=await mainMenu(music);continue}
    fixture=selected
@@ -1378,14 +1380,14 @@ async function start(){
   const current={shape:lineup.shape,starters:homeSlots.map(m=>m.displayName),bench:matchBench}
   try{
    const unavailable=new Set(homeSlots.filter(m=>m.penalty>0).map(m=>m.displayName))
-   const result=await selectLineup(portraits,fixture!,{current,unavailable})
+   const result=await selectLineup(portraits,fixture!,{current,unavailable,music:music!})
    if(!result)return
    applyTeam(result.starters,result.bench)
    nameText.textContent=players[active].displayName
    audio.menu('close');pause(document.hidden);reveal(matchView,':scope > canvas,.bug-stack')
   }finally{squadOpen=false;padIndex=null}
  }
- function pause(on:boolean){if(phase==='fulltime')return;cancelRush();cancelCharge();paused=on;keys.clear();axisX=axisZ=0;el('knob').style.transform='';el('pause').textContent=on?'Resume':'Pause';el('message').textContent=on?'Match paused':phase==='halftime'?'Halftime':phase==='kickoff'?(kickoffBlue?matchOpponent.name+' kickoff':players[active].displayName+' · pass to kick off'):''}
+ function pause(on:boolean){if(phase==='fulltime')return;cancelRush();cancelCharge();paused=on;matchView.toggleAttribute('data-paused',on);keys.clear();axisX=axisZ=0;el('knob').style.transform='';el('pause').textContent=on?'Resume':'Pause';el('message').textContent=on?'Match paused':phase==='halftime'?'Halftime':phase==='kickoff'?(kickoffBlue?matchOpponent.name+' kickoff':players[active].displayName+' · pass to kick off'):''}
  function snap(value:number,step:number){return Math.round(value/step)*step}
  function screenRotation(){return broadcast?broadcastRotation:view.end?2*attackSign:0}
  function resize(){
@@ -1444,7 +1446,7 @@ async function start(){
   bins.hide();restorePracticeIds();crossingDrill=false;training.panel.hidden=true;matchView.classList.remove('training')
   players.splice(0,players.length,...matchPlayers);opponents.splice(0,opponents.length,...matchRivals)
   for(const actor of pitchActors){actor.sprite.visible=true;actor.sprintTime=0;actor.sprintCharge=actor.staminaCapacity=100}
-  keys.clear();paused=false;reset()
+  keys.clear();paused=false;matchView.removeAttribute('data-paused');reset()
  }
  new ResizeObserver(resize).observe(renderer.domElement.parentElement!);resize();reset()
  if(lineup.warmup){
@@ -1464,12 +1466,12 @@ async function start(){
   restorePracticeIds=()=>matchPlayers.slice(0,3).forEach((slot,i)=>Object.assign(slot,previous[i]))
   players.splice(3);opponents.splice(0)
   for(const actor of pitchActors)actor.sprite.visible=players.includes(actor)||actor===awayGK
-  training.panel.hidden=false;matchView.classList.add('training');training.choose(0);setupRep()
+  training.panel.hidden=false;matchView.classList.add('training');training.choose(standalonePractice?0:Math.floor(Math.random()*drills.length));setupRep()
  }
  let revealFirstFrame=!broadcast
  el('switchPlayer').onclick=switchPlayer
  el('reset').onclick=()=>{
-  audio.clear();half=1;attackSign=1;matchSeconds=homeScore=awayScore=0;paused=false;el('pause').textContent='Pause';el('pause').removeAttribute('disabled')
+  audio.clear();half=1;attackSign=1;matchSeconds=homeScore=awayScore=0;paused=false;matchView.removeAttribute('data-paused');el('pause').textContent='Pause';el('pause').removeAttribute('disabled')
   applyTeam(lineup.starters,lineup.bench)
   for(const data of squad.values()){data.penalty=data.lateChallenges=0;data.sprintCharge=data.staminaCapacity=100}
   for(const m of [...outfield,sean]){m.penalty=m.lateChallenges=0;m.sprite.visible=true;m.sprintCharge=m.staminaCapacity=100}

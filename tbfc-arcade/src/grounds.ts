@@ -5,11 +5,11 @@ import type {MatchSettings} from './matchSettings'
 import { boardX, boardZ, boardHeight, boardThickness } from './perimeter'
 import * as T from 'three'
 import turfUrl from './art/ground/grass.jpg?inline'
-import crestUrl from './art/ground/crest.png?inline'
+import sponsorUrl from './art/ground/sons-of-pitches-board.png?inline'
 
 export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,home:Club) {
   const loader=new T.TextureLoader()
-  const [grass,crest,homeMap]=await Promise.all([loader.loadAsync(turfUrl),loader.loadAsync(crestUrl),homeBoard(loader,home)])
+  const [grass,sponsorMap,homeMap]=await Promise.all([loader.loadAsync(turfUrl),loader.loadAsync(sponsorUrl),homeBoard(loader,home)])
   grass.colorSpace=T.SRGBColorSpace
   grass.wrapS=grass.wrapT=T.MirroredRepeatWrapping
   grass.repeat.set(7,6)
@@ -70,19 +70,11 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
     for(const dx of [-3.65,0,3.65])place(x+dx,1.55,-18.4,.065,3.05,.065,0x66716a)
     for(const y of [2.28,2.97])place(x,y,-18.4,7.5,.065,.065,0xaab2a9)
   }
-  const makeBoard=(title:string,background:string)=>{
-    const c=document.createElement('canvas');c.width=1024;c.height=128
-    const ctx=c.getContext('2d')!
-    ctx.fillStyle=background;ctx.fillRect(0,0,1024,128)
-    ctx.fillStyle='#d85e2c';ctx.fillRect(0,117,1024,11)
-    ctx.drawImage(crest.image,26,9,104,104)
-    ctx.font='bold 68px Arial';ctx.fillStyle='#fff3dc';ctx.textBaseline='middle'
-    ctx.fillText(title,158,62,830)
-    const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.anisotropy=grass.anisotropy
+  const boards=[homeMap,sponsorMap].map(map=>{
+    map.colorSpace=T.SRGBColorSpace
+    map.anisotropy=grass.anisotropy
     return new T.MeshBasicMaterial({map})
-  }
-  homeMap.colorSpace=T.SRGBColorSpace;homeMap.anisotropy=grass.anisotropy
-  const boards=[new T.MeshBasicMaterial({map:homeMap}),makeBoard('SONS OF PITCHES','#573023')]
+  })
   for(const end of [false,true]){
     const halfLength=end?boardZ:boardX
     const count=Math.ceil(2*halfLength/6.8),width=2*halfLength/count
