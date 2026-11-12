@@ -7,13 +7,21 @@ import kick2 from './audio/soccer-ball-kick-2.mp3?inline'
 import kick3 from './audio/soccer-ball-kick-3.mp3?inline'
 import kick4 from './audio/soccer-ball-kick-4.mp3?inline'
 
-const recordings={stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
+import nav from './audio/01_UI_Nav_Standard.wav?inline'
+import success from './audio/13_UI_Success_Bloop.wav?inline'
+import open from './audio/06_UI_Menu_Open.wav?inline'
+import close from './audio/07_UI_Menu_Close.wav?inline'
+
+type MenuCue='nav'|'success'|'open'|'close'
+const recordings={nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 type Sound=keyof typeof recordings|Impact
 
 export class MatchAudio {
  private ctx?:AudioContext
  private master?:GainNode
+ private menuBus?:GainNode
+ private menuVoice?:AudioBufferSourceNode
  private bed?:GainNode
  private buffers=new Map<Sound,AudioBuffer>()
  private voices=new Set<AudioBufferSourceNode>()
@@ -29,6 +37,7 @@ export class MatchAudio {
   if(!window.AudioContext)return
   if(!this.ctx){
    const ctx=this.ctx=new AudioContext()
+   this.menuBus=ctx.createGain();this.menuBus.connect(ctx.destination)
    this.master=ctx.createGain();this.master.connect(ctx.destination)
    this.bed=ctx.createGain();this.bed.connect(this.master)
    this.sync()
@@ -64,6 +73,7 @@ export class MatchAudio {
  private sync(){
   if(!this.ctx)return
   const gain=this.master!.gain,now=this.ctx.currentTime
+  this.menuBus!.gain.setValueAtTime(this.muted?0:.48,now)
   gain.cancelScheduledValues(now)
   if(this.stopped||this.muted)gain.setValueAtTime(0,now)
   else gain.setTargetAtTime(.83,now,.012)
@@ -90,8 +100,21 @@ export class MatchAudio {
   src.onended=()=>{this.voices.delete(src);src.disconnect();level.disconnect()}
   src.start()
  }
+ menu(key:MenuCue){
+  if(this.muted||document.hidden)return
+  this.unlock()
+  const ctx=this.ctx,buffer=this.buffers.get(key)
+  if(!ctx||!buffer)return
+  this.menuVoice?.stop()
+  const source=ctx.createBufferSource()
+  source.buffer=buffer;source.connect(this.menuBus!)
+  source.onended=()=>{source.disconnect();if(this.menuVoice===source)this.menuVoice=undefined}
+  this.menuVoice=source;source.start()
+ }
  kick(power=.4){
   const keys=['kick1','kick2','kick3','kick4'] as const
   this.play(keys[this.kickIndex++%4],.32+.55*power,1.12-.19*power)
  }
 }
+
+export const audio=new MatchAudio()

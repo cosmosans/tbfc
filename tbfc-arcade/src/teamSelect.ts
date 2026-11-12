@@ -1,3 +1,4 @@
+import {audio} from './matchAudio'
 import {hint,reveal} from './screenUI'
 import {clubs,type Fixture} from './opponentSquads'
 import {menuPad,menuDirection,padStatus} from './menuPad'
@@ -22,17 +23,17 @@ export function selectTeams(previous?:Fixture,standings?:ReadonlyMap<string,numb
  function cycle(i:number,step:number){
   let index=clubs.indexOf(picks[i])
   do{index=(index+step+clubs.length)%clubs.length}while(clubs[index]===picks[1-i])
-  picks[i]=clubs[index];paint(i);focusSide(i)
+  audio.menu('nav');picks[i]=clubs[index];paint(i);focusSide(i)
  }
- cards.forEach((card,i)=>{paint(i);card.onclick=e=>{const btn=(e.target as HTMLElement).closest('button');if(btn)cycle(i,Number(btn.dataset.step));else focusSide(i)}})
+ cards.forEach((card,i)=>{paint(i);card.onclick=e=>{const btn=(e.target as HTMLElement).closest('button');if(btn)cycle(i,Number(btn.dataset.step));else if(i!==side){audio.menu('nav');focusSide(i)}}})
  root.addEventListener('focusin',e=>{const i=cards.findIndex(c=>c.contains(e.target as Node));if(i>=0){side=i;cards.forEach((c,j)=>c.dataset.active=String(i===j))}})
  focusSide(side)
  reveal(root,'.ts-heading,article,.ts-foot')
  return new Promise(resolve=>{
-  function finish(back=false){cancelAnimationFrame(frame);window.removeEventListener('keydown',key);root.remove();main.inert=false;resolve(back?null:{home:picks[0],away:picks[1]})}
+  function finish(back=false){audio.menu(back?'nav':'success');cancelAnimationFrame(frame);window.removeEventListener('keydown',key);root.remove();main.inert=false;resolve(back?null:{home:picks[0],away:picks[1]})}
   root.querySelector<HTMLButtonElement>('.ts-next')!.onclick=()=>finish()
   root.querySelector<HTMLButtonElement>('.ts-back')!.onclick=()=>finish(true)
-  function navigate(dir:string){if(dir==='u'||dir==='d')cycle(side,dir==='u'?-1:1);else focusSide(dir==='l'?0:1)}
+  function navigate(dir:string){if(dir==='u'||dir==='d')cycle(side,dir==='u'?-1:1);else{const nextSide=dir==='l'?0:1;if(nextSide!==side){focusSide(nextSide);audio.menu('nav')}}}
   function key(e:KeyboardEvent){
    const dir=({ArrowLeft:'l',ArrowRight:'r',ArrowUp:'u',ArrowDown:'d'} as Record<string,string>)[e.key]
    if(dir){e.preventDefault();navigate(dir)}

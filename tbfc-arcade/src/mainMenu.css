@@ -1,22 +1,23 @@
-#main-menu{position:fixed;inset:0;z-index:22;overflow:auto;display:grid;place-items:center;background:radial-gradient(ellipse at center,#281813 0,transparent 73%),#060606;color:#fff2dc;font-family:Upheaval,monospace}
+#main-menu{position:fixed;inset:0;z-index:22;overflow:auto;display:grid;place-items:center;background:radial-gradient(ellipse at center,#0c0806 0,transparent 73%),#060606;color:#fff2dc;font-family:Upheaval,monospace}
 .menu-shell{width:min(88vw,540px);margin:auto;padding:clamp(8px,2vh,22px) 0;text-align:center}
 .menu-title{display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,30px)}
 .menu-title img{display:block;width:clamp(64px,18vh,144px);height:auto;image-rendering:pixelated}
 .menu-title h1{color:#ffad72;text-shadow:none}
-.menu-title span{color:#ffad72;font-size:clamp(16px,3vw,30px)}
+.menu-title span{display:block;line-height:1;color:#ffad72;font-size:clamp(16px,3vw,30px)}
 .menu-title h1,.menu-shell>h1{margin:0;font:clamp(34px,7vw,68px)/1 Upheaval,monospace}
+.menu-title h1{line-height:.72}
 /* Size the inline lockup as a unit, using its 144px desktop crest as 1em. */
 [data-screen=intro] .menu-shell{container-type:inline-size}
 [data-screen=intro] .menu-title{font-size:min(144px,26.6667cqw,18dvh);gap:.208333em;text-align:left;white-space:nowrap}
 [data-screen=intro] .menu-title img{width:1em;flex:none}
-[data-screen=intro] .menu-title span{display:block;font-size:.208333em;line-height:1.2}
+[data-screen=intro] .menu-title span{font-size:.208333em}
 [data-screen=intro] .menu-title h1{font-size:.472222em}
-[data-screen=menu] .menu-title{flex-direction:column;gap:clamp(2px,1vh,10px)}
-[data-screen=menu] .menu-title img{width:min(48dvh,250px,66vw)}
-[data-screen=menu] .menu-title h1{font-size:clamp(26px,5dvh,54px);margin:auto}
-[data-screen=menu] .menu-title span{font-size:clamp(14px,2.6dvh,25px)}
+[data-screen=menu] .menu-title{width:min(48dvh,250px,66vw);margin-inline:auto;container-type:inline-size;flex-direction:column;gap:clamp(2px,1vh,10px)}
+[data-screen=menu] .menu-title img{width:100%}
+[data-screen=menu] .menu-title h1{font-size:28cqw;white-space:nowrap;margin:auto}
+[data-screen=menu] .menu-title span{font-size:11.9cqw;white-space:nowrap}
 .menu-shell nav{display:grid;gap:clamp(3px,.8dvh,8px);max-width:410px;margin:clamp(8px,2dvh,22px) auto 0}
-.menu-shell button{display:flex;align-items:center;justify-content:space-between;padding:clamp(4px,1dvh,10px) 18px;border:1px solid #73503c;border-radius:3px;background:#261a15;color:#fff3df;font:clamp(16px,3dvh,31px)/1 Upheaval,monospace}
+.menu-shell button{display:flex;align-items:center;justify-content:space-between;padding:clamp(4px,1dvh,10px) 18px;border:1px solid #73503c;border-radius:3px;background:#0c0806;color:#fff3df;font:clamp(16px,3dvh,31px)/1 Upheaval,monospace}
 .menu-shell button:disabled{color:#ac9e94;background:#1b1715;border-color:#382f29;cursor:default}
 .menu-shell small{font:600 12px var(--ui-font);color:#c1aca0}
 .menu-shell .menu-kick,.menu-shell .menu-start{background:#a64018;border-color:#ef864c;color:#fff7e5}
@@ -24,7 +25,7 @@
 .menu-shell button:focus-visible{outline:2px solid #ffca8b;outline-offset:2px}
 @media(prefers-reduced-motion:no-preference){
  .menu-title h1{width:fit-content;background:linear-gradient(108deg,#ffad72 41%,#efbd61 47%,#fff3a8 50%,#efbd61 53%,#ffad72 59%) 100% 0 / 300% 100%;background-clip:text;-webkit-background-clip:text;color:transparent;animation:arcade-shimmer 5s linear infinite}
- @keyframes arcade-shimmer{0%,80%{background-position:100% 0}98%,100%{background-position:0% 0}}
+ @keyframes arcade-shimmer{0%{background-position:100% 0}18%,100%{background-position:0% 0}}
 }
 
 .menu-broadcast{position:fixed;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transition:opacity .45s}
@@ -32,3 +33,5 @@
 #main-menu:has(.menu-broadcast)::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,#11090799 0%,#100a073a 65%,#0a080750)}
 .menu-shell{position:relative;z-index:2}
 #main-menu:has(.menu-broadcast) .menu-title{text-shadow:0 2px 4px #110a08}
+
+.menu-controller{display:block;width:fit-content;margin:12px auto 0;padding:4px 10px;background:#17100ed9;border-radius:3px}

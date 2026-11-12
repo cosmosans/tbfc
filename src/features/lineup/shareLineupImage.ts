@@ -66,6 +66,22 @@ function line(ctx: CanvasRenderingContext2D, x1: number, y1: number, x2: number,
   ctx.stroke();
 }
 
+function recordSegment(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, color: string) {
+  // Match RecordBar's skewX(-10deg) while keeping the text upright.
+  const slant = Math.tan(10 * Math.PI / 180) * height / 2;
+  ctx.beginPath();
+  ctx.moveTo(x + slant, y);
+  ctx.lineTo(x + width + slant, y);
+  ctx.lineTo(x + width - slant, y + height);
+  ctx.lineTo(x - slant, y + height);
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,.2)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+}
+
 export async function createShareLineupImage(data: ClubData, match: Match, savedLineup: Lineup): Promise<Blob> {
   await document.fonts.load("700 32px Oxanium");
   const lineup = normalizeLineupRoles(savedLineup);
@@ -152,14 +168,15 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
   const counts = awayIsTbfc ? [h2h.W, h2h.D, h2h.L] : [h2h.L, h2h.D, h2h.W];
   const total = counts.reduce((sum, count) => sum + count, 0);
   const shares = total ? counts.map(count => count / total) : [1 / 3, 1 / 3, 1 / 3];
-  const barX = 118, barY = 565, barW = 844, barH = 27;
+  const barX = 122, barY = 565, barW = 836, barH = 27, barGap = 5;
+  const segmentWidth = barW - barGap * 2;
   let cursor = barX;
   shares.forEach((share, index) => {
-    const width = index === 2 ? barX + barW - cursor : barW * share;
-    ctx.fillStyle = index === 1 ? "#aeb0b1" : (awayIsTbfc ? index === 0 : index === 2) ? ORANGE : opponent?.color || "#465260";
-    ctx.fillRect(cursor, barY, width, barH);
+    const width = index === 2 ? barX + barW - cursor : segmentWidth * share;
+    const color = index === 1 ? "#aeb0b1" : (awayIsTbfc ? index === 0 : index === 2) ? ORANGE : opponent?.color || "#465260";
+    recordSegment(ctx, cursor, barY, width, barH, color);
     if (width > 40) label(ctx, `${counts[index]}${index === 1 ? "D" : "W"}`, cursor + width / 2, barY + barH / 2, width - 8, 18, index === 1 ? "#111" : WHITE, 700);
-    cursor += width;
+    cursor += width + barGap;
   });
 
   // Portrait pitch. The saved formation points stay in their match positions.
@@ -217,7 +234,7 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
       label(ctx, name.toUpperCase(), cx, plateY + 8, 210, 22, gk ? WHITE : match.kit === "White" ? "#ed623e" : "#f47730", 800);
     });
   });
-  label(ctx, "TURF BURNERS FC", W / 2, 1880, 800, 24, MUTED, 800);
+  label(ctx, "turfburnersfc.soccer", W / 2, 1880, 800, 24, MUTED, 800);
   ctx.fillStyle = ORANGE;
   ctx.fillRect(0, H - 8, W, 8);
   return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Could not create the share image.")), "image/png"));

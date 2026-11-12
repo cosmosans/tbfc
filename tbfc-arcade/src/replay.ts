@@ -124,7 +124,7 @@ export class GoalReplay {
       if(actor){
         const facing=(pose.face-yaw+8)%8
         if(pose.mode===0||pose.map.userData.directionalIdle)pose.map.offset.x=facing*pose.w
-        else if(pose.mode===1)pose.map.offset.y=1-(facing+1)*pose.h
+        else if(pose.mode===1||pose.map.userData.directionalRun||pose.map.userData.directionalCelebration)pose.map.offset.y=1-(facing+1)*pose.h
         else if(pose.mode===2&&facing!==0&&facing!==4)pose.map.offset.y=1-((facing<4?0:pose.westKickRow)+1)*pose.h
       }
     }

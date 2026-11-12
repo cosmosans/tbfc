@@ -1,3 +1,4 @@
+import {audio} from './matchAudio'
 import {hint,reveal} from './screenUI'
 import mandyDetail from './art/mandy-detail.gif?inline'
 import pamDetail from './art/pam-detail.gif?inline'
@@ -58,7 +59,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
  const root=document.createElement('section');root.id='lineup';root.setAttribute('aria-label',match?'Match substitutions':'Pre-match lineup');document.body.append(root)
  document.querySelector('main')!.inert=true
  const bios:Record<string,[number,string]>={
-  Nelson:[7,'Forward'],Daniel:[15,'Midfielder'],Steven:[10,'Forward'],José:[27,'Midfielder'],Meghan:[6,'Forward'],Pam:[8,'Forward'],Jan:[4,'Defender'],Mandy:[47,'Defender'],
+  Nadia:[16,'Forward'],Nelson:[7,'Forward'],Daniel:[15,'Midfielder'],Steven:[10,'Forward'],José:[27,'Midfielder'],Meghan:[6,'Forward'],Pam:[8,'Forward'],Jan:[4,'Defender'],Mandy:[47,'Defender'],
   Jeremy:[3,'Midfielder'],Chris:[9,'Defender'],Sean:[1,'Goalkeeper'],Stubbs:[12,'Forward']
  }
  let highlighted:number=1
@@ -68,6 +69,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
   function finish(back=false,warmup=false){
    const result={shape,warmup,starters:slots.slice(0,7) as string[],bench:slots.slice(7).filter((n):n is string=>!!n)}
    if(!back&&!match&&availableWomen(slots)<2)return
+   if(!match)audio.menu(back?'nav':'success')
    if(!match)try{localStorage.setItem(key,JSON.stringify(result))}catch{}
    cancelAnimationFrame(frame);window.removeEventListener('keydown',keydown)
    root.remove();style.remove();document.querySelector('main')!.inert=false;resolve(back?null:result)
@@ -83,8 +85,8 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    dialog.className='lu-confirm lu-settings';dialog.setAttribute('aria-labelledby','lu-question')
    dialog.innerHTML=`<h2 id="lu-question">Match settings</h2><p>${home.name} vs ${away.name}</p><p>${shape} · 7 starters · ${slots.slice(7).filter(Boolean).length} subs</p>${settingsFields(settings)}<p>Difficulty · Untuned</p><div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup">Warm up</button><button id="lu-cancel">Back to lineup</button></div>`
    root.append(dialog)
-   dialog.onclose=()=>{dialog?.remove();dialog=null;if(root.isConnected){previous?.focus();revealLineup()}}
-   dialog.showModal()
+   dialog.onclose=()=>{dialog?.remove();dialog=null;if(root.isConnected){audio.menu('nav');previous?.focus();revealLineup()}}
+   audio.menu('success');dialog.showModal()
    reveal(dialog,'h2,fieldset,#lu-confirm,#lu-warmup,#lu-cancel')
    root.querySelector<HTMLElement>('#lu-confirm')!.focus()
   }
@@ -140,17 +142,18 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
   })
   function cycleShape(step:number){
    const index=(shapes.indexOf(shape)+step+shapes.length)%shapes.length
-   shape=shapes[index]
+   audio.menu('nav');shape=shapes[index]
    const current=document.activeElement as HTMLElement|null
    const focus=current&&root.contains(current)&&current.id?current.id:'slot-1'
    draw(focus.startsWith('form-')?'form-'+index:focus)
   }
-  function close(){const slot=editing;editing=-1;draw('slot-'+slot)}
+  function close(){audio.menu('nav');const slot=editing;editing=-1;draw('slot-'+slot)}
   root.onclick=e=>{
    const b=(e.target as HTMLElement).closest('button');if(!b)return
    if(dialog){
     const key=b.dataset.setting
     if(key==='speed'||key==='time'||key==='weather'){
+     if(b.getAttribute('aria-pressed')!=='true')audio.menu('nav')
      if(key==='speed')settings.speed=settingsOptions.speed.find(v=>String(v)===b.value)??settings.speed
      if(key==='time')settings.time=settingsOptions.time.find(v=>v===b.value)??settings.time
      if(key==='weather')settings.weather=settingsOptions.weather.find(v=>v===b.value)??settings.weather
@@ -163,7 +166,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
     return
    }
    if(b.id==='lu-prev'||b.id==='lu-next'){cycleShape(b.id==='lu-prev'?-1:1);return}
-   if(b.dataset.slot!==undefined){editing=Number(b.dataset.slot);
+   if(b.dataset.slot!==undefined){audio.menu('nav');editing=Number(b.dataset.slot);
     if(match){
      const candidate=slots.slice(7).find(n=>n&&legalSwap(n))
      draw(candidate?'name-'+names.indexOf(candidate):'lu-back');return
@@ -179,17 +182,18 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    }
    if(b.hasAttribute('data-clear')){slots[editing]=null;close();return}
    if(b.hasAttribute('data-back')){close();return}
-   if(b.dataset.shape){shape=b.dataset.shape as Shape;editing=-1;draw(b.id);return}
+   if(b.dataset.shape){if(b.dataset.shape!==shape)audio.menu('nav');shape=b.dataset.shape as Shape;editing=-1;draw(b.id);return}
    if(b.id==='lu-teams'){finish(true);return}
    if(b.id==='lu-start')confirmKickoff()
   }
   function move(dx:number,dy:number){
    const items=Array.from(root.querySelectorAll<HTMLButtonElement>(dialog?'dialog button':editing>=0?'.lu-roster button:not(:disabled)':'button:not(:disabled)')).filter(b=>b.getClientRects().length>0)
    const current=document.activeElement as HTMLButtonElement
+   const focus=(item?:HTMLButtonElement)=>{if(item&&item!==current){item.focus();audio.menu('nav')}}
    if(editing>=0&&!dialog&&dy&&items.includes(current)){
-    items[Math.max(0,Math.min(items.length-1,items.indexOf(current)+dy))].focus();return
+    focus(items[Math.max(0,Math.min(items.length-1,items.indexOf(current)+dy))]);return
    }
-   if(!items.includes(current)){items[0]?.focus();return}
+   if(!items.includes(current)){focus(items[0]);return}
    const rect=current.getBoundingClientRect();let best:HTMLButtonElement|undefined,score=Infinity
    for(const b of items){
     const r=b.getBoundingClientRect(),x=r.x+r.width/2-rect.x-rect.width/2,y=r.y+r.height/2-rect.y-rect.height/2
@@ -198,7 +202,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
     const cost=along+across*2.5
     if(cost<score){score=cost;best=b}
    }
-   best?.focus()
+   focus(best)
   }
   function keydown(e:KeyboardEvent){
    if(!dialog&&!e.repeat){
