@@ -4,7 +4,7 @@ import {hint,reveal} from './screenUI'
 import {createChipBins} from './chipBins'
 import {drills,warmupPanel,shotPoints} from './warmup'
 import {startMenuMusic} from './menuMusic'
-import {mainMenu} from './mainMenu'
+import {mainMenu,mountMenuBackdrop} from './mainMenu'
 import {goalCannons} from './goalCannons'
 import {kneelingPose} from './kneelingPose'
 import mandyGoalUrl from './art/mandy-goal.png?inline'
@@ -118,7 +118,13 @@ async function start(){
   lineup={shape:'1-3-3',starters:broadcastStarters(Object.keys(kits),burners.keeper,burnerEligibility),bench:[]}
  }else{
   const music=startMenuMusic(!audio.muted,on=>audio.setMuted(!on))
-  let destination=await mainMenu(music,true)
+  const returning=history.state?.arcadeMenu===true
+  if(returning){
+   history.replaceState({...history.state,arcadeMenu:false},'')
+   music.start(false)
+  }
+  const removeBackdrop=mountMenuBackdrop()
+  let destination=await mainMenu(music,!returning)
   do{
    if(destination==='celebrations'){
     celebrationLab=true
@@ -134,6 +140,7 @@ async function start(){
    portraits=club===burners?burnerPortraits:Object.fromEntries([...club.outfield,...club.bench,club.keeper].map(n=>[n,rivalSprites(club,n)?.idle??(n===club.keeper?tealIdle:trainingIdle)]))
    lineup=await selectLineup(portraits,fixture,undefined,settings)
   }while(!lineup)
+  removeBackdrop()
   music.finish()
  }
  const {home,away:matchOpponent}=fixture
@@ -159,7 +166,7 @@ async function start(){
   const mesh=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshBasicMaterial({color}))
   mesh.position.set(x,y,z);scene.add(mesh);return mesh
  }
- const updateWeather=await buildGrounds(scene,renderer,settings)
+ const updateWeather=await buildGrounds(scene,renderer,settings,home)
  const lines=0xb8d9b1
  for(const z of [-fieldZ,fieldZ])box(0,.01,z,42,.02,.07,lines)
  for(const x of [-fieldX,0,fieldX])box(x,.01,0,.07,.02,24,lines)

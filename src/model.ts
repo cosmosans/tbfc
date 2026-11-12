@@ -42,6 +42,7 @@ export type Match = {
 export const positions = [
   "ST",
   "CAM",
+  "CM",
   "CDM",
   "LW",
   "LB",

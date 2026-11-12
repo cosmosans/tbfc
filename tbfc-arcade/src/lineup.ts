@@ -76,6 +76,17 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
   }
   const revealLineup=()=>reveal(root,'.lu-heading,.lu-form:not([hidden]),.lu-field,.lu-details,.lu-bench')
   let dialog:HTMLDialogElement|null=null
+  function confirmQuit(){
+   if(!match||dialog)return
+   dialog=document.createElement('dialog')
+   dialog.className='lu-confirm lu-quit-confirm'
+   dialog.setAttribute('aria-labelledby','quit-question')
+   dialog.innerHTML=`<h2 id="quit-question">Quit match?</h2><p>Are you sure? This match will end.</p><div><button id="quit-yes">${hint('Enter','A')} Quit</button><button id="lu-cancel">${hint('Esc','B')} Keep playing</button></div>`
+   root.append(dialog)
+   dialog.onclose=()=>{dialog?.remove();dialog=null;root.querySelector<HTMLElement>('#lu-quit')?.focus()}
+   audio.menu('open');dialog.showModal()
+   dialog.querySelector<HTMLElement>('#quit-yes')!.focus()
+  }
   function confirmKickoff(){
    if(dialog)return
    if(match){finish();return}
@@ -93,7 +104,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
   function draw(focus:string){
    const field=[...positions(shape),{role:'GK',lane:0,y:86}]
    const role=(i:number)=>i<0?'Available':i>=7?'Sub':field[i].role
-   root.innerHTML=`<div class="lu-wrap"><div class="lu-heading"><div><small>${home.name}</small><h1>${match?'Substitutions':'Lineup select'}</h1></div>${match?'':'<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match&&availableWomen(slots)<2?'disabled':''}>${hint('P','Menu')} ${match?'Resume':'Match settings'} ▸</button></div>
+   root.innerHTML=`<div class="lu-wrap"><div class="lu-heading"><div><small>${home.name}</small><h1>${match?'Substitutions':'Lineup select'}</h1></div>${match?'<button id="lu-quit">Quit match</button>':'<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match&&availableWomen(slots)<2?'disabled':''}>${hint('P','Menu')} ${match?'Resume':'Match settings'} ▸</button></div>
     <div class="lu-form" aria-label="Formation" ${match?'hidden':''}><button class="lu-bumper" id="lu-prev" aria-label="Previous formation">${hint('[','LB')}</button>${shapes.map((f,i)=>`<button id="form-${i}" data-shape="${f}" aria-pressed="${f===shape}">${f}</button>`).join('')}<button class="lu-bumper" id="lu-next" aria-label="Next formation">${hint(']','RB')}</button></div>
     <div class="lu-rule">${match?shape+' · ':''}Women on field: ${availableWomen(slots)} / 2 minimum${match&&!slots.slice(7).some(Boolean)?' · No substitutes named':''}</div><div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${field.map((p,i)=>`<button class="lu-marker" ${match&&(match.unavailable.has(slots[i]!)||!slots.slice(7).some(Boolean))?'disabled':''} data-current="${i===highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}" style="left:${50+p.lane*3.5}%;top:${p.y}%">${avatar(slots[i]!)}<span>${p.role} · ${slots[i]}</span></button>`).join('')}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots.slice(7).map((n,i)=>`<button ${match?'disabled':''} data-slot="${i+7}" id="slot-${i+7}" aria-label="Sub ${i+1}, ${n??'empty'}">${n??'+ Empty'}</button>`).join('')}</div></div></div><aside class="lu-details"><h2>Player details</h2><div id="lu-profile"></div>${editing>=0?`<div class="lu-roster"><h2>${editing<0?'Match squad':'Choose for '+(editing<7?role(editing):'bench')}</h2>${(match?slots.slice(7).filter((n):n is string=>!!n):names).map(n=>`<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n)||editing<0||(editing>=7&&!slots[editing]&&slots.slice(0,7).includes(n))?'disabled':''}>${avatar(n)}<strong>${n}</strong><small>${role(slots.indexOf(n))}</small></button>`).join('')}
@@ -151,6 +162,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
   root.onclick=e=>{
    const b=(e.target as HTMLElement).closest('button');if(!b)return
    if(dialog){
+    if(b.id==='quit-yes'){history.replaceState({...history.state,arcadeMenu:true},'');location.reload();return}
     const key=b.dataset.setting
     if(key==='speed'||key==='time'||key==='weather'){
      if(b.getAttribute('aria-pressed')!=='true')audio.menu('nav')
@@ -183,6 +195,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    if(b.hasAttribute('data-clear')){slots[editing]=null;close();return}
    if(b.hasAttribute('data-back')){close();return}
    if(b.dataset.shape){if(b.dataset.shape!==shape)audio.menu('nav');shape=b.dataset.shape as Shape;editing=-1;draw(b.id);return}
+   if(b.id==='lu-quit'){confirmQuit();return}
    if(b.id==='lu-teams'){finish(true);return}
    if(b.id==='lu-start')confirmKickoff()
   }
@@ -234,7 +247,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
      else if(editing>=0)close()
      else if(match)finish();else finish(true)
     }
-    if(!opening&&pad.buttons[0]?.pressed&&!a)(document.activeElement as HTMLElement)?.click()
+    if(!opening&&pad.buttons[0]?.pressed&&!a)(dialog?.querySelector<HTMLElement>('#quit-yes')??document.activeElement as HTMLElement)?.click()
     a=!!pad.buttons[0]?.pressed;b=!!pad.buttons[1]?.pressed
    }else{a=b=lb=rb=startHeld=false;held=''}
    if(root.isConnected)frame=requestAnimationFrame(poll)

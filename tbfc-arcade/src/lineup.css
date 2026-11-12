@@ -95,3 +95,7 @@
 .lu-portrait:has(.lu-detail-loop){height:calc(50 * var(--portrait-pixel));padding-block:var(--portrait-pixel)}
 
 .lu-portrait[data-player="Pam"] .lu-detail-loop{transform:translateX(-15px)}
+
+.lu-quit-confirm{box-sizing:border-box;width:min(440px,96vw);padding:clamp(10px,3vw,22px)}
+.lu-quit-confirm>div{flex-wrap:nowrap}
+#lineup .lu-quit-confirm button{display:inline-flex;align-items:center;justify-content:center;gap:.35em;white-space:nowrap;padding:.55em clamp(4px,2vw,16px);font-size:clamp(13px,3.5vw,18px)}

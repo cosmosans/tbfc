@@ -1,3 +1,5 @@
+import {homeBoard} from './homeBoard'
+import type {Club} from './opponentSquads'
 import {matchSky} from './matchSky'
 import type {MatchSettings} from './matchSettings'
 import { boardX, boardZ, boardHeight, boardThickness } from './perimeter'
@@ -5,9 +7,9 @@ import * as T from 'three'
 import turfUrl from './art/ground/grass.jpg?inline'
 import crestUrl from './art/ground/crest.png?inline'
 
-export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings) {
+export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,home:Club) {
   const loader=new T.TextureLoader()
-  const [grass,crest]=await Promise.all([loader.loadAsync(turfUrl),loader.loadAsync(crestUrl)])
+  const [grass,crest,homeMap]=await Promise.all([loader.loadAsync(turfUrl),loader.loadAsync(crestUrl),homeBoard(loader,home)])
   grass.colorSpace=T.SRGBColorSpace
   grass.wrapS=grass.wrapT=T.MirroredRepeatWrapping
   grass.repeat.set(7,6)
@@ -79,7 +81,8 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
     const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.anisotropy=grass.anisotropy
     return new T.MeshBasicMaterial({map})
   }
-  const boards=[makeBoard('TURF BURNERS FC','#263e38'),makeBoard('SONS OF PITCHES','#573023')]
+  homeMap.colorSpace=T.SRGBColorSpace;homeMap.anisotropy=grass.anisotropy
+  const boards=[new T.MeshBasicMaterial({map:homeMap}),makeBoard('SONS OF PITCHES','#573023')]
   for(const end of [false,true]){
     const halfLength=end?boardZ:boardX
     const count=Math.ceil(2*halfLength/6.8),width=2*halfLength/count

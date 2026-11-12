@@ -31,11 +31,11 @@ export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>
  return {
   get musicEnabled(){return musicEnabled},
   get soundEnabled(){return soundEnabled},
-  start(){
+  start(playStartCue=true){
    if(started||finished)return
    started=true
    if(soundEnabled){
-    void cue.play().catch(()=>{})
+    if(playStartCue)void cue.play().catch(()=>{})
     setMatchSound(true)
    }
    play()

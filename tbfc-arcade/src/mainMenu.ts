@@ -7,20 +7,13 @@ import css from "./mainMenu.css?inline";
 
 type Destination = "match" | "practice" | "celebrations";
 
-export function mainMenu(
-  music: MenuMusic,
-  showIntro = false,
-): Promise<Destination> {
-  const root = document.createElement("section");
-  root.id = "main-menu";
-  root.setAttribute("aria-labelledby", "menu-title");
+export function mountMenuBackdrop() {
   const style = document.createElement("style");
   style.textContent = css;
-  const shell = document.createElement("div");
-  shell.className = "menu-shell";
-  root.append(style, shell);
+  document.head.append(style);
+  let feed: HTMLIFrameElement | undefined;
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    const feed = document.createElement("iframe");
+    feed = document.createElement("iframe");
     const url = new URL(location.href);
     url.searchParams.set("broadcast", "1");
     feed.src = url.href;
@@ -29,8 +22,21 @@ export function mainMenu(
     feed.inert = true;
     feed.tabIndex = -1;
     feed.setAttribute("aria-hidden", "true");
-    root.prepend(feed);
+    document.body.append(feed);
   }
+  return () => { feed?.remove(); style.remove(); };
+}
+
+export function mainMenu(
+  music: MenuMusic,
+  showIntro = false,
+): Promise<Destination> {
+  const root = document.createElement("section");
+  root.id = "main-menu";
+  root.setAttribute("aria-labelledby", "menu-title");
+  const shell = document.createElement("div");
+  shell.className = "menu-shell";
+  root.append(shell);
   document.body.append(root);
   const main = document.querySelector("main")!;
   main.inert = true;

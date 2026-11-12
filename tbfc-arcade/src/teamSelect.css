@@ -16,3 +16,34 @@
 @media(max-width:520px){.ts-foot{flex-direction:column-reverse}.ts-next{width:100%}.ts-crest button{width:26px}.ts-match h2{min-height:2em}}
 
 .ts-heading{position:static;display:flex;align-items:baseline;justify-content:space-between;gap:12px}.ts-pad{font:12px var(--ui-font);color:#d9c6b4}
+
+.ts-back{background:#0c0806}
+
+.ts-match article {
+ position: relative;
+ isolation: isolate;
+ overflow: hidden;
+}
+.ts-match article::before {
+ content: '';
+ position: absolute;
+ z-index: -1;
+ pointer-events: none;
+ left: 50%;
+ top: 44%;
+ width: 116%;
+ aspect-ratio: 1;
+ background: var(--club);
+ mask: url('./art/team-swirl.png') center / contain no-repeat;
+ image-rendering: pixelated;
+ opacity: .43;
+ transform: translate(-50%, -50%);
+}
+.ts-match article[data-active=true]::before { opacity: .56; }
+@media (prefers-reduced-motion: no-preference) {
+ .ts-match article::before { animation: team-swirl 36s linear infinite; }
+ .ts-match article:last-child::before { animation-direction: reverse; animation-delay: -9s; }
+}
+@keyframes team-swirl {
+ to { transform: translate(-50%, -50%) rotate(1turn); }
+}

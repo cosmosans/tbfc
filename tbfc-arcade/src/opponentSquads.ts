@@ -75,4 +75,4 @@ export const burners = {
 }
 export const clubs = [burners,...opponentLadder]
 export type Club = (typeof clubs)[number]
-export type Fixture = {home:Club, away:Club}
+export type Fixture = {home:Club, away:Club, homeOnRight?:boolean}

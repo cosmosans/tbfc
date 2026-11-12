@@ -4,7 +4,7 @@ export const formationSlots: Record<Formation, readonly Position[]> = {
   "1-2-3-1": ["GK", "LB", "RB", "LW", "CAM", "RW", "ST"],
   "1-3-3": ["GK", "LB", "CDM", "RB", "LW", "CAM", "RW"],
   "1-2-1-2-1": ["GK", "LB", "RB", "CAM", "LW", "RW", "ST"],
-  "1-2-1-3": ["GK", "LB", "RB", "CAM", "LW", "ST", "RW"],
+  "1-2-1-3": ["GK", "LB", "RB", "CM", "LW", "ST", "RW"],
   "1-3-1-2": ["GK", "LB", "CDM", "RB", "CAM", "LW", "RW"],
 };
 
@@ -60,10 +60,12 @@ export const formationPoints: Record<
 };
 
 export function normalizeLineupRoles(lineup: Lineup): Lineup {
-  if (lineup.formation !== "1-2-1-2-1" || !Object.values(lineup.benchPositions ?? {}).includes("CDM")) return lineup;
+  const previousRole = lineup.formation === "1-2-1-2-1" ? "CDM" : lineup.formation === "1-2-1-3" ? "CAM" : null;
+  const currentRole = lineup.formation === "1-2-1-2-1" ? "CAM" : "CM";
+  if (!previousRole || !Object.values(lineup.benchPositions ?? {}).includes(previousRole)) return lineup;
   const benchPositions = { ...lineup.benchPositions };
   for (const id of Object.keys(benchPositions)) {
-    if (benchPositions[id] === "CDM") benchPositions[id] = "CAM";
+    if (benchPositions[id] === previousRole) benchPositions[id] = currentRole;
   }
   return { ...lineup, benchPositions };
 }

@@ -28,10 +28,12 @@
  @keyframes arcade-shimmer{0%{background-position:100% 0}18%,100%{background-position:0% 0}}
 }
 
-.menu-broadcast{position:fixed;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transition:opacity .45s}
+.menu-broadcast{position:fixed;z-index:19;inset:0;width:100%;height:100%;border:0;pointer-events:none;opacity:0;transition:opacity .45s}
 .menu-broadcast.feed-live{opacity:.60}
-#main-menu:has(.menu-broadcast)::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,#11090799 0%,#100a073a 65%,#0a080750)}
+.menu-broadcast ~ #main-menu::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,#11090799 0%,#100a073a 65%,#0a080750)}
 .menu-shell{position:relative;z-index:2}
-#main-menu:has(.menu-broadcast) .menu-title{text-shadow:0 2px 4px #110a08}
+.menu-broadcast ~ #main-menu .menu-title{text-shadow:0 2px 4px #110a08}
 
 .menu-controller{display:block;width:fit-content;margin:12px auto 0;padding:4px 10px;background:#17100ed9;border-radius:3px}
+
+body:has(>.menu-broadcast) :is(#main-menu,#team-select,#lineup){background:linear-gradient(#0c08065e,#0c080685)}
