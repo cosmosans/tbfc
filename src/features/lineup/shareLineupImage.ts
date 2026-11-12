@@ -12,7 +12,7 @@ import BlueLabel from "../../img/lineup-label-gk-blue.png";
 import GreenLabel from "../../img/lineup-label-gk-green.png";
 import WhiteKit from "../../img/white-front.png";
 import BlackKit from "../../img/black-front.png";
-import { goalkeeperPlate } from "../../components/LineupNameplate";
+import { goalkeeperPlate, JOSE_GOALKEEPER_TEXT_COLOR } from "../../components/LineupNameplate";
 import { splitMatchLocation } from "../../matchLocation";
 
 const W = 1080;
@@ -231,7 +231,7 @@ export async function createShareLineupImage(data: ClubData, match: Match, saved
       if (plate) contain(ctx, plate, cx - 126, plateY - 15, 252, 45);
       else { ctx.fillStyle = "#111"; ctx.fillRect(cx - 124, plateY - 12, 248, 40); }
       const name = person ? `${person.number} ${person.name.split(" ")[0]}` : "—";
-      label(ctx, name.toUpperCase(), cx, plateY + 8, 210, 22, gk ? WHITE : match.kit === "White" ? "#ed623e" : "#f47730", 800);
+      label(ctx, name.toUpperCase(), cx, plateY + 8, 210, 22, gk === "blue" ? JOSE_GOALKEEPER_TEXT_COLOR : gk ? WHITE : match.kit === "White" ? "#ed623e" : "#f47730", 800);
     });
   });
   label(ctx, "turfburnersfc.soccer", W / 2, 1880, 800, 24, MUTED, 800);

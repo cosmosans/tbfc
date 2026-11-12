@@ -39,6 +39,12 @@ async function readPublicApi(path: `/api/${string}`) {
   return readResponse(await clubApiRequest(path, { cache: 'no-store', credentials: 'same-origin' }));
 }
 
+export type Matchday = { data: ClubData; headToHead: ReturnType<typeof import("./model").record> };
+
+export async function fetchMatchday(): Promise<Matchday> {
+  return readPublicApi(`/api/matchday?offset=${new Date().getTimezoneOffset()}`);
+}
+
 type ClubSnapshot = RemoteClub & { access?: string };
 type Manifest = ClubSnapshot & { pages?: { start: number; end: number }[]; unchanged?: boolean };
 

@@ -108,6 +108,7 @@ export default function MatchBanner({
   onEdit,
   detail = false,
   children,
+  previousRecord,
   replaySeconds,
   goalTime,
   goalSoundEnabled = false,
@@ -120,6 +121,7 @@ export default function MatchBanner({
   onEdit?: () => void;
   detail?: boolean;
   children?: React.ReactNode;
+  previousRecord?: ReturnType<typeof record>;
   replaySeconds?: number;
   goalTime?: number;
   goalSoundEnabled?: boolean;
@@ -148,7 +150,7 @@ export default function MatchBanner({
     );
   const coverPhoto = match.photos?.find(photo => photo.cover && photo.src);
   const backdrop = coverPhoto?.src || location?.imageUrl;
-  const headToHead = record(
+  const headToHead = previousRecord ? { ...previousRecord } : record(
     data.matches.filter(
       (item) =>
         !(replaying && item.id === match.id && match.status === "in_progress") &&

@@ -59,7 +59,7 @@ import TeamDetail from "./features/teams/TeamDetail";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub, setManageModeAccess } from "./editAccess";
-import { fetchClubData, fetchMatchEvents, publishClubData } from "./remoteData";
+import { fetchMatchday, type Matchday, fetchClubData, fetchMatchEvents, publishClubData } from "./remoteData";
 import FlameIcon from "./img/flame-white.svg";
 
 type Page =
@@ -109,7 +109,24 @@ import { withCleanSheets } from "./cleanSheets";
 
 export default function App() {
   const manageModeKey = "tbfc-manage-mode";
-  const [sourceData, setData] = useState<ClubData>(loadData);
+  const location = useLocation();
+  const [needsFullClub, setNeedsFullClub] = useState(() =>
+    location.pathname !== "/" || window.localStorage.getItem(manageModeKey) === "on");
+  const summaryOnly = !needsFullClub && location.pathname === "/";
+  const summaryActive = useRef(summaryOnly);
+  useLayoutEffect(() => { summaryActive.current = summaryOnly; }, [summaryOnly]);
+  const [previousRecord, setPreviousRecord] = useState<Matchday["headToHead"]>();
+  const [summaryLoaded, setSummaryLoaded] = useState(false);
+  const applyMatchday = useCallback((summary: Matchday) => {
+    setData(summary.data);
+    setPreviousRecord(summary.headToHead);
+    setSummaryLoaded(true);
+    setSyncState("ready");
+  }, []);
+  const [sourceData, setData] = useState<ClubData>(() => summaryOnly ? {
+    matches: [], players: [], opponents: [], seasons: [], locations: [],
+    events: [], lineups: [], boards: [], standings: [],
+  } : loadData());
   const [clockTime, setClockTime] = useState(Date.now);
   const data = useMemo(
     () => withCleanSheets({
@@ -130,6 +147,18 @@ export default function App() {
   const saveQueue = useRef(Promise.resolve());
   useEffect(() => {
     let active = true;
+    if (summaryOnly) {
+      void fetchMatchday().then(summary => {
+        if (active) applyMatchday(summary);
+      }).catch(() => {
+        // Also supports older servers during a staged rollout.
+        if (active) setNeedsFullClub(true);
+      });
+      return () => { active = false; };
+    }
+    setNeedsFullClub(true);
+    setSummaryLoaded(false);
+    setSyncState("loading");
     void (async () => {
       let restoreManageMode = false;
       if (window.localStorage.getItem(manageModeKey) === "on") {
@@ -167,7 +196,7 @@ export default function App() {
         if (!active) return;
         if (!draft?.dirty) {
           revision.current = remote.revision;
-          if (remote.data) setData(remote.data);
+          setData(remote.data ?? loadData());
         }
         setSyncState(remote.data ? "ready" : "empty");
       } catch (error) {
@@ -177,15 +206,16 @@ export default function App() {
             ? error.message
             : "Could not connect to the shared database.",
         );
+        setData(current => draft ? current : loadData());
         setSyncState("error");
       }
     })();
     return () => {
       active = false;
     };
-  }, []);
+  }, [summaryOnly, applyMatchday]);
   const navigate = useNavigate();
-  const location = useLocation();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -401,7 +431,7 @@ export default function App() {
     const pollingMatch = sourceData.matches.find((match) => match.id === pollingMatchId);
     const start = pollingMatch ? kickoffTime(pollingMatch) : null;
     const liveWindow = start !== null && clockTime >= start && clockTime < start + 61 * 60_000;
-    if (dirty || (manageMode && !pollingMatchId) || (pollingMatchId && !liveWindow)) return;
+    if (syncState === "loading" || dirty || (manageMode && !pollingMatchId) || (pollingMatchId && !liveWindow)) return;
     let active = true;
     let loading = false;
     const refresh = async () => {
@@ -446,6 +476,11 @@ export default function App() {
           }));
           return;
         }
+        if (summaryOnly) {
+          const summary = await fetchMatchday();
+          if (active) applyMatchday(summary);
+          return;
+        }
         const remote = await fetchClubData();
         if (active && remote.data) {
           revision.current = remote.revision;
@@ -470,7 +505,7 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [manageMode, dirty, pollingMatchId, syncState, goalSound, playWhistle, sourceData.matches, clockTime]);
+  }, [summaryOnly, applyMatchday, manageMode, dirty, pollingMatchId, syncState, goalSound, playWhistle, sourceData.matches, clockTime]);
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
@@ -518,6 +553,12 @@ export default function App() {
     if (dirty || publishing || discarding) return;
     const version = editVersion.current;
     try {
+      if (summaryOnly) {
+        // Ignore this response if navigation has started a full-club load.
+        const summary = await fetchMatchday();
+        if (summaryActive.current) applyMatchday(summary);
+        return;
+      }
       const remote = await fetchClubData();
       if (version !== editVersion.current) return;
       revision.current = remote.revision;
@@ -706,7 +747,7 @@ export default function App() {
                   ? "schedule"
                   : (page ?? "matches")
         }
-        onAdmin={() => setAdminBackupOpen(true)}
+        onAdmin={() => { setNeedsFullClub(true); setAdminBackupOpen(true); }}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <PullToRefresh
@@ -835,7 +876,7 @@ export default function App() {
             {backupMessage}
           </Alert>
         )}
-        {syncState === "loading" ? (
+        {syncState === "loading" || (summaryLoaded && !summaryOnly) ? (
           <ClubDataSkeleton
             teamCount={data.opponents.length}
             view={
@@ -1026,6 +1067,7 @@ export default function App() {
               <Stack gap={3} sx={{ mb: 3 }}>
                 {nextMatch && (
                   <MatchBanner
+                    previousRecord={summaryOnly ? previousRecord : undefined}
                     goalSoundEnabled={goalSoundEnabled}
                     onGoalSoundToggle={() => void toggleGoalSound()}
                     goalTime={goalBurst?.matchId === nextMatch.id ? goalBurst.started : undefined}

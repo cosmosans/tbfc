@@ -7,6 +7,7 @@ import PinkLabel from "../img/lineup-label-gk-pink.png";
 import BlueLabel from "../img/lineup-label-gk-blue.png";
 
 export type GoalkeeperPlate = "green" | "pink" | "blue";
+export const JOSE_GOALKEEPER_TEXT_COLOR = "#003558";
 const goalkeeperImages = {
   green: GreenLabel,
   pink: PinkLabel,
@@ -51,7 +52,7 @@ export const nameplateStyles = (
   backgroundPosition: "center",
   color: goalkeeper
     ? goalkeeper === "blue"
-      ? "#003B62"
+      ? JOSE_GOALKEEPER_TEXT_COLOR
       : "#fff"
     : kit === "White"
       ? "#FD6340"

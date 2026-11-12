@@ -12,8 +12,6 @@ export function selectTeams(
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
   ];
-  let homeOnRight = previous?.homeOnRight ?? false;
-  if (homeOnRight) picks.reverse();
   const root = document.createElement("section");
   root.id = "team-select";
   root.setAttribute("aria-label", "Select teams");
@@ -30,7 +28,7 @@ export function selectTeams(
   function paint(i: number) {
     const club = picks[i],
       card = cards[i],
-      role = i === Number(homeOnRight) ? "Home" : "Away";
+      role = i === 0 ? "Home" : "Away";
     const rank = standings?.get(club.name);
     card.style.setProperty("--club", clubAccent(club));
     card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(club.stars)}</span>${"☆".repeat(5 - club.stars)}</div>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
@@ -41,7 +39,7 @@ export function selectTeams(
     cards[i].querySelector("button")!.focus({ preventScroll: true });
   }
   function swapSides() {
-    homeOnRight = !homeOnRight;
+    picks.reverse();
     audio.menu("nav");
     paint(0);
     paint(1);
@@ -88,9 +86,8 @@ export function selectTeams(
         back
           ? null
           : {
-              home: picks[Number(homeOnRight)],
-              away: picks[Number(!homeOnRight)],
-              homeOnRight,
+              home: picks[0],
+              away: picks[1],
             },
       );
     }
