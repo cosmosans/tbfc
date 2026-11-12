@@ -102,7 +102,12 @@ export default function StandingsWidget({
   return (
     <Card
       component="section"
-      sx={{ bgcolor: "background.paper", border: 0, ...panelBorder, minWidth: 0 }}
+      sx={{
+        bgcolor: "background.paper",
+        border: 0,
+        ...panelBorder,
+        minWidth: 0,
+      }}
     >
       <CardContent sx={{ p: 0, "&:last-child": { pb: 0 } }}>
         <Stack
@@ -122,7 +127,8 @@ export default function StandingsWidget({
             }}
           >
             <Typography
-              component="h2" variant="h5"
+              component="h2"
+              variant="h5"
               sx={{
                 fontWeight: 700,
                 flex: 1,
@@ -222,6 +228,7 @@ export default function StandingsWidget({
                   >
                     <TableCell align="center">#</TableCell>
                     <TableCell>Team</TableCell>
+                    <TableCell align="right">Pts</TableCell>
                     <TableCell align="right">W</TableCell>
                     <TableCell align="right">L</TableCell>
                     <TableCell align="right">D</TableCell>
@@ -229,7 +236,6 @@ export default function StandingsWidget({
                     <TableCell align="right">Allowed</TableCell>
                     <TableCell align="right">Diff</TableCell>
                     <TableCell align="right">PI</TableCell>
-                    <TableCell align="right">Pts</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -344,6 +350,12 @@ export default function StandingsWidget({
                               </Stack>
                             )}
                           </TableCell>
+                          <TableCell
+                            align="right"
+                            sx={{ color: "#fff", fontWeight: 900 }}
+                          >
+                            {row.rankingPoints}
+                          </TableCell>
                           <TableCell align="right">{row.wins}</TableCell>
                           <TableCell align="right">{row.losses}</TableCell>
                           <TableCell align="right">{row.draws}</TableCell>
@@ -357,12 +369,6 @@ export default function StandingsWidget({
                             {diff > 0 ? `+${diff}` : diff}
                           </TableCell>
                           <TableCell align="right">{row.pi ?? "—"}</TableCell>
-                          <TableCell
-                            align="right"
-                            sx={{ color: "#fff", fontWeight: 900 }}
-                          >
-                            {row.rankingPoints}
-                          </TableCell>
                         </TableRow>
                       );
                     })}

@@ -1,3 +1,4 @@
+import SportsEsportsIcon from "@mui/icons-material/SportsEsports";
 import matchdayActiveIcon from "../img/nav/matchday-active.svg";
 import matchdayIcon from "../img/nav/matchday.svg";
 import scheduleActiveIcon from "../img/nav/schedule-active.svg";
@@ -97,6 +98,7 @@ export default function AppHeader({
   page,
   onNavigate,
   onAdmin,
+  onArcade,
   onBack,
   matchTab,
   matchTabOptions,
@@ -104,6 +106,7 @@ export default function AppHeader({
 }: {
   page: NavigationPage;
   onNavigate: (page: NavigationPage) => void;
+  onArcade: () => void;
   onAdmin?: () => void;
   onBack?: () => void;
   matchTab?: MatchTab;
@@ -158,6 +161,10 @@ export default function AppHeader({
               Turf Burners FC
             </Typography>
           </Brand>
+          <IconButton onClick={onArcade} aria-label="Play TBFC Arcade" title="Play TBFC Arcade"
+            sx={{ ml: "auto", color: "#fff", width: 44, height: 44 }}>
+            <SportsEsportsIcon />
+          </IconButton>
           {onAdmin && (
             <IconButton
               onClick={onAdmin}
@@ -171,7 +178,7 @@ export default function AppHeader({
                 p: { xs: 0, sm: 1 },
                 flexShrink: 0,
                 order: { xs: 1, md: 0 },
-                ml: "auto",
+
               }}
             >
               <Box

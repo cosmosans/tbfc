@@ -660,6 +660,21 @@ export default function App() {
     navigate(`/match/${encodeURIComponent(match.id)}`);
   }
 
+  if (location.pathname === "/arcade") {
+    return (
+      <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column", bgcolor: "#000",
+        pt: "env(safe-area-inset-top)", pb: "env(safe-area-inset-bottom)" }}>
+        <Button sx={{ alignSelf: "flex-start", color: "#fff" }}
+          onClick={() => location.state?.fromClub ? navigate(-1) : navigate("/", { replace: true })}>
+          ← Back to TBFC
+        </Button>
+        <iframe title="TBFC Arcade" src="/tbfc-arcade/play.html" allow="gamepad; fullscreen"
+          onLoad={(event) => event.currentTarget.focus()}
+          style={{ width: "100%", flex: 1, minHeight: 0, border: 0 }} />
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{
       "--nav-rail-width": "0px",
@@ -668,6 +683,7 @@ export default function App() {
       pl: "var(--nav-rail-width)",
     }}>
       <AppHeader
+        onArcade={() => navigate("/arcade", { state: { fromClub: true } })}
         matchTab={selected ? normalizeMatchTab(requestedTab, selected.status === "scheduled", canEditClub) : undefined}
         matchTabOptions={selected ? visibleMatchTabs(selected.status === "scheduled", canEditClub) : undefined}
         onMatchTabChange={(tab) => {
