@@ -1,6 +1,6 @@
 import type {Club} from './opponentSquads'
 
-const assets=import.meta.glob<string>('./art/{okw,ss}-*.png',{eager:true,query:'?inline',import:'default'})
+const assets=import.meta.glob<string>('./art/{okw,ss}-*.png',{eager:true,query:'?url',import:'default'})
 const clubs:Record<string,string>={'Shooting Stars FC':'ss','One Kick Wonders':'okw'}
 
 export function rivalSprites(club:Club,name:string){

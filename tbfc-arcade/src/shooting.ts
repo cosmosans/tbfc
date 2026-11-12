@@ -12,12 +12,15 @@ export function missChances(shooterX:number, z:number, goalX:number, power:numbe
   return {wide:total*(1-highShare),over:total*highShare}
 }
 
-export function planShot(x:number,z:number,keeperZ:number,power:number,goalX:number,shooterX:number,keeperX:number,random=Math.random,defended=true,target=(random()*2-1)*1.65){
+export function planShot(x:number,z:number,keeperZ:number,power:number,goalX:number,shooterX:number,keeperX:number,random=Math.random,defended=true,target=(random()*2-1)*1.65,errorMultiplier=1){
   const progress=Math.min(1,Math.max(0,shooterX/goalX))
   const angle=(goalX-shooterX)/Math.max(.01,Math.hypot(goalX-shooterX,z))
   const placement=Math.min(1,Math.abs(target-keeperZ)/3)
   const goalChance=progress*(.45+.25*power+.14*placement)*(.65+.35*angle)
   const miss=missChances(shooterX,z,goalX,power)
+  const scale=Math.min(errorMultiplier,.99/(miss.wide+miss.over))
+  miss.wide*=scale
+  miss.over*=scale
   const roll=random()
   // Resolve woodwork and keeper odds only among shots that survived the accuracy roll.
   const onFrame=(roll-miss.wide-miss.over)/(1-miss.wide-miss.over)

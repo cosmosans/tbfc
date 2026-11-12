@@ -4,8 +4,8 @@ import {matchSky} from './matchSky'
 import type {MatchSettings} from './matchSettings'
 import { boardX, boardZ, boardHeight, boardThickness } from './perimeter'
 import * as T from 'three'
-import turfUrl from './art/ground/grass.jpg?inline'
-import sponsorUrl from './art/ground/sons-of-pitches-board.png?inline'
+import turfUrl from './art/ground/grass.jpg?url'
+import sponsorUrl from './art/ground/sons-of-pitches-board.png?url'
 
 export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,home:Club) {
   const loader=new T.TextureLoader()

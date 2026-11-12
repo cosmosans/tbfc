@@ -1,7 +1,7 @@
 import * as T from 'three'
 import {burners,type Club} from './opponentSquads'
-import original from './art/ground/tbfc-board.png?inline'
-import vortex from './art/ground/board-vortex.png?inline'
+import original from './art/ground/tbfc-board.png?url'
+import vortex from './art/ground/board-vortex.png?url'
 
 // Vortex highlight, lettering and outer stroke, in that order.
 const inks:Record<string,[string,string,string]>={

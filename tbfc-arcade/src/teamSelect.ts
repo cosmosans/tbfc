@@ -1,18 +1,9 @@
 import { audio } from "./matchAudio";
 import { hint, reveal } from "./screenUI";
-import { clubs, type Fixture } from "./opponentSquads";
+import { clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./teamSelect.css?inline";
-const accents = [
-  "#f47738",
-  "#88c6ed",
-  "#9c6cdb",
-  "#e74939",
-  "#e0b859",
-  "#599de0",
-  "#9dce90",
-  "#f1529d",
-];
+
 export function selectTeams(
   previous?: Fixture,
   standings?: ReadonlyMap<string, number>,
@@ -41,7 +32,7 @@ export function selectTeams(
       card = cards[i],
       role = i === Number(homeOnRight) ? "Home" : "Away";
     const rank = standings?.get(club.name);
-    card.style.setProperty("--club", accents[clubs.indexOf(club)]);
+    card.style.setProperty("--club", clubAccent(club));
     card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(club.stars)}</span>${"☆".repeat(5 - club.stars)}</div>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
   }
   function focusSide(i: number) {

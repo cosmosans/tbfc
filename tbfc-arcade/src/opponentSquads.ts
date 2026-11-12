@@ -1,20 +1,20 @@
-import burnersCrest from './art/ground/crest.png?inline'
-import orangeKit from './art/kits/orange-slices.webp?inline'
-import whiffKit from './art/kits/whiff-city-fc.webp?inline'
-import dancersKit from './art/kits/goal-dancers-fc.webp?inline'
-import wondersKit from './art/kits/one-kick-wonders.webp?inline'
-import starsKit from './art/kits/shooting-stars-fc.webp?inline'
-import puffsKit from './art/kits/peachy-puffs.webp?inline'
-import fleetKit from './art/kits/fleet-feet-fc.webp?inline'
-import interKit from './art/kits/inter-your-mom.webp?inline'
-import fleetCrest from './art/ground/fleet-feet-fc.png?inline'
-import wondersCrest from './art/ground/one-kick-wonders.png?inline'
-import dancersCrest from './art/ground/goal-dancers-fc.png?inline'
-import interCrest from './art/ground/inter-your-mom.png?inline'
-import whiffCrest from './art/ground/whiff-city-fc.png?inline'
-import puffsCrest from './art/ground/peachy-puffs.png?inline'
-import starsCrest from './art/ground/shooting-stars.png?inline'
-import orangeCrest from './art/ground/orange-slices.png?inline'
+import burnersCrest from './art/ground/crest.png?url'
+import orangeKit from './art/kits/orange-slices.webp?url'
+import whiffKit from './art/kits/whiff-city-fc.webp?url'
+import dancersKit from './art/kits/goal-dancers-fc.webp?url'
+import wondersKit from './art/kits/one-kick-wonders.webp?url'
+import starsKit from './art/kits/shooting-stars-fc.webp?url'
+import puffsKit from './art/kits/peachy-puffs.webp?url'
+import fleetKit from './art/kits/fleet-feet-fc.webp?url'
+import interKit from './art/kits/inter-your-mom.webp?url'
+import fleetCrest from './art/ground/fleet-feet-fc.png?url'
+import wondersCrest from './art/ground/one-kick-wonders.png?url'
+import dancersCrest from './art/ground/goal-dancers-fc.png?url'
+import interCrest from './art/ground/inter-your-mom.png?url'
+import whiffCrest from './art/ground/whiff-city-fc.png?url'
+import puffsCrest from './art/ground/peachy-puffs.png?url'
+import starsCrest from './art/ground/shooting-stars.png?url'
+import orangeCrest from './art/ground/orange-slices.png?url'
 
 type Opponent = {
   name: string
@@ -76,3 +76,15 @@ export const burners = {
 export const clubs = [burners,...opponentLadder]
 export type Club = (typeof clubs)[number]
 export type Fixture = {home:Club, away:Club, homeOnRight?:boolean}
+
+const accents = [
+  "#f47738",
+  "#88c6ed",
+  "#9c6cdb",
+  "#e74939",
+  "#e0b859",
+  "#599de0",
+  "#9dce90",
+  "#f1529d",
+];
+export function clubAccent(club:Club){return accents[clubs.indexOf(club)]}

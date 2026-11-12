@@ -174,8 +174,8 @@ export default function LineupEditor({
           alignItems: "start",
         }}
       >
-        <Stack gap={2} sx={{ minWidth: 0 }}>
-          <Card>
+        <Stack gap={2} sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}>
+          <Card sx={{ order: { xs: 3, md: 0 } }}>
             <CardContent>
               <Stack
                 direction="row"
@@ -272,7 +272,7 @@ export default function LineupEditor({
               </LineupGrid>
             </CardContent>
           </Card>
-          <Card>
+          <Card sx={{ order: { xs: 4, md: 0 } }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Bench ({benchPlayers.length})
@@ -382,14 +382,18 @@ export default function LineupEditor({
             </CardContent>
           </Card>
         </Stack>
-        <Stack gap={2} sx={{ minWidth: 0 }}>
-          <ShareLineupButton data={data} match={match} lineup={lineup} />
-          <LineupPitch
-            data={data}
-            lineup={lineup}
-            onFormationChange={canEditClub ? changeFormation : undefined}
-          />
-          <Card>
+        <Stack gap={2} sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}>
+          <Box sx={{ order: { xs: 1, md: 0 } }}>
+            <ShareLineupButton data={data} match={match} lineup={lineup} />
+          </Box>
+          <Box sx={{ order: { xs: 2, md: 0 }, minWidth: 0 }}>
+            <LineupPitch
+              data={data}
+              lineup={lineup}
+              onFormationChange={canEditClub ? changeFormation : undefined}
+            />
+          </Box>
+          <Card sx={{ order: { xs: 5, md: 0 } }}>
             <CardContent>
               <Stack
                 direction="row"

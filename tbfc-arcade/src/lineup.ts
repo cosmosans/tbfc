@@ -1,8 +1,10 @@
+import { rememberDivision } from "./difficulty";
+import {lineupChemistry} from './lineupChemistry'
 import type { MenuMusic } from "./menuMusic";
 import { audio } from "./matchAudio";
 import { hint, reveal } from "./screenUI";
 import { playerRatings, ratingLabels } from "./playerRatings";
-import { burners, type Fixture } from "./opponentSquads";
+import { clubAccent, burners, type Fixture } from "./opponentSquads";
 import { menuDirection, menuPad } from "./menuPad";
 import {
   defaultSettings,
@@ -23,6 +25,8 @@ const formations = {
 };
 export type Shape = keyof typeof formations;
 const shapes = Object.keys(formations) as Shape[];
+const forwardY = 14;
+const keeperY = 86;
 export function positions(shape: Shape) {
   const rows = formations[shape];
   return rows.flatMap((roles, line) =>
@@ -37,7 +41,7 @@ export function positions(shape: Shape) {
         lane:
           roles.length === 1 ? 0 : width * ((2 * i) / (roles.length - 1) - 1),
         depth: -3 - (10 * line) / (rows.length - 1),
-        y: 14 + (line * 48) / (rows.length - 1),
+        y: forwardY + (line * (keeperY - forwardY)) / rows.length,
       };
     }),
   );
@@ -139,6 +143,7 @@ export function selectLineup(
   document.head.append(style);
   const root = document.createElement("section");
   root.id = "lineup";
+  root.style.setProperty("--club", clubAccent(home));
   root.toggleAttribute("data-substitutions", !!match);
   root.setAttribute(
     "aria-label",
@@ -256,7 +261,7 @@ export function selectLineup(
       dialog = document.createElement("dialog");
       dialog.className = "lu-confirm lu-settings";
       dialog.setAttribute("aria-labelledby", "lu-question");
-      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<p>Difficulty · Untuned</p><div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
+      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<p>Division affects opponent decisions and execution. Team stars show squad strength.</p><div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -285,23 +290,28 @@ export function selectLineup(
           )
         : [];
       lastShape = shape;
-      const field = [...positions(shape), { role: "GK", lane: 0, y: 86 }];
+      const field = [...positions(shape), { role: "GK", lane: 0, y: keeperY }];
+      const chemistry=home!==burners&&!match?lineupChemistry(home.name,shape,slots):null
+      const web=chemistry ? `<svg class="lu-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${chemistry.links.map(({a,b,rating})=>{
+        const color=rating>=70?'#74df85':rating>=40?'#ffc763':'#ff7971'
+        return `<line x1="${50+field[a].lane*3.5}" y1="${field[a].y}" x2="${50+field[b].lane*3.5}" y2="${field[b].y}" stroke="${color}" stroke-width="${rating>=70?4:rating>=40?2.5:1.25}" vector-effect="non-scaling-stroke"/>`
+      }).join('')}</svg>` : ''
       const role = (i: number) =>
         i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
       root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button><button id="lu-quit">Quit match</button>' : '<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : "Match settings"} ▸</button></div>
     <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}><button class="lu-bumper" id="lu-prev" aria-label="Previous formation">${hint("[", "LB")}</button>${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}<button class="lu-bumper" id="lu-next" aria-label="Next formation">${hint("]", "RB")}</button></div>
-    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div><div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${avatar(slots[i]!)}<span>${p.role} · ${slots[i]}</span></button>`).join("")}</div>
+    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${avatar(slots[i]!)}<span>${p.role} · ${slots[i]}</span></button>`).join("")}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
       .slice(7)
       .map(
         (n, i) =>
-          `<button ${match ? "disabled" : ""} data-slot="${i + 7}" id="slot-${i + 7}" aria-label="Sub ${i + 1}, ${n ?? "empty"}">${n ?? "+ Empty"}</button>`,
+          `<button ${match ? "disabled" : ""} data-swapping="${editing === i + 7}" data-slot="${i + 7}" id="slot-${i + 7}" aria-label="Sub ${i + 1}, ${n ?? "empty"}">${n ? avatar(n) : ""}${n ?? "+ Empty"}</button>`,
       )
       .join(
         "",
       )}</div></div></div><aside class="lu-details"><h2>Player details</h2><div id="lu-profile"></div>${
       editing >= 0
-        ? `<div class="lu-roster"><h2>${editing < 0 ? "Match squad" : "Choose for " + (editing < 7 ? role(editing) : "bench")}</h2>${(match ? slots.slice(7).filter((n): n is string => !!n) : names).map((n) => `<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n) || editing < 0 || (editing >= 7 && !slots[editing] && slots.slice(0, 7).includes(n)) ? "disabled" : ""}>${avatar(n)}<strong>${n}</strong><small>${role(slots.indexOf(n))}</small></button>`).join("")}
+        ? `<div class="lu-roster"><h2>${editing < 0 ? "Match squad" : "Choose for " + (editing < 7 ? role(editing) : "bench")}</h2>${(match ? slots.slice(7).filter((n): n is string => !!n) : names.filter(n => !slots.includes(n))).map((n) => `<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n) || editing < 0 || (editing >= 7 && !slots[editing] && slots.slice(0, 7).includes(n)) ? "disabled" : ""}>${avatar(n)}<strong>${n}</strong><small>${role(slots.indexOf(n))}</small></button>`).join("")}
     ${editing >= 7 ? '<button data-clear id="lu-clear">Leave empty</button>' : ""}${editing >= 0 ? '<button data-back id="lu-back">Back</button>' : ""}</div>`
         : ""
     }</aside></div>
@@ -370,9 +380,38 @@ export function selectLineup(
       fire = panel.querySelector("canvas")!.getContext("2d");
       paintFire(0);
     }
+    function previewSwap(button: HTMLElement) {
+      if (editing < 0 || match || home === burners) return;
+      const trial = slots.slice();
+      if (button.dataset.name) trial[editing] = button.dataset.name;
+      else if (button.dataset.slot !== undefined) {
+        const target = Number(button.dataset.slot);
+        [trial[target], trial[editing]] = [trial[editing], trial[target]];
+      }
+      const valid = trial.slice(0, 7).every(Boolean);
+      const result = lineupChemistry(home.name, shape, valid ? trial : slots);
+      const lines = root.querySelectorAll<SVGLineElement>(".lu-links line");
+      result.links.forEach(({a,b,rating}, i) => {
+        const line = lines[i];
+        const color = rating >= 70 ? "#74df85" : rating >= 40 ? "#ffc763" : "#ff7971";
+        line.setAttribute("stroke", color);
+        line.style.color = color;
+        line.setAttribute("stroke-width", String(rating >= 70 ? 4 : rating >= 40 ? 2.5 : 1.25));
+        line.classList.toggle("lu-preview", valid && (slots[a] !== trial[a] || slots[b] !== trial[b]));
+      });
+      const meter = root.querySelector<HTMLElement>(".lu-chem-meter")!;
+      meter.setAttribute("aria-valuenow", String(result.score));
+      meter.querySelector("i")!.style.width = result.score + "%";
+    }
+    root.addEventListener("pointerover", event => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-slot],[data-name]");
+      if (event.pointerType === "mouse" && button && button !== document.activeElement) button.focus({preventScroll:true});
+    });
     root.addEventListener("focusin", (event) => {
       const b = event.target as HTMLElement;
-      if (b.closest(".lu-roster")) pickerFocus = b.id;
+      previewSwap(b);
+      if (b.dataset.name) root.querySelectorAll<HTMLElement>(".lu-marker").forEach(m => m.dataset.current = "false");
+      if (b.closest(".lu-roster") || b.dataset.slot !== undefined) pickerFocus = b.id;
       if (b.dataset.slot !== undefined) {
         highlighted = Number(b.dataset.slot);
         root
@@ -407,8 +446,12 @@ export function selectLineup(
           return;
         }
         const key = b.dataset.setting;
-        if (key === "speed" || key === "time" || key === "weather") {
+        if (key === "speed" || key === "time" || key === "weather" || key === "difficulty") {
           if (b.getAttribute("aria-pressed") !== "true") audio.menu("nav");
+          if (key === "difficulty") {
+            const division = settingsOptions.difficulty.find(v => v === b.value);
+            if (division) { settings.difficulty = division; rememberDivision(division); }
+          }
           if (key === "speed")
             settings.speed =
               settingsOptions.speed.find((v) => String(v) === b.value) ??
@@ -441,23 +484,20 @@ export function selectLineup(
       }
       if (b.dataset.slot !== undefined) {
         audio.menu("nav");
-        editing = Number(b.dataset.slot);
+        const target = Number(b.dataset.slot);
+        if (!match && editing >= 0) {
+          if ((target < 7 && !slots[editing]) || (editing < 7 && !slots[target])) return;
+          [slots[target], slots[editing]] = [slots[editing], slots[target]];
+          close();
+          return;
+        }
+        editing = target;
         if (match) {
           const candidate = slots.slice(7).find((n) => n && legalSwap(n));
           draw(candidate ? "name-" + names.indexOf(candidate) : "lu-back");
           return;
         }
-        draw(
-          "name-" +
-            Math.max(
-              0,
-              names.indexOf(
-                slots[editing] ??
-                  names.find((n) => !slots.includes(n)) ??
-                  names[0],
-              ),
-            ),
-        );
+        draw(b.id);
         return;
       }
       if (b.dataset.name && editing >= 0) {
@@ -509,7 +549,9 @@ export function selectLineup(
         root.querySelectorAll<HTMLButtonElement>(
           dialog
             ? "dialog button"
-            : editing >= 0
+            : editing >= 0 && !match
+              ? "[data-slot],.lu-roster button:not(:disabled)"
+              : editing >= 0
               ? ".lu-roster button:not(:disabled)"
               : "button:not(:disabled)",
         ),
@@ -521,7 +563,7 @@ export function selectLineup(
           audio.menu("nav");
         }
       };
-      if (editing >= 0 && !dialog && dy && items.includes(current)) {
+      if (match && editing >= 0 && !dialog && dy && items.includes(current)) {
         focus(
           items[
             Math.max(0, Math.min(items.length - 1, items.indexOf(current) + dy))
@@ -631,7 +673,7 @@ export function selectLineup(
       }
       if (root.isConnected) frame = requestAnimationFrame(poll);
     }
-    draw(match ? "lu-start" : "slot-1");
+    draw(match ? "lu-start" : "slot-0");
     revealLineup();
     window.addEventListener("keydown", keydown);
     frame = requestAnimationFrame(poll);

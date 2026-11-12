@@ -1,6 +1,6 @@
-import startClick from './audio/start-click.mp3?inline'
-import retro from './audio/menu-retro.mp3?inline'
-import football from './audio/menu-football.mp3?inline'
+import startClick from './audio/start-click.mp3?url'
+import retro from './audio/menu-retro.mp3?url'
+import football from './audio/menu-football.mp3?url'
 
 export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>void){
  const tracks=[retro,football]

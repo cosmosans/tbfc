@@ -1,3 +1,4 @@
+import { profiles } from './difficulty'
 import {celebrationControls} from './celebrationLab'
 import {broadcastDirector,broadcastShirt,broadcastStarters} from './menuBroadcast'
 import {hint,reveal} from './screenUI'
@@ -7,93 +8,93 @@ import {startMenuMusic,type MenuMusic} from './menuMusic'
 import {mainMenu,mountMenuBackdrop} from './mainMenu'
 import {goalCannons} from './goalCannons'
 import {kneelingPose} from './kneelingPose'
-import mandyGoalUrl from './art/mandy-goal.png?inline'
-import pamGoalUrl from './art/pam-goal.png?inline'
-import nadiaIdle from './art/nadia-idle.png?inline'
-import nadiaRun from './art/nadia-run.png?inline'
-import nadiaKick from './art/nadia-side-kicks.png?inline'
-import nadiaFall from './art/nadia-fall.png?inline'
-import nelsonIdle from './art/nelson-idle.png?inline'
-import nelsonRun from './art/nelson-run.png?inline'
-import nelsonKick from './art/nelson-side-kicks.png?inline'
-import nelsonFall from './art/nelson-fall.png?inline'
-import stubbsFall from './art/stubbs-fall.png?inline'
-import meghanFall from './art/meghan-fall.png?inline'
-import chrisFall from './art/chris-fall.png?inline'
-import mandyFall from './art/mandy-fall.png?inline'
-import seanFall from './art/sean-fall.png?inline'
-import danielFall from './art/daniel-fall.png?inline'
-import stevenFall from './art/steven-fall.png?inline'
-import joseFall from './art/jose-fall.png?inline'
-import starsFall from './art/stars-fall.png?inline'
-import tealFall from './art/teal-fall.png?inline'
+import mandyGoalUrl from './art/mandy-goal.png?url'
+import pamGoalUrl from './art/pam-goal.png?url'
+import nadiaIdle from './art/nadia-idle.png?url'
+import nadiaRun from './art/nadia-run.png?url'
+import nadiaKick from './art/nadia-side-kicks.png?url'
+import nadiaFall from './art/nadia-fall.png?url'
+import nelsonIdle from './art/nelson-idle.png?url'
+import nelsonRun from './art/nelson-run.png?url'
+import nelsonKick from './art/nelson-side-kicks.png?url'
+import nelsonFall from './art/nelson-fall.png?url'
+import stubbsFall from './art/stubbs-fall.png?url'
+import meghanFall from './art/meghan-fall.png?url'
+import chrisFall from './art/chris-fall.png?url'
+import mandyFall from './art/mandy-fall.png?url'
+import seanFall from './art/sean-fall.png?url'
+import danielFall from './art/daniel-fall.png?url'
+import stevenFall from './art/steven-fall.png?url'
+import joseFall from './art/jose-fall.png?url'
+import starsFall from './art/stars-fall.png?url'
+import tealFall from './art/teal-fall.png?url'
 import {rivalSprites} from './rivalSprites'
 import {burners,clubs,type Club,type Fixture} from './opponentSquads'
 import {selectTeams} from './teamSelect'
 import {menuPad} from './menuPad'
 import type {Selection} from './lineup'
-import trainingIdle from './art/blue-chris-idle.png?inline'
-import trainingRun from './art/blue-chris-run.png?inline'
-import trainingKick from './art/blue-side-kicks.png?inline'
-import danielIdle from './art/daniel-idle.png?inline'
-import danielRun from './art/daniel-run.png?inline'
-import danielKick from './art/daniel-side-kicks.png?inline'
+import trainingIdle from './art/blue-chris-idle.png?url'
+import trainingRun from './art/blue-chris-run.png?url'
+import trainingKick from './art/blue-side-kicks.png?url'
+import danielIdle from './art/daniel-idle.png?url'
+import danielRun from './art/daniel-run.png?url'
+import danielKick from './art/daniel-side-kicks.png?url'
 import {defaultSettings} from './matchSettings'
-import stevenIdle from './art/steven-idle.png?inline'
-import stevenRun from './art/steven-run.png?inline'
-import stevenKick from './art/steven-side-kicks.png?inline'
-import joseGoalUrl from './art/jose-goal.png?inline'
-import maskRun from './art/jose-mask-run.png?inline'
-import joseIdle from './art/jose-idle.png?inline'
-import joseRun from './art/jose-run.png?inline'
-import joseKick from './art/jose-side-kicks.png?inline'
+import stevenIdle from './art/steven-idle.png?url'
+import stevenRun from './art/steven-run.png?url'
+import stevenKick from './art/steven-side-kicks.png?url'
+import joseGoalUrl from './art/jose-goal.png?url'
+import maskRun from './art/jose-mask-run.png?url'
+import joseIdle from './art/jose-idle.png?url'
+import joseRun from './art/jose-run.png?url'
+import joseKick from './art/jose-side-kicks.png?url'
 import {selectLineup, positions, burnerEligibility} from './lineup'
-import janIdle from './art/jan-idle.png?inline'
-import janRun from './art/jan-run.png?inline'
-import janKick from './art/jan-side-kicks.png?inline'
+import janIdle from './art/jan-idle.png?url'
+import janRun from './art/jan-run.png?url'
+import janKick from './art/jan-side-kicks.png?url'
 import { audio } from './matchAudio'
-import cardSheet from './art/ref-yellow-card.png?inline'
-import stubbsKick from './art/stubbs-side-kicks.png?inline'
-import mandyKick from './art/mandy-side-kicks.png?inline'
-import jeremyKick from './art/jeremy-side-kicks.png?inline'
-import seanKick from './art/sean-side-kicks.png?inline'
-import blueKick from './art/stars-side-kicks.png?inline'
-import tealKick from './art/teal-side-kicks.png?inline'
-import tealIdle from './art/teal-idle.png?inline'
-import mandyIdle from './art/mandy-idle.png?inline'
-import mandyRun from './art/mandy-run.png?inline'
-import jeremyIdle from './art/jeremy-idle.png?inline'
-import jeremyRun from './art/jeremy-run.png?inline'
-import seanIdle from './art/sean-idle.png?inline'
-import seanRun from './art/sean-run.png?inline'
+import cardSheet from './art/ref-yellow-card.png?url'
+import stubbsKick from './art/stubbs-side-kicks.png?url'
+import mandyKick from './art/mandy-side-kicks.png?url'
+import jeremyKick from './art/jeremy-side-kicks.png?url'
+import seanKick from './art/sean-side-kicks.png?url'
+import blueKick from './art/stars-side-kicks.png?url'
+import tealKick from './art/teal-side-kicks.png?url'
+import tealIdle from './art/teal-idle.png?url'
+import mandyIdle from './art/mandy-idle.png?url'
+import mandyRun from './art/mandy-run.png?url'
+import jeremyIdle from './art/jeremy-idle.png?url'
+import jeremyRun from './art/jeremy-run.png?url'
+import seanIdle from './art/sean-idle.png?url'
+import seanRun from './art/sean-run.png?url'
 import { GoalReplay, strikerView, frameAction, cinematicPlayerSize, cinematicBallSize } from './replay'
-import refereeIdle from './art/ref-idle.png?inline'
-import refereeRun from './art/ref-run.png?inline'
+import refereeIdle from './art/ref-idle.png?url'
+import refereeRun from './art/ref-run.png?url'
 import { advanceOutBall } from './perimeter'
-import pamSideKicks from './art/pam-side-kicks.png?inline'
-import chrisSideKicks from './art/chris-side-kicks.png?inline'
-import meghanKick from './art/meghan-kick-preview.png?inline'
-import awayKeeperEnd from './art/keeper-end.png?inline'
-import stubbsIdle from './art/stubbs-idle.png?inline'
-import stubbsRun from './art/stubbs-run.png?inline'
+import pamSideKicks from './art/pam-side-kicks.png?url'
+import chrisSideKicks from './art/chris-side-kicks.png?url'
+import meghanKick from './art/meghan-kick-preview.png?url'
+import awayKeeperEnd from './art/keeper-end.png?url'
+import stubbsIdle from './art/stubbs-idle.png?url'
+import stubbsRun from './art/stubbs-run.png?url'
 import { buildGrounds } from './grounds'
 import { createGoal } from './goal'
-import keeperImage from './art/practice-keeper.png?inline'
+import keeperImage from './art/practice-keeper.png?url'
 import { planShot, shotFeedback } from './shooting'
-import ballSheet from './art/ball-spin.png?inline'
+import ballSheet from './art/ball-spin.png?url'
 import { kickArc, heightAt } from './ballArc'
-import oxaniumUrl from './fonts/oxanium.ttf?inline'
-import upheavalUrl from './fonts/upheavtt.ttf?inline'
+import oxaniumUrl from './fonts/oxanium.ttf?url'
+import upheavalUrl from './fonts/upheavtt.ttf?url'
 import * as T from 'three'
-import pam_idle from './art/pam-idle.png?inline'
-import pam_run from './art/pam-run.png?inline'
+import pam_idle from './art/pam-idle.png?url'
+import pam_run from './art/pam-run.png?url'
 
-import blueIdle from './art/stars-idle.png?inline'
-import blueRun from './art/stars-run.png?inline'
-import chris_idle from './art/chris-idle.png?inline'
-import chris_run from './art/chris-run.png?inline'
-import meghan_idle from './art/meghan-pixellab-idle.png?inline'
-import meghan_run from './art/meghan-pixellab-run.png?inline'
+import blueIdle from './art/stars-idle.png?url'
+import blueRun from './art/stars-run.png?url'
+import chris_idle from './art/chris-idle.png?url'
+import chris_run from './art/chris-run.png?url'
+import meghan_idle from './art/meghan-pixellab-idle.png?url'
+import meghan_run from './art/meghan-pixellab-run.png?url'
 const uiFont = new FontFace('Oxanium', 'url(' + oxaniumUrl + ')', {weight:'200 800', display:'swap'})
 document.fonts.add(uiFont)
 void uiFont.load()
@@ -106,11 +107,13 @@ async function start(){
  const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chris_idle,chris_run,chrisSideKicks],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
  const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisFall,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFall}
  const settings=defaultSettings()
+ const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
  let fixture:Fixture|undefined,lineup:Selection|null=null,portraits=burnerPortraits
  audio.state(true,false)
  let music:MenuMusic|undefined
  let standalonePractice=false
+ let simulation=false
  let celebrationLab=false
  const broadcast=new URLSearchParams(location.search).get('broadcast')==='1'
  if(broadcast){
@@ -128,6 +131,14 @@ async function start(){
   const removeBackdrop=mountMenuBackdrop()
   let destination=await mainMenu(music,!returning)
   do{
+   if(destination==='simulate'){
+    simulation=true
+    const home=clubs[Math.floor(Math.random()*clubs.length)]
+    const visitors=clubs.filter(club=>club!==home)
+    fixture={home,away:visitors[Math.floor(Math.random()*visitors.length)]}
+    lineup={shape:'1-3-3',starters:[...home.outfield,home.keeper],bench:[...home.bench]}
+    break
+   }
    if(destination==='celebrations'){
     celebrationLab=true
     fixture={home:burners,away:clubs[clubs.length-1]}
@@ -145,6 +156,7 @@ async function start(){
   removeBackdrop()
   music.finish()
  }
+ const aiHome=broadcast||simulation
  const {home,away:matchOpponent}=fixture
  const homeLabel=home===burners?'TBFC':home.name
  const homeShape=positions(lineup.shape)
@@ -203,7 +215,7 @@ async function start(){
  let shotDirection=1
  let netTravel=false
  const circle=new T.Mesh(new T.RingGeometry(2.9,2.97,64),new T.MeshBasicMaterial({color:lines,side:T.DoubleSide}));circle.rotation.x=-Math.PI/2;circle.position.y=.035;scene.add(circle)
- const jogAssets=import.meta.glob<string>('./art/*-celebration-jog.png',{eager:true,query:'?inline',import:'default'})
+ const jogAssets=import.meta.glob<string>('./art/*-celebration-jog.png',{eager:true,query:'?url',import:'default'})
  const jogByIdle=new Map([
   [meghan_idle,'meghan-pixellab'],[pam_idle,'pam'],[janIdle,'jan'],[mandyIdle,'mandy'],
   [jeremyIdle,'jeremy'],[chris_idle,'chris'],[seanIdle,'sean'],[stubbsIdle,'stubbs'],
@@ -1026,7 +1038,7 @@ async function start(){
  }
  function blueWins(index:number,reason:string){
   windupReceiver=-1;cancelCharge();endFollowUpRuns();returnRunTime=0
-  lastBlue=true;bluePass=null;blueDecisionTime=.65;blueCarrier=index;held=false;inFlight=false;lastSender=-1
+  lastBlue=true;bluePass=null;blueDecisionTime=difficulty().reactionDelayMs/1000;blueCarrier=index;held=false;inFlight=false;lastSender=-1
   pressTime=0;turnoverGrace=.7;dribbleSide=opponents[index].sprite.position.z>0?-1:1
   el('shotResult').textContent=reason;noticeTime=.9
  }
@@ -1085,7 +1097,7 @@ async function start(){
     o.goal.set(ballPos.x,0,ballPos.z)
    }else{
     o.goal.set(attackSign*T.MathUtils.clamp(attackSign*ballPos.x+(i>=3?7:-1),-13,18),0,
-     lanes[i]+T.MathUtils.clamp(ballPos.z*.28,-2.5,2.5))
+     T.MathUtils.lerp(ballPos.z,lanes[i]+T.MathUtils.clamp(ballPos.z*.28,-2.5,2.5),difficulty().defensiveShape))
    }
    o.goal.x=T.MathUtils.clamp(o.goal.x,-20.4,20.4);o.goal.z=T.MathUtils.clamp(o.goal.z,-11.4,11.4)
    o.velocity.subVectors(o.goal,pos)
@@ -1104,7 +1116,7 @@ async function start(){
    const target=held?ballPos:carrier.sprite.position
    const dx=target.x-defender.sprite.position.x,dz=target.z-defender.sprite.position.z
    pressTime=Math.hypot(dx,dz)<1.85?pressTime+dt:0
-   if(pressTime>=.12){
+   if(pressTime>=difficulty().reactionDelayMs/1000){
     defender.face=facing(dx,dz,defender.face)
     defender.age=0;defender.tackling=true;defender.shooting=false;defender.moving=false
     pressTime=0
@@ -1235,7 +1247,7 @@ async function start(){
    releaseLooseStrike(dx,target-ball.position.z,shotMultiplier-1)
    return true
   }
-  shot=planShot(-attackSign*ball.position.x,ball.position.z,keeperStart,shotMultiplier-1,fieldX,-attackSign*from.x,-attackSign*keeperStartX,Math.random,homeKeeper.visible,target)
+  shot=planShot(-attackSign*ball.position.x,ball.position.z,keeperStart,shotMultiplier-1,fieldX,-attackSign*from.x,-attackSign*keeperStartX,Math.random,homeKeeper.visible,target,difficulty().shootingError)
   shot.targetX*=-attackSign
   scorer=carrier;replay.markStrike(carrier.sprite,ball.position)
   shotDirection=-attackSign;shotStart.copy(ball.position);shotTime=0;arc=kickArc(shotMultiplier)
@@ -1249,7 +1261,7 @@ async function start(){
   blueDecisionTime-=dt
   if(blueDecisionTime>0)return
   const carrier=opponents[blueCarrier],from=carrier.sprite.position
-  blueDecisionTime=.18
+  blueDecisionTime=difficulty().reactionDelayMs/1000
   const inFinalThird=attackSign*from.x<=-fieldX/3
   if(inFinalThird&&tryBlueShot())return
   if(carrier.sprintTime>0)return
@@ -1269,12 +1281,14 @@ async function start(){
     const along=((pos.x-from.x)*dx+(pos.z-from.z)*dz)/length
     if(along>0&&along<1)lane=Math.min(lane,Math.hypot(pos.x-from.x-along*dx,pos.z-from.z-along*dz))
    }
-   if(space<1.5||lane<.8)continue
+   if(space<1.5||lane<difficulty().laneClearance)continue
    const score=Math.min(space,5)+Math.min(lane,3)-.1*Math.sqrt(length)-attackSign*dx*.14
    if(score>best){best=score;receiver=i}
   }
   if(receiver<0)return
   const end=opponents[receiver].sprite.position.clone()
+  const scatter=(.12+.035*from.distanceTo(end))*difficulty().passingError
+  end.z=T.MathUtils.clamp(end.z+(Math.random()*2-1)*scatter,-11.5,11.5)
   end.y=restingHeight
   const start=ball.position.clone()
   carrier.age=.12;carrier.shooting=true
@@ -1307,7 +1321,7 @@ async function start(){
  }
  let autoX=0,autoZ=0
  function readAim(pad:Gamepad|null|undefined){
-   if(broadcast)return [autoX,autoZ]
+   if(aiHome)return [autoX,autoZ]
    const x=Number(keys.has('KeyD'))-Number(keys.has('ArrowLeft')||keys.has('KeyA'))+axisX+(pad?.axes[0]??0)
    const z=Number(keys.has('ArrowDown')||keys.has('KeyS'))-Number(keys.has('ArrowUp')||keys.has('KeyW'))+axisZ+(pad?.axes[1]??0)+Number(!!pad?.buttons[13]?.pressed)-Number(!!pad?.buttons[12]?.pressed)
   return view.end?[-z*attackSign,x*attackSign]:[x,z]
@@ -1372,7 +1386,16 @@ async function start(){
   recentHomeKicker=players[active];homeLateTime=lateTackleWindow
   lastSender=active;ballPlayer=active=target;held=false;inFlight=true
  }
+ function exitSimulation(){
+  history.replaceState({...history.state,arcadeMenu:true},'')
+  location.reload()
+ }
  async function matchMenu(){
+  if(simulation){
+   if(phase==='fulltime')exitSimulation()
+   else pause(!paused)
+   return
+  }
   if(crossingDrill){endWarmup();return}
   if(squadOpen||phase==='fulltime')return
   if(replay.cut>=0||celebrating){audio.menu(paused?'close':'open');pause(!paused);return}
@@ -1387,7 +1410,7 @@ async function start(){
    audio.menu('close');pause(document.hidden);reveal(matchView,':scope > canvas,.bug-stack')
   }finally{squadOpen=false;padIndex=null}
  }
- function pause(on:boolean){if(phase==='fulltime')return;cancelRush();cancelCharge();paused=on;matchView.toggleAttribute('data-paused',on);keys.clear();axisX=axisZ=0;el('knob').style.transform='';el('pause').textContent=on?'Resume':'Pause';el('message').textContent=on?'Match paused':phase==='halftime'?'Halftime':phase==='kickoff'?(kickoffBlue?matchOpponent.name+' kickoff':players[active].displayName+' · pass to kick off'):''}
+ function pause(on:boolean){if(phase==='fulltime')return;cancelRush();cancelCharge();paused=on;matchView.toggleAttribute('data-paused',on);keys.clear();axisX=axisZ=0;el('knob').style.transform='';el('pause').textContent=on?'Resume':'Pause';el('message').textContent=on?(simulation?'Paused · Menu to resume · B to quit':'Match paused'):phase==='halftime'?'Halftime':phase==='kickoff'?(kickoffBlue?matchOpponent.name+' kickoff':players[active].displayName+' · pass to kick off'):''}
  function snap(value:number,step:number){return Math.round(value/step)*step}
  function screenRotation(){return broadcast?broadcastRotation:view.end?2*attackSign:0}
  function resize(){
@@ -1468,6 +1491,16 @@ async function start(){
   for(const actor of pitchActors)actor.sprite.visible=players.includes(actor)||actor===awayGK
   training.panel.hidden=false;matchView.classList.add('training');training.choose(standalonePractice?0:Math.floor(Math.random()*drills.length));setupRep()
  }
+ if(simulation){
+  matchView.dataset.simulation=''
+  const exit=document.createElement('button')
+  exit.textContent='Quit match'
+  exit.onclick=exitSimulation
+  const controls=document.createElement('div')
+  controls.className='sim-controls'
+  controls.append(el('changeView'),el('pause'),exit)
+  matchView.append(controls)
+ }
  let revealFirstFrame=!broadcast
  el('switchPlayer').onclick=switchPlayer
  el('reset').onclick=()=>{
@@ -1485,6 +1518,7 @@ async function start(){
   if(['KeyB','KeyK','Space'].includes(e.code)){e.preventDefault();if(!e.repeat)press('shot',e.code)}
   return
  }
+ if(simulation&&e.code==='Escape'){if(!e.repeat)void matchMenu();return}
  if(broadcast||squadOpen||e.target instanceof HTMLButtonElement&&e.code==='Space')return
  if(crossingDrill&&e.code==='Enter'){e.preventDefault();if(!e.repeat)endWarmup();return}
  if(crossingDrill&&e.code==='KeyR'){if(!e.repeat)chooseDrill(training.drill);return}
@@ -1495,15 +1529,16 @@ async function start(){
   if(!e.repeat)cycleView(e.code==='Comma'||e.key===','||e.key==='<'?-1:1)
   return
  }
+ if(simulation)return
  if(e.code==='ArrowRight'){if(!e.repeat)switchPlayer();return}
  keys.add(e.code);if(!e.repeat){if(e.code==='KeyX')press('cross',e.code);if(e.code==='KeyY')press('through',e.code);if(['KeyE','KeyJ'].includes(e.code))press('pass',e.code);if(['KeyB','KeyK','Space'].includes(e.code))press('shot',e.code);if(e.code==='Escape')void matchMenu()}})
- addEventListener('keyup',e=>{keys.delete(e.code);release(e.code)});addEventListener('blur',()=>{if(celebrationLab){keys.clear();axisX=axisZ=0}else if(!broadcast)pause(true)})
- const utilityButtons=[4,14,15]
- const utilityHeld=[false,false,false]
+ addEventListener('keyup',e=>{keys.delete(e.code);release(e.code)});addEventListener('blur',()=>{if(celebrationLab){keys.clear();axisX=axisZ=0}else if(!aiHome)pause(true)})
+ const utilityButtons=[4,14,15,11,1]
+ const utilityHeld=utilityButtons.map(()=>false)
  let padIndex:number|null=null
  function updatePadStatus(text:string){const badge=el('padStatus');if(badge.textContent!==text)badge.textContent=text}
  addEventListener('gamepaddisconnected',event=>{
-  if(celebrationLab||event.gamepad.index!==padIndex)return
+  if(simulation||celebrationLab||event.gamepad.index!==padIndex)return
   padIndex=null;pause(true);updatePadStatus('Controller disconnected')
  })
  const stick=el('stick')
@@ -1607,7 +1642,7 @@ async function start(){
   if(!groupStarted&&goalAge>=celebrationRunSeconds)startGroupCelebration()
   if(celebrant&&!groupStarted){
    const pos=celebrant.sprite.position
-   const userScored=shotDirection===attackSign&&!broadcast
+   const userScored=shotDirection===attackSign&&!aiHome
    const [x,z]=userScored?readAim(pad):[-shotDirection*.65,(Math.sign(shotStart.z||1)*9-pos.z)*.3]
    celebrant.moving=Math.hypot(x,z)>.22
    if(celebrant.moving){
@@ -1670,7 +1705,7 @@ async function start(){
  let broadcastRotation=0,decisionIn=.5
  function playForHome(dt:number){
   decisionIn-=dt
-  if(phase==='fulltime'){half=1;matchSeconds=homeScore=awayScore=0;reset();return}
+  if(phase==='fulltime'){if(simulation)return;half=1;matchSeconds=homeScore=awayScore=0;reset();return}
   if(celebrating||phase==='halftime'||outBall||keeperRestart||keeperGather>0||resultTime>0)return
   const player=players[active],pos=player.sprite.position
   if(freeKick){
@@ -1707,18 +1742,19 @@ async function start(){
  function tick(now:number){
   const elapsed=(now-last)/1000,dt=Math.min(.04,elapsed)*(celebrating?.38:1);last=now
   if(squadOpen){requestAnimationFrame(tick);return}
-  if(broadcast&&document.hidden){requestAnimationFrame(tick);return}
+  if(aiHome&&document.hidden){requestAnimationFrame(tick);return}
   if(!paused)updateWeather(dt)
-  if(broadcast)playForHome(dt)
+  if(aiHome&&!paused&&replay.cut<0)playForHome(dt)
   const inputPad=broadcast?undefined:menuPad()
   labControls?.poll(inputPad)
-  const pad=celebrationLab?undefined:inputPad
-  if(pad&&padIndex!==pad.index){
-   utilityButtons.forEach((n,i)=>utilityHeld[i]=!!pad.buttons[n]?.pressed)
-   padIndex=pad.index;faceActions.forEach((_,i)=>padHeld[i]=!!pad.buttons[i]?.pressed);lastPause=!!pad.buttons[9]?.pressed
-   updatePadStatus(pad.mapping==='standard'?'Controller connected':'Controller connected · check layout')
+  const pad=celebrationLab||simulation?undefined:inputPad
+  const controlsPad=celebrationLab?undefined:inputPad
+  if(controlsPad&&padIndex!==controlsPad.index){
+   utilityButtons.forEach((n,i)=>utilityHeld[i]=!!controlsPad.buttons[n]?.pressed)
+   padIndex=controlsPad.index;faceActions.forEach((_,i)=>padHeld[i]=!!pad?.buttons[i]?.pressed);lastPause=!!controlsPad.buttons[9]?.pressed
+   updatePadStatus(controlsPad.mapping==='standard'?'Controller connected':'Controller connected · check layout')
   }
-  const menu=!!pad?.buttons[9]?.pressed
+  const menu=!!inputPad?.buttons[9]?.pressed
   const rb=!!pad?.buttons[5]?.pressed
   if(crossingDrill&&rb&&!lastDrillButton)chooseDrill((training.drill+1)%drills.length)
   if(crossingDrill&&training.count===5&&pad?.buttons[0]?.pressed&&!padHeld[0])chooseDrill(training.drill)
@@ -1728,9 +1764,10 @@ async function start(){
   if(menu&&!lastPause)void matchMenu()
   lastPause=menu
   utilityButtons.forEach((n,i)=>{
-   const down=!!pad?.buttons[n]?.pressed
+   const down=!!controlsPad?.buttons[n]?.pressed
    if(down&&!utilityHeld[i]){
-    if(n===4)switchPlayer()
+    if(n===1){if(simulation&&(paused||phase==='fulltime'))exitSimulation()}
+    else if(n===4){if(!simulation)switchPlayer()}
     else cycleView(n===14?-1:1)
    }
    utilityHeld[i]=down
@@ -1864,8 +1901,8 @@ async function start(){
     foot.x+=dx*step;foot.z+=dz*step;foot.y=0;homeKeeper.material.rotation=0
    }
    if(!celebrationLab&&!shot&&!keeperRestart&&resultTime<=0){
-    const cover=T.MathUtils.clamp(ball.position.z*.45,-1.55,1.55)
     for(const goalie of keepers){
+     const cover=T.MathUtils.clamp(ball.position.z*(goalie===keeper?difficulty().keeperTracking:.45),-1.55,1.55)
      if(goalie===homeKeeper&&(rushing||keeperGather>0))continue
      const homeX=attackSign*(goalie===keeper?keeperHomeX:-keeperHomeX)
      goalie.position.x+=T.MathUtils.clamp(homeX-goalie.position.x,-6*dt,6*dt)
@@ -2098,7 +2135,7 @@ async function start(){
     const cut=interceptPass(previousPassPosition,ball.position,players)
     if(cut>=0)winBack(cut,'INTERCEPTED')
     else if(t===1){
-     blueCarrier=bluePass.receiver;bluePass=null;blueDecisionTime=.75
+     blueCarrier=bluePass.receiver;bluePass=null;blueDecisionTime=difficulty().reactionDelayMs/1000
     }
    }else if(blueCarrier>=0){
     lastBlue=true
