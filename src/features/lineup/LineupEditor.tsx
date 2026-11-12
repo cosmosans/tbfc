@@ -28,6 +28,7 @@ import {
 import { fullStrength } from "./fullStrength";
 import { formationSlots, normalizeLineupRoles } from "./formations";
 import LineupPitch from "./LineupPitch";
+import ShareLineupButton from "./ShareLineupButton";
 import { canEditClub } from "../../editAccess";
 import { byPlayerNumber } from "../../playerOrder";
 
@@ -45,7 +46,10 @@ export default function LineupEditor({
     data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id));
   const confirmedOutIds = new Set(lineup.confirmedOutIds ?? []);
   if (!canEditClub) {
-    return <LineupPitch data={data} lineup={lineup} showTitle={false} />;
+    return <Stack gap={2} sx={{ mt: 2 }}>
+      <ShareLineupButton data={data} match={match} lineup={lineup} />
+      <LineupPitch data={data} lineup={lineup} showTitle={false} />
+    </Stack>;
   }
 
   function save(next: typeof lineup) {
@@ -379,6 +383,7 @@ export default function LineupEditor({
           </Card>
         </Stack>
         <Stack gap={2} sx={{ minWidth: 0 }}>
+          <ShareLineupButton data={data} match={match} lineup={lineup} />
           <LineupPitch
             data={data}
             lineup={lineup}

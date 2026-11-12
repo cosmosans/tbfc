@@ -63,13 +63,17 @@ export class MatchAudio {
  }
  private sync(){
   if(!this.ctx)return
-  this.master!.gain.setTargetAtTime(this.stopped||this.muted?0:.83,this.ctx.currentTime,.012)
+  const gain=this.master!.gain,now=this.ctx.currentTime
+  gain.cancelScheduledValues(now)
+  if(this.stopped||this.muted)gain.setValueAtTime(0,now)
+  else gain.setTargetAtTime(.83,now,.012)
   this.bed!.gain.setTargetAtTime(this.quiet?.09:.23,this.ctx.currentTime,.2)
  }
- toggle(){
-  this.muted=!this.muted
+ setMuted(muted:boolean){
+  this.muted=muted
   try{localStorage.setItem('tbfc.arcade.muted',this.muted?'yes':'no')}catch{}
-  this.unlock();this.sync()
+  if(!muted)this.unlock()
+  this.sync()
  }
  state(stopped:boolean,quiet:boolean){
   if(this.stopped===stopped&&this.quiet===quiet)return

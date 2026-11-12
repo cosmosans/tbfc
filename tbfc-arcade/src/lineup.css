@@ -24,7 +24,13 @@
 }
 @media(prefers-reduced-motion:reduce){#lineup button:focus::after,#lineup .lu-marker[data-current=true]::after,.lu-portrait .lu-avatar{animation:none}}
 .lu-heading small,.lu-player small,.lu-bench small{color:#ffab7b;font-size:14px}
-.lu-form{margin:14px 0;flex-wrap:wrap}
+.lu-form{width:100%;max-width:700px;margin:14px auto;justify-content:center}
+.lu-form [data-shape]{flex:1;min-width:0;white-space:nowrap}
+@media(max-width:700px){
+ .lu-heading:has(#lu-teams){flex-wrap:wrap;align-items:stretch}
+ .lu-heading:has(#lu-teams)>div{flex-basis:100%}
+ #lineup .lu-heading:has(#lu-teams)>button{flex:1;min-width:0;padding:8px 4px;font-size:clamp(14px,3.7vw,18px)}
+}
 .lu-form button,.lu-bench button{padding:6px 12px}
 .lu-layout{display:grid;grid-template-columns:minmax(145px,.6fr) minmax(280px,1.4fr);gap:clamp(12px,3vw,30px)}
 .lu-player{display:flex;width:100%;align-items:center;gap:10px;text-align:left;min-height:34px;padding:1px 8px;margin-bottom:3px}
@@ -40,11 +46,11 @@
 .lu-bench>div{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
 .lu-bench button{font-size:15px!important;padding:5px 1px}
 #lineup p{margin-top:14px;color:#c9c0bb;font:13px var(--ui-font)}
-@media(max-width:520px){.lu-layout{grid-template-columns:1fr}.lu-field{height:290px}.lu-roster{display:grid;grid-template-columns:1fr 1fr;gap:3px}.lu-roster h2{grid-column:1/-1}.lu-player{margin:0}.lu-form{margin:8px 0}}
-@media(max-height:480px) and (min-width:521px){.lu-wrap{padding:5px 12px}.lu-form{margin:5px 0}.lu-field{height:218px}.lu-player{min-height:24px}.lu-avatar{width:24px;height:24px}.lu-heading{padding-bottom:4px}.lu-heading h1{font-size:28px!important}.lu-form button{padding:3px 10px}.lu-wrap p{margin-top:4px!important}}
+@media(max-width:520px){.lu-layout{grid-template-columns:1fr}.lu-field{height:290px}.lu-roster{display:grid;grid-template-columns:minmax(0,1fr);gap:3px}.lu-roster h2{grid-column:1/-1}.lu-player{margin:0}.lu-form{margin-block:8px}}
+@media(max-height:480px) and (min-width:521px){.lu-wrap{padding:5px 12px}.lu-form{margin-block:5px}.lu-field{height:218px}.lu-player{min-height:24px}.lu-avatar{width:24px;height:24px}.lu-heading{padding-bottom:4px}.lu-heading h1{font-size:28px!important}.lu-form button{padding:3px 10px}.lu-wrap p{margin-top:4px!important}}
 
 #lineup .lu-bumper{padding:4px 7px;border-radius:7px 7px 3px 3px;border-bottom-width:3px;font-size:13px;color:#eeb59c}
-@media(max-width:520px){.lu-form{gap:3px;flex-wrap:nowrap}.lu-form button{font-size:clamp(12px,3.3vw,17px);padding:5px 3px}#lineup .lu-bumper{padding:4px;font-size:12px}}
+@media(max-width:520px){.lu-form{gap:3px;flex-wrap:nowrap}#lineup .lu-form [data-shape]{font-size:clamp(11px,3.3vw,17px);padding:5px 3px}#lineup .lu-bumper{padding:4px;font-size:12px}}
 
 .lu-confirm{width:min(360px,90vw);padding:22px;background:#171414;color:#fff6da;border:2px solid #ca5126;border-radius:4px;font:inherit}
 .lu-confirm::backdrop{background:#060606dd}

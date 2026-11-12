@@ -29,7 +29,7 @@ export function positions(shape:Shape){
 export type Selection={shape:Shape,starters:string[],bench:string[],warmup?:boolean}
 
 type MatchSquad={current:Selection,unavailable:Set<string>}
-const burnerEligibility=new Set(['Meghan','Jan','Mandy','Nadia','Pam'])
+export const burnerEligibility=new Set(['Meghan','Jan','Mandy','Nadia','Pam'])
 export function selectLineup(portraits:Record<string,string>,fixture:Fixture,match?:MatchSquad,settings:MatchSettings=defaultSettings()):Promise<Selection|null>{
  const {home,away}=fixture
  const key=home===burners?'tbfc.match.lineup.v1':'tbfc.match.lineup.v1.'+home.name
@@ -72,6 +72,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    cancelAnimationFrame(frame);window.removeEventListener('keydown',keydown)
    root.remove();style.remove();document.querySelector('main')!.inert=false;resolve(back?null:result)
   }
+  const revealLineup=()=>reveal(root,'.lu-heading,.lu-form:not([hidden]),.lu-field,.lu-details,.lu-bench')
   let dialog:HTMLDialogElement|null=null
   function confirmKickoff(){
    if(dialog)return
@@ -82,7 +83,7 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    dialog.className='lu-confirm lu-settings';dialog.setAttribute('aria-labelledby','lu-question')
    dialog.innerHTML=`<h2 id="lu-question">Match settings</h2><p>${home.name} vs ${away.name}</p><p>${shape} · 7 starters · ${slots.slice(7).filter(Boolean).length} subs</p>${settingsFields(settings)}<p>Difficulty · Untuned</p><div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup">Warm up</button><button id="lu-cancel">Back to lineup</button></div>`
    root.append(dialog)
-   dialog.onclose=()=>{dialog?.remove();dialog=null;if(previous?.isConnected)previous.focus()}
+   dialog.onclose=()=>{dialog?.remove();dialog=null;if(root.isConnected){previous?.focus();revealLineup()}}
    dialog.showModal()
    reveal(dialog,'h2,fieldset,#lu-confirm,#lu-warmup,#lu-cancel')
    root.querySelector<HTMLElement>('#lu-confirm')!.focus()
@@ -234,6 +235,6 @@ export function selectLineup(portraits:Record<string,string>,fixture:Fixture,mat
    }else{a=b=lb=rb=startHeld=false;held=''}
    if(root.isConnected)frame=requestAnimationFrame(poll)
   }
-  draw(match?'lu-start':'slot-1');reveal(root,'.lu-heading,.lu-form:not([hidden]),.lu-field,.lu-details,.lu-bench');window.addEventListener('keydown',keydown);frame=requestAnimationFrame(poll)
+  draw(match?'lu-start':'slot-1');revealLineup();window.addEventListener('keydown',keydown);frame=requestAnimationFrame(poll)
  })
 }

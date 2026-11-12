@@ -6,7 +6,7 @@ export function hint(key:string,pad:string){
 // A repeating ordered-dither tile reveals opaque square pixels in eight passes.
 const order=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5]
 let masks:Keyframe[]|undefined
-export function reveal(root:HTMLElement,selector:string){
+export function reveal(root:HTMLElement,selector=':scope > *'){
  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return
  if(!masks){
   masks=Array.from({length:9},(_,i)=>{
@@ -16,5 +16,6 @@ export function reveal(root:HTMLElement,selector:string){
    return {maskImage:'url('+cv.toDataURL()+')',maskSize:'32px 32px',maskRepeat:'repeat',easing:'steps(1,end)'}
   })
  }
+ root.animate(masks,{duration:260})
  root.querySelectorAll<HTMLElement>(selector).forEach((el,i)=>el.animate(masks!,{duration:300,delay:i*72,fill:'backwards'}))
 }
