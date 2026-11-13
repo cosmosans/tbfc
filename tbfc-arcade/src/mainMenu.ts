@@ -5,7 +5,13 @@ import crest from "./art/ground/crest.png?url";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./mainMenu.css?inline";
 
-export type Destination = "career" | "match" | "practice" | "celebrations" | "simulate" | "burnLab";
+export type Destination =
+  | "career"
+  | "match"
+  | "practice"
+  | "celebrations"
+  | "simulate"
+  | "penalties" | "burnLab";
 
 export function mountMenuBackdrop() {
   const style = document.createElement("style");
@@ -24,7 +30,10 @@ export function mountMenuBackdrop() {
     feed.setAttribute("aria-hidden", "true");
     document.body.append(feed);
   }
-  return () => { feed?.remove(); style.remove(); };
+  return () => {
+    feed?.remove();
+    style.remove();
+  };
 }
 
 export function mainMenu(
@@ -48,7 +57,7 @@ export function mainMenu(
     const title =
       '<div class="menu-title"><img src="' +
       crest +
-      '" alt=""><div><span>TURF BURNERS FC</span><h1 id="menu-title">ARCADE</h1></div></div>';
+      '" alt=""><div><span>TURF BURNERS FC</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
     function audioButton(
       action: "music" | "sound",
       label: string,
@@ -69,7 +78,8 @@ export function mainMenu(
       );
     }
     function draw(next: typeof screen, returnFocus = "first") {
-      if (screen && screen !== "intro") audio.menu(next === "menu" ? "nav" : "success");
+      if (screen && screen !== "intro")
+        audio.menu(next === "menu" ? "nav" : "success");
       screen = next;
       root.dataset.screen = next;
       if (next === "intro")
@@ -81,7 +91,8 @@ export function mainMenu(
           title +
           '<nav aria-label="Main menu"><button data-action="career">Career Mode</button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
-        shell.innerHTML = '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="back">Back</button></nav>';
+        shell.innerHTML =
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
@@ -91,10 +102,21 @@ export function mainMenu(
       controllerStatus = shell.querySelector(".menu-controller");
       shell
         .querySelector<HTMLButtonElement>(
-          returnFocus === "first" ? "button:enabled" : '[data-action="' + returnFocus + '"]',
+          returnFocus === "first"
+            ? "button:enabled"
+            : '[data-action="' + returnFocus + '"]',
         )!
         .focus({ preventScroll: true });
       reveal(shell, ".menu-title img,.menu-title>div,:scope>h1,button");
+      if (next === "menu") {
+        const brand = shell.querySelector<HTMLElement>(".menu-title span")!;
+        const arcade = shell.querySelector<HTMLElement>(".menu-title h1")!;
+        const alignTitle = () => {
+          arcade.style.transform = "none";
+          arcade.style.transform = `scaleX(${brand.getBoundingClientRect().width / arcade.getBoundingClientRect().width})`;
+        };
+        void document.fonts.ready.then(alignTitle);
+      }
     }
     function leave(destination: Destination) {
       audio.menu("success");
@@ -112,17 +134,28 @@ export function mainMenu(
           music.start();
           draw("menu");
           break;
-        case "career": leave("career"); break;
+        case "career":
+          leave("career");
+          break;
         case "kick":
           leave("match");
           break;
         case "practice":
           leave("practice");
           break;
-        case "debug": draw("debug"); break;
-        case "simulate": leave("simulate"); break;
-        case "burnLab": leave("burnLab"); break;
-        case "celebrations": leave("celebrations"); break;
+        case "debug":
+          draw("debug");
+          break;
+        case "simulate":
+          leave("simulate");
+          break;
+        case "penalties": leave("penalties"); break;
+        case "burnLab":
+          leave("burnLab");
+          break;
+        case "celebrations":
+          leave("celebrations");
+          break;
         case "settings":
           draw("settings");
           break;
@@ -150,7 +183,10 @@ export function mainMenu(
         document.activeElement as HTMLButtonElement,
       );
       const target = choices[(index + step + choices.length) % choices.length];
-      if (target !== document.activeElement) {target.focus();audio.menu("nav");}
+      if (target !== document.activeElement) {
+        target.focus();
+        audio.menu("nav");
+      }
     }
     root.onkeydown = (e) => {
       if (e.repeat && (e.key === "Enter" || e.key === " ")) {
@@ -176,15 +212,21 @@ export function mainMenu(
     function poll() {
       const pad = menuPad(),
         dir = pad ? menuDirection(pad) : "";
-      if (controllerStatus && controllerStatus.textContent !== padStatus) controllerStatus.textContent = padStatus;
+      if (controllerStatus && controllerStatus.textContent !== padStatus)
+        controllerStatus.textContent = padStatus;
       if (dir !== direction && (dir === "u" || dir === "d"))
         move(dir === "u" ? -1 : 1);
       direction = dir;
       const down = confirm(pad),
         back = !!pad?.buttons[1]?.pressed;
-      if (back && !backHeld && (screen === "settings" || screen === "debug")) draw("menu", screen);
+      if (back && !backHeld && (screen === "settings" || screen === "debug"))
+        draw("menu", screen);
       else if (down && !held)
-        shell.querySelector<HTMLButtonElement>(screen === "intro" ? ".menu-start" : "button:focus")?.click();
+        shell
+          .querySelector<HTMLButtonElement>(
+            screen === "intro" ? ".menu-start" : "button:focus",
+          )
+          ?.click();
       held = down;
       backHeld = back;
       if (root.isConnected) frame = requestAnimationFrame(poll);

@@ -1,0 +1,26 @@
+main.pk-active>:not(canvas,header,.pk-ui),
+main.pk-active header>:not(.bug-stack),
+main.pk-active .bug-stack>:not(#scoreboard,.pk-board){display:none!important}
+.pk-ui{position:absolute;inset:0;pointer-events:none;font:clamp(10px,1.6vw,18px) Oxanium,sans-serif;color:#fff5df}
+.pk-board{margin:auto;width:max-content;max-width:100%;padding:3px 9px 5px;background:#181611f2;color:#fff3d6;font:clamp(10px,2.5cqw,15px)/1.1 Upheaval,monospace;border-bottom:2px solid #9b522e}
+.pk-board>div{display:grid;grid-template-columns:minmax(0,1fr) repeat(5,1.15em);align-items:center;gap:.3em}
+.pk-board b{padding-right:.7em}.pk-board i{width:1.15em;height:1.15em;display:grid;place-items:center;font: bold 1em/1 monospace;color:#aea89a}
+.pk-board [data-result=Goal]{color:#78df86}.pk-board i[data-result]:not([data-result=""],[data-result=Goal]){color:#ff826d}
+.pk-status,.pk-end{background:#191813f5;border-top:3px solid #e67a39;padding:.4em .7em}
+.pk-status:empty{display:none}
+.pk-status{position:absolute;right:1%;bottom:9%;font:1.15em Upheaval,monospace}
+.pk-ui .pk-power{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);width:clamp(110px,24%,250px);--club:#ff9b41}
+.pk-ui .pk-power i{transform-origin:left;transition:none}
+.pk-ui [hidden]{display:none!important}
+.pk-end{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:auto;width:max-content;max-width:94%;padding:1em 1.25em 1.15em;box-shadow:0 4px #0e0e0a}
+.pk-end strong{display:block;font:1.8em Upheaval,monospace}.pk-end label{display:block;margin:.6em}
+.pk-end nav{display:flex;justify-content:center;flex-wrap:wrap;gap:.65em}
+.pk-end button{padding:.65em .9em;background:#342c24;color:#fff0d8;border:1px solid #8c7057;border-bottom:3px solid #71563e;border-radius:0;font:1.05em/1 Upheaval,monospace}
+.pk-end button:first-of-type{background:#aa471e;border-color:#f68c48;border-bottom-color:#873816}
+.pk-end button:hover,.pk-end button:focus-visible{background:#6b4128;outline:2px solid #ffd084;outline-offset:2px}
+.pk-end button:active{transform:translateY(1px)}
+.pk-ui [data-touch]{display:none;position:absolute;right:1%;bottom:2%;touch-action:none;pointer-events:auto}
+.pk-ui [data-touch] button{padding:.4em .65em;margin:.15em;font:inherit;border-radius:2px}
+@media(pointer:coarse){.pk-ui [data-touch]{display:flex}.pk-ui .pk-power{bottom:calc(4% + 34px)}.pk-status{bottom:calc(5% + 49px)}}
+.pk-flying>*{visibility:hidden}
+.pk-skip{position:absolute;right:1%;bottom:2%;background:#191813ed;border:1px solid #8c7057;border-radius:0;font:1em Upheaval,monospace}

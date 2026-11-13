@@ -1,3 +1,6 @@
+import {bios} from './lineupRoles.ts'
+import {playerRatings} from './playerRatings.ts'
+import {shootout,simulatePenalties,type Kick} from './shootoutRules.ts'
 import type {Attribute} from './careerDevelopment'
 import {varyMessages} from './careerPhrases.ts'
 // Club indices use the arcade club list. Scores always follow the fixture's listed order.
@@ -6,8 +9,8 @@ type Tier = typeof tiers[number]
 export type Sheet = {shape:'1-3-3'|'1-3-1-2'|'1-2-1-3'|'1-2-3-1',starters:string[],bench:string[]}
 type Goal = {minute:number,club:number,player:string}
 export type PlayerPerformance={name:string,goals:number,assists:number,passes:number,xpBefore:number,xpAfter:number}
-export type Report = {simulatedFrom?:number,performance?:PlayerPerformance,score:[number,number],goals:Goal[],shots:[number,number],played:string[],simulated:boolean,pens?:[number,number]}
-export type Game = {kickoff?:number,timeline?:[number[],number[]],a:number,b:number,score?:[number,number],pens?:[number,number]}
+export type Report = {kicks?:Kick[],simulatedFrom?:number,performance?:PlayerPerformance,score:[number,number],goals:Goal[],shots:[number,number],played:string[],simulated:boolean,pens?:[number,number]}
+export type Game = {requiresWinner?:boolean,kicks?:Kick[],kickoff?:number,timeline?:[number[],number[]],a:number,b:number,score?:[number,number],pens?:[number,number]}
 type Vote = {name:string,day:number,answer:'Yes'|'No'|'Maybe'|'Late',message:string}
 type Conditions={time:"Day"|"Night",weather:"Rain"|"Clouds"|"Sun"}
 export type Week = {conditions:Conditions,events:Vote[],sheet:Sheet}
@@ -133,18 +136,27 @@ export function finishRound(c:Career,report:Report,ratings:number[]){
   else if(g.b===0)g.score=[report.score[1],report.score[0]]
   else g.score=[g.timeline![0].length,g.timeline![1].length]
  }
- if(c.round>=6)for(const g of c.schedule[c.round]){
-  if(g.score![0]!==g.score![1])continue
-  const winning=Math.floor(roll(c)*3)+3
-  g.pens=roll(c)<.5?[winning,winning-1]:[winning-1,winning]
-  if(g.a===0||g.b===0)report.pens=g.a===0?[...g.pens]:[g.pens[1],g.pens[0]]
+ for(const g of c.schedule[c.round]){
+  if(!fixtureRequiresWinner(c,g)||g.score![0]!==g.score![1])continue
+  const ours=g.a===0||g.b===0
+  const orient=(kicks:Kick[])=>kicks.map(k=>({...k,side:g.b===0?(k.side===0?1:0) as 0|1:k.side}))
+  const attribute=(side:0|1,index:number,keeping:boolean)=>{
+   const club=side===0?g.a:g.b
+   if(club!==0)return 65+ratings[club]*4
+   const starters=c.week.sheet.starters
+   const name=keeping?starters.at(-1)!:starters[index%starters.length]
+   return (playerRatings[bios[name]?.[0]]?.[keeping?5:2]??75)+(name===c.player?(c.upgrades?.[keeping?'Keeping':'Shooting']??0):0)
+  }
+  g.kicks=ours&&report.kicks?orient(report.kicks):simulatePenalties([ratings[g.a],ratings[g.b]],()=>roll(c),attribute)
+  g.pens=shootout(g.kicks).score
+  if(ours){report.kicks=orient(g.kicks);report.pens=shootout(report.kicks).score}
  }
  if(c.round===5){
   const [a,b,d,e,f,h,i,j]=table(c,6).map(row=>row.club)
-  c.schedule.push([{a,b:e},{a:b,b:d},{a:f,b:j},{a:h,b:i}])
+  c.schedule.push([{a,b:e},{a:b,b:d},{a:f,b:j},{a:h,b:i}].map(g=>({...g,requiresWinner:true})))
  }
  if(c.round===6){
-  const pair=(a:number,b:number)=>({a,b})
+  const pair=(a:number,b:number)=>({a,b,requiresWinner:true})
   const [topA,topB,lowA,lowB]=c.schedule[6].map(outcome)
   c.schedule.push([pair(topA[0],topB[0]),pair(topA[1],topB[1]),pair(lowA[0],lowB[0]),pair(lowA[1],lowB[1])])
  }
@@ -192,3 +204,6 @@ export function calendarTime(c:Career,day=c.day){return Date.UTC(2027,1,27+(c.se
 export function calendarDate(c:Career,day=c.day){
  return new Date(calendarTime(c,day)).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'UTC'})
 }
+
+// Older saves predate the fixture flag.
+export function fixtureRequiresWinner(c:Career,g:Game){return g.requiresWinner??(c.round>=6)}

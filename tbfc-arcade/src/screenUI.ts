@@ -1,7 +1,10 @@
-export function hint(key:string,pad:string){
+export function padBadge(button:string){
  const glyph:Record<string,string>={Menu:'☰',View:'⧉'}
+ return `<kbd class="pad-hint" data-pad="${button}" aria-label="${button==='Menu'?'Start':button}">${glyph[button]??button}</kbd>`
+}
+export function hint(key:string,pad:string){
  const [button,direction]=pad.split(" ")
- return `<kbd class="key-hint">${key}</kbd><kbd class="pad-hint" data-pad="${button}" aria-label="${button}">${glyph[button]??button}</kbd>${direction ? `<span class="pad-direction">${direction}</span>` : ""}`
+ return `<kbd class="key-hint">${key}</kbd>${padBadge(button)}${direction ? `<span class="pad-direction">${direction}</span>` : ""}`
 }
 
 // A repeating ordered-dither tile reveals opaque square pixels in eight passes.

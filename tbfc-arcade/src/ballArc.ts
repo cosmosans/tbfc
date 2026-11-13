@@ -25,3 +25,9 @@ export function heightAt(arc: ReturnType<typeof kickArc>, seconds: number) {
   }
   return 0
 }
+
+export function nextTouch(duration:number,seconds:number){
+ let end=duration
+ for(let hop=1;hop<=2&&seconds>end;hop++){duration*=rebound;end+=duration}
+ return Math.max(seconds,end)
+}

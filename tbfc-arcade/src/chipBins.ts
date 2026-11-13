@@ -26,6 +26,11 @@ export function createChipBins(scene:T.Scene){
  let flying=false
  const origin=new T.Vector3(),velocity=new T.Vector3()
  return {
+  landing(ball:T.Vector3,out:T.Vector3){
+   const v=judged?roll:velocity,vy=judged?v.y:v.y-gravity*age
+   const t=(vy+Math.sqrt(vy*vy+2*gravity*Math.max(0,ball.y-.18)))/gravity
+   out.copy(ball).addScaledVector(v,t)
+  },
   get flying(){return flying},
   show(index:number){target=[0,1,2,1,2][index%5];group.visible=true;flying=false;bins.forEach((b,i)=>b.lip.material.color.setHex(i===target?0xffbd40:0x9ba7a0))},
   hide(){group.visible=false;flying=false},

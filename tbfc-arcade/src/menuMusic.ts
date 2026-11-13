@@ -1,9 +1,68 @@
 import startClick from './audio/start-click.mp3?url'
 import retro from './audio/menu-retro.mp3?url'
 import football from './audio/menu-football.mp3?url'
+import pixelChiptune from './audio/menu-pixel-chiptune.mp3?url'
+import hitslab from './audio/hitslab-chiptune-457939.mp3?url'
+import monume from './audio/monume-retro-arcade-629774.mp3?url'
+import arpmedia from './audio/arpmedia-retro-arcade-577821.mp3?url'
+
+const tracks=[retro,football,pixelChiptune,hitslab,monume,arpmedia]
+const cursorKey='tbfc.arcade.nextMusicTrack'
+let nextIndex=0
+
+type Bookmark={track:string,time:number}
+export function createMusicCue({fadeInMs=0,fadeOutMs=450}={},bookmark?:Bookmark){
+ const player=new Audio()
+ player.preload='none'
+ const volume=.36
+ let active=false,animation=0,index:number|null=null,consumed=false
+ function fade(to:number,ms:number,done?:()=>void){
+  cancelAnimationFrame(animation)
+  const from=player.volume,start=performance.now()
+  function step(){
+   const t=ms>0?Math.min(1,(performance.now()-start)/ms):1
+   player.volume=from+(to-from)*t
+   if(t<1)animation=requestAnimationFrame(step)
+   else done?.()
+  }
+  step()
+ }
+ function play(){
+  if(!active||document.hidden)return
+  if(index===null){
+   try{
+    const saved=localStorage.getItem(cursorKey)
+    if(saved!==null&&/^\d+$/.test(saved))nextIndex=Number(saved)%tracks.length
+   }catch{}
+   const savedTrack=bookmark?tracks.indexOf(bookmark.track):-1
+   index=savedTrack>=0?savedTrack:nextIndex;consumed=false;player.src=tracks[index]
+   if(bookmark&&savedTrack>=0&&Number.isFinite(bookmark.time))player.currentTime=bookmark.time
+   bookmark=undefined
+   player.volume=fadeInMs?0:volume
+  }
+  if(player.paused)void player.play().catch(()=>{})
+ }
+ player.onplaying=()=>{
+  if(!active||index===null||consumed)return
+  consumed=true;nextIndex=(index+1)%tracks.length
+  try{localStorage.setItem(cursorKey,String(nextIndex))}catch{}
+  fade(volume,fadeInMs)
+ }
+ player.onended=()=>{index=null;play()}
+ return {
+  bookmark():Bookmark|undefined{return index!==null&&consumed?{track:tracks[index],time:player.currentTime}:bookmark},
+  resume(){active=true;play()},
+  pause(){active=false;player.pause()},
+  finish(){
+   active=false
+   fade(0,player.paused?0:fadeOutMs,()=>{
+    player.pause();player.removeAttribute('src');player.load();index=null
+   })
+  }
+ }
+}
 
 export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>void){
- const tracks=[retro,football]
  const musicKey='tbfc.arcade.musicMuted'
  let musicEnabled=initialSound,soundEnabled=initialSound
  // Seed both channels from the old combined preference on the first visit.
@@ -12,27 +71,25 @@ export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>
   if(stored===null)localStorage.setItem(musicKey,musicEnabled?'no':'yes')
   else musicEnabled=stored!=='yes'
  }catch{}
- let index=0,started=false,finished=false
- const music=new Audio()
- music.preload='none';music.src=tracks[0];music.volume=.36;music.muted=!musicEnabled
+ const saved=history.state?.arcadeMusic as Bookmark|undefined
+ if(saved)history.replaceState({...history.state,arcadeMusic:undefined},'')
+ let started=false
+ let music=createMusicCue({fadeInMs:saved?900:0},saved)
  const cue=new Audio(startClick)
  cue.preload='auto';cue.volume=.6;cue.muted=!soundEnabled
- const listeners=new AbortController(),options={signal:listeners.signal}
+
  function play(){
-  if(started&&musicEnabled&&!finished&&!document.hidden&&music.paused)void music.play().catch(()=>{})
+  if(started&&musicEnabled&&!document.hidden)music.resume()
  }
  function pauseMenu(){music.pause();cue.pause()}
- music.addEventListener('ended',()=>{
-  index=(index+1)%tracks.length;music.src=tracks[index];play()
- },options)
- document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseMenu();else play()},options)
- window.addEventListener('pagehide',pauseMenu,options)
- window.addEventListener('pageshow',play,options)
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseMenu();else play()})
+ window.addEventListener('pagehide',pauseMenu)
+ window.addEventListener('pageshow',play)
  return {
   get musicEnabled(){return musicEnabled},
   get soundEnabled(){return soundEnabled},
   start(playStartCue=true){
-   if(started||finished)return
+   if(started)return
    started=true
    if(soundEnabled){
     if(playStartCue)void cue.play().catch(()=>{})
@@ -42,9 +99,8 @@ export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>
   },
   toggleMusic(){
    musicEnabled=!musicEnabled
-   music.muted=!musicEnabled
-   try{localStorage.setItem(musicKey,music.muted?'yes':'no')}catch{}
-   if(musicEnabled)play()
+   try{localStorage.setItem(musicKey,musicEnabled?'no':'yes')}catch{}
+   if(musicEnabled)play();else music.pause()
   },
   toggleSound(){
    soundEnabled=!soundEnabled
@@ -52,16 +108,17 @@ export function startMenuMusic(initialSound:boolean,setMatchSound:(on:boolean)=>
    if(!soundEnabled)cue.pause()
    setMatchSound(soundEnabled)
   },
+  startBreak(){
+   if(started)return
+   started=true;music=createMusicCue({fadeInMs:900,fadeOutMs:650});play()
+  },
+  carryOver(){
+   history.replaceState({...history.state,arcadeMusic:music.bookmark()},'')
+  },
   finish(){
-   finished=true;listeners.abort();cue.pause()
-   const start=performance.now()
-   function fade(){
-    const remaining=Math.max(0,1-(performance.now()-start)/450)
-    music.volume=.36*remaining
-    if(remaining&&!music.paused){requestAnimationFrame(fade);return}
-    music.pause();music.removeAttribute('src');music.load()
-   }
-   fade()
+   if(!started)return
+   started=false;cue.pause()
+   music.finish()
   }
  }
 }

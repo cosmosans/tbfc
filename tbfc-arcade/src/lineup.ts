@@ -243,16 +243,6 @@ export function selectLineup(
       dialog.className = "lu-confirm lu-settings";
       dialog.setAttribute("aria-labelledby", "lu-question");
       dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
-      const slider = dialog.querySelector<HTMLInputElement>("#lu-division")!;
-      const label = dialog.querySelector("output")!;
-      slider.oninput = () => {
-        const division = settingsOptions.difficulty[slider.valueAsNumber];
-        settings.difficulty = division;
-        rememberDivision(division);
-        slider.setAttribute("aria-valuetext", profiles[division].label);
-        label.value = profiles[division].label;
-        audio.menu("nav");
-      };
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -452,8 +442,16 @@ export function selectLineup(
           return;
         }
         const key = b.dataset.setting;
-        if (key === "speed" || key === "time" || key === "weather") {
+        if (key === "speed" || key === "time" || key === "weather" || key === "difficulty") {
           if (b.getAttribute("aria-pressed") !== "true") audio.menu("nav");
+          if (key === "difficulty") {
+            const division = settingsOptions.difficulty.find(v => v === b.value);
+            if (division) {
+              settings.difficulty = division;
+              rememberDivision(division);
+              dialog.querySelector<HTMLElement>(".lu-division-detail")!.textContent = profiles[division].label;
+            }
+          }
           if (key === "speed")
             settings.speed =
               settingsOptions.speed.find((v) => String(v) === b.value) ??
@@ -550,7 +548,7 @@ export function selectLineup(
       const items = Array.from(
         root.querySelectorAll<HTMLButtonElement>(
           dialog
-            ? "dialog button, dialog input[type=range]"
+            ? "dialog button"
             : editing >= 0 && !match
               ? "[data-slot],.lu-roster button:not(:disabled)"
               : editing >= 0
@@ -559,13 +557,6 @@ export function selectLineup(
         ),
       ).filter((b) => b.getClientRects().length > 0);
       const current = document.activeElement as HTMLButtonElement;
-      if (dx && document.activeElement instanceof HTMLInputElement && document.activeElement.id === "lu-division") {
-        const slider = document.activeElement;
-        const before = slider.value;
-        if (dx > 0) slider.stepUp(); else slider.stepDown();
-        if (slider.value !== before) slider.dispatchEvent(new Event("input"));
-        return;
-      }
       const focus = (item?: HTMLButtonElement) => {
         if (item && item !== current) {
           item.focus();

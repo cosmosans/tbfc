@@ -6,6 +6,8 @@ export const drills=[
  {name:'Chip the bins',hint:`Aim at the gold rim. Hold ${control('X','X')} for distance and release to chip. A clean drop through the center earns more.`},
  {name:'Free practice',hint:`Move ${control('WASD','LS')} · Pass ${control('J','A')} · Shoot ${control('K','B')} · Through ball ${control('Y','Y')}`}
 ]
+export const aerialDrill=drills.length
+drills.push({name:'Aerial duel',hint:`Meet the descending goal kick at the gold ring. Jump with ${control('J','A')} and charge ${control('K','B')} before contact for a header or volley.`})
 export function warmupPanel(parent:HTMLElement,select:(i:number)=>void,kickoff:()=>void){
  const panel=document.createElement('section');panel.className='training-panel'
  panel.innerHTML=`<div><strong></strong><span aria-live="polite"></span></div><p></p><nav><button data-next>Next ${control('N','RB')}</button><button data-again>Retry ${control('R','View')}</button><button data-start>Match ${control('Enter','Menu')}</button></nav>`

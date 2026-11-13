@@ -116,3 +116,5 @@
 @media (prefers-reduced-motion: no-preference) {
  .side-badge { transition: left .28s ease-out, top .28s ease-out; }
 }
+
+.ts-foot button kbd.pad-hint{display:inline-flex;margin-right:.35em}

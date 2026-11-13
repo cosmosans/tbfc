@@ -1,5 +1,5 @@
 import { audio } from "./matchAudio";
-import { hint, reveal } from "./screenUI";
+import { hint, padBadge, reveal } from "./screenUI";
 import { clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
@@ -17,7 +17,7 @@ export function selectTeams(
   root.setAttribute("aria-label", "Select teams");
   const style = document.createElement("style");
   style.textContent = css;
-  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">‹ Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">Side Select ▸</button></div></div>`;
+  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Side Select</button></div></div>`;
   root.prepend(style);
   document.body.append(root);
   const main = document.querySelector("main")!;

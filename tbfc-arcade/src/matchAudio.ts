@@ -1,5 +1,5 @@
 import blast from './audio/burner-blast.wav?url'
-import post from './audio/post.wav?url'
+import post from './audio/post-hit.mp3?url'
 import cheer from './audio/goal-crowd.mp3?url'
 import stadium from './audio/stadium.mp3?url'
 import goal from './audio/tbfc-goal.mp3?url'

@@ -70,3 +70,38 @@
 #career .cr-week b{font:clamp(16px,2vw,23px)/1 Upheaval,monospace;color:#ffcea7}
 #career .cr-week span{font-size:clamp(11px,1.5vw,14px)}
 #career .cr-week small{font-size:clamp(9px,1.3vw,12px);color:#ffb37a}
+
+#career .cr-squad-table{table-layout:fixed}
+#career .cr-squad-table th{font-weight:700;color:#ffc094;padding:8px 10px;text-align:center;border-bottom:2px solid #80513a}
+#career .cr-squad-table th:first-child{width:34%;text-align:left}
+#career .cr-squad-table th:nth-child(2){width:26%;text-align:left}
+#career .cr-squad-table th:nth-child(3){width:24%}
+#career .cr-squad-table th:nth-child(4){width:16%}
+#career .cr-squad-table td{padding:8px 10px}
+#career .cr-squad-table .cr-squad-player{display:flex;align-items:center;gap:10px;text-align:left;font-weight:700}
+#career .cr-squad-table .cr-squad-position{text-align:left}
+#career .cr-squad-table .cr-squad-count{text-align:center;font-size:2em;font-weight:700;line-height:1}
+@media(max-width:640px){#career .cr-squad-table th,#career .cr-squad-table td{padding:7px 3px}#career .cr-squad-table .cr-squad-player{gap:3px}#career .cr-squad-table .cr-squad-player .cr-face{width:26px;height:26px}#career .cr-squad-table .cr-squad-count{font-size:24px}}
+
+#career .cr-bracket{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:28px;padding:12px 4px}
+#career .cr-bracket-semis{display:grid;gap:22px;position:relative}
+#career .cr-bracket-semis::after{content:"";position:absolute;left:100%;top:25%;height:50%;width:14px;border:3px solid #80513a;border-left:0}
+#career .cr-bracket-final{position:relative}
+#career .cr-bracket-final::before{content:"";position:absolute;right:100%;top:50%;width:14px;border-top:3px solid #80513a}
+#career .cr-bracket-match{border:2px solid #80513a;background:#2b201a;padding:8px;min-width:0}
+#career .cr-bracket-match h3{font-size:17px;margin:0 0 5px;text-transform:uppercase}
+#career .cr-bracket-entrant{display:flex;align-items:center;gap:6px;min-height:34px;padding:4px 2px;border-top:1px solid #503b30;font-weight:700}
+#career .cr-bracket-entrant img{width:23px;height:23px;object-fit:contain;image-rendering:pixelated}
+#career .cr-bracket-entrant span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#career .cr-bracket-entrant b{margin-left:auto;font:22px/1 Upheaval,monospace}
+#career .cr-bracket-winner{color:#ffc18e;background:#473023}
+#career .cr-bracket-empty,#career .cr-bracket-note{color:#bba18d}
+#career .cr-bracket-match small{display:block;text-align:right}
+#career .cr-bracket-note{margin:0 4px 2px}
+@media(max-width:640px){#career .cr-bracket{gap:18px}#career .cr-bracket-semis::after,#career .cr-bracket-final::before{width:9px}#career .cr-bracket-match{padding:4px}#career .cr-bracket-match h3{font-size:13px}#career .cr-bracket-entrant{font-size:12px}#career .cr-bracket-entrant img{width:18px;height:18px}}
+
+#career .cr-season-title{margin-top:-10px}
+.cr-heading:has(.cr-season-title) small{display:block;padding-bottom:3px}
+.cr-header-player{display:flex;align-items:center;gap:4px;margin-left:auto;color:#ffc18e;font:clamp(18px,2.4vw,28px)/1 Upheaval,monospace}
+.cr-header-player span{width:76px;height:76px;background-size:800% 100%;background-repeat:no-repeat;image-rendering:pixelated}
+@media(max-width:600px){.cr-heading:has(.cr-header-player){flex-wrap:wrap;row-gap:0}}

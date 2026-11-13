@@ -41,3 +41,5 @@
 .stat-edge{position:absolute;bottom:1px;height:3px;width:min(48%,max(1px,calc(var(--units)*5px)));background:repeating-linear-gradient(to right,currentColor 0 4px,transparent 4px 5px)}
 .stat-edge.home{right:50%;color:var(--stat-home);transform:scaleX(-1)}
 .stat-edge.away{left:50%;color:var(--stat-away)}
+
+.pause-score .pause-clock{font:600 13px/1 Oxanium,sans-serif;font-variant-numeric:tabular-nums;text-align:center}

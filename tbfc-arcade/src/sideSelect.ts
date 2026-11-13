@@ -1,3 +1,4 @@
+import {padBadge} from './screenUI'
 import type { Fixture } from './opponentSquads'
 import keyboardIcon from './art/device-keyboard.png'
 import gamepadIcon from './art/device-gamepad.png'
@@ -11,7 +12,7 @@ export function selectSides(fixture:Fixture):Promise<Seat[]|null>{
  const root=document.createElement('section')
  root.id='team-select'
  root.className='side-select'
- root.innerHTML='<style>'+css+'</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">Back</button><span>← → Choose Side · Enter / Start to Continue</span><button class="ts-next">Continue</button></div></div>'
+ root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Back</button><span>← → Choose Side · Enter / Start to Continue</span><button class="ts-next">${padBadge("Menu")} Continue</button></div></div>`
  const grid=root.querySelector('.ts-match')!
  const sides=new Map<number,number>([[-1,0]])
  const held=new Map<number,string>()

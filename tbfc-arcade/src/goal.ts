@@ -54,6 +54,7 @@ export function createGoal(scene: T.Scene, lineX: number) {
   group.add(new T.LineSegments(geometry,new T.LineBasicMaterial({color:0xd5e8db,transparent:true,opacity:.58,depthWrite:false})))
   let elapsed=Infinity, hitX=0, hitY=0, hitZ=0, strength=0
   return {
+    setVisible(visible:boolean){group.visible=visible},
     contactX(y:number){return lineX+sign*(depthAt(y)-.15)},
     strike(worldX:number,y:number,z:number,power:number){
       elapsed=0;hitX=(worldX-lineX)*sign;hitY=y;hitZ=z;strength=.45+.4*power
