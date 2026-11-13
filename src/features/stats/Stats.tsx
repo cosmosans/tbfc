@@ -157,6 +157,8 @@ export default function Stats({
     "teamGoals" | "goalsAgainst" | "gdPerMatch"
   >("teamGoals");
   const [goalGrouping, setGoalGrouping] = useState("kickoff");
+  const kickoffPPG = goalGrouping === "kickoffPPG";
+  const goalChartKey = kickoffPPG ? "ppg" : "goals";
   const byPlayer = goalGrouping === "player";
   const events = careerEvents(data);
   const [perMatch, setPerMatch] = useState(false);
@@ -245,7 +247,7 @@ export default function Stats({
     ? data.players.map(player => ({ label: player.name, goals: playerStats(player, events)[0][1] }))
         .filter(player => player.goals > 0)
         .sort((a, b) => b.goals - a.goals || a.label.localeCompare(b.label))
-    : goalsByKickoff(data.matches).map(({ time, goals }) => ({ label: time, goals }));
+    : goalsByKickoff(data.matches).map(({ time, goals, points, played }) => ({ label: time, goals, ppg: points / played }));
   const adjusted = opponentMetric === "gdPerMatch";
   const sortField = opponentMetric === "teamGoals" ? "goalsFor" : opponentMetric;
   const chartTeams = teams
@@ -602,9 +604,10 @@ export default function Stats({
           </CardContent>
         </Card>
         <Card component="section" sx={{ width: "100%", minWidth: 0 }}>
-          <PanelHeader title="Goals Scored" subtitle={byOpponent ? "Total Turf Burners goals against each opponent in completed matches." : timeline ? "Each dot is a recorded Turf Burners goal in a completed match." : histogram ? "Timed goals in five-minute intervals. Per-match values use all completed matches." : byPlayer ? "Goals credited to each player across all seasons." : "Total Turf Burners goals across all seasons, grouped by match start time."}>
+          <PanelHeader title="Goals Scored" subtitle={kickoffPPG ? "Average points per completed match at each kickoff time across all seasons (3 per win, 1 per draw)." : byOpponent ? "Total Turf Burners goals against each opponent in completed matches." : timeline ? "Each dot is a recorded Turf Burners goal in a completed match." : histogram ? "Timed goals in five-minute intervals. Per-match values use all completed matches." : byPlayer ? "Goals credited to each player across all seasons." : "Total Turf Burners goals across all seasons, grouped by match start time."}>
             <Select size="small" sx={{ fontSize: ".875rem" }} value={goalGrouping} onChange={event => setGoalGrouping(event.target.value)} inputProps={{ "aria-label": "Goals Scored grouping" }}>
               <MenuItem value="kickoff">By Kickoff Time</MenuItem>
+              <MenuItem value="kickoffPPG">PPG by Kickoff Time</MenuItem>
               <MenuItem value="opponent">By Opponent</MenuItem>
               <MenuItem value="player">By Player</MenuItem>
               <MenuItem value="timeline">Goal Timeline</MenuItem>
@@ -619,13 +622,13 @@ export default function Stats({
                     <BarChart layout={horizontalBars ? "vertical" : "horizontal"} data={goalData} maxBarSize={64} margin={{ top: 28, right: 36, bottom: 12, left: 0 }} accessibilityLayer>
                       <CartesianGrid stroke="#394144" vertical={horizontalBars} horizontal={!horizontalBars} />
                       {horizontalBars ? <>
-                        <XAxis type="number" tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" />
+                        <XAxis type="number" tickFormatter={formatStat} domain={kickoffPPG ? [0, 3] : undefined} allowDecimals={kickoffPPG || (histogram && perMatch)} stroke="#a7afb1" />
                         <YAxis type="category" dataKey="label" hide={byPlayer} width={byPlayer ? 0 : 70} interval={0} tick={byOpponent ? crestTick : {fontSize: 12}} stroke="#a7afb1" />
                       </> : <><XAxis dataKey="label" tickFormatter={byPlayer ? name => String(name).trim().split(" ")[0] : undefined} angle={byPlayer ? -40 : 0} height={byPlayer ? 100 : byOpponent ? 60 : 30} textAnchor={byPlayer ? "end" : "middle"} interval={0} stroke="#a7afb1" tick={byOpponent ? crestTick : { fontSize: 12 }}
                         padding={{ left: byPlayer ? 0 : 20, right: 12 }} />
-                      <YAxis tickFormatter={formatStat} allowDecimals={histogram && perMatch} stroke="#a7afb1" width={42} /></>}
+                      <YAxis tickFormatter={formatStat} domain={kickoffPPG ? [0, 3] : undefined} allowDecimals={kickoffPPG || (histogram && perMatch)} stroke="#a7afb1" width={42} /></>}
                       <Tooltip content={byOpponent ? props => <OpponentChartTooltip {...props} /> : undefined} cursor={barHoverStyle} formatter={formatStat} contentStyle={{ background: "#1b2022", border: "1px solid #394144" }} />
-                      <Bar cursor={byOpponent ? "pointer" : undefined} onClick={byOpponent ? entry => openTeam(entry.payload?.id) : undefined} barSize={horizontalBars && byPlayer ? 14 : undefined} dataKey="goals" name={histogram && perMatch ? "Goals Per Match" : "Goals Scored"} fill={theme.palette.primary.main} isAnimationActive={false}>
+                      <Bar cursor={byOpponent ? "pointer" : undefined} onClick={byOpponent ? entry => openTeam(entry.payload?.id) : undefined} barSize={horizontalBars && byPlayer ? 14 : undefined} dataKey={goalChartKey} name={kickoffPPG ? "Points Per Game" : histogram && perMatch ? "Goals Per Match" : "Goals Scored"} fill={theme.palette.primary.main} isAnimationActive={false}>
                         {opponentGoals.map(team => <Cell key={team.id ?? team.label} fill={team.color || theme.palette.primary.main} />)}
                         {horizontalBars && byPlayer && (
                           <LabelList dataKey="label" content={({ viewBox, value }) => viewBox && "x" in viewBox ? (
@@ -634,7 +637,7 @@ export default function Stats({
                             </text>
                           ) : null} />
                         )}
-                        <LabelList formatter={formatStat} dataKey="goals" position={horizontalBars ? "right" : "top"} fill="#fff" fontWeight={800} fontSize={13} />
+                        <LabelList formatter={formatStat} dataKey={goalChartKey} position={horizontalBars ? "right" : "top"} fill="#fff" fontWeight={800} fontSize={13} />
                       </Bar>
                     </BarChart>
                   </ResponsiveContainer>
