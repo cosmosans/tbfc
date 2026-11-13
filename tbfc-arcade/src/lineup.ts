@@ -56,6 +56,7 @@ export type Selection = {
 type MatchSquad = {
   current: Selection;
   unavailable: Set<string>;
+  exhausted: Set<string>;
   music: MenuMusic;
 };
 export const burnerEligibility = new Set([
@@ -301,7 +302,7 @@ export function selectLineup(
         : [];
       lastShape = shape;
       const field = [...positions(shape), { role: "GK", lane: 0, y: keeperY }];
-      const chemistry=home!==burners&&!match?lineupChemistry(home.name,shape,slots):null
+      const chemistry=!match?lineupChemistry(home.name,shape,slots):null
       const web=chemistry ? `<svg class="lu-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${chemistry.links.map(({a,b,rating})=>{
         const color=rating>=70?'#74df85':rating>=40?'#ffc763':'#ff7971'
         return `<line x1="${50+field[a].lane*3.5}" y1="${field[a].y}" x2="${50+field[b].lane*3.5}" y2="${field[b].y}" stroke="${color}" stroke-width="${rating>=70?4:rating>=40?2.5:1.25}" vector-effect="non-scaling-stroke"/>`
@@ -310,7 +311,7 @@ export function selectLineup(
         i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
       root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button><button id="lu-quit">Quit match</button>' : '<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : "Match settings"} ▸</button></div>
     <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}><button class="lu-bumper" id="lu-prev" aria-label="Previous formation">${hint("[", "LB")}</button>${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}<button class="lu-bumper" id="lu-next" aria-label="Next formation">${hint("]", "RB")}</button></div>
-    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${avatar(slots[i]!)}<span>${p.role} · ${slots[i]}</span></button>`).join("")}</div>
+    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}${avatar(slots[i]!)}<span>${p.role} · ${slots[i]}</span></button>`).join("")}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
       .slice(7)
       .map(
@@ -398,7 +399,7 @@ export function selectLineup(
       paintFire(0);
     }
     function previewSwap(button: HTMLElement) {
-      if (editing < 0 || match || home === burners) return;
+      if (editing < 0 || match) return;
       const trial = slots.slice();
       if (button.dataset.name) trial[editing] = button.dataset.name;
       else if (button.dataset.slot !== undefined) {

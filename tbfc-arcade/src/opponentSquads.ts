@@ -33,7 +33,7 @@ type Opponent = {
 // Arcade difficulty against TBFC, easiest first. Player names are fictional.
 export const opponentLadder = [
   {
-    name:'Fleet Feet FC', stars:1, role:'The confidence fixture', kit:'Pale sky blue with white trim', crest:fleetCrest, kitArt:fleetKit,
+    name:'Fleet Feet FC', stars:2.5, role:'The confidence fixture', kit:'Pale sky blue with white trim', crest:fleetCrest, kitArt:fleetKit,
     record:{wins:2, draws:0, losses:0, goalsFor:6, goalsAgainst:3},
     keeper:'Robin', outfield:['Alma','Ellis','Oscar','Noor','Remy','Lena'], bench:['Jules','Theo','Mina','Cole']
   }, {

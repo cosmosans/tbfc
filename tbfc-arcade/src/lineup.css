@@ -154,3 +154,6 @@
 .lu-settings .lu-division .lu-stops{display:flex;justify-content:space-between;padding:0 8px;pointer-events:none}
 .lu-stops i{width:2px;height:5px;background:#b59580}
 .lu-division output{display:block;text-align:center;margin-top:6px;font-family:Upheaval,monospace}
+
+.lu-marker .lu-tired{left:50%;top:0;z-index:2;font-size:17px;font-style:normal}
+.lu-marker[data-swapping=true] .lu-tired{left:calc(50% + 30px)}

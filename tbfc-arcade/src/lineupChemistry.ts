@@ -1,3 +1,4 @@
+import burnerRatings from './burnerChemistry.json'
 import type {Shape} from './lineup'
 
 // Slots run from the front row back to the keeper, left to right within each row.
@@ -8,7 +9,8 @@ const neighbors:Record<Shape,[number,number][]>={
  '1-2-3-1':[[0,1],[0,2],[0,3],[1,2],[2,3],[1,4],[2,4],[2,5],[3,5],[4,5],[4,6],[5,6]]
 }
 
-function pairRating(club:string,a:string,b:string){
+export function pairRating(club:string,a:string,b:string){
+ if(club==='Turf Burners FC')return (burnerRatings as Record<string,number>)[[a,b].sort().join('|')]??50
  // A seeded roll per unordered pair keeps experiments repeatable across visits.
  let seed=2166136261
  for(const c of [club,...[a,b].sort()].join('|'))seed=Math.imul(seed^c.charCodeAt(0),16777619)

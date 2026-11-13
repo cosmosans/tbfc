@@ -15,6 +15,8 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import moment from "moment";
 import type { ClubData, Opponent, StandingRow } from "../../model";
@@ -55,6 +57,9 @@ export default function StandingsWidget({
   initialSeasonId?: string;
 }) {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const mobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const pointsHeader = <TableCell align="right">Pts</TableCell>;
   const seasons = orderedSeasons(data, true).filter(
     (season) => season.id === "season-fall-2026",
   );
@@ -86,8 +91,7 @@ export default function StandingsWidget({
   }
   function apply() {
     if (!seasonId || !pending) return;
-    const today = new Date();
-    const updatedOn = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    const updatedOn = new Date().toISOString();
     update({
       ...data,
       standings: [
@@ -145,7 +149,7 @@ export default function StandingsWidget({
                 sx={{ textTransform: "uppercase", fontSize: 12 }}
                 color="text.secondary"
               >
-                Updated {moment(snapshot.updatedOn).fromNow()}
+                Updated {Date.now() - moment(snapshot.updatedOn).valueOf() < 60000 ? "just now" : moment(snapshot.updatedOn).fromNow()}
               </Typography>
             )}
           </Box>
@@ -228,7 +232,7 @@ export default function StandingsWidget({
                   >
                     <TableCell align="center">#</TableCell>
                     <TableCell>Team</TableCell>
-                    <TableCell align="right">Pts</TableCell>
+                    {mobile && pointsHeader}
                     <TableCell align="right">W</TableCell>
                     <TableCell align="right">L</TableCell>
                     <TableCell align="right">D</TableCell>
@@ -236,6 +240,7 @@ export default function StandingsWidget({
                     <TableCell align="right">Allowed</TableCell>
                     <TableCell align="right">Diff</TableCell>
                     <TableCell align="right">PI</TableCell>
+                    {!mobile && pointsHeader}
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -255,6 +260,11 @@ export default function StandingsWidget({
                         : tbfc
                           ? "/stats"
                           : undefined;
+                      const pointsCell = (
+                        <TableCell align="right" sx={{ color: "#fff", fontWeight: 900 }}>
+                          {row.rankingPoints}
+                        </TableCell>
+                      );
                       const diff = row.pointsScored - row.pointsAllowed;
                       return (
                         <TableRow
@@ -350,12 +360,7 @@ export default function StandingsWidget({
                               </Stack>
                             )}
                           </TableCell>
-                          <TableCell
-                            align="right"
-                            sx={{ color: "#fff", fontWeight: 900 }}
-                          >
-                            {row.rankingPoints}
-                          </TableCell>
+                          {mobile && pointsCell}
                           <TableCell align="right">{row.wins}</TableCell>
                           <TableCell align="right">{row.losses}</TableCell>
                           <TableCell align="right">{row.draws}</TableCell>
@@ -369,6 +374,7 @@ export default function StandingsWidget({
                             {diff > 0 ? `+${diff}` : diff}
                           </TableCell>
                           <TableCell align="right">{row.pi ?? "—"}</TableCell>
+                          {!mobile && pointsCell}
                         </TableRow>
                       );
                     })}

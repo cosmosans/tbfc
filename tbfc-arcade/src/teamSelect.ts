@@ -31,7 +31,7 @@ export function selectTeams(
       role = i === 0 ? "Home" : "Away";
     const rank = standings?.get(club.name);
     card.style.setProperty("--club", clubAccent(club));
-    card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(club.stars)}</span>${"☆".repeat(5 - club.stars)}</div>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
+    card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(club.stars)}</span>${club.stars % 1 ? '<i class="ts-half">☆</i>' : ""}${"☆".repeat(5 - Math.ceil(club.stars))}</div>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
   }
   function focusSide(i: number) {
     side = i;

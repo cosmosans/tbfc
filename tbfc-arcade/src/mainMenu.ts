@@ -5,7 +5,7 @@ import crest from "./art/ground/crest.png?url";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./mainMenu.css?inline";
 
-type Destination = "match" | "practice" | "celebrations" | "simulate";
+type Destination = "match" | "practice" | "celebrations" | "simulate" | "burnLab";
 
 export function mountMenuBackdrop() {
   const style = document.createElement("style");
@@ -81,7 +81,7 @@ export function mainMenu(
           title +
           '<nav aria-label="Main menu"><button disabled>Season Mode <small>COMING SOON</small></button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
-        shell.innerHTML = '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="back">Back</button></nav>';
+        shell.innerHTML = '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
@@ -120,6 +120,7 @@ export function mainMenu(
           break;
         case "debug": draw("debug"); break;
         case "simulate": leave("simulate"); break;
+        case "burnLab": leave("burnLab"); break;
         case "celebrations": leave("celebrations"); break;
         case "settings":
           draw("settings");

@@ -1,3 +1,5 @@
+import {createBurningBall} from './burningBall'
+import {pairRating} from './lineupChemistry'
 import { profiles } from './difficulty'
 import {celebrationControls} from './celebrationLab'
 import {broadcastDirector,broadcastShirt,broadcastStarters} from './menuBroadcast'
@@ -113,6 +115,7 @@ async function start(){
  let music:MenuMusic|undefined
  let standalonePractice=false
  let simulation=false
+ let burnLab=false
  let celebrationLab=false
  const broadcast=new URLSearchParams(location.search).get('broadcast')==='1'
  if(broadcast){
@@ -136,6 +139,12 @@ async function start(){
     const visitors=clubs.filter(club=>club!==home)
     fixture={home,away:visitors[Math.floor(Math.random()*visitors.length)]}
     lineup={shape:'1-3-3',starters:[...home.outfield,home.keeper],bench:[...home.bench]}
+    break
+   }
+   if(destination==='burnLab'){
+    burnLab=true
+    fixture={home:burners,away:clubs[clubs.length-1]}
+    lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[...burners.bench]}
     break
    }
    if(destination==='celebrations'){
@@ -214,6 +223,11 @@ async function start(){
  let shotDirection=1
  let netTravel=false
  const circle=new T.Mesh(new T.RingGeometry(2.9,2.97,64),new T.MeshBasicMaterial({color:lines,side:T.DoubleSide}));circle.rotation.x=-Math.PI/2;circle.position.y=.035;scene.add(circle)
+ const idleAssets=import.meta.glob<string>('./art/*-idle.png',{eager:true,query:'?url',import:'default'})
+ const jogAssets=import.meta.glob<string>('./art/*-celebration-jog.png',{eager:true,query:'?url',import:'default'})
+ const jogForIdle=new Map(Object.entries(idleAssets).map(([path,url])=>[url,jogAssets[path.replace('-idle.png','-celebration-jog.png')]]))
+ jogForIdle.set(joseIdle,new URL('./art/jose-mask-run.png',import.meta.url).href)
+ const jogSheets=new Map<string,Promise<T.Texture>>()
  async function createPlayer(name:string, displayName:string, urls:string[], runRows=8, frameSeconds=0, westKickRow=3){
   const maps=await Promise.all(urls.map(async url=>{
   const tex=await new T.TextureLoader().loadAsync(url);tex.magFilter=tex.minFilter=T.NearestFilter;tex.generateMipmaps=false;tex.colorSpace=T.SRGBColorSpace;
@@ -221,6 +235,16 @@ async function start(){
   return tex
  }))
 
+  const jogUrl=jogForIdle.get(urls[0])
+  if(jogUrl){
+   if(!jogSheets.has(jogUrl))jogSheets.set(jogUrl,celebrationSheet(jogUrl).then(map=>{
+    if(broadcast&&urls[0]===blueIdle)broadcastShirt(map,matchOpponent.name)
+    map.repeat.y=1/8
+    map.userData.directionalRun=true
+    return map
+   }))
+   maps[0].userData.scorerJog=await jogSheets.get(jogUrl)
+  }
   const shirt=new T.SpriteMaterial({map:maps[0],transparent:true,depthWrite:false})
   const sprite=new T.Sprite(shirt);sprite.center.set(.5,2/48);sprite.scale.setScalar(2.5);scene.add(sprite)
   const runFrames=maps[1]?maps[1].image.width/(maps[1].image.height/runRows):1
@@ -329,6 +353,42 @@ async function start(){
   return {mesh,sprite}
  })
  let shot:ReturnType<typeof planShot>|null=null
+ const burnHud=el('burnHud'),burnLabel=el('burnLabel')
+ const burnEnabled=home===burners&&!celebrationLab&&!broadcast&&!standalonePractice
+ burnHud.hidden=!burnEnabled
+ let burn=0,previousPair='',blastShooter:typeof sean|null=null,blastWindup=0,impactTime=0,blastFlying=false
+ const chain=new Set<string>()
+ const onFireDurationSeconds = 20
+ let fireRemaining = 0
+ function renderBurn(){
+  burnLabel.textContent = burn===100
+   ? (burnLab?'ON FIRE!':'ON FIRE! '+Math.ceil(fireRemaining)+'s')
+   : (burn>=50?'HEATING UP ':'BURN ')+burn+'%'
+  burnHud.style.setProperty('--burn',String(burn/100))
+  burnHud.toggleAttribute('data-hot',burn>=50)
+ }
+ function resetBurn(){
+  burn=burnLab?100:0
+  fireRemaining=0
+  renderBurn()
+ }
+ function changeBurn(delta:number){
+  if(!burnEnabled||crossingDrill||burn===100)return
+  burn=burnLab?100:T.MathUtils.clamp(burn+delta,0,100)
+  if(burn===100)fireRemaining=onFireDurationSeconds
+  renderBurn()
+ }
+ if(burnLab)changeBurn(100)
+ function creditPass(receiver:number,oneTouch:boolean){
+  if(lastSender<0||receiver===lastSender||!burnEnabled||crossingDrill)return
+  const from=players[lastSender].displayName,to=players[receiver].displayName
+  const pair=[from,to].sort().join('|')
+  chain.add(from);chain.add(to)
+  const base=passKind==='through'?12:oneTouch?8:5
+  changeBurn(pair===previousPair?1:base+(pairRating(home.name,from,to)>=70?5:0)+(perfectPass?3:0)+(chain.size===4?5:0))
+  if(chain.size>=4){chain.clear();chain.add(to)}
+  previousPair=pair
+ }
  const shotStart=new T.Vector3()
  const switchButton=el('switchPlayer') as HTMLButtonElement
  let reboundRunner=-1
@@ -340,7 +400,7 @@ async function start(){
   const corner=!!goalEnd&&(goalEnd===attackSign?lastBlue:!lastBlue)
   outBall={remaining:.95,goalEnd,spot:ball.position.clone(),blueRestart:!lastBlue,corner}
   outVelocity.set(dx,dy,dz)
-  cancelCharge();endFollowUpRuns()
+  cancelCharge();endFollowUpRuns();clearPassCall();perfectPass=false
   inFlight=false;held=false;windupReceiver=-1;blueCarrier=-1;bluePass=null;lastSender=-1;noticeTime=0
   el('shotResult').textContent=goalEnd?(corner?'CORNER':miss?miss.toUpperCase()+' · GOAL KICK':'GOAL KICK'):'OUT OF TOUCH'
  }
@@ -362,6 +422,11 @@ async function start(){
  const ball=new T.Sprite(new T.SpriteMaterial({map:ballMap,transparent:true,depthWrite:false}))
  ball.center.set(.5,.22)
  scene.add(ball)
+ const burningBall=createBurningBall(scene)
+ const flames=Array.from({length:12},(_,i)=>{
+  const sprite=new T.Sprite(new T.SpriteMaterial({color:i<4?0xffdd54:0xff5616,transparent:true,depthWrite:false,opacity:1-i/14,blending:T.AdditiveBlending}))
+  sprite.visible=false;scene.add(sprite);return sprite
+ })
  const replay=new GoalReplay([...pitchActors.map(m=>m.sprite),ball],ball,pitchActors,fieldX)
  async function celebrationSheet(url:string){
   const map=await new T.TextureLoader().loadAsync(url)
@@ -418,6 +483,7 @@ async function start(){
  type Action=PassKind|'shot'
  let windupReceiver=-1
  let passPower=.4
+ let passWasFirstTime=false
  let passKind:PassKind='pass',crossLift=0
  const receiverLaunch=new T.Vector3(),passTarget=new T.Vector3(),assistOffset=new T.Vector3()
  const passHeading=new T.Vector3()
@@ -450,6 +516,7 @@ async function start(){
    !outBall&&!keeperRestart&&keeperGather<=0&&resultTime<=0&&(!shot||shotDirection===attackSign)
  }
  function press(action:Action,source:string){
+  if(blastShooter)return
   if(!broadcast)audio.unlock()
   if(crossingDrill&&(bins.flying||repReset>=0||training.count===5))return
   if(replay.cut>=0&&action==='pass'){
@@ -564,14 +631,30 @@ async function start(){
   referee.runClock=referee.moving?referee.runClock+dt:0
  }
  let supportOwner=-1,runner=-1,runSide=1,supportTimer=0,returnRunTime=0
+ const passCall=el('passCall')
+ let passCallIndex=-1,passCallAt=0,passCallCooldown=0,perfectPass=false
+ function clearPassCall(){passCallIndex=-1;passCall.hidden=true}
+ function passingSpace(x:number,z:number,from:T.Vector3){
+  const dx=x-from.x,dz=z-from.z,lengthSq=dx*dx+dz*dz
+  let open=6,lane=4
+  for(const opponent of opponents){
+   if(opponent.penalty)continue
+   const foot=opponent.sprite.position
+   open=Math.min(open,Math.hypot(foot.x-x,foot.z-z))
+   const t=T.MathUtils.clamp(((foot.x-from.x)*dx+(foot.z-from.z)*dz)/Math.max(.01,lengthSq),0,1)
+   lane=Math.min(lane,Math.hypot(foot.x-from.x-t*dx,foot.z-from.z-t*dz))
+  }
+  return {open,lane}
+ }
  function organizeAttack(dt:number){
   returnRunTime=Math.max(0,returnRunTime-dt)
   if(crossingDrill||!held||windupReceiver>=0||players[active].age>=0){
-   supportOwner=-1
+   supportOwner=-1;clearPassCall()
    return
   }
   const carrier=players[active].sprite.position
   if(supportOwner!==active){
+   clearPassCall()
    supportOwner=active;supportTimer=0
    const options=players.map((_,i)=>i).filter(i=>i!==active&&!players[i].penalty)
    if(!options.length)return
@@ -583,49 +666,57 @@ async function start(){
   if(Math.abs(carrier.z)>6)runSide=carrier.z>0?-1:1
   supportTimer-=dt
   if(supportTimer>0)return
-  supportTimer=.45
+  supportTimer=.35
+  const occupied=[carrier]
   for(const [i,mate] of players.entries()){
    if(mate.penalty||i===active||i===lastSender&&returnRunTime>0)continue
-   if(homeShape[i].back&&i!==runner){
-    mate.goal.set(attackSign*T.MathUtils.clamp(attackSign*carrier.x-(homeShape[i].lane===0?9:6),-18,homeShape[i].lane===0?1:7),0,homeShape[i].lane+carrier.z*.10)
-    continue
-   }
-   const deep=i===runner,side=homeShape[i].lane===0?(deep?runSide:-runSide):Math.sign(homeShape[i].lane)
+   const role=homeShape[i],deep=i===runner
+   const side=role.lane===0?(deep?runSide:-runSide):Math.sign(role.lane)
+   const aheadOptions=deep?[6,9,12]:role.back?[-10,-7,-4]:role.front?[1,4,7]:[-4,-1,2,5]
+   const widths=role.lane===0?[0,side*3.5,-side*3.5,side*6]:[role.lane,role.lane*.75,role.lane+side*1.2]
    let best=-Infinity,bestX=0,bestZ=0
-   for(const ahead of deep?[7,9,11]:[-2,1,3]){
-    for(const width of [8.3,9.5,10.5]){
+   for(const ahead of aheadOptions){
+    for(const width of widths){
      const x=T.MathUtils.clamp(carrier.x+attackSign*ahead,-19,19)
-     let z=side*width
-     if(Math.abs(carrier.z)>6){
-      if(deep&&attackSign*carrier.x>7)z=side*(width-8)
-      else if(!deep)z=carrier.z*.35+side*(width-9)
-     }
-     if(!deep&&homeShape[i].lane===0)z=carrier.z*.24
+     const z=T.MathUtils.clamp(width+carrier.z*(role.back?.08:.16),-10.7,10.7)
      const dx=x-carrier.x,dz=z-carrier.z,lengthSq=dx*dx+dz*dz
-     let open=5,lane=4
-     for(const o of opponents){
-      if(o.penalty)continue
-      const foot=o.sprite.position
-      open=Math.min(open,Math.hypot(foot.x-x,foot.z-z))
-      const t=T.MathUtils.clamp(((foot.x-carrier.x)*dx+(foot.z-carrier.z)*dz)/Math.max(.01,lengthSq),.12,1)
-      lane=Math.min(lane,Math.hypot(foot.x-carrier.x-t*dx,foot.z-carrier.z-t*dz))
-     }
-     const score=open*.9+lane*(deep?.7:1.7)-.16*Math.abs(width-9.5)
-
-     const value=score-.15*Math.hypot(x-mate.sprite.position.x,z-mate.sprite.position.z)
-       -.22*Math.abs(ahead-(deep?9:1))-.12*Math.hypot(x-mate.goal.x,z-mate.goal.z)
+     const {open,lane}=passingSpace(x,z,carrier)
+     const crowding=occupied.reduce((cost,spot)=>Math.max(cost,Math.max(0,4-Math.hypot(x-spot.x,z-spot.z))),0)
+     const stagger=role.lane<-.5?-2.3:role.lane>.5?2.3:i%2?1.2:-1.2
+     const preferred=(deep?9:role.back?-7:role.front?4:0)+(deep?0:stagger)
+     const value=open*.9+lane*1.35-crowding*3
+       -.1*Math.abs(z-role.lane)-.12*Math.abs(ahead-preferred)
+       -.13*Math.hypot(x-mate.sprite.position.x,z-mate.sprite.position.z)
+       -.1*Math.hypot(x-mate.goal.x,z-mate.goal.z)
        -Math.max(0,3-Math.sqrt(lengthSq))*2
      if(value>best){best=value;bestX=x;bestZ=z}
     }
    }
-   if(!homeShape[i].front&&!homeShape[i].back&&!deep){bestX=carrier.x-attackSign*2;bestZ=homeShape[i].lane*.8+carrier.z*.18}
    mate.goal.set(T.MathUtils.clamp(bestX,-19,19),0,bestZ)
+   occupied.push(mate.goal)
+  }
+  const now=performance.now()
+  if(passCallIndex>=0&&now-passCallAt>1500){clearPassCall();passCallCooldown=now+350}
+  if(passCallIndex<0&&now>=passCallCooldown){
+   let best=-Infinity,target=-1
+   for(const [i,mate] of players.entries()){
+    if(i===active||mate.penalty||mate.age>=0)continue
+    const foot=mate.sprite.position,distance=Math.hypot(foot.x-carrier.x,foot.z-carrier.z)
+    if(distance<3||distance>17)continue
+    const {open,lane}=passingSpace(foot.x,foot.z,carrier)
+    if(open<2.4||lane<1.15)continue
+    const score=open+lane*1.5-distance*.18+attackSign*(foot.x-carrier.x)*.1
+    if(score>best){best=score;target=i}
+   }
+   if(target>=0){passCallIndex=target;passCallAt=now;passCall.hidden=false}
   }
  }
  function reset(blue=false){
+  burningBall.clear()
+  blastShooter=null;blastFlying=false;impactTime=0;chain.clear();previousPair=''
   afterChallenge=-Infinity;struckLoose=false;finishCard();clearReplay();freeKick=null;kickSpot=null
   recentHomeKicker=null;homeLateTime=0;sean.age=awayGK.age=-1;recentKicker=-1;lateTime=0;feedbackActor=null;callout.hidden=true;aerial=null;marks=null;centerPass=false;kickoffBlue=blue;phase='kickoff';breakSeconds=.9;lastBlue=blue
-  supportOwner=-1;returnRunTime=0
+  supportOwner=-1;returnRunTime=0;clearPassCall();perfectPass=false
   if(crossingDrill){
    active=0
    players[0].sprite.position.set(-10,0,1)
@@ -938,6 +1029,7 @@ async function start(){
  function receivePass(collector:number,aerialFinish:boolean){
   const intent=charge?{action:charge.action,power:heldPower(charge.start)}:queued
   const intended=collector===ballPlayer
+  if(inFlight&&intended)creditPass(collector,passWasFirstTime)
   if(crossingDrill&&inFlight){
    if(training.drill===0){
     const distance=passStart.distanceTo(players[collector].sprite.position)
@@ -961,11 +1053,18 @@ async function start(){
    launchShot(actor)
   }else{
    carry()
-   if(intent&&intended){players[collector].age=-1;pass(1+intent.power,intent.action)}
+   if(intent&&intended){players[collector].age=-1;pass(1+intent.power,intent.action,true)}
   }
  }
- function launchShot(shooter:typeof players[number]){
-  audio.kick(shotMultiplier-1)
+ function launchShot(shooter:typeof players[number],blast=false){
+  if(!blast&&burn===100&&!crossingDrill&&!ownBox(shooter.sprite.position)){
+   held=false;inFlight=false;blastShooter=shooter;blastWindup=0
+   shooter.age=.065;shooter.shooting=true
+   audio.play('blast',.95)
+   return
+  }
+  if(blast){shotMultiplier=1.95;impactTime=.08;blastFlying=true}
+  else audio.kick(shotMultiplier-1)
   kickSpot=null
   recentHomeKicker=shooter;homeLateTime=lateTackleWindow
   scorer=shooter;replay.markStrike(shooter.sprite,ball.position)
@@ -980,7 +1079,7 @@ async function start(){
    return
   }
   const dx=attackSign*fieldX-ball.position.x
-  if(Math.hypot(dx,ball.position.z)>(7+11*power)**2/12){
+  if(!blast&&Math.hypot(dx,ball.position.z)>(7+11*power)**2/12){
    if(crossingDrill)finishRep(0,'Short of goal')
    releaseLooseStrike(dx,-ball.position.z,power)
    return
@@ -991,7 +1090,8 @@ async function start(){
   const range=Math.hypot(fieldX-attackSign*shooter.sprite.position.x,shooter.sprite.position.z)
   shotZone=range<7?0:range<14?1:2
   shotDirection=attackSign
-  shot=planShot(attackSign*ball.position.x,ball.position.z,keeperStart,shotMultiplier-1,fieldX,attackSign*shooter.sprite.position.x,attackSign*keeperStartX,Math.random,defendingKeeper.visible)
+  shot=planShot(attackSign*ball.position.x,ball.position.z,keeperStart,shotMultiplier-1,fieldX,attackSign*shooter.sprite.position.x,attackSign*keeperStartX,Math.random,defendingKeeper.visible,blast?(keeperStart>=0?-1:1)*(1.1+Math.random()*.52):undefined,blast?.45:1)
+  if(blast)shot.duration=T.MathUtils.clamp(shot.duration*.46,.17,.38)
   const grade=shotFeedback(shot.result,range,shotMultiplier-1,Math.abs(shot.targetZ-keeperStart))
   feedbackActor=grade?shooter:null;feedbackTime=1.05;callout.hidden=!grade
   if(grade){callout.textContent=grade;callout.dataset.grade=grade}
@@ -1011,7 +1111,9 @@ async function start(){
   active=nearest
  }
  function blueWins(index:number,reason:string){
-  windupReceiver=-1;cancelCharge();endFollowUpRuns();returnRunTime=0
+  if(!lastBlue&&burn<100)changeBurn(-15)
+  chain.clear();previousPair=''
+  windupReceiver=-1;cancelCharge();endFollowUpRuns();returnRunTime=0;clearPassCall();perfectPass=false
   lastBlue=true;bluePass=null;blueDecisionTime=difficulty().reactionDelayMs/1000;blueCarrier=index;held=false;inFlight=false;lastSender=-1
   pressTime=0;turnoverGrace=.7;dribbleSide=opponents[index].sprite.position.z>0?-1:1
   el('shotResult').textContent=reason;noticeTime=.9
@@ -1273,12 +1375,26 @@ async function start(){
   blueCarrier=-1
  }
  function winBack(index:number,reason:string){
+  if(['WON BACK','TACKLE WON','INTERCEPTED'].includes(reason))changeBurn(6)
   if(reason==='WON BACK'||reason==='TACKLE WON')afterChallenge=performance.now()
   lastBlue=false
   cancelCharge();endFollowUpRuns()
   blueCarrier=-1;bluePass=null;active=ballPlayer=index;held=true;lastSender=-1;turnoverGrace=1
   el('shotResult').textContent=reason;noticeTime=.8
   carry()
+ }
+ // Protect roughly three feet of ground travel off the boot.
+ const blastClearance = .9
+ const exposedStart = new T.Vector3()
+ function blastBlocker(previous:T.Vector3, current:T.Vector3){
+  const distanceFromBoot = (point:T.Vector3) => Math.hypot(point.x-shotStart.x, point.z-shotStart.z)
+  const endDistance = distanceFromBoot(current)
+  if(endDistance <= blastClearance)return -1
+  const startDistance = distanceFromBoot(previous)
+  if(startDistance >= blastClearance)return interceptPass(previous,current)
+  // Only test the part of this frame's path beyond the protected distance.
+  exposedStart.lerpVectors(previous,current,(blastClearance-startDistance)/(endDistance-startDistance))
+  return interceptPass(exposedStart,current)
  }
  function interceptPass(start:T.Vector3,end:T.Vector3,defenders=opponents,exclude=-1,radius=.6,maxHeight=.84){
   const dx=end.x-start.x,dz=end.z-start.z,length=dx*dx+dz*dz
@@ -1300,7 +1416,7 @@ async function start(){
    const z=Number(keys.has('ArrowDown')||keys.has('KeyS'))-Number(keys.has('ArrowUp')||keys.has('KeyW'))+axisZ+(pad?.axes[1]??0)+Number(!!pad?.buttons[13]?.pressed)-Number(!!pad?.buttons[12]?.pressed)
   return view.end?[-z*attackSign,x*attackSign]:[x,z]
  }
- function pass(multiplier:number,kind:PassKind){
+ function pass(multiplier:number,kind:PassKind,firstTime=false){
   if(paused||!held||players[active].age>=0)return
   if(phase==='kickoff'){centerPass=true;phase='play';el('message').textContent=''}
   const sender=players[active],from=sender.sprite.position
@@ -1316,13 +1432,20 @@ async function start(){
    const score=crossRun+(aimed?alignment*8:(i===lastSender&&distance<9?4:0))-distance*.35
    if(score>best){best=score;target=i}
   })
+  if(kind==='pass'&&!aimed&&passCallIndex>=0&&!players[passCallIndex].penalty)target=passCallIndex
   if(target<0)return
   const to=players[target].sprite.position
+  const perfectDuration=Math.max(.16,ball.position.distanceTo(to)/16)
+  const windupDuration=sender.maps[2]?.12:0
+  perfectPass=kind==='pass'&&target===passCallIndex&&performance.now()+(perfectDuration+windupDuration)*1000-passCallAt<=1500
+  clearPassCall()
+  passWasFirstTime=firstTime
   passKind=kind
   passStart.copy(ball.position);passTime=0
   receiverLaunch.copy(to)
   passTarget.copy(to);passTarget.y=restingHeight
   passDuration=Math.max(.06,ball.position.distanceTo(to)/8)/multiplier
+  if(perfectPass)passDuration=perfectDuration
   if(kind==='through'){
    const [faceX,faceZ]=dirs[sender.face]
    passHeading.set(aimed?aimX:faceX,0,aimed?aimZ:faceZ).normalize()
@@ -1377,7 +1500,8 @@ async function start(){
   const current={shape:lineup.shape,starters:homeSlots.map(m=>m.displayName),bench:matchBench}
   try{
    const unavailable=new Set(homeSlots.filter(m=>m.penalty>0).map(m=>m.displayName))
-   const result=await selectLineup(portraits,fixture!,{current,unavailable,music:music!})
+   const exhausted = new Set([...matchBench.map(name => squad.get(name)!), ...homeSlots].filter(player => player.staminaCapacity <= 0).map(player => player.displayName))
+   const result=await selectLineup(portraits,fixture!,{current,unavailable,exhausted,music:music!})
    if(!result)return
    applyTeam(result.starters,result.bench)
    nameText.textContent=players[active].displayName
@@ -1478,7 +1602,7 @@ async function start(){
  let revealFirstFrame=!broadcast
  el('switchPlayer').onclick=switchPlayer
  el('reset').onclick=()=>{
-  audio.clear();half=1;attackSign=1;matchSeconds=homeScore=awayScore=0;paused=false;matchView.removeAttribute('data-paused');el('pause').textContent='Pause';el('pause').removeAttribute('disabled')
+  audio.clear();resetBurn();half=1;attackSign=1;matchSeconds=homeScore=awayScore=0;paused=false;matchView.removeAttribute('data-paused');el('pause').textContent='Pause';el('pause').removeAttribute('disabled')
   applyTeam(lineup.starters,lineup.bench)
   for(const data of squad.values()){data.penalty=data.lateChallenges=0;data.sprintCharge=data.staminaCapacity=100}
   for(const m of [...outfield,sean]){m.penalty=m.lateChallenges=0;m.sprite.visible=true;m.sprintCharge=m.staminaCapacity=100}
@@ -1678,7 +1802,7 @@ async function start(){
  let broadcastRotation=0,decisionIn=.5
  function playForHome(dt:number){
   decisionIn-=dt
-  if(phase==='fulltime'){if(simulation)return;half=1;matchSeconds=homeScore=awayScore=0;reset();return}
+  if(phase==='fulltime'){if(simulation)return;resetBurn();half=1;matchSeconds=homeScore=awayScore=0;reset();return}
   if(celebrating||phase==='halftime'||outBall||keeperRestart||keeperGather>0||resultTime>0)return
   const player=players[active],pos=player.sprite.position
   if(freeKick){
@@ -1713,9 +1837,19 @@ async function start(){
   }
  }
  function tick(now:number){
-  const elapsed=(now-last)/1000,dt=Math.min(.04,elapsed)*(celebrating?.38:1);last=now
+  const elapsed=(now-last)/1000,dt=Math.min(.04,elapsed)*(blastShooter?0:impactTime>0?.08:celebrating?.38:1);last=now
   if(squadOpen){requestAnimationFrame(tick);return}
   if(aiHome&&document.hidden){requestAnimationFrame(tick);return}
+  if(!paused&&!squadOpen&&!document.hidden){
+   impactTime=Math.max(0,impactTime-elapsed)
+   if(blastShooter){
+    blastWindup+=elapsed
+    if(blastWindup>=.65){
+     const shooter=blastShooter;blastShooter=null;shooter.age=.12
+     launchShot(shooter,true)
+    }
+   }
+  }
   if(!paused)updateWeather(dt)
   if(aiHome&&!paused&&replay.cut<0)playForHome(dt)
   const inputPad=broadcast?undefined:menuPad()
@@ -1801,7 +1935,13 @@ async function start(){
   }else if(!paused&&phase==='halftime'&&(breakSeconds-=elapsed)<=0){
    half=2;matchSeconds=0;attackSign=-1;reset(true)
   }
-  if(!celebrationLab&&!crossingDrill&&!paused&&!celebrating&&phase==='play'){
+  if(!blastShooter&&!celebrationLab&&!crossingDrill&&!paused&&!celebrating&&phase==='play'){
+   if(!burnLab&&fireRemaining>0&&!document.hidden&&!outBall&&!keeperRestart){
+    const previousSecond=Math.ceil(fireRemaining)
+    fireRemaining=Math.max(0,fireRemaining-elapsed)
+    if(fireRemaining===0)resetBurn()
+    else if(Math.ceil(fireRemaining)!==previousSecond)renderBurn()
+   }
    matchSeconds=Math.min(1500,matchSeconds+elapsed*settings.speed)
    if(matchSeconds>=1500){
     audio.play('whistle',.75,half===1?1:.88)
@@ -1819,7 +1959,7 @@ async function start(){
    const actor=players[active];if(actor.age>=0&&(actor.age+=dt)>.42)actor.age=-1
    camTarget.lerp(ball.position,1-Math.exp(-6*dt))
   }
-  else if(!paused&&phase==='play'&&(!crossingDrill||repReset<0&&training.count<5)){
+  else if(!paused&&!blastShooter&&phase==='play'&&(!crossingDrill||repReset<0&&training.count<5)){
    homeLateTime=Math.max(0,homeLateTime-dt)
    lateTime=Math.max(0,lateTime-dt)
    if(charge)showPower(heldPower(charge.start))
@@ -1935,7 +2075,7 @@ async function start(){
     }
     if(actor.age>=.37)actor.age=-1
    }
-   const canCollect=()=>rushing&&canRush()&&ball.position.y<=1.35&&
+   const canCollect=()=>!perfectPass&&rushing&&canRush()&&ball.position.y<=1.35&&
     Math.hypot(ball.position.x-homeKeeper.position.x,ball.position.z-homeKeeper.position.z)<1.05
    if(canCollect())keeperTouch()
    if(keeperGather>0){
@@ -2002,7 +2142,10 @@ async function start(){
     passTime=Math.min(passDuration,passTime+dt)
     const fraction=passTime/passDuration
     previousPassPosition.copy(ball.position)
-    if(passKind==='through'){
+    if(perfectPass){
+     ball.position.lerpVectors(passStart,players[ballPlayer].sprite.position,fraction)
+     ball.position.y=restingHeight
+    }else if(passKind==='through'){
      const distance=(launchSpeed-.5*turfDeceleration*passTime)*passTime
      ball.position.copy(passStart).addScaledVector(passHeading,distance)
      ball.position.y=restingHeight
@@ -2013,9 +2156,9 @@ async function start(){
      ball.position.lerpVectors(passStart,passTarget,fraction).addScaledVector(assistOffset,fraction*fraction)
      ball.position.y=restingHeight+(passKind==='cross'?4*crossLift*fraction*(1-fraction):heightAt(arc,passTime))
     }
-    const interceptor=interceptPass(previousPassPosition,ball.position)
+    const interceptor=perfectPass?-1:interceptPass(previousPassPosition,ball.position)
     const wantsFinish=passKind==='cross'&&(charge?.action==='shot'||queued?.action==='shot')
-    const collector=interceptPass(previousPassPosition,ball.position,players,lastSender,wantsFinish?1.15:.78,wantsFinish?2:.84)
+    const collector=perfectPass?(fraction===1?ballPlayer:-1):interceptPass(previousPassPosition,ball.position,players,lastSender,wantsFinish?1.15:.78,wantsFinish?2:.84)
     if(Math.abs(ball.position.x)>fieldX||Math.abs(ball.position.z)>fieldZ){
      const step=Math.max(.000001,dt)
      ballOut((ball.position.x-previousPassPosition.x)/step,(ball.position.y-previousPassPosition.y)/step,(ball.position.z-previousPassPosition.z)/step)
@@ -2023,8 +2166,15 @@ async function start(){
     else if(interceptor>=0)blueWins(interceptor,'INTERCEPTED')
     else if(collector>=0){
      lastBlue=false
+     const completedPerfectPass=perfectPass&&performance.now()-passCallAt<=1500,passer=players[lastSender]
      receivePass(collector,wantsFinish)
+     if(!inFlight&&windupReceiver<0)perfectPass=false
+     if(completedPerfectPass){
+      feedbackActor=passer;feedbackTime=1.05
+      callout.textContent='PERFECT PASS';callout.dataset.grade='PERFECT PASS';callout.hidden=false
+     }
     }else if(fraction===1){
+     perfectPass=false
      if(crossingDrill&&training.drill!==4)finishRep(0,'Missed receiver')
      inFlight=false;rollingPass=true;clearanceLoose=true;reboundVY=0
      // Unmet assisted passes roll on. A through ball has already spent its momentum.
@@ -2052,10 +2202,12 @@ async function start(){
      goalie.material.rotation=(keeperStart-goalie.position.z)*.35
      goalie.position.y=shot.result==='Save'?dive*Math.min(.85,ball.position.y*.65):0
     }
-    const blocker=shotDirection!==attackSign?interceptPass(previousPassPosition,ball.position,players):-1
+    const blocker=shotDirection!==attackSign?interceptPass(previousPassPosition,ball.position,players):blastFlying?blastBlocker(previousPassPosition,ball.position):-1
     if(canCollect())keeperTouch()
     else if(blocker>=0){
-     shot=null;winBack(blocker,'BLOCKED')
+     shot=null
+     if(blastFlying){blastFlying=false;blueWins(blocker,'BLOCKED')}
+     else winBack(blocker,'BLOCKED')
     }else if(t===1){
      if(crossingDrill){
       const distance=Math.hypot(fieldX-shotStart.x,shotStart.z),angle=Math.atan2(Math.abs(shotStart.z),Math.max(.1,fieldX-shotStart.x))
@@ -2063,6 +2215,11 @@ async function start(){
       finishRep(valid?shotPoints(shot.result,distance,angle,shotMultiplier-1,firstTimeCross):0,shot.result)
       shot=null
      }else{
+     if(shot.result==='Goal'&&burn===100){
+      resetBurn()
+     }else if(shotDirection===attackSign&&!blastFlying){
+      changeBurn(shot.result==='Goal'?20:shot.result==='Save'?10:0)
+     }
      if(shotDirection===attackSign)recordAttempt(shot.result)
      el('shotResult').textContent=shotDirection!==attackSign&&shot.result==='Goal'?matchOpponent.name+' GOAL':shot.result.toUpperCase()
      if(shot.result==='Wide'||shot.result==='Over'){
@@ -2187,6 +2344,7 @@ async function start(){
    if(aerial&&(aerial.age+=dt)>.42)aerial=null
    updateReferee(dt)
    if(feedbackActor&&(feedbackTime-=dt)<=0){feedbackActor=null;callout.hidden=true}
+   if(passCallIndex>=0&&(paused||phase!=='play'||!held||performance.now()-passCallAt>1500))clearPassCall()
    const controlled=players[active]
    if(nameText.textContent!==controlled.displayName)nameText.textContent=controlled.displayName
    capacity.style.transform='scaleX('+controlled.staminaCapacity/100+')'
@@ -2244,6 +2402,15 @@ async function start(){
      if(actor.turnTime>=.065)actor.drawFace=actor.face
     }else{actor.turnCandidate=actor.face;actor.turnTime=0}
     const spriteFace=(actor.drawFace+screenRotation()+8)%8
+    if(celebrating&&!groupStarted&&actor===celebrant&&running){
+     const jog=actor.maps[0].userData.scorerJog as T.Texture|undefined
+     if(jog){
+      const frames=jog.image.width/48
+      jog.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-spriteFace)/8)
+      actor.sprite.material.map=jog
+      continue
+     }
+    }
     // Play the contact reaction during the whistle, including a brief recovery before the restart.
     if(freeKick && freeKick.wait>0 && freeKick.fallAge<.94 && actor.maps[3] &&
        actor===(freeKick.blue?opponents:players)[freeKick.taker] && actor.displayName===freeKick.victimName){
@@ -2316,7 +2483,28 @@ async function start(){
    callout.style.top=Math.round((1-headScreen.y)*canvas.clientHeight/2-(feedbackActor===players[active]?58:8)-8*(1-feedbackTime/1.05))+'px'
    callout.style.opacity=String(Math.min(1,feedbackTime/.22))
   }
+  if(passCallIndex>=0){
+   const sprite=players[passCallIndex].sprite
+   headScreen.copy(sprite.position).addScaledVector(screenUp,sprite.scale.y*(1-sprite.center.y)).project(camera)
+   passCall.style.left=Math.round((headScreen.x+1)*canvas.clientWidth/2)+'px'
+   passCall.style.top=Math.round((1-headScreen.y)*canvas.clientHeight/2-8)+'px'
+  }
   if(!celebrationLab&&!broadcast&&!paused&&phase==='play')replay.record(celebrating?Math.min(elapsed,.10):dt,(shotDirection===1?attackingGoal:homeGoal).rippleTime)
+  const burningPossession=burn===100&&phase==='play'&&!crossingDrill&&!celebrating&&!outBall&&!keeperRestart&&!shot&&!blastShooter&&blueCarrier<0&&!bluePass&&(held||inFlight||rollingPass&&!lastBlue)
+  burningBall.update(ball.position,burningPossession,ball.position.y<=restingHeight+.25,paused?0:dt)
+  if(!shot)blastFlying=false
+  for(const [i,ember] of flames.entries()){
+   ember.visible=(!!blastShooter||blastFlying)&&replay.cut<0
+   if(!ember.visible)continue
+   if(blastShooter){
+    const angle=i*Math.PI/6+blastWindup*9,radius=.12+.8*(1-Math.min(1,blastWindup/.65))
+    ember.position.copy(ball.position);ember.position.x+=radius*Math.cos(angle);ember.position.y+=radius*Math.sin(angle)
+    ember.scale.setScalar(.08+blastWindup*.17)
+   }else{
+    ember.position.copy(ball.position).lerp(shotStart,Math.min(1,i*.014/Math.max(.1,shotTime/(shot?.duration||1))))
+    ember.scale.setScalar(.36*(1-i/14))
+   }
+  }
   renderer.render(scene,camera)
   if(revealFirstFrame||broadcast&&!matchView.dataset.live)matchView.removeAttribute('data-loading')
   if(revealFirstFrame){
@@ -2331,7 +2519,7 @@ async function start(){
    else if(!broadcast&&replay.begin()){
     beginReplayInset()
     goalBanner.hidden=true;setReplayHint()
-    ring.visible=false;nameplate.hidden=true;callout.hidden=true;switchButton.disabled=true
+    ring.visible=false;nameplate.hidden=true;callout.hidden=true;clearPassCall();switchButton.disabled=true
     el('shotResult').textContent=''
    }else reset(shotDirection===attackSign)
   }

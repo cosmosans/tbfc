@@ -47,3 +47,5 @@
 @keyframes team-swirl {
  to { transform: translate(-50%, -50%) rotate(1turn); }
 }
+
+.ts-half{position:relative;font-style:normal}.ts-half::before{content:"★";position:absolute;left:0;width:50%;overflow:hidden;color:#ffbe59}

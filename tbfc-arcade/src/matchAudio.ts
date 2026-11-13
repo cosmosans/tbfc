@@ -1,3 +1,5 @@
+import blast from './audio/burner-blast.wav?url'
+import post from './audio/post.wav?url'
 import cheer from './audio/goal-crowd.mp3?url'
 import stadium from './audio/stadium.mp3?url'
 import goal from './audio/tbfc-goal.mp3?url'
@@ -13,7 +15,7 @@ import open from './audio/06_UI_Menu_Open.wav?url'
 import close from './audio/07_UI_Menu_Close.wav?url'
 
 type MenuCue='nav'|'success'|'open'|'close'
-const recordings={nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
+const recordings={blast,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 type Sound=keyof typeof recordings|Impact
 
@@ -44,6 +46,7 @@ export class MatchAudio {
    for(const [key,url] of Object.entries(recordings)){
     void fetch(url).then(r=>r.arrayBuffer()).then(b=>ctx.decodeAudioData(b)).then(buffer=>{
      this.buffers.set(key as Sound,buffer)
+     if(key==='post')this.buffers.set('bar',buffer)
      if(key==='stadium'){
       const crowd=ctx.createBufferSource()
       crowd.buffer=buffer;crowd.loop=true;crowd.connect(this.bed!);crowd.start()
