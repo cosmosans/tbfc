@@ -46,6 +46,7 @@ import starsFall from './art/stars-fall.png?url'
 import tealFall from './art/teal-fall.png?url'
 import {rivalSprites} from './rivalSprites'
 import {clubAccent,burners,clubs,type Club,type Fixture} from './opponentSquads'
+import {selectSides,playerColor,type Seat} from './sideSelect'
 import {selectTeams} from './teamSelect'
 import {menuDirection,menuPad} from './menuPad'
 import type {Selection} from './lineup'
@@ -129,6 +130,7 @@ async function start(){
  let music:MenuMusic|undefined
  let ticket:Ticket|null=null
  let standalonePractice=false
+ let seats:Seat[]|null=null
  let simulation=false
  let burnLab=false
  let celebrationLab=false
@@ -149,6 +151,7 @@ async function start(){
   let resume=history.state?.arcadeCareer as number|undefined
   let destination=resume!==undefined?'career':await mainMenu(music,!returning)
   do{
+   seats=null;simulation=false
    if(destination==='career'){
     ticket=await careerHub(burnerPortraits,settings,resume)
     resume=undefined
@@ -182,6 +185,9 @@ async function start(){
    const selected=await selectTeams(fixture)
    if(!selected){destination=await mainMenu(music);continue}
    fixture=selected
+   seats=await selectSides(fixture)
+   if(!seats)continue
+   simulation=seats.length===0
    const club=fixture.home
    portraits=club===burners?burnerPortraits:Object.fromEntries([...club.outfield,...club.bench,club.keeper].map(n=>[n,rivalSprites(club,n)?.idle??(n===club.keeper?tealIdle:trainingIdle)]))
    lineup=await selectLineup(portraits,fixture,undefined,settings)
@@ -198,7 +204,7 @@ async function start(){
  function trainingFactor(name:string,stat:Attribute){
   return ticket&&name===ticket.career.player?1+(gains.get(stat)??0)*.01:1
  }
- const aiHome=broadcast||simulation
+ const aiHome=broadcast||simulation||!!seats&&!seats.some(s=>s.side===-1)
  const {home,away:matchOpponent}=fixture
  const homeLabel=home===burners?'TBFC':home.name
  const homeShape=positions(lineup.shape)
@@ -1271,6 +1277,8 @@ async function start(){
   for(const [i,o] of opponents.entries()){
    const pos=o.sprite.position
    if(o.penalty||o.age>=0){o.moving=false;o.sprintTime=0;continue}
+   const human=owner(1,i)
+   if(human){driveSeat(human,dt);continue}
    if(keeperRestart?.blueBuild){
     const depth=i<3?[-5,-8,-5][i]:[12,8,12][i-3]
     o.goal.set(attackSign*depth,0,lanes[i])
@@ -1307,7 +1315,7 @@ async function start(){
   }
   const carrier=held?players[ballPlayer]:homeLateTime>.18?recentHomeKicker:null
   const defender=opponents[nearest]
-  if(carrier&&turnoverGrace<=0&&!defender.penalty&&defender.age<0){
+  if(!owner(1,nearest)&&carrier&&turnoverGrace<=0&&!defender.penalty&&defender.age<0){
    const target=held?ballPos:carrier.sprite.position
    const dx=target.x-defender.sprite.position.x,dz=target.z-defender.sprite.position.z
    pressTime=Math.hypot(dx,dz)<1.85?pressTime+dt:0
@@ -1413,7 +1421,7 @@ async function start(){
    mate.goal.z=T.MathUtils.clamp(mate.goal.z,-11.5,11.5)
   })
  }
- function tryBlueShot(blast=false){
+ function tryBlueShot(blast=false,human=false){
   const carrier=opponents[blueCarrier],from=carrier.sprite.position
   let target=0,best=-Infinity
   const dx=-attackSign*fieldX-ball.position.x
@@ -1435,7 +1443,7 @@ async function start(){
    blastShooter=carrier;blastWindup=0;carrier.face=facing(dx,-from.z);carrier.shooting=true;carrier.age=.065
    audio.play('blast',.95);return true
   }
-  if(best===-Infinity&&!blast)return false
+  if(best===-Infinity&&!blast&&!human)return false
   const range=Math.hypot(dx,target-ball.position.z)
   keeperStartX=homeKeeper.position.x;keeperStart=homeKeeper.position.z
   shotMultiplier=blast?blastMultiplier:1+T.MathUtils.clamp(range/15,.28,.85)
@@ -1457,21 +1465,28 @@ async function start(){
   blueCarrier=-1;noticeTime=0;el('shotResult').textContent=''
   return true
  }
- function decideBlueAttack(dt:number){
+ function decideBlueAttack(dt:number,human?:Seat){
+  if(!human&&owner(1,blueCarrier))return
   blueDecisionTime-=dt
-  if(blueDecisionTime>0)return
+  if(!human&&blueDecisionTime>0)return
   const carrier=opponents[blueCarrier],from=carrier.sprite.position
   blueDecisionTime=difficulty().reactionDelayMs/1000
   const inFinalThird=attackSign*from.x<=-fieldX/3
-  if(inFinalThird&&tryBlueShot())return
-  if(carrier.sprintTime>0)return
-  if(!inFinalThird&&!players.some(m=>!m.penalty&&m.sprite.position.distanceToSquared(from)<3.7**2)&&Math.random()>.11)return
+  if(!human&&inFinalThird&&tryBlueShot())return
+  if(!human&&carrier.sprintTime>0)return
+  if(!human&&!inFinalThird&&!players.some(m=>!m.penalty&&m.sprite.position.distanceToSquared(from)<3.7**2)&&Math.random()>.11)return
   let receiver=-1,best=-Infinity
   for(const [i,mate] of opponents.entries()){
    if(mate.penalty)continue
    if(i===blueCarrier)continue
    const to=mate.sprite.position,dx=to.x-from.x,dz=to.z-from.z
    const length=dx*dx+dz*dz
+   if(human){
+    const [x,z]=seatAim(human),aim=Math.hypot(x,z)>.2?[x,z]:dirs[carrier.face]
+    const score=(dx*aim[0]+dz*aim[1])/Math.max(.01,Math.sqrt(length))-.01*Math.sqrt(length)
+    if(score>best){best=score;receiver=i}
+    continue
+   }
    if(length<2.5**2||length>23**2)continue
    let space=Infinity,lane=Infinity
    for(const defender of players){
@@ -1538,7 +1553,76 @@ async function start(){
   return winner
  }
  let autoX=0,autoZ=0
+ const couchKeys=new Set<string>()
+ const buttons=new Map<Seat,boolean[]>()
+ const seatLabels=new Map<Seat,HTMLElement>()
+ let lastHome=-1,lastAway=-1
+ function teamActors(s:Seat){return s.side===-1?players:opponents}
+ function owner(side:number,i:number){return seats?.find(s=>s.side===side&&s.actor===i)}
+ function claim(side:number,index:number){
+  if(index<0||owner(side,index))return
+  const group=seats?.filter(s=>s.side===side)
+  if(group?.length)group.reduce((a,b)=>a.actor<0?a:b.actor<0?b:teamActors(a)[a.actor].sprite.position.distanceToSquared(ball.position)<teamActors(b)[b.actor].sprite.position.distanceToSquared(ball.position)?a:b).actor=index
+ }
+ function syncSeats(){
+  if(!seats)return
+  if(active!==lastHome){claim(-1,active);lastHome=active}
+  if(blueCarrier!==lastAway){claim(1,blueCarrier);lastAway=blueCarrier}
+  for(const s of seats){
+   const actors=teamActors(s)
+   if(!actors[s.actor]||actors[s.actor].penalty)s.actor=actors.findIndex((a,i)=>!a.penalty&&!owner(s.side,i))
+  }
+ }
+ function seatAim(s:Seat){
+  const pad=s.device<0?null:navigator.getGamepads()[s.device]
+  const key=(k:string)=>s.device<0&&couchKeys.has(k)
+  const x=(pad?.axes[0]??0)+Number(!!pad?.buttons[15]?.pressed||key('ArrowRight')||key('KeyD'))-Number(!!pad?.buttons[14]?.pressed||key('ArrowLeft')||key('KeyA'))
+  const z=(pad?.axes[1]??0)+Number(!!pad?.buttons[13]?.pressed||key('ArrowDown')||key('KeyS'))-Number(!!pad?.buttons[12]?.pressed||key('ArrowUp')||key('KeyW'))
+  return view.end?[-z*attackSign,x*attackSign]:[x,z]
+ }
+ function driveSeat(s:Seat,dt:number){
+  const actor=teamActors(s)[s.actor],pos=actor.sprite.position,[x,z]=seatAim(s)
+  actor.moving=actor.age<0&&Math.hypot(x,z)>.24
+  if(!actor.moving)return
+  actor.face=facing(x,z,actor.face)
+  const [dx,dz]=dirs[actor.face]
+  const sprint=s.device<0?couchKeys.has('ShiftLeft'):navigator.getGamepads()[s.device]?.buttons[7]?.pressed
+  const step=4*dt+(sprint?2*spendSprint(actor,dt):0)
+  pos.x=T.MathUtils.clamp(pos.x+dx*step,-20.7,20.7);pos.z=T.MathUtils.clamp(pos.z+dz*step,-11.7,11.7);actor.travel+=step
+ }
+ function couchInput(s:Seat,index:number,down:boolean){
+  const source='seat'+s.number+'-'+index
+  if(!down){release(source);return}
+  if(index===9){void matchMenu();return}
+  if(paused||squadOpen||s.actor<0)return
+  if(index===4){
+   const actors=teamActors(s)
+   for(let n=1;n<actors.length;n++){
+    const i=(s.actor+n)%actors.length
+    if(!actors[i].penalty&&!owner(s.side,i)){
+     s.actor=i
+     if(s.side===-1&&!held&&!inFlight){active=i;lastHome=i}
+     break
+    }
+   }
+   return
+  }
+  if(index>3)return
+  if(s.side===-1&&s.actor===active){press(faceActions[index],source);return}
+  const actor=teamActors(s)[s.actor]
+  if(phase!=='play'||celebrating||replay.cut>=0||blastShooter||outBall||keeperRestart||actor.age>=0)return
+  if(s.side===1&&s.actor===blueCarrier){
+   if(index===1)tryBlueShot(false,true)
+   else decideBlueAttack(0,s)
+  }else if(index===1&&(s.side===1?held:canTackle())){
+   actor.age=0;actor.tackling=true;actor.shooting=false
+  }
+ }
  function readAim(pad:Gamepad|null|undefined){
+   if(seats){
+    const s=owner(-1,active)
+    return s?seatAim(s):[autoX,autoZ]
+   }
    if(aiHome)return [autoX,autoZ]
    const x=Number(keys.has('KeyD'))-Number(keys.has('ArrowLeft')||keys.has('KeyA'))+axisX+(pad?.axes[0]??0)
    const z=Number(keys.has('ArrowDown')||keys.has('KeyS'))-Number(keys.has('ArrowUp')||keys.has('KeyW'))+axisZ+(pad?.axes[1]??0)+Number(!!pad?.buttons[13]?.pressed)-Number(!!pad?.buttons[12]?.pressed)
@@ -1728,16 +1812,7 @@ async function start(){
   for(const actor of pitchActors)actor.sprite.visible=players.includes(actor)||actor===awayGK
   training.panel.hidden=false;matchView.classList.add('training');training.choose(standalonePractice?0:Math.floor(Math.random()*drills.length));setupRep()
  }
- if(simulation){
-  matchView.dataset.simulation=''
-  const exit=document.createElement('button')
-  exit.textContent='Quit match'
-  exit.onclick=exitSimulation
-  const controls=document.createElement('div')
-  controls.className='sim-controls'
-  controls.append(el('changeView'),el('pause'),exit)
-  matchView.append(controls)
- }
+ if(simulation)matchView.dataset.simulation=''
  let revealFirstFrame=!broadcast
  el('switchPlayer').onclick=switchPlayer
  el('reset').onclick=()=>{
@@ -1757,6 +1832,14 @@ async function start(){
   if(['KeyB','KeyK','Space'].includes(e.code)){e.preventDefault();if(!e.repeat)press('shot',e.code)}
   return
  }
+ if(seats){
+  if(e.code==='Escape'){if(!e.repeat)void matchMenu();return}
+  couchKeys.add(e.code)
+  const s=seats.find(s=>s.device===-1)
+  if(s&&!e.repeat)couchInput(s,keyButton(e.code),true)
+  if(e.code.startsWith('Arrow')||e.code==='Space'||e.code==='Tab')e.preventDefault()
+  return
+ }
  if(simulation&&e.code==='Escape'){e.preventDefault();if(!e.repeat)void matchMenu();return}
  if(broadcast||squadOpen||e.target instanceof HTMLButtonElement&&e.code==='Space')return
  if(crossingDrill&&e.code==='Enter'){e.preventDefault();if(!e.repeat)endWarmup();return}
@@ -1771,7 +1854,9 @@ async function start(){
  if(simulation)return
  if(e.code==='ArrowRight'){if(!e.repeat)switchPlayer();return}
  keys.add(e.code);if(!e.repeat){if(e.code==='KeyX')press('cross',e.code);if(e.code==='KeyY')press('through',e.code);if(['KeyE','KeyJ'].includes(e.code))press('pass',e.code);if(['KeyB','KeyK','Space'].includes(e.code))press('shot',e.code);if(e.code==='Escape'){e.preventDefault();void matchMenu()}}})
- addEventListener('keyup',e=>{keys.delete(e.code);release(e.code)});addEventListener('blur',()=>{if(celebrationLab){keys.clear();axisX=axisZ=0}else if(!aiHome&&!squadOpen&&!crossingDrill)void matchMenu()})
+ function keyButton(code:string){return ({KeyE:0,KeyJ:0,Space:1,KeyB:1,KeyK:1,KeyX:2,KeyY:3,Tab:4,KeyQ:4} as Record<string,number>)[code]??99}
+ addEventListener('blur',()=>couchKeys.clear())
+ addEventListener('keyup',e=>{couchKeys.delete(e.code);const s=seats?.find(s=>s.device===-1);if(s)couchInput(s,keyButton(e.code),false);keys.delete(e.code);release(e.code)});addEventListener('blur',()=>{if(celebrationLab){keys.clear();axisX=axisZ=0}else if(!aiHome&&!squadOpen&&!crossingDrill)void matchMenu()})
  const utilityButtons=[4,14,15,11,1]
  const utilityHeld=utilityButtons.map(()=>false)
  let padIndex:number|null=null
@@ -1953,7 +2038,7 @@ async function start(){
  let broadcastRotation=0,decisionIn=.5
  function playForHome(dt:number){
   decisionIn-=dt
-  if(phase==='fulltime'){if(simulation)return;resetBurn();half=1;matchSeconds=homeScore=awayScore=0;reset();return}
+  if(phase==='fulltime'){if(simulation||seats)return;resetBurn();half=1;matchSeconds=homeScore=awayScore=0;reset();return}
   if(celebrating||phase==='halftime'||outBall||keeperRestart||keeperGather>0||resultTime>0)return
   const player=players[active],pos=player.sprite.position
   if(freeKick){
@@ -2125,8 +2210,16 @@ async function start(){
    }
   }
   if(!paused)updateWeather(dt)
-  if(aiHome&&!paused&&replay.cut<0)playForHome(dt)
-  const inputPad=broadcast?undefined:menuPad()
+  syncSeats()
+  for(const s of seats??[]){
+   if(s.device<0)continue
+   const pad=navigator.getGamepads()[s.device]
+   const next=Array.from(pad?.buttons??[],b=>b.pressed),prev=buttons.get(s)
+   if(prev)for(const i of [0,1,2,3,4,9])if(!!next[i]!==!!prev[i])couchInput(s,i,!!next[i])
+   buttons.set(s,next)
+  }
+  if((aiHome||seats&&!owner(-1,active))&&!paused&&replay.cut<0)playForHome(dt)
+  const inputPad=broadcast||seats?.length?undefined:menuPad()
   labControls?.poll(inputPad)
   const pad=celebrationLab||simulation?undefined:inputPad
   const controlsPad=celebrationLab?undefined:inputPad
@@ -2287,7 +2380,9 @@ async function start(){
     if(Math.hypot(dx,dz)>.2){x=dx;z=dz}
    }
    p.moving=p.age<0&&Math.max(Math.abs(x),Math.abs(z))>(p.moving?.18:.24)
-   const wantsSprint=p.moving&&(keys.has('ShiftLeft')||keys.has('ShiftRight')||!!pad?.buttons[7]?.pressed)
+   const driver=owner(-1,active)
+   const couchSprint=driver&&(driver.device<0?couchKeys.has("ShiftLeft"):navigator.getGamepads()[driver.device]?.buttons[7]?.pressed)
+   const wantsSprint=p.moving&&(couchSprint||(keys.has('ShiftLeft')||keys.has('ShiftRight')||!!pad?.buttons[7]?.pressed))
    for(const mate of players)mate.sprintTime=0
    const burst=p.sprintTime=wantsSprint?spendSprint(p,dt):0
    const strideTime=dt+burst*(sprintCadence-1)
@@ -2300,6 +2395,8 @@ async function start(){
    if(!celebrationLab){organizeAttack(dt);organizeDefense()}
    for(const [i,partner] of players.entries()){
     if(partner.penalty||i===active)continue
+    const human=owner(-1,i)
+    if(human){driveSeat(human,dt);continue}
     const other=partner.sprite.position
     if(nearCover<0&&i===reboundRunner&&canSwitch()){
      // Lead a moving rebound briefly, then close on the resting ball.
@@ -2481,12 +2578,12 @@ async function start(){
     else if(interceptor>=0)blueWins(interceptor,'INTERCEPTED')
     else if(collector>=0){
      lastBlue=false
-     const completedPerfectPass=perfectPass&&performance.now()-passCallAt<=1500,passer=players[lastSender]
+     const completedPerfectPass=perfectPass&&performance.now()-passCallAt<=1500
      receivePass(collector,wantsFinish)
      if(!inFlight&&windupReceiver<0)perfectPass=false
      if(completedPerfectPass){
-      feedbackActor=passer;feedbackTime=1.05
-      callout.textContent='PERFECT PASS';callout.dataset.grade='PERFECT PASS';callout.hidden=false
+      feedbackActor=players[collector];feedbackTime=1.05
+      callout.textContent='PERFECT PASS!';callout.dataset.grade='PERFECT PASS';callout.hidden=false
      }
     }else if(fraction===1){
      perfectPass=false
@@ -2816,6 +2913,14 @@ async function start(){
   headScreen.copy(selected.position).addScaledVector(screenUp,selected.scale.y*(1-selected.center.y)).project(camera)
   nameplate.style.left=Math.round((headScreen.x+1)*canvas.clientWidth/2)+'px'
   nameplate.style.top=Math.round((1-headScreen.y)*canvas.clientHeight/2-3)+'px'
+  for(const s of seats??[]){
+   if(seats!.length<2)break
+   let label=seatLabels.get(s)
+   if(!label){label=document.createElement('span');label.textContent='P'+s.number;label.style.cssText='position:absolute;pointer-events:none;transform:translate(-50%,-100%);font:18px Upheaval,monospace;color:white;text-align:center;min-width:2em;padding:2px 4px';label.style.backgroundColor=playerColor(s.number);matchView.append(label);seatLabels.set(s,label)}
+   const sprite=teamActors(s)[s.actor]?.sprite
+   label.hidden=!sprite?.visible||celebrating||replay.cut>=0
+   if(!label.hidden){headScreen.copy(sprite.position).addScaledVector(screenUp,sprite.scale.y*(1-sprite.center.y)).project(camera);label.style.left=(headScreen.x+1)*canvas.clientWidth/2+'px';label.style.top=((1-headScreen.y)*canvas.clientHeight/2-(sprite===selected?nameplate.offsetHeight+5:4))+'px'}
+  }
   nameplate.hidden=celebrating
   if(celebrating)ring.visible=false
   for(const {actor,icon} of exhaustionMarkers){

@@ -379,7 +379,7 @@ export function selectLineup(
       paintFire(0);
     }
     function chemistryText(result:ReturnType<typeof lineupChemistry>){
-      return result.positionPenalty ? result.score+'/100 · −'+result.positionPenalty+' position fit ('+result.misplaced.join(', ')+')' : result.score+'/100';
+      return result.score+'/100';
     }
     function previewSwap(button: HTMLElement) {
       if (editing < 0 || match) return;

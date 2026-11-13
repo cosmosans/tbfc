@@ -1,7 +1,7 @@
 import { audio } from "./matchAudio";
 import { hint, reveal } from "./screenUI";
 import { clubAccent, clubs, type Fixture } from "./opponentSquads";
-import { menuPad, menuDirection, padStatus } from "./menuPad";
+import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
 
 export function selectTeams(
@@ -17,7 +17,7 @@ export function selectTeams(
   root.setAttribute("aria-label", "Select teams");
   const style = document.createElement("style");
   style.textContent = css;
-  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1><small class="ts-pad" role="status"></small></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">‹ Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">Lineup select ▸</button></div></div>`;
+  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">‹ Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">Side Select ▸</button></div></div>`;
   root.prepend(style);
   document.body.append(root);
   const main = document.querySelector("main")!;
@@ -146,9 +146,6 @@ export function selectTeams(
     function poll(now: number) {
       const pad = menuPad(),
         dir = pad ? menuDirection(pad) : "";
-      const status = root.querySelector(".ts-pad")!;
-      const statusText = pad ? padStatus : "";
-      if (status.textContent !== statusText) status.textContent = statusText;
       if (dir && (dir !== last || now >= next)) {
         navigate(dir);
         next = now + (dir === last ? 190 : 330);
