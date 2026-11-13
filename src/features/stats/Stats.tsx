@@ -247,7 +247,7 @@ export default function Stats({
     ? data.players.map(player => ({ label: player.name, goals: playerStats(player, events)[0][1] }))
         .filter(player => player.goals > 0)
         .sort((a, b) => b.goals - a.goals || a.label.localeCompare(b.label))
-    : goalsByKickoff(data.matches).map(({ time, goals, points, played }) => ({ label: time, goals, ppg: points / played }));
+    : goalsByKickoff(data.matches).map(({ time, goals, points, played }) => ({ label: time, goals, played, ppg: points / played }));
   const adjusted = opponentMetric === "gdPerMatch";
   const sortField = opponentMetric === "teamGoals" ? "goalsFor" : opponentMetric;
   const chartTeams = teams
@@ -637,6 +637,8 @@ export default function Stats({
                             </text>
                           ) : null} />
                         )}
+                        {kickoffPPG && <LabelList dataKey="played" position="center" fill="#000" fontWeight={800} fontSize={12}
+                          formatter={(value: unknown) => `${value} ${Number(value) === 1 ? "game" : "games"}`} />}
                         <LabelList formatter={formatStat} dataKey={goalChartKey} position={horizontalBars ? "right" : "top"} fill="#fff" fontWeight={800} fontSize={13} />
                       </Bar>
                     </BarChart>

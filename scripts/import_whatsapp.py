@@ -58,12 +58,35 @@ def append_story(existing, story):
     return existing + '\n\n' + story
 
 
+# WhatsApp display names are sometimes shorter than the roster names.
+PLAYER_ALIASES = {
+    'pamela': 'Pam Williams',
+    'mandy': 'Mandy Cline',
+    'spencer': 'Spencer Smith',
+    'chris': 'Chris Richardson',
+    'jeremy c': 'Jeremy Courtney',
+}
+
+
+def player_for_sender(sender, mapped_id, players):
+    by_id = {player['id']: player for player in players}
+    if mapped_id is not None:
+        if mapped_id not in by_id:
+            raise ValueError(f'Unknown player ID for sender: {sender}')
+        return mapped_id
+    name = PLAYER_ALIASES.get(sender.casefold(), sender)
+    matches = [player for player in players if player['name'].casefold() == name.casefold()]
+    if len(matches) != 1:
+        raise ValueError(f'Unmapped or ambiguous sender: {sender}')
+    return matches[0]['id']
+
+
 def build(snapshot, plan, messages, plan_dir):
     original = snapshot['data']
     candidate = json.loads(json.dumps(original))
     matches = {m['id']: m for m in candidate['matches']}
     sources = {m['id']: m for m in messages}
-    players = {p['id'] for p in candidate['players']}
+    players = candidate['players']
     mappings = plan['players']
     changes, provenance, used_sources = [], [], set()
     seen_matches = set()
@@ -85,9 +108,7 @@ def build(snapshot, plan, messages, plan_dir):
                 raise ValueError(f'Message selected more than once: {index}')
             used_sources.add(index)
             source = sources[index]
-            pid = mappings.get(source['sender'])
-            if pid not in players:
-                raise ValueError(f'Unmapped sender: {source["sender"]}')
+            pid = player_for_sender(source['sender'], mappings.get(source['sender']), players)
             text = clean_quote(source['text'])
             if not text or 'This message was deleted' in text or 'You deleted this message' in text:
                 raise ValueError(f'Message has no usable quotation: {index}')

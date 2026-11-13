@@ -157,3 +157,7 @@
 
 .lu-marker .lu-tired{left:50%;top:0;z-index:2;font-size:17px;font-style:normal}
 .lu-marker[data-swapping=true] .lu-tired{left:calc(50% + 30px)}
+
+.lu-position{color:#fff6da;font:clamp(10px,1.2vw,14px)/1 Upheaval,monospace;text-shadow:1px 1px #15100b}
+#lineup .lu-energy{display:inline-block;min-width:4.5em;padding:1px 4px;text-align:center;color:white;text-shadow:0 1px 1px #32180d;background:linear-gradient(to right,#ca5126 0 var(--charge),#9c3916 var(--charge) var(--capacity),#110d0c var(--capacity) 100%)}
+#lineup .lu-bench .lu-energy{min-width:0;flex:1}

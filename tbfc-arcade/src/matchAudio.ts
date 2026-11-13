@@ -28,6 +28,7 @@ export class MatchAudio {
  private buffers=new Map<Sound,AudioBuffer>()
  private voices=new Set<AudioBufferSourceNode>()
  private stopped=false
+ private finalWhistle=false
  private quiet=false
  private kickIndex=0
  muted=false
@@ -80,8 +81,10 @@ export class MatchAudio {
   gain.cancelScheduledValues(now)
   if(this.stopped||this.muted)gain.setValueAtTime(0,now)
   else gain.setTargetAtTime(.83,now,.012)
-  this.bed!.gain.setTargetAtTime(this.quiet?.09:.23,this.ctx.currentTime,.2)
+  this.bed!.gain.setTargetAtTime(this.finalWhistle?0:this.quiet?.09:.23,this.ctx.currentTime,.2)
  }
+ finishMatch(){this.finalWhistle=true;this.sync()}
+ restartMatch(){this.finalWhistle=false;this.sync()}
  setMuted(muted:boolean){
   this.muted=muted
   try{localStorage.setItem('tbfc.arcade.muted',this.muted?'yes':'no')}catch{}

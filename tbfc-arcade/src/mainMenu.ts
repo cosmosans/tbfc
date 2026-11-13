@@ -5,7 +5,7 @@ import crest from "./art/ground/crest.png?url";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./mainMenu.css?inline";
 
-type Destination = "match" | "practice" | "celebrations" | "simulate" | "burnLab";
+export type Destination = "career" | "match" | "practice" | "celebrations" | "simulate" | "burnLab";
 
 export function mountMenuBackdrop() {
   const style = document.createElement("style");
@@ -79,7 +79,7 @@ export function mainMenu(
       if (next === "menu")
         shell.innerHTML =
           title +
-          '<nav aria-label="Main menu"><button disabled>Season Mode <small>COMING SOON</small></button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
+          '<nav aria-label="Main menu"><button data-action="career">Career Mode</button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML = '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
@@ -112,6 +112,7 @@ export function mainMenu(
           music.start();
           draw("menu");
           break;
+        case "career": leave("career"); break;
         case "kick":
           leave("match");
           break;

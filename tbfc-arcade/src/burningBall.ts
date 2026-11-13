@@ -87,5 +87,5 @@ export function createBurningBall(scene: T.Scene) {
     tracking = true
     last.copy(position)
   }
-  return { clear, update }
+  return { clear, update, fire }
 }
