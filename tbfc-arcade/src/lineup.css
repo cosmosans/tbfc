@@ -146,3 +146,11 @@
 }
 @keyframes lu-swap-spin{to{transform:translateX(-50%) rotate(1turn)}}
 @keyframes lu-link-pulse{to{opacity:.65;filter:drop-shadow(0 0 4px currentColor)}}
+
+.lu-bench>div{align-items:stretch}
+.lu-bench button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:calc(32px + 1em)}
+.lu-division input{display:block;width:100%;margin:8px 0 0;accent-color:#ef864c;cursor:pointer}
+.lu-division input:focus-visible{outline:2px solid #ef864c;outline-offset:3px}
+.lu-settings .lu-division .lu-stops{display:flex;justify-content:space-between;padding:0 8px;pointer-events:none}
+.lu-stops i{width:2px;height:5px;background:#b59580}
+.lu-division output{display:block;text-align:center;margin-top:6px;font-family:Upheaval,monospace}

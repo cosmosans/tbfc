@@ -1,4 +1,4 @@
-import { rememberDivision } from "./difficulty";
+import { profiles, rememberDivision } from "./difficulty";
 import {lineupChemistry} from './lineupChemistry'
 import type { MenuMusic } from "./menuMusic";
 import { audio } from "./matchAudio";
@@ -261,7 +261,17 @@ export function selectLineup(
       dialog = document.createElement("dialog");
       dialog.className = "lu-confirm lu-settings";
       dialog.setAttribute("aria-labelledby", "lu-question");
-      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<p>Division affects opponent decisions and execution. Team stars show squad strength.</p><div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
+      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
+      const slider = dialog.querySelector<HTMLInputElement>("#lu-division")!;
+      const label = dialog.querySelector("output")!;
+      slider.oninput = () => {
+        const division = settingsOptions.difficulty[slider.valueAsNumber];
+        settings.difficulty = division;
+        rememberDivision(division);
+        slider.setAttribute("aria-valuetext", profiles[division].label);
+        label.value = profiles[division].label;
+        audio.menu("nav");
+      };
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -316,13 +326,20 @@ export function selectLineup(
         : ""
     }</aside></div>
     <p>${hint("Arrows", "LS")} Move　 ${hint("Enter", "A")} Select　 ${hint("Esc", "B")} Back</p></div>`;
+      const slideDuration = 340;
       root.querySelectorAll<HTMLElement>(".lu-marker").forEach((marker, i) => {
         if (previous[i])
           marker.animate(
             [previous[i], { left: marker.style.left, top: marker.style.top }],
-            { duration: 340, easing: "ease-out" },
+            { duration: slideDuration, easing: "ease-out" },
           );
       });
+      if (moving) {
+        const links = root.querySelector<SVGElement>(".lu-links");
+        links?.animate([{ opacity: 0 }, { opacity: getComputedStyle(links).opacity }], {
+          delay: slideDuration, duration: 180, easing: "ease-out", fill: "backwards",
+        });
+      }
       profile(slots[highlighted]);
       root.querySelector<HTMLElement>("#" + focus)?.focus();
     }
@@ -446,12 +463,8 @@ export function selectLineup(
           return;
         }
         const key = b.dataset.setting;
-        if (key === "speed" || key === "time" || key === "weather" || key === "difficulty") {
+        if (key === "speed" || key === "time" || key === "weather") {
           if (b.getAttribute("aria-pressed") !== "true") audio.menu("nav");
-          if (key === "difficulty") {
-            const division = settingsOptions.difficulty.find(v => v === b.value);
-            if (division) { settings.difficulty = division; rememberDivision(division); }
-          }
           if (key === "speed")
             settings.speed =
               settingsOptions.speed.find((v) => String(v) === b.value) ??
@@ -548,7 +561,7 @@ export function selectLineup(
       const items = Array.from(
         root.querySelectorAll<HTMLButtonElement>(
           dialog
-            ? "dialog button"
+            ? "dialog button, dialog input[type=range]"
             : editing >= 0 && !match
               ? "[data-slot],.lu-roster button:not(:disabled)"
               : editing >= 0
@@ -557,6 +570,13 @@ export function selectLineup(
         ),
       ).filter((b) => b.getClientRects().length > 0);
       const current = document.activeElement as HTMLButtonElement;
+      if (dx && document.activeElement instanceof HTMLInputElement && document.activeElement.id === "lu-division") {
+        const slider = document.activeElement;
+        const before = slider.value;
+        if (dx > 0) slider.stepUp(); else slider.stepDown();
+        if (slider.value !== before) slider.dispatchEvent(new Event("input"));
+        return;
+      }
       const focus = (item?: HTMLButtonElement) => {
         if (item && item !== current) {
           item.focus();

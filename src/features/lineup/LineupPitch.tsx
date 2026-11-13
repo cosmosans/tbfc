@@ -90,13 +90,14 @@ export default function LineupPitch({
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 
   return (
-    <Box className="lineup-pitch" sx={{ width: "100%", minWidth: 0 }}>
+    <Box className="lineup-pitch" sx={{ width: "100%", maxWidth: 1155, minWidth: 0, mx: "auto" }}>
       <Box sx={{ position: "relative", isolation: "isolate" }}>
         <PitchArtwork />
       <Pitch
         sx={{
           aspectRatio: "1.65",
-          minHeight: minPitchHeight,
+          minHeight: Math.min(minPitchHeight, 700),
+          maxHeight: 700,
           touchAction: "auto",
         }}
         aria-label={`${lineup.formation} lineup with substitutes`}

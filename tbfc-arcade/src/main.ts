@@ -44,7 +44,6 @@ import stevenIdle from './art/steven-idle.png?url'
 import stevenRun from './art/steven-run.png?url'
 import stevenKick from './art/steven-side-kicks.png?url'
 import joseGoalUrl from './art/jose-goal.png?url'
-import maskRun from './art/jose-mask-run.png?url'
 import joseIdle from './art/jose-idle.png?url'
 import joseRun from './art/jose-run.png?url'
 import joseKick from './art/jose-side-kicks.png?url'
@@ -215,37 +214,13 @@ async function start(){
  let shotDirection=1
  let netTravel=false
  const circle=new T.Mesh(new T.RingGeometry(2.9,2.97,64),new T.MeshBasicMaterial({color:lines,side:T.DoubleSide}));circle.rotation.x=-Math.PI/2;circle.position.y=.035;scene.add(circle)
- const jogAssets=import.meta.glob<string>('./art/*-celebration-jog.png',{eager:true,query:'?url',import:'default'})
- const jogByIdle=new Map([
-  [meghan_idle,'meghan-pixellab'],[pam_idle,'pam'],[janIdle,'jan'],[mandyIdle,'mandy'],
-  [jeremyIdle,'jeremy'],[chris_idle,'chris'],[seanIdle,'sean'],[stubbsIdle,'stubbs'],
-  [stevenIdle,'steven'],[danielIdle,'daniel'],[nelsonIdle,'nelson'],[nadiaIdle,'nadia'],
-  [trainingIdle,'blue-chris'],[blueIdle,'stars'],[tealIdle,'teal']
- ])
- const jogTextures=new Map<string,Promise<T.Texture>>()
- async function scorerJog(idle:string,customUrl?:string){
-  const name=jogByIdle.get(idle)
-  const url=customUrl??jogAssets['./art/'+name+'-celebration-jog.png']
-  if(!url)return
-  let loading=jogTextures.get(url)
-  if(!loading){
-   loading=celebrationSheet(url).then(map=>{
-    if(broadcast&&idle===blueIdle)broadcastShirt(map,matchOpponent.name)
-    map.repeat.y=1/8;map.userData.directionalRun=true
-    return map
-   })
-   jogTextures.set(url,loading)
-  }
-  return loading
- }
- async function createPlayer(name:string, displayName:string, urls:string[], runRows=8, frameSeconds=0, westKickRow=3,customJog?:string){
+ async function createPlayer(name:string, displayName:string, urls:string[], runRows=8, frameSeconds=0, westKickRow=3){
   const maps=await Promise.all(urls.map(async url=>{
   const tex=await new T.TextureLoader().loadAsync(url);tex.magFilter=tex.minFilter=T.NearestFilter;tex.generateMipmaps=false;tex.colorSpace=T.SRGBColorSpace;
   if(broadcast&&guestSheets.includes(url))broadcastShirt(tex,matchOpponent.name)
   return tex
  }))
 
-  maps[0].userData.scorerJog=await scorerJog(urls[0],customJog)
   const shirt=new T.SpriteMaterial({map:maps[0],transparent:true,depthWrite:false})
   const sprite=new T.Sprite(shirt);sprite.center.set(.5,2/48);sprite.scale.setScalar(2.5);scene.add(sprite)
   const runFrames=maps[1]?maps[1].image.width/(maps[1].image.height/runRows):1
@@ -285,7 +260,7 @@ async function start(){
  function makeRival(club:Club,name:string,fallback:string[]){
   const art=rivalSprites(club,name)
   const sheets=art?[art.idle,art.run,art.kick,...fallback.slice(3)]:fallback
-  return createPlayer(name,name,sheets,8,.2,1,art?.jog)
+  return createPlayer(name,name,sheets,8,.2,1)
  }
  const makeHomePlayer=(name:string)=>home===burners?makeBurner(name):makeRival(home,name,name===home.keeper?keeperSheets:trainingSheets)
  const fieldPlayers=celebrationLab?Object.keys(kits).filter(n=>n!==home.keeper):lineup.starters.slice(0,6)
@@ -394,14 +369,13 @@ async function start(){
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,joseGoal,joseMaskRun]=await Promise.all([pamGoalUrl,mandyGoalUrl,joseGoalUrl,maskRun].map(celebrationSheet))
+ const [pamGoal,mandyGoal,joseGoal]=await Promise.all([pamGoalUrl,mandyGoalUrl,joseGoalUrl].map(celebrationSheet))
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- joseMaskRun.userData.directionalRun=true
  const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:joseGoal}
  let goalMap:T.Texture|undefined
  const celebrationRunSeconds=3.5
- let groupStarted=false,maskedScorer=false
+ let groupStarted=false
  // The camera flashes on frame nine of Mandy’s 200 ms-per-frame animation.
  const photoAt=3,photoStart=photoAt-9*.2
  const frontRow=new Set<typeof sean>()
@@ -1595,7 +1569,6 @@ async function start(){
   celebrant=scorer
   goalMap=scorer&&(homeGoalScored?home:matchOpponent)===burners?celebrations[scorer.displayName]:undefined
   groupStarted=false
-  maskedScorer=(homeGoalScored?home:matchOpponent)===burners&&celebrant?.displayName==='José'
   frontRow.clear()
   goalAge=0;aerial=null;callout.hidden=true;feedbackActor=null
   for(const actor of pitchActors){
@@ -2271,15 +2244,6 @@ async function start(){
      if(actor.turnTime>=.065)actor.drawFace=actor.face
     }else{actor.turnCandidate=actor.face;actor.turnTime=0}
     const spriteFace=(actor.drawFace+screenRotation()+8)%8
-    if(celebrating&&!groupStarted&&actor===celebrant&&running&&!maskedScorer){
-     const jog=actor.maps[0].userData.scorerJog as T.Texture|undefined
-     if(jog){
-      const frames=jog.image.width/48
-      jog.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-spriteFace)/8)
-      actor.sprite.material.map=jog
-      continue
-     }
-    }
     // Play the contact reaction during the whistle, including a brief recovery before the restart.
     if(freeKick && freeKick.wait>0 && freeKick.fallAge<.94 && actor.maps[3] &&
        actor===(freeKick.blue?opponents:players)[freeKick.taker] && actor.displayName===freeKick.victimName){
@@ -2307,8 +2271,7 @@ async function start(){
     const runFrame=actor.tackling?Math.min(actor.runFrames-1,Math.floor(actor.age/.42*actor.runFrames)):actor.frameSeconds?Math.floor(actor.runClock/actor.frameSeconds):Math.floor(actor.travel/.28)
     const col=mode===2?kickPoseTimes.findLastIndex(time=>actor.age>=time):mode===1?runFrame%cols:spriteFace
     const row=mode===2?kickRow:mode===0?0:spriteFace
-    const maskedRun=celebrating&&!groupStarted&&actor===celebrant&&maskedScorer
-    const tex=maskedRun?joseMaskRun:celebrating&&groupStarted&&goalMap===mandyGoal&&frontRow.has(actor)&&!actor.moving&&mode===0? kneelingPose(actor.maps[0]):actor.maps[mode]
+    const tex=celebrating&&groupStarted&&goalMap===mandyGoal&&frontRow.has(actor)&&!actor.moving&&mode===0? kneelingPose(actor.maps[0]):actor.maps[mode]
     tex.repeat.set(1/cols,1/rows)
     tex.offset.set(col/cols,(rows-1-row)/rows)
     actor.sprite.material.map=tex

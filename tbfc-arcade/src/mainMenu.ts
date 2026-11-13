@@ -79,7 +79,7 @@ export function mainMenu(
       if (next === "menu")
         shell.innerHTML =
           title +
-          '<nav aria-label="Main menu"><button disabled>Season Mode <small>COMING SOON</small></button><button class="menu-kick" data-action="kick">Kick Off <span aria-hidden="true">▸</span></button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
+          '<nav aria-label="Main menu"><button disabled>Season Mode <small>COMING SOON</small></button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML = '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
