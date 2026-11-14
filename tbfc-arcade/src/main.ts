@@ -6,6 +6,9 @@ import meghanGoalUrl from './art/meghan-hockey-goal.png?url'
 import meghanSkateUrl from './art/meghan-skate.png?url'
 import nelsonGoalUrl from './art/nelson-goal.png?url'
 import janGoalUrl from './art/jan-goal.png?url'
+import stevenGoalRunUrl from './art/steven-goal-run.png?url'
+import nadiaGoalGroupUrl from './art/nadia-goal-group.png?url'
+import danielGoalGroupUrl from './art/daniel-goal-group.png?url'
 import stubbsSlideUrl from './art/stubbs-slide.png?url'
 import {careerRating,type Attribute} from './careerDevelopment'
 import {playerRatings,ratingLabels} from './playerRatings'
@@ -541,9 +544,10 @@ async function start(){
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,janGoal,meghanSkate,stubbsSlide]=await Promise.all([
-  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl
+ const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup]=await Promise.all([
+  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl
  ].map(celebrationSheet))
+ for(const map of [stevenGoalRun,nadiaGoalGroup,danielGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
  spiderIdle.userData.directionalIdle=true
  spiderRun.repeat.y=1/8;spiderRun.userData.directionalRun=true
@@ -551,7 +555,8 @@ async function start(){
  meghanSkate.userData.directionalRun=true
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal}
+ const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup}
  const costumeChange=costumeSmoke(scene)
  const costumeRevealTime=.20
  let costumeReveal=false
@@ -644,7 +649,7 @@ async function start(){
  const jumps=new Map<typeof sean,number>()
  function jumpHeight(actor:typeof sean){
   const age=jumps.get(actor)
-  return age===undefined?0:Math.sin(Math.PI*Math.min(1,age/.72))*.94
+  return age===undefined?0:Math.sin(Math.PI*Math.min(1,age/.72))*.47
  }
  function jump(actor:typeof sean){
   if(phase==='play'&&!paused&&!celebrating&&!freeKick&&!outBall&&!shot&&replay.cut<0&&!blastShooter&&
@@ -2118,7 +2123,7 @@ async function start(){
   const losers=homeGoalScored?opponents:players
   celebrant=scorer
   goalMap=scorer&&(homeGoalScored?home:matchOpponent)===burners?celebrations[scorer.displayName]:undefined
-  runCelebration=(homeGoalScored?home:matchOpponent)===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:undefined):undefined
+  runCelebration=(homeGoalScored?home:matchOpponent)===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:undefined):undefined
   costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun
   celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:3.5
   slideX=-shotDirection;slideZ=0
@@ -3093,15 +3098,12 @@ async function start(){
      else runCelebration.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      actor.sprite.material.map=runCelebration;continue
     }
-    if(celebrating&&groupStarted&&!actor.moving&&actor!==celebrant&&actor.displayName==='Jan'&&walks.some(w=>w.actor===actor&&w.gather)){
-     const frames=janGoal.image.width/48
-     janGoal.offset.x=Math.floor((goalAge-celebrationRunSeconds)/.2)%frames/frames
-     actor.sprite.material.map=janGoal;continue
-    }
-    if(celebrating&&groupStarted&&!actor.moving&&actor!==celebrant&&actor.displayName==='Nelson'&&walks.some(w=>w.actor===actor&&w.gather)){
-     const frames=nelsonGoal.image.width/48
-     nelsonGoal.offset.x=Math.floor((goalAge-celebrationRunSeconds)/.2)%frames/frames
-     actor.sprite.material.map=nelsonGoal;continue
+    const groupMap=groupCelebrations[actor.displayName]
+    if(celebrating&&groupStarted&&!actor.moving&&actor!==celebrant&&groupMap&&walks.some(w=>w.actor===actor&&w.gather)){
+     const frames=groupMap.image.width/48
+     groupMap.offset.x=Math.floor((goalAge-celebrationRunSeconds)/.2)%frames/frames
+     if(groupMap.userData.directionalCelebration)groupMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
+     actor.sprite.material.map=groupMap;continue
     }
     if(celebrating&&actor===celebrant&&goalMap&&groupStarted){
      const groupAge=groupStarted?goalAge-celebrationRunSeconds:goalAge
@@ -3109,7 +3111,7 @@ async function start(){
      const frame=goalMap===mandyGoal
       ? Math.min(frames-1,Math.floor(Math.max(0,groupAge-photoStart)/.2))
       : Math.floor(groupAge/.2)%frames
-     if(goalMap===mandyGoal)goalMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
+     if(goalMap.userData.directionalCelebration)goalMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
      goalMap.offset.x=frame/frames
      actor.sprite.material.map=goalMap;continue
     }
@@ -3167,7 +3169,7 @@ async function start(){
    if(actor!==sean&&actor!==awayGK)actor.sprite.material.rotation=0
    if(aerial&&actor===players[aerial.index]){
     const jump=Math.sin(Math.PI*Math.min(1,aerial.age/.42))
-    actor.sprite.position.y+=jump*(aerial.style==='VOLLEY'?.19:.61)
+    actor.sprite.position.y+=jump*(aerial.style==='VOLLEY'?.19:.305)
     actor.sprite.material.rotation=jump*(aerial.style==='BICYCLE KICK'?2.25:aerial.style==='HEADER'?.23:.13)*(actor.lastSideFace===2?-1:1)
    }
    if(celebrating){
