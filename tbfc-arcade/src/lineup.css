@@ -166,3 +166,6 @@
 .lu-division button[aria-pressed="true"]{background:#a64018;border-color:#ef864c;color:#fff7e5}
 
 #lineup .lu-bench button:has(.lu-energy){padding-inline:clamp(4px,1vw,12px)}
+
+/* Keep the complete menu in proportion with the current viewport. */
+#lineup .lu-wrap{zoom:var(--menu-scale,1)}

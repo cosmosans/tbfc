@@ -5,8 +5,10 @@ import pixelChiptune from './audio/menu-pixel-chiptune.mp3?url'
 import hitslab from './audio/hitslab-chiptune-457939.mp3?url'
 import monume from './audio/monume-retro-arcade-629774.mp3?url'
 import arpmedia from './audio/arpmedia-retro-arcade-577821.mp3?url'
+import synthFeelGood from './audio/menu-synth-feel-good.mp3?url'
+import carsSport from './audio/menu-cars-sport.mp3?url'
 
-const tracks=[retro,football,pixelChiptune,hitslab,monume,arpmedia]
+const tracks=[retro,football,pixelChiptune,hitslab,monume,arpmedia,synthFeelGood,carsSport]
 const cursorKey='tbfc.arcade.nextMusicTrack'
 let nextIndex=0
 

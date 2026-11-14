@@ -591,6 +591,16 @@ export function selectLineup(
           best = b;
         }
       }
+      if(!best){
+        // Keep every control reachable when the lineup geometry puts it off axis.
+        best=items.filter(b=>b!==current).map(b=>{
+          const r=b.getBoundingClientRect()
+          const x=r.x+r.width/2-rect.x-rect.width/2
+          const y=r.y+r.height/2-rect.y-rect.height/2
+          const along=x*dx+y*dy
+          return {b,along,across:Math.abs(x*dy-y*dx)}
+        }).filter(v=>v.along>2).sort((a,b)=>a.along+a.across*2.5-b.along-b.across*2.5)[0]?.b
+      }
       focus(best);
     }
     function keydown(e: KeyboardEvent) {
@@ -661,10 +671,7 @@ export function selectLineup(
           else finish(true);
         }
         if (!opening && pad.buttons[0]?.pressed && !a)
-          (
-            dialog?.querySelector<HTMLElement>("#quit-yes") ??
-            (document.activeElement as HTMLElement)
-          )?.click();
+          (document.activeElement as HTMLElement)?.click();
         a = !!pad.buttons[0]?.pressed;
         b = !!pad.buttons[1]?.pressed;
       } else {
@@ -673,7 +680,7 @@ export function selectLineup(
       }
       if (root.isConnected) frame = requestAnimationFrame(poll);
     }
-    draw(match ? "lu-start" : "slot-0");
+    draw("slot-0");
     revealLineup();
     window.addEventListener("keydown", keydown);
     frame = requestAnimationFrame(poll);

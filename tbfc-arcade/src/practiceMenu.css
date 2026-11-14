@@ -1,6 +1,6 @@
 .practice-menu{position:fixed;inset:0;z-index:25;display:grid;place-items:safe center;overflow:auto;background:#151710ef;color:#fff1dc;font-family:var(--ui-font)}
 .practice-shell{width:min(92vw,720px);margin:auto;padding:16px 0}
-.practice-shell h1{margin:0 0 12px;font:clamp(32px,7vh,60px)/1 Upheaval,monospace;color:#ffad72}
+.practice-shell h1{margin:0 0 12px;font:clamp(32px,7vh,60px)/1 Upheaval,monospace;color:#ffad72;text-align:center}
 .practice-shell p{margin:0 0 12px}
 .practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .practice-menu button{color:inherit;background:#302820;border:2px solid #69543b;padding:6px;cursor:pointer}
@@ -36,4 +36,7 @@
 
 .drill-hints [data-back]{background:transparent;border:0;padding:0;font:inherit}
 
-.practice-shell{display:flex;flex-direction:column;min-height:100dvh;justify-content:center;padding-bottom:0}.practice-shell>h1{margin-top:auto}.practice-shell .menu-legend{padding-top:16px}
+.practice-shell{display:flex;flex-direction:column;justify-content:center}.practice-shell .menu-legend{margin-top:0;padding:16px 0 0}
+
+/* Keep the complete menu in proportion with the current viewport. */
+.practice-menu .practice-shell{zoom:var(--menu-scale,1)}

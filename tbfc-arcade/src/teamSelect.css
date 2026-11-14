@@ -1,6 +1,6 @@
 #team-select{position:fixed;inset:0;z-index:20;display:grid;place-items:center;overflow:auto;color:#fff4e9;background:radial-gradient(ellipse at 50% 95%,#0c0806,transparent 64%),#060606;font:18px Upheaval,monospace}
 .ts-wrap{width:min(94vw,1080px);margin:auto;padding:clamp(10px,3vh,32px) 0}
-.ts-wrap h1{font-size:clamp(28px,5vw,58px);line-height:1;margin:0 0 clamp(12px,3vh,28px)}
+.ts-wrap h1{font:clamp(32px,7vh,60px)/1 Upheaval,monospace;color:#ffad72;text-align:center;margin:0 0 clamp(12px,3vh,28px)}
 .ts-match{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,4vw,48px)}
 .ts-match article{min-width:0;text-align:center;padding:clamp(10px,2vw,24px) 5px;background:radial-gradient(ellipse at 50% 40%,color-mix(in srgb,var(--club) 20%,#161414),#0c0806 75%);border:1px solid #483730;border-top:4px solid var(--club)}
 .ts-match article[data-active=true]{outline:2px solid #ffb477;outline-offset:3px}
@@ -118,3 +118,6 @@
 }
 
 .ts-foot button kbd.pad-hint{display:inline-flex;margin-right:.35em}
+
+/* Keep the complete menu in proportion with the current viewport. */
+#team-select .ts-wrap{zoom:var(--menu-scale,1)}

@@ -115,3 +115,9 @@
 #career nav.cr-sections{align-items:center;justify-content:center;flex-wrap:nowrap;gap:clamp(3px,1vw,8px)}
 #career .cr-sections button[aria-current=page]{background:#ca5126;color:white}
 @media(max-width:650px){#career .cr-sections button:not(.menu-bumper){white-space:normal;min-width:0;padding:5px 2px;font-size:clamp(11px,2.7vw,16px)}}
+
+/* Career pages can use screen space for more information instead of enlarging every row. */
+#career .cr-shell{zoom:clamp(.75,var(--menu-scale,1),1.15)}
+@media(min-width:1600px) and (min-height:900px){
+  #career .cr-shell{max-width:none;width:min(2200px,80vw)}
+}

@@ -2,7 +2,7 @@ import type {Club} from './opponentSquads'
 import {menuDirection,menuPad} from './menuPad'
 import {hint,reveal} from './screenUI'
 
-type Choice='resume'|'squad'|'abandon'|'quit'
+type Choice='resume'|'squad'|'simulate'|'quit'
 export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean):Promise<Choice>{
  const dialog=document.createElement('dialog')
  dialog.className='career-whistle pause-menu';dialog.setAttribute('aria-label','Match Paused')
@@ -17,8 +17,8 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
   const button=(choice:string,text:string)=>`<button data-choice="${choice}">${text}</button>`
   function draw(){
    section.innerHTML=confirming?
-    '<h3>Abandon Match?</h3><p>Your score and match events will count. The rest of the match will be simulated and the final result saved.</p>'+button('back','Keep Playing')+button('abandon','Simulate Remaining Time'):
-    (canQuit?button('quit','Quit Match'):'')+(canSim?button('ask','Abandon Match'):'')+(canSub?button('squad','Substitutions'):'')+button('resume','Resume Match')
+    '<h3>Simulate Rest of Match?</h3><p>The AI will finish both teams’ remaining time. Your score and match events will count, and the final result will be saved before returning to Central.</p>'+button('back','Keep Playing')+button('simulate','Simulate Rest of Match'):
+    (canQuit?button('quit','Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match'):'')+(canSub?button('squad','Substitutions'):'')+button('resume','Resume Match')
    section.insertAdjacentHTML('beforeend',`<p>${hint('Esc','Menu')} Resume　${hint('Esc','B')} Back　${hint('Enter','A')} Select</p>`)
    section.querySelector<HTMLButtonElement>(confirming?'[data-choice=back]':'[data-choice=resume]')!.focus()
   }

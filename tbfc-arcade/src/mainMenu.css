@@ -40,3 +40,13 @@
 body:has(>.menu-broadcast) :is(#main-menu,#team-select,#lineup){background:linear-gradient(#0c08065e,#0c080685)}
 
 .menu-shell nav button:enabled:focus::after{content:"▸"}
+
+/* Keep the complete menu in proportion with the current viewport. */
+#main-menu .menu-shell{zoom:var(--menu-scale,1)}
+
+/* Keep Pam centered over black while the background match reaches its first frame. */
+#main-menu[data-screen=loading]{background:#000}
+#main-menu[data-screen=loading] .menu-shell{display:grid;place-items:center;min-height:0}
+.menu-loading{display:grid;justify-items:center;gap:12px;color:#ffad72;font:clamp(28px,5dvh,44px)/1 Upheaval,monospace;white-space:nowrap}
+.menu-loading img{display:block;width:clamp(136px,20dvh,204px);height:auto;image-rendering:pixelated}
+.menu-loading strong{font:inherit}

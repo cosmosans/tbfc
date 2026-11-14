@@ -1,3 +1,4 @@
+import './menuScale'
 import {playPenalties} from './penaltyArena'
 import type {Kick} from './shootoutRules'
 import {fixtureRequiresWinner} from './careerSeason'
@@ -7,8 +8,13 @@ import meghanSkateUrl from './art/meghan-skate.png?url'
 import nelsonGoalUrl from './art/nelson-goal.png?url'
 import janGoalUrl from './art/jan-goal.png?url'
 import stevenGoalRunUrl from './art/steven-goal-run.png?url'
+import stevenGoalGroupUrl from './art/steven-goal-group.png?url'
+import pamSkateGoalUrl from './art/pam-skate-goal.png?url'
+import joseOverheadUrl from './art/jose-overhead.png?url'
 import nadiaGoalGroupUrl from './art/nadia-goal-group.png?url'
 import danielGoalGroupUrl from './art/daniel-goal-group.png?url'
+import chrisGoalGroupUrl from './art/chris-goal-group.png?url'
+import jeremyGoalGroupUrl from './art/jeremy-goal-group.png?url'
 import stubbsSlideUrl from './art/stubbs-slide.png?url'
 import {careerRating,type Attribute} from './careerDevelopment'
 import {playerRatings,ratingLabels} from './playerRatings'
@@ -100,6 +106,10 @@ import pamSideKicks from './art/pam-side-kicks.png?url'
 import chrisSideKicks from './art/chris-side-kicks.png?url'
 import meghanKick from './art/meghan-kick-preview.png?url'
 import awayKeeperEnd from './art/keeper-end.png?url'
+import rivalKeeperDiveFrontUrl from './art/rival-keeper-front.png?url'
+import rivalKeeperDiveRearUrl from './art/rival-keeper-rear.png?url'
+import burnerKeeperDiveFrontUrl from './art/keeper-dive-front.png?url'
+import burnerKeeperDiveRearUrl from './art/sean-keeper-dive.png?url'
 import stubbsIdle from './art/stubbs-idle.png?url'
 import stubbsRun from './art/stubbs-run.png?url'
 import { buildGrounds } from './grounds'
@@ -160,7 +170,7 @@ async function start(){
   }
   const removeBackdrop=mountMenuBackdrop()
   let resume=history.state?.arcadeCareer as number|undefined
-  let destination=resume!==undefined?'career':history.state?.practiceMenu?'practice':await mainMenu(music,!returning)
+  let destination=resume!==undefined?'career':history.state?.practiceMenu?'practice':await mainMenu(music,!returning,removeBackdrop.ready)
   do{
    seats=null;simulation=false
    if(destination==='career'){
@@ -398,6 +408,13 @@ async function start(){
   matchBench.splice(0,matchBench.length,...bench)
  }
  let squadOpen=false
+ const keeperDiveUrls=[rivalKeeperDiveFrontUrl,rivalKeeperDiveRearUrl,burnerKeeperDiveFrontUrl,burnerKeeperDiveRearUrl]
+ const keeperDiveMaps=await Promise.all(keeperDiveUrls.map(async url=>{
+  const texture=await new T.TextureLoader().loadAsync(url)
+  texture.magFilter=texture.minFilter=T.NearestFilter
+  texture.generateMipmaps=false;texture.colorSpace=T.SRGBColorSpace
+  return texture
+ }))
  const awayGK=await (matchOpponent===burners?makeBurner(matchOpponent.keeper):makeRival(matchOpponent,matchOpponent.keeper,keeperSheets))
  const pitchActors=[...outfield,referee,sean,awayGK]
  const exhaustionMarkers=[...outfield,sean,awayGK].map(actor=>{
@@ -544,19 +561,21 @@ async function start(){
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup]=await Promise.all([
-  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl
+ const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
+  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl,chrisGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
- for(const map of [stevenGoalRun,nadiaGoalGroup,danielGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ for(const map of [stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
  spiderIdle.userData.directionalIdle=true
  spiderRun.repeat.y=1/8;spiderRun.userData.directionalRun=true
  meghanSkate.repeat.y=1/8
  meghanSkate.userData.directionalRun=true
+ pamSkateGoal.repeat.y=1/8; pamSkateGoal.userData.directionalRun=true
+ joseOverhead.repeat.y=1/8
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup}
+ const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
  const costumeChange=costumeSmoke(scene)
  const costumeRevealTime=.20
  let costumeReveal=false
@@ -637,7 +656,8 @@ async function start(){
   meter.hidden=charge===null&&queued===null
   meter.setAttribute('aria-valuenow',String(Math.round(fraction*100)))
  }
- function heldPower(start:number){return T.MathUtils.clamp((performance.now()-start)/1000,0,1)}
+ const chargeTimeMs=650
+ function heldPower(start:number){return T.MathUtils.clamp((performance.now()-start)/chargeTimeMs,0,1)}
  let rollingPass=false
  function cancelCharge(){suppressTap=false;rollingPass=false;queued=null;charge=null;showPower(0)}
  function canChargeLooseShot(){
@@ -1830,9 +1850,9 @@ async function start(){
   if(squadOpen||phase==='fulltime'||celebrationLab||broadcast)return
   audio.menu('open');pause(true);squadOpen=true;audio.state(true,false)
   try{
-   const choice=await pauseMenu(home,matchOpponent,[homeScore,awayScore],half,matchSeconds,!simulation&&replay.cut<0&&!celebrating,!!ticket?.career.simulate,!ticket)
+   const choice=await pauseMenu(home,matchOpponent,[homeScore,awayScore],half,matchSeconds,!simulation&&replay.cut<0&&!celebrating,!!ticket,!ticket)
    if(choice==='quit'){exitSimulation();return}
-   if(choice==='abandon'&&ticket){
+   if(choice==='simulate'&&ticket){
     const c=structuredClone(ticket.career)
     const report:Report={score:[homeScore,awayScore],shots:[...careerShots],goals:[...careerGoals],played:[...appearances],simulated:false}
     simulateRemainder(c,report,(half-1)*1500+matchSeconds,players.filter(p=>!p.penalty).map(p=>p.displayName),opponents.filter(p=>!p.penalty).map(p=>p.displayName),ratings)
@@ -2123,8 +2143,8 @@ async function start(){
   const losers=homeGoalScored?opponents:players
   celebrant=scorer
   goalMap=scorer&&(homeGoalScored?home:matchOpponent)===burners?celebrations[scorer.displayName]:undefined
-  runCelebration=(homeGoalScored?home:matchOpponent)===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:undefined):undefined
-  costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun
+  runCelebration=(homeGoalScored?home:matchOpponent)===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:undefined):undefined
+  costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun||runCelebration===pamSkateGoal
   celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:3.5
   slideX=-shotDirection;slideZ=0
   groupStarted=false
@@ -2151,7 +2171,7 @@ async function start(){
   if(!celebrant)return
   celebrant.moving=false;celebrant.runClock=0
   if(goalMap===spiderIdle)celebrant.face=celebrant.drawFace=0
-  resultTime=goalMap===pamGoal||goalMap===nelsonGoal||goalMap===janGoal?2*goalMap.image.width/48*.2:goalMap===meghanGoal?goalMap.image.width/48*.2:2.8
+  resultTime=goalMap===pamGoal||goalMap===nelsonGoal||goalMap===janGoal?2*goalMap.image.width/48*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/48*.2:2.8
   if(goalMap!==mandyGoal)return
   const center=celebrant.sprite.position
   const mates=walks.filter(w=>w.gather)
@@ -3156,6 +3176,31 @@ async function start(){
     tex.repeat.set(1/cols,1/rows)
     tex.offset.set(col/cols,(rows-1-row)/rows)
     actor.sprite.material.map=tex
+    if(actor===sean||actor===awayGK){
+     actor.sprite.scale.setScalar(cinematicPlayerSize)
+     actor.sprite.center.set(.5,2/48)
+     const activeDive=shot&&(shot.result==='Save'||shot.result==='Goal')&&
+      actor===(shotDirection===attackSign?awayGK:sean)
+     if(activeDive){
+      const isBurner=(actor===sean?home:matchOpponent)===burners
+      const front=shotDirection===attackSign
+      const sheet=keeperDiveMaps[(isBurner?2:0)+Number(!front)]
+      const direction=Math.sign(shot.targetZ-keeperStart)||1
+      const frame=Math.min(16,Math.floor(Math.max(0,shotTime/shot.duration)*17))
+      const mirror=direction<0
+      sheet.repeat.set((mirror?-1:1)/17,1)
+      sheet.offset.set((frame+Number(mirror))/17,0)
+      actor.sprite.material.map=sheet
+      actor.sprite.material.rotation=0
+      actor.sprite.scale.set(cinematicPlayerSize*68/48,cinematicPlayerSize*56/48,1)
+      actor.sprite.center.set(.5,2/56)
+     }
+    }
+    if(aerial&&actor===players[aerial.index]&&actor.displayName==='José'){
+     const frames=joseOverhead.image.width/48
+     joseOverhead.offset.set(Math.min(frames-1,Math.floor(aerial.age/.42*frames))/frames,(7-spriteFace)/8)
+     actor.sprite.material.map=joseOverhead
+    }
    }
   if(cardScene&&cardScene.time>0){
    const center=referee.sprite.position,t=cardScene.time/1.55,yaw=Math.atan2(cardScene.offender.sprite.position.x-center.x,cardScene.offender.sprite.position.z-center.z)+.65

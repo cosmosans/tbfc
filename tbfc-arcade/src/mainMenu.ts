@@ -2,6 +2,7 @@ import { audio } from "./matchAudio";
 import { reveal } from "./screenUI";
 import type { MenuMusic } from "./menuMusic";
 import crest from "./art/ground/crest.png?url";
+import pamLoading from "./art/pam-loading.gif?url";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./mainMenu.css?inline";
 
@@ -18,6 +19,10 @@ export function mountMenuBackdrop() {
   style.textContent = css;
   document.head.append(style);
   let feed: HTMLIFrameElement | undefined;
+  let finishReady = () => {};
+  const ready = new Promise<void>((resolve) => { finishReady = resolve; });
+  let observer: MutationObserver | undefined;
+  let fallback = 0;
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
     feed = document.createElement("iframe");
     const url = new URL(location.href);
@@ -29,16 +34,29 @@ export function mountMenuBackdrop() {
     feed.tabIndex = -1;
     feed.setAttribute("aria-hidden", "true");
     document.body.append(feed);
-  }
-  return () => {
+    observer = new MutationObserver(() => {
+      if (!feed?.classList.contains("feed-live")) return;
+      observer?.disconnect();
+      clearTimeout(fallback);
+      finishReady();
+    });
+    observer.observe(feed, { attributes: true, attributeFilter: ["class"] });
+    // If the demo cannot render, keep the menu usable rather than loading forever.
+    fallback = window.setTimeout(() => { observer?.disconnect(); feed?.remove(); finishReady(); }, 15000);
+  } else finishReady();
+  const remove = () => {
+    observer?.disconnect();
+    clearTimeout(fallback);
     feed?.remove();
     style.remove();
   };
+  return Object.assign(remove, { ready });
 }
 
 export function mainMenu(
   music: MenuMusic,
   showIntro = false,
+  backdropReady: Promise<void> = Promise.resolve(),
 ): Promise<Destination> {
   const root = document.createElement("section");
   root.id = "main-menu";
@@ -53,7 +71,8 @@ export function mainMenu(
   return new Promise((resolve) => {
     let frame = 0;
     let controllerStatus: HTMLElement | null = null;
-    let screen: "intro" | "menu" | "settings" | "debug";
+    let screen: "loading" | "intro" | "menu" | "settings" | "debug";
+    const openedAt = performance.now();
     const title =
       '<div class="menu-title"><img src="' +
       crest +
@@ -78,10 +97,12 @@ export function mainMenu(
       );
     }
     function draw(next: typeof screen, returnFocus = "first") {
-      if (screen && screen !== "intro")
+      if (screen && screen !== "intro" && screen !== "loading")
         audio.menu(next === "menu" ? "nav" : "success");
       screen = next;
       root.dataset.screen = next;
+      if (next === "loading")
+        shell.innerHTML = '<div class="menu-loading" role="status" aria-label="Loading"><img src="' + pamLoading + '" alt=""><strong>LOADING <span class="menu-loading-dots" aria-hidden="true">. . .</span></strong></div>';
       if (next === "intro")
         shell.innerHTML =
           title +
@@ -105,9 +126,9 @@ export function mainMenu(
           returnFocus === "first"
             ? "button:enabled"
             : '[data-action="' + returnFocus + '"]',
-        )!
-        .focus({ preventScroll: true });
-      reveal(shell, ".menu-title img,.menu-title>div,:scope>h1,button");
+        )
+        ?.focus({ preventScroll: true });
+      if (next !== "loading") reveal(shell, ".menu-title img,.menu-title>div,:scope>h1,button");
       if (next === "menu") {
         const brand = shell.querySelector<HTMLElement>(".menu-title span")!;
         const arcade = shell.querySelector<HTMLElement>(".menu-title h1")!;
@@ -179,6 +200,7 @@ export function mainMenu(
       const choices = Array.from(
         shell.querySelectorAll<HTMLButtonElement>("button:enabled"),
       );
+      if (!choices.length) return;
       const index = choices.indexOf(
         document.activeElement as HTMLButtonElement,
       );
@@ -202,7 +224,9 @@ export function mainMenu(
         draw("menu", screen);
       }
     };
-    draw(showIntro ? "intro" : "menu");
+    draw("loading");
+    const minimum = new Promise<void>(resolve => setTimeout(resolve, Math.max(0, 1500 - (performance.now() - openedAt))));
+    void Promise.all([backdropReady, minimum]).then(() => { if (root.isConnected) draw(showIntro ? "intro" : "menu"); });
     const confirm = (pad?: Gamepad) =>
       !!(pad?.buttons[0]?.pressed || pad?.buttons[9]?.pressed);
     const initial = menuPad();
@@ -212,6 +236,10 @@ export function mainMenu(
     function poll() {
       const pad = menuPad(),
         dir = pad ? menuDirection(pad) : "";
+      if (screen === "loading") {
+        const dots = shell.querySelector(".menu-loading-dots");
+        if (dots) dots.textContent = Array(1 + Math.floor((performance.now() - openedAt) / 350) % 3).fill(".").join(" ");
+      }
       if (controllerStatus && controllerStatus.textContent !== padStatus)
         controllerStatus.textContent = padStatus;
       if (dir !== direction && (dir === "u" || dir === "d"))
