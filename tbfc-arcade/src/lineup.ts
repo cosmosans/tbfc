@@ -5,7 +5,7 @@ import { profiles, rememberDivision } from "./difficulty";
 import {lineupChemistry} from './lineupChemistry'
 import type { MenuMusic } from "./menuMusic";
 import { audio } from "./matchAudio";
-import { hint, reveal } from "./screenUI";
+import { menuBumper, hint, reveal } from "./screenUI";
 import { playerRatings, ratingLabels } from "./playerRatings";
 import { clubAccent, burners, type Fixture } from "./opponentSquads";
 import { menuDirection, menuPad } from "./menuPad";
@@ -280,7 +280,7 @@ export function selectLineup(
       const role = (i: number) =>
         i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
       root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>'+(progress?'':'<button id="lu-quit">Quit Match</button>') : '<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : career ? "Confirm lineup" : "Match settings"} ▸</button></div>
-    <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}><button class="lu-bumper" id="lu-prev" aria-label="Previous formation">${hint("[", "LB")}</button>${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}<button class="lu-bumper" id="lu-next" aria-label="Next formation">${hint("]", "RB")}</button></div>
+    <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}>${menuBumper('previous','Previous formation','id="lu-prev"')}${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}${menuBumper('next','Next formation','id="lu-next"')}</div>
     <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span><small class="lu-fit">${chemistryText(chemistry)}</small></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}<b class="lu-position">${p.role}</b>${avatar(slots[i]!)}${nameplate(slots[i]!)}</button>`).join("")}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
       .slice(7)

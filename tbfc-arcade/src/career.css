@@ -36,7 +36,7 @@
 #career fieldset{border:0;padding:0;margin:0 0 8px}#career legend{font-weight:600;color:#e4b59c;margin-bottom:3px}
 #career .cr-options{display:flex;flex-wrap:wrap;gap:5px}#career .cr-options button{flex:1;padding:5px}
 #career .cr-keypad{position:fixed;inset:0;margin:auto;width:min(300px,90vw);background:#1d1714;color:white;border:2px solid #ac653d}
-#career .cr-keypad::backdrop{background:#000b}#career .cr-keypad div{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}#career output{display:block;margin:8px 0}
+#career .cr-keypad::backdrop{background:#000b}#career .cr-keypad div:not(.menu-legend){display:grid;grid-template-columns:repeat(3,1fr);gap:6px}#career output{display:block;margin:8px 0}
 #career .cr-help{padding:8px 0;color:#d6bfa9}
 @media(max-width:640px){#career .cr-setup{grid-template-columns:1fr}#career nav{gap:4px}#career nav button{font-size:15px;padding:5px}#career td,#career th{font-size:12px}}
 #career .cr-training{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
@@ -105,3 +105,13 @@
 .cr-header-player{display:flex;align-items:center;gap:4px;margin-left:auto;color:#ffc18e;font:clamp(18px,2.4vw,28px)/1 Upheaval,monospace}
 .cr-header-player span{width:76px;height:76px;background-size:800% 100%;background-repeat:no-repeat;image-rendering:pixelated}
 @media(max-width:600px){.cr-heading:has(.cr-header-player){flex-wrap:wrap;row-gap:0}}
+#career .cr-shell{display:flex;flex-direction:column;min-height:100dvh}
+#career .cr-saves{display:grid;grid-template-columns:repeat(3,minmax(0,210px));gap:clamp(6px,2vw,18px);justify-content:center}
+#career .cr-saves button{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px}
+#career .cr-saves .cr-face{width:52%;height:auto;aspect-ratio:1;object-fit:contain}
+#career .cr-saves strong{font:clamp(16px,2.5vw,26px)/1 Upheaval,monospace}
+#career .cr-saves small,#career .cr-saves button>span:last-child{font:clamp(10px,1.5vw,14px)/1.2 var(--ui-font)}
+#career .cr-delete-dialog{width:min(420px,94vw);padding:clamp(14px,3vw,24px)}
+#career nav.cr-sections{align-items:center;justify-content:center;flex-wrap:nowrap;gap:clamp(3px,1vw,8px)}
+#career .cr-sections button[aria-current=page]{background:#ca5126;color:white}
+@media(max-width:650px){#career .cr-sections button:not(.menu-bumper){white-space:normal;min-width:0;padding:5px 2px;font-size:clamp(11px,2.7vw,16px)}}

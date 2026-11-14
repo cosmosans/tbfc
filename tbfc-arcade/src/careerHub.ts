@@ -11,7 +11,7 @@ import jeremyHead from "./art/headshots/jeremy.png?url";
 import joseHead from "./art/headshots/jose.png?url";
 import pamHead from "./art/headshots/pam.png?url";
 import stubbsHead from "./art/headshots/stubbs.png?url";
-import { hint } from "./screenUI";
+import { hint, menuBumper } from "./screenUI";
 import { scoreRow } from "./leagueBoard";
 import { burners, clubs, type Fixture } from "./opponentSquads";
 import {
@@ -250,22 +250,22 @@ export function careerHub(
         content =
           panel(
             "Career saves",
-            [0, 1, 2]
+            '<div class="cr-saves">' + [0, 1, 2]
               .map((i) => {
                 try {
                   const s = loadSlot(i);
                   return btn(
                     "slot" + i,
                     s
-                      ? `Continue · ${s.player} · ${seasonName(s.season)} · ${division(s.division)}`
-                      : "New career · Slot " + (i + 1),
+                      ? `${face(s.player)}<strong>${s.player}</strong><small>${seasonName(s.season)} · ${division(s.division)}</small><span>Week ${s.round + 1}</span>`
+                      : `<strong>New Career</strong><small>Slot ${i + 1}</small>`,
                   );
                 } catch {
                   return "<p>Slot " + (i + 1) + " · Unable to read save</p>";
                 }
               })
-              .join(" "),
-          ) + btn("back", "Back to arcade");
+              .join("") + "</div>",
+          );
       } else if (screen === "setup") {
         const choices = (
           key: keyof typeof setup,
@@ -309,7 +309,7 @@ export function careerHub(
           gameIndex = s.schedule[s.round].findIndex((g) => !g.a || !g.b);
         const visible = s.week.events.filter((e) => e.day <= s.day);
         const report = s.reports[s.round];
-        content = `<nav aria-label="Career sections">${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${btn("slots", "Save slots")}</nav>`;
+        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper('previous','Previous career section','data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${btn("slots", "Save slots")}${menuBumper('next','Next career section','data-action="next-tab"')}</nav>`;
         if (tab === "Central") {
           content += weekStrip(s);
           const title = stage(s.round, gameIndex);
@@ -446,9 +446,9 @@ export function careerHub(
         screen === "hub" && state
           ? `<div class="cr-header-player">${state.player}<span aria-hidden="true" style="background-image:url('${portraits[state.player]}')"></span></div>`
           : ""
-      }</div>${content}<div class="cr-help">${hint("Arrows", "LS")} Move　${hint("Enter", "A")} Select　${hint("Esc", "B")} Back ${screen === "hub" ? hint("[ ]", "LB") + " / RB Tabs" : ""}</div>`;
+      }</div>${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
-        focus ? `[data-action="${focus}"]` : "button,select",
+        focus ? `[data-action="${focus}"]` : screen === "hub" ? '[aria-current="page"]' : "button,select",
       );
       target?.focus({ preventScroll: true });
     }
@@ -489,6 +489,8 @@ export function careerHub(
       }
     }
     async function action(a: string) {
+      if (a === "previous-tab" || a === "next-tab") { changeTab(a === "previous-tab" ? -1 : 1); return; }
+      if (a === "menu-back") { back(); return; }
       if (a === "back") {
         leave(null);
         return;
@@ -503,11 +505,11 @@ export function careerHub(
       timer = 0;
       if (a === "delete" && c) {
         const dialog = document.createElement("dialog");
-        dialog.className = "cr-keypad";
-        dialog.innerHTML = `<h2>Delete career?</h2><p>${c.player} · ${seasonName(c.season)} · ${division(c.division)} · Slot ${slot + 1}</p><p>This permanently deletes this career and its season history.</p>${btn("cancel-delete", "Keep career")} ${btn("confirm-delete", "Delete save")}`;
+        dialog.className = "cr-keypad cr-delete-dialog";
+        dialog.innerHTML = `<h2>Delete career?</h2><p>${c.player} · ${seasonName(c.season)} · ${division(c.division)} · Slot ${slot + 1}</p><p>This permanently deletes this career and its season history.</p><div class="menu-legend">${btn("cancel-delete", hint("Esc", "B") + " Cancel")}${btn("confirm-delete", hint("Enter", "A") + " Delete")}</div>`;
         shell.append(dialog);
         dialog.showModal();
-        dialog.querySelector("button")!.focus();
+        dialog.querySelector<HTMLButtonElement>('[data-action="confirm-delete"]')!.focus();
         dialog.onclose = () => {
           dialog.remove();
           shell.querySelector<HTMLElement>('[data-action="delete"]')?.focus();
@@ -727,7 +729,7 @@ export function careerHub(
       else void action(screen === "slots" ? "back" : "slots").catch(error);
     }
     function changeTab(step: number) {
-      if (screen === "hub" && !root.hidden)
+      if (screen === "hub" && !root.hidden && !shell.querySelector("dialog[open]"))
         void action(
           "tab" + ((tabs.indexOf(tab) + step + tabs.length) % tabs.length),
         ).catch(error);
@@ -802,8 +804,10 @@ export function careerHub(
           move(d);
           repeatAt = now + (dir === d ? 150 : 380);
         }
-        if (pressed[0] && !previous[0])
-          (document.activeElement as HTMLElement)?.click();
+        if (pressed[0] && !previous[0]) {
+          const confirm = shell.querySelector<HTMLButtonElement>('dialog[open] [data-action="confirm-delete"]');
+          (confirm ?? document.activeElement as HTMLElement)?.click();
+        }
         if (pressed[1] && !previous[1]) back();
         if (pressed[2] && !previous[2]) changeTab(-1);
         if (pressed[3] && !previous[3]) changeTab(1);

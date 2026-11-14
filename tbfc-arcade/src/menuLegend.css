@@ -1,0 +1,5 @@
+.menu-legend{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:6px 18px;width:100%;margin-top:auto;padding:14px 0 max(12px,env(safe-area-inset-bottom));text-align:center}
+.menu-legend>span,.menu-legend>button{white-space:nowrap}
+.practice-menu .menu-legend button,#career .menu-legend button{padding:0;min-height:0;background:transparent;border:0;font:inherit;color:inherit}
+:is(#lineup,#career) button.menu-bumper{flex:none;padding:4px 7px;border-radius:7px 7px 3px 3px;border-bottom-width:3px;font-size:13px;color:#eeb59c}
+@media(max-width:520px){:is(#lineup,#career) button.menu-bumper{padding:4px;font-size:12px}}

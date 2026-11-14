@@ -47,11 +47,44 @@ export function createGoal(scene: T.Scene, lineX: number) {
   grid(panelColumns,4,(u,v)=>[v*roofDepth,height,(2*u-1)*halfWidth])
   const roofEnd = coords.length / 3
   for(const z of [-halfWidth,halfWidth])grid(5,panelRows,(u,v)=>[u*depthAt(v*height),v*height,z])
-  const geometry=new T.BufferGeometry()
-  const positions=new T.Float32BufferAttribute(coords,3).setUsage(T.DynamicDrawUsage)
-  geometry.setAttribute('position',positions)
-  geometry.setIndex(edges)
-  group.add(new T.LineSegments(geometry,new T.LineBasicMaterial({color:0xd5e8db,transparent:true,opacity:.58,depthWrite:false})))
+  const positions = new T.Float32BufferAttribute(coords,3)
+  // A seamless diagonal highlight winds around each short length of cord.
+  const size = 32
+  const pixels = new Uint8Array(size*size*4)
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+    const twist = Math.cos(2*Math.PI*(2*x+4*y)/size)
+    const shade = Math.round(218+28*twist)
+    pixels.set([shade,shade,shade,255],4*(y*size+x))
+  }
+  const texture = new T.DataTexture(pixels,size,size)
+  texture.wrapS = texture.wrapT = T.RepeatWrapping
+  texture.generateMipmaps = true
+  texture.minFilter = T.LinearMipmapLinearFilter
+  texture.magFilter = T.LinearFilter
+  texture.needsUpdate = true
+  const cords = new T.InstancedMesh(
+    new T.CylinderGeometry(.013,.013,1,6,1,true),
+    new T.MeshBasicMaterial({color:0xd5e8db,map:texture}),
+    edges.length/2
+  )
+  cords.instanceMatrix.setUsage(T.DynamicDrawUsage)
+  cords.frustumCulled = false
+  group.add(cords)
+  const start = new T.Vector3(), direction = new T.Vector3()
+  const up = new T.Vector3(0,1,0), segment = new T.Object3D()
+  function updateCords(){
+    for(let i=0;i<edges.length;i+=2){
+      start.fromBufferAttribute(positions,edges[i])
+      direction.fromBufferAttribute(positions,edges[i+1]).sub(start)
+      segment.position.copy(start).addScaledVector(direction,.5)
+      segment.scale.y = direction.length()
+      segment.quaternion.setFromUnitVectors(up,direction.normalize())
+      segment.updateMatrix()
+      cords.setMatrixAt(i/2,segment.matrix)
+    }
+    cords.instanceMatrix.needsUpdate = true
+  }
+  updateCords()
   let elapsed=Infinity, hitX=0, hitY=0, hitZ=0, strength=0
   return {
     setVisible(visible:boolean){group.visible=visible},
@@ -80,7 +113,7 @@ export function createGoal(scene: T.Scene, lineX: number) {
         else if(roof)positions.setY(i,y+offset)
         else positions.setX(i,x+offset)
       }
-      positions.needsUpdate=true
+      updateCords()
     }
   }
 }

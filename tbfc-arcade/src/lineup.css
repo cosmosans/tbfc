@@ -49,8 +49,8 @@
 @media(max-width:520px){.lu-layout{grid-template-columns:1fr}.lu-field{height:290px}.lu-roster{display:grid;grid-template-columns:minmax(0,1fr);gap:3px}.lu-roster h2{grid-column:1/-1}.lu-player{margin:0}.lu-form{margin-block:8px}}
 @media(max-height:480px) and (min-width:521px){.lu-wrap{padding:5px 12px}.lu-form{margin-block:5px}.lu-field{height:218px}.lu-player{min-height:24px}.lu-avatar{width:24px;height:24px}.lu-heading{padding-bottom:4px}.lu-heading h1{font-size:28px!important}.lu-form button{padding:3px 10px}.lu-wrap p{margin-top:4px!important}}
 
-#lineup .lu-bumper{padding:4px 7px;border-radius:7px 7px 3px 3px;border-bottom-width:3px;font-size:13px;color:#eeb59c}
-@media(max-width:520px){.lu-form{gap:3px;flex-wrap:nowrap}#lineup .lu-form [data-shape]{font-size:clamp(11px,3.3vw,17px);padding:5px 3px}#lineup .lu-bumper{padding:4px;font-size:12px}}
+
+@media(max-width:520px){.lu-form{gap:3px;flex-wrap:nowrap}#lineup .lu-form [data-shape]{font-size:clamp(11px,3.3vw,17px);padding:5px 3px}}
 
 .lu-confirm{width:min(360px,90vw);padding:22px;background:#171414;color:#fff6da;border:2px solid #ca5126;border-radius:4px;font:inherit}
 .lu-confirm::backdrop{background:#060606dd}

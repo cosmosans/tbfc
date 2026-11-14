@@ -1,3 +1,4 @@
+import './menuLegend.css'
 export function padBadge(button:string){
  const glyph:Record<string,string>={Menu:'☰',View:'⧉'}
  return `<kbd class="pad-hint" data-pad="${button}" aria-label="${button==='Menu'?'Start':button}">${glyph[button]??button}</kbd>`
@@ -22,4 +23,9 @@ export function reveal(root:HTMLElement,selector=':scope > *'){
  }
  root.animate(masks,{duration:260})
  root.querySelectorAll<HTMLElement>(selector).forEach((el,i)=>el.animate(masks!,{duration:300,delay:i*72,fill:'backwards'}))
+}
+
+export function menuBumper(direction:'previous'|'next',label:string,attributes:string){
+ const previous=direction==='previous'
+ return `<button class="menu-bumper" ${attributes} aria-label="${label}">${hint(previous?'[':']',previous?'LB':'RB')}</button>`
 }
