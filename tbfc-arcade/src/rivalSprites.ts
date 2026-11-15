@@ -4,7 +4,7 @@ import keeperKick from './art/rival-keeper-kick.png?url'
 import {rivalWomen} from './rivalRoster'
 import type {Club} from './opponentSquads'
 
-const assets=import.meta.glob<string>('./art/{ff,okw,ss,gd,inter,whiff,peach}-*-{idle,run,kick}.png',{eager:true,query:'?url',import:'default'})
+const assets=import.meta.glob<string>('./art/{ff,okw,ss,gd,inter,whiff,peach}-*-{idle,run,kick,jump}.png',{eager:true,query:'?url',import:'default'})
 const clubs:Record<string,string>={'Fleet Feet FC':'ff','Shooting Stars FC':'ss','One Kick Wonders':'okw','Goal Dancers FC':'gd','Inter Your Mom':'inter','Whiff City FC':'whiff','Peachy Puffs':'peach'}
 
 // Keep the existing kit sheets and assign each fictional character their roster artwork.
@@ -18,5 +18,5 @@ export function rivalSprites(club:Club,name:string){
  const prefix='./art/'+kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)
  const idle=assets[prefix+'-idle.png']
  if(!idle)return undefined
- return {idle,run:assets[prefix+'-run.png'],kick:assets[prefix+'-kick.png']??assets['./art/ff-ellis-kick.png']}
+ return {idle,run:assets[prefix+'-run.png'],kick:assets[prefix+'-kick.png']??assets['./art/ff-ellis-kick.png'],jump:assets[prefix+'-jump.png']}
 }

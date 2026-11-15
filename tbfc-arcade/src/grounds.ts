@@ -1,34 +1,22 @@
 import {homeBoard} from './homeBoard'
 import type {Club} from './opponentSquads'
+import {schoolLighting} from './schoolLighting'
 import {matchSky} from './matchSky'
 import type {MatchSettings} from './matchSettings'
 import { boardX, boardZ, boardHeight, boardThickness } from './perimeter'
 import * as T from 'three'
+import schoolGroundUrl from '../art/stadiums/high-school-track.glb?url'
 import turfUrl from './art/ground/grass.jpg?url'
-import sponsorUrl from './art/ground/sons-of-pitches-board.png?url'
 
-export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,home:Club) {
-  const loader=new T.TextureLoader()
-  const [grass,sponsorMap,homeMap]=await Promise.all([loader.loadAsync(turfUrl),loader.loadAsync(sponsorUrl),homeBoard(loader,home)])
-  grass.colorSpace=T.SRGBColorSpace
-  grass.wrapS=grass.wrapT=T.MirroredRepeatWrapping
-  grass.repeat.set(7,6)
-  grass.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())
-  const surface=(w:number,h:number,x:number,y:number,z:number,mat:T.Material)=>{
-    const mesh=new T.Mesh(new T.PlaneGeometry(w,h),mat)
-    mesh.rotation.x=-Math.PI/2
-    mesh.position.set(x,y,z)
-    mesh.receiveShadow=true
-    scene.add(mesh)
-    return mesh
-  }
+export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,opponent:Club|null,schoolGround=false) {
   const night=settings.time==='Night',evening=settings.time==='Evening'
   const overcast=settings.weather!=='Sun'
-  scene.add(new T.HemisphereLight(night?0xadcaff:evening?0xffd9b9:0xfff9e8,0x899478,night?.75:1.65))
+  const fill=new T.HemisphereLight(night?0xadcaff:evening?0xffd9b9:0xfff9e8,0x899478,night?.75:1.65)
+  scene.add(fill)
   const sun=new T.DirectionalLight(night?0xccddff:evening?0xffac70:0xffe5b1,(night?.7:1.9)*(overcast?.48:1))
   sun.position.set(27,evening?5:night?11:24,-16)
-  const updateWeather=matchSky(scene,settings,sun)
-  if(night||evening){
+  const {updateWeather,setSkyTime}=matchSky(scene,settings,sun)
+  if(!schoolGround&&(night||evening)){
    for(const x of [-22,22]){
     const lamp=new T.PointLight(0xe8f3ff,night?230:100,90,1.4)
     lamp.position.set(x,8.6,-19.4);scene.add(lamp)
@@ -48,6 +36,33 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
   renderer.shadowMap.autoUpdate=false
   renderer.shadowMap.needsUpdate=true
 
+  if(schoolGround){
+    const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js')
+    const school=await new GLTFLoader().loadAsync(schoolGroundUrl)
+    school.scene.traverse(object=>{
+      if(object instanceof T.Mesh){object.receiveShadow=true;object.castShadow=true}
+    })
+    scene.add(school.scene)
+    const {stadiumBallPhysics}=await import('./stadiumCollision')
+    const setSchoolNight=schoolLighting(scene,school.scene,renderer,fill,sun,setSkyTime)
+    if(night)setSchoolNight(true)
+    return {updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
+  }
+
+  const loader=new T.TextureLoader()
+  const [grass,opponentMap]=await Promise.all([loader.loadAsync(turfUrl),opponent?homeBoard(loader,opponent):Promise.resolve(null)])
+  grass.colorSpace=T.SRGBColorSpace
+  grass.wrapS=grass.wrapT=T.MirroredRepeatWrapping
+  grass.repeat.set(7,6)
+  grass.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())
+  const surface=(w:number,h:number,x:number,y:number,z:number,mat:T.Material)=>{
+    const mesh=new T.Mesh(new T.PlaneGeometry(w,h),mat)
+    mesh.rotation.x=-Math.PI/2
+    mesh.position.set(x,y,z)
+    mesh.receiveShadow=true
+    scene.add(mesh)
+    return mesh
+  }
   const lawn=grass.clone()
   lawn.repeat.set(28,21)
   surface(160,100,0,-.055,0,new T.MeshStandardMaterial({map:lawn,color:0x99aa8b,roughness:1}))
@@ -70,11 +85,11 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
     for(const dx of [-3.65,0,3.65])place(x+dx,1.55,-18.4,.065,3.05,.065,0x66716a)
     for(const y of [2.28,2.97])place(x,y,-18.4,7.5,.065,.065,0xaab2a9)
   }
-  const boards=[homeMap,sponsorMap].map(map=>{
-    map.colorSpace=T.SRGBColorSpace
-    map.anisotropy=grass.anisotropy
-    return new T.MeshBasicMaterial({map})
-  })
+  if(opponentMap){
+    opponentMap.colorSpace=T.SRGBColorSpace
+    opponentMap.anisotropy=grass.anisotropy
+  }
+  const boardMaterial=new T.MeshBasicMaterial({map:opponentMap,color:opponentMap?0xffffff:0x302d25})
   for(const end of [false,true]){
     const halfLength=end?boardZ:boardX
     const count=Math.ceil(2*halfLength/6.8),width=2*halfLength/count
@@ -87,7 +102,7 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
         place(x,boardHeight/2,z,end?boardThickness:width,boardHeight,end?width:boardThickness,0xb9b7a8)
         // Print each side so both the sideline and end cameras see a readable board.
         for(const normal of [-1,1]){
-          const face=new T.Mesh(panel,boards[i%2])
+          const face=new T.Mesh(panel,boardMaterial)
           const offset=normal*(boardThickness/2+.004)
           face.position.set(x+(end?offset:0),boardHeight/2,z+(end?0:offset))
           face.rotation.y=end?normal*Math.PI/2:normal<0?Math.PI:0
@@ -108,5 +123,5 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
   beams.forEach((m,i)=>{structures.setMatrixAt(i,m);structures.setColorAt(i,colors[i])})
   structures.castShadow=structures.receiveShadow=true
   scene.add(structures)
-  return updateWeather
+  return {updateWeather,setSchoolNight:null,advanceStadiumBall:null}
 }

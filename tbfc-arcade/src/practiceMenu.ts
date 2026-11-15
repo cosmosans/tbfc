@@ -100,7 +100,7 @@ export function practiceMenu(portraits: Record<string,string>){
     repeatAt=now+(dir===previous?160:380)
    }
    if(start&&!startHeld&&roster&&selected.size)root.querySelector<HTMLButtonElement>('[data-play]')?.click()
-   else if((a&&!pressed)||(start&&!startHeld))root.querySelector<HTMLButtonElement>('button:enabled:focus')?.click()
+   else if(a&&!pressed)root.querySelector<HTMLButtonElement>('button:enabled:focus')?.click()
    startHeld=start
    if(b&&!backHeld)back()
    previous=dir;pressed=a;backHeld=b

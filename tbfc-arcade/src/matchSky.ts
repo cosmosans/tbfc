@@ -2,17 +2,14 @@ import * as T from 'three'
 import type {MatchSettings} from './matchSettings'
 
 export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalLight){
- const night=settings.time==='Night',evening=settings.time==='Evening'
  const cover={Sun:.22,Clouds:.74,Rain:.94,Snow:.87}[settings.weather]
- const horizon=new T.Color(night?0x344362:evening?0xffbf89:0xcfdfdf)
- const zenith=new T.Color(night?0x081326:evening?0x586eaa:0x3984ba)
- const grey=new T.Color(night?0x273345:evening?0xae98a0:0x98a7ad)
- horizon.lerp(grey,cover*.6);zenith.lerp(grey,cover*.65)
+ const horizon=new T.Color(),zenith=new T.Color(),grey=new T.Color()
  scene.background=horizon
- scene.fog=new T.FogExp2(horizon,settings.weather==='Snow'?.019:settings.weather==='Rain'?.013:.006)
+ const fog=new T.FogExp2(horizon,settings.weather==='Snow'?.019:settings.weather==='Rain'?.013:.006)
+ scene.fog=fog
  const sky=new T.Mesh(new T.SphereGeometry(1,40,20),new T.ShaderMaterial({
-  side:T.BackSide,depthWrite:false,uniforms:{horizon:{value:horizon},zenith:{value:zenith},cover:{value:cover},night:{value:Number(night)},
-   lightDir:{value:sun.position.clone().normalize()},cloudLit:{value:new T.Color(night?0x545e79:evening?0xffccb1:0xffffff)}},
+  side:T.BackSide,depthWrite:false,uniforms:{horizon:{value:horizon},zenith:{value:zenith},cover:{value:cover},night:{value:0},
+   lightDir:{value:sun.position.clone().normalize()},cloudLit:{value:new T.Color()}},
   vertexShader:`varying vec3 ray;
    void main(){ray=position;vec4 clip=projectionMatrix*vec4(mat3(viewMatrix)*position,1.);gl_Position=clip.xyww;}`,
   fragmentShader:`varying vec3 ray;uniform vec3 horizon,zenith,lightDir,cloudLit;uniform float cover,night;
@@ -34,8 +31,20 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
    }`
  }))
  sky.frustumCulled=false;sky.renderOrder=-100;scene.add(sky)
+ function setSkyTime(time:MatchSettings['time']){
+  const night=time==='Night',evening=time==='Evening'
+  grey.setHex(night?0x273345:evening?0xae98a0:0x98a7ad)
+  horizon.setHex(night?0x182941:evening?0xffbf89:0xcfdfdf).lerp(grey,cover*.6)
+  zenith.setHex(night?0x080f24:evening?0x586eaa:0x3984ba).lerp(grey,cover*.65)
+  fog.color.copy(horizon)
+  const uniforms=sky.material.uniforms
+  uniforms.night.value=Number(night)
+  uniforms.lightDir.value.copy(sun.position).normalize()
+  uniforms.cloudLit.value.setHex(night?0x424e69:evening?0xffccb1:0xffffff)
+ }
+ setSkyTime(settings.time)
  const rain=settings.weather==='Rain'
- if(!rain&&settings.weather!=='Snow')return (_dt:number)=>{}
+ if(!rain&&settings.weather!=='Snow')return {setSkyTime,updateWeather:(_dt:number)=>{}}
  const count=rain?760:490,stride=rain?6:3
  const points=new Float32Array(count*stride)
  let seed=2311

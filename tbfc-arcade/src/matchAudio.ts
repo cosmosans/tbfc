@@ -1,7 +1,9 @@
 import blast from './audio/burner-blast.wav?url'
 import post from './audio/post-hit.mp3?url'
-import cheer from './audio/goal-crowd.mp3?url'
+import cheer from './audio/goal-crowd-immediate.mp3?url'
 import stadium from './audio/stadium.mp3?url'
+import nearGoal1 from './audio/near-goal.mp3?url'
+import nearGoal2 from './audio/near-goal-2.mp3?url'
 import goal from './audio/tbfc-goal.mp3?url'
 import whistle from './audio/whistle.mp3?url'
 import kick1 from './audio/soccer-ball-kick.mp3?url'
@@ -15,7 +17,7 @@ import open from './audio/06_UI_Menu_Open.wav?url'
 import close from './audio/07_UI_Menu_Close.wav?url'
 
 type MenuCue='nav'|'success'|'open'|'close'
-const recordings={blast,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
+const recordings={nearGoal1,nearGoal2,blast,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 type Sound=keyof typeof recordings|Impact
 
@@ -30,6 +32,7 @@ export class MatchAudio {
  private stopped=false
  private finalWhistle=false
  private quiet=false
+ private nearGoalIndex=0
  private kickIndex=0
  muted=false
 
@@ -116,6 +119,14 @@ export class MatchAudio {
   source.buffer=buffer;source.connect(this.menuBus!)
   source.onended=()=>{source.disconnect();if(this.menuVoice===source)this.menuVoice=undefined}
   this.menuVoice=source;source.start()
+ }
+ goalFire(){
+  this.play('goal',.14)
+  this.play('cheer',.25)
+ }
+ nearGoal(){
+  if(this.nearGoalIndex++%2===0)this.play('nearGoal1',.065)
+  else this.play('nearGoal2',.10)
  }
  kick(power=.4){
   const keys=['kick1','kick2','kick3','kick4'] as const

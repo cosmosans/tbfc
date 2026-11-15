@@ -2,7 +2,7 @@
 export const boardX=23.5, boardZ=13.25, boardHeight=1, boardThickness=.14
 const radius=.18
 
-export function advanceOutBall(p:{x:number,y:number,z:number},v:{x:number,y:number,z:number},dt:number){
+export function advanceOutBall(p:{x:number,y:number,z:number},v:{x:number,y:number,z:number},dt:number,schoolFence=false){
   let hitBoard=false
   const old={x:p.x,y:p.y,z:p.z}
   p.x+=v.x*dt;p.z+=v.z*dt
@@ -10,13 +10,16 @@ export function advanceOutBall(p:{x:number,y:number,z:number},v:{x:number,y:numb
   // Test the crossing height so a lob can clear the top of a board.
   for(const axis of ['x','z'] as const){
     const other=axis==='x'?'z':'x'
-    const wall=(axis==='x'?boardX:boardZ)-radius
-    const span=(axis==='x'?boardZ:boardX)+radius
+    const halfX=schoolFence?29.85:boardX,halfZ=schoolFence?17:boardZ
+    const wall=(axis==='x'?halfX:halfZ)-radius
+    const span=(axis==='x'?halfZ:halfX)+radius
     const sign=Math.sign(v[axis])
     if(!sign||old[axis]*sign>wall||p[axis]*sign<wall)continue
     const fraction=(sign*wall-old[axis])/(p[axis]-old[axis])
     const hitTime=dt*fraction
-    if(old.y+(v.y+17*dt)*hitTime-8.5*hitTime*hitTime>boardHeight+radius ||
+    const along=old[other]+(p[other]-old[other])*fraction
+    if(schoolFence&&axis==='z'&&Math.abs(along)<1.5-radius)continue
+    if(old.y+(v.y+17*dt)*hitTime-8.5*hitTime*hitTime>(schoolFence?1.24:boardHeight)+radius ||
        Math.abs(old[other]+(p[other]-old[other])*fraction)>span)continue
     hitBoard=true
     p[axis]=sign*wall-(p[axis]-sign*wall)*.66

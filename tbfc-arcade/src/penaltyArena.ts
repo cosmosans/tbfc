@@ -263,11 +263,13 @@ export function playPenalties(a:Arena){
   kicks.push({side,outcome});board();phase='result';age=0
   status.textContent=outcome==='Goal'?'GOAL!':outcome==='Save'?'SAVED!':outcome==='Woodwork'?'OFF THE FRAME!':'MISS!'
   if(outcome==='Goal'){
-   pose='concede';audio.play('cheer',.8);goalTime=recordTime;sample()
+   pose='concede';audio.goalFire();goalTime=recordTime;sample()
    cut=0;cutAge=0;goalVelocity.copy(velocity).multiplyScalar(.55);meter.hidden=true;reticle.visible=false;skip.hidden=false;a.fire(0)
   }
-  else if(outcome==='Save'){goalTime=recordTime;pose='saveContact';audio.play('post',.85);audio.play('cheer',.4,.84)}
-  else audio.play('close',.4,.7)
+  else{
+   audio.nearGoal()
+   if(outcome==='Save'){goalTime=recordTime;pose='saveContact';audio.play('post',.85)}
+  }
  }
  function actions(){
   const s=shootout(kicks,first);phase='end';end.hidden=false;end.replaceChildren()
