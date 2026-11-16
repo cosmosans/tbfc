@@ -15,6 +15,7 @@ export function selectSides(fixture:Fixture):Promise<Seat[]|null>{
  root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Back</button><span>← → Choose Side · Enter / Start to Continue</span><button class="ts-next">${padBadge("Menu")} Continue</button></div></div>`
  const grid=root.querySelector('.ts-match')!
  const sides=new Map<number,number>([[-1,0]])
+ let suggestedPad:number|null=null
  const held=new Map<number,string>()
  const badges=new Map<number,HTMLElement>()
  const numbers=new Map<number,number>()
@@ -24,13 +25,18 @@ export function selectSides(fixture:Fixture):Promise<Seat[]|null>{
    const club=side===-1?fixture.home:fixture.away
    card.innerHTML='<img class="side-crest" src="'+club.crest+'" alt=""><h2>'+club.name+'</h2><p class="side-cpu">CPU</p>'
   }
-  card.onclick=()=>{sides.set(-1,side);paint()}
+  card.onclick=()=>{choose(-1,side);paint()}
   grid.append(card)
   return card
  })
  const layer=document.createElement('div')
  layer.className='side-badges'
  grid.append(layer)
+ function choose(device:number,side:number){
+  if(device===-1&&suggestedPad!==null)sides.set(suggestedPad,0)
+  if(device===-1||device===suggestedPad)suggestedPad=null
+  sides.set(device,side)
+ }
  function paint(){
   for(const [device,badge] of badges)if(!sides.has(device)){
    badge.remove();badges.delete(device);numbers.delete(device)
@@ -68,7 +74,7 @@ export function selectSides(fixture:Fixture):Promise<Seat[]|null>{
    done=true;cancelAnimationFrame(frame);removeEventListener('keydown',key);root.remove()
    resolve(back?null:[...sides].flatMap(([device,side])=>side?[{device,side:side as -1|1,number:numbers.get(device)!,actor:-1}]:[]))
   }
-  function move(id:number,dir:number){sides.set(id,Math.max(-1,Math.min(1,(sides.get(id)??0)+dir)));paint()}
+  function move(id:number,dir:number){choose(id,Math.max(-1,Math.min(1,(sides.get(id)??0)+dir)));paint()}
   function key(e:KeyboardEvent){
    if(e.repeat)return
    if(e.code==='Escape')finish(true)
@@ -80,7 +86,12 @@ export function selectSides(fixture:Fixture):Promise<Seat[]|null>{
    for(const id of sides.keys())if(id>=0&&!pads.some(p=>p.index===id)){sides.delete(id);held.delete(id);paint()}
    for(const p of pads){
     const cmd=p.buttons[9]?.pressed?'start':p.buttons[1]?.pressed?'back':p.buttons[14]?.pressed||p.axes[0]<-.6?'left':p.buttons[15]?.pressed||p.axes[0]>.6?'right':''
-    if(!sides.has(p.index)){sides.set(p.index,0);paint()}
+    if(!sides.has(p.index)){
+     const firstPad=sides.size===1&&sides.get(-1)===0
+     sides.set(p.index,firstPad?-1:0)
+     if(firstPad)suggestedPad=p.index
+     paint()
+    }
     else if(cmd&&held.get(p.index)!==cmd){
      if(cmd==='start'||cmd==='back'){finish(cmd==='back');return}
      move(p.index,cmd==='left'?-1:1)

@@ -7,7 +7,7 @@ import football from "./audio/MUSIC_MENU_FOOTBALL.mp3?url";
 
 import hitslab from "./audio/MUSIC_MENU_HIT_LAB.mp3?url";
 
-import hypeJump from "./audio/MUSIC_MENU_HYPE_JUMP.aiff?url";
+import hypeJump from "./audio/MUSIC_MENU_HYPE_JUMP.mp3?url";
 
 import pixelChips from "./audio/MUSIC_MENU_PIXEL_CHIPS.mp3?url";
 import sport from "./audio/MUSIC_MENU_SPORT.mp3?url";
@@ -39,6 +39,21 @@ export function createMusicCue(
     animation = 0,
     index: number | null = null,
     consumed = false;
+  const failedTracks = new Set<number>();
+  let blockedWarning = false;
+  function skipFailedTrack(failedIndex: number | null) {
+    if (!active || failedIndex === null || index !== failedIndex || failedTracks.has(failedIndex)) return;
+    failedTracks.add(failedIndex);
+    if (failedTracks.size === tracks.length) {
+      console.warn('No menu music tracks could be played.');
+      return;
+    }
+    index = (failedIndex + 1) % tracks.length;
+    while (failedTracks.has(index)) index = (index + 1) % tracks.length;
+    consumed = false;
+    player.src = tracks[index];
+    play();
+  }
   function fade(to: number, ms: number, done?: () => void) {
     cancelAnimationFrame(animation);
     const from = player.volume,
@@ -68,10 +83,21 @@ export function createMusicCue(
       bookmark = undefined;
       player.volume = fadeInMs ? 0 : volume;
     }
-    if (player.paused) void player.play().catch(() => {});
+    if (player.paused) {
+      const attemptedIndex = index;
+      void player.play().catch(error => {
+        if (error?.name === 'NotAllowedError') {
+          if (!blockedWarning) console.warn('Menu music will retry after the next interaction.');
+          blockedWarning = true;
+        } else if (error?.name !== 'AbortError') skipFailedTrack(attemptedIndex);
+      });
+    }
   }
+  player.onerror = () => skipFailedTrack(index);
   player.onplaying = () => {
     if (!active || index === null || consumed) return;
+    failedTracks.clear();
+    blockedWarning = false;
     consumed = true;
     nextIndex = (index + 1) % tracks.length;
     try {
@@ -152,6 +178,10 @@ export function startMenuMusic(
     if (document.hidden) pauseMenu();
     else play();
   });
+  // A returning page can start before the browser has granted audio playback.
+  // Retry while the user is actively interacting, without changing their setting.
+  document.addEventListener('pointerdown', play);
+  document.addEventListener('keydown', play);
   window.addEventListener("pagehide", pauseMenu);
   window.addEventListener("pageshow", play);
   return {

@@ -14,7 +14,7 @@ import interCrest from './art/ground/inter-your-mom.png?url'
 import whiffCrest from './art/ground/whiff-city-fc.png?url'
 import puffsCrest from './art/ground/peachy-puffs.png?url'
 import starsCrest from './art/ground/shooting-stars.png?url'
-import orangeCrest from './art/ground/orange-slices.png?url'
+import orangeCrest from './art/ground/orange-slices-crest.png?url'
 
 type Opponent = {
   name: string
@@ -35,38 +35,38 @@ export const opponentLadder = [
   {
     name:'Fleet Feet FC', stars:2.5, role:'The confidence fixture', kit:'Pale sky blue with white trim', crest:fleetCrest, kitArt:fleetKit,
     record:{wins:2, draws:0, losses:0, goalsFor:6, goalsAgainst:3},
-    keeper:'Robin', outfield:['Alma','Ellis','Oscar','Noor','Remy','Lena'], bench:['Jules','Theo','Mina','Cole']
+    keeper:'Robin', outfield:['Aaron','Ellis','Oscar','Noor','Remy','Lena'], bench:['Jules','Theo','Mina','Cole']
   }, {
     name:'One Kick Wonders', stars:2, role:'The manageable challenge', kit:'Deep purple', crest:wondersCrest, kitArt:wondersKit,
     record:{wins:1, draws:1, losses:0, goalsFor:3, goalsAgainst:2},
-    keeper:'Devon', outfield:['Piper','Luca','Nico','Avery','Quinn','Idris'], bench:['Tessa','Ezra','June','Otto']
+    keeper:'Devon', outfield:['Marcus','Luca','Nico','Avery','Quinn','Idris'], bench:['Tessa','Ezra','June','Otto']
   }, {
     name:'Goal Dancers FC', stars:3, role:'The evenly matched rival', kit:'Red with gold cuffs', crest:dancersCrest, kitArt:dancersKit,
     record:{wins:1, draws:3, losses:1, goalsFor:7, goalsAgainst:7},
-    keeper:'Alexis', outfield:['Juno','Bruno','Elena','Arlo','Simone','Rio'], bench:['Naya','Victor','Toby','Dani']
+    keeper:'Alexis', outfield:['Julian','Bruno','Elena','Arlo','Simone','Rio'], bench:['Naya','Victor','Toby','Dani']
   }, {
     name:'Inter Your Mom', stars:3, role:'The wildcard', kit:'Black with tonal diagonal stripes', crest:interCrest, kitArt:interKit,
     record:{wins:1, draws:1, losses:1, goalsFor:6, goalsAgainst:8},
-    keeper:'Morgan', outfield:['Kit','Jasper','Freya','Ada','Miles','Ruben'], bench:['Holly','Alex','Isaac','Gemma']
+    keeper:'Morgan', outfield:['Kieran','Jasper','Freya','Ada','Miles','Ruben'], bench:['Holly','Alex','Isaac','Gemma']
   }, {
     name:'Whiff City FC', stars:4, role:'The grudge match', kit:'Light blue with navy trim', crest:whiffCrest, kitArt:whiffKit,
     record:{wins:1, draws:0, losses:3, goalsFor:5, goalsAgainst:9},
-    keeper:'Ash', outfield:['Wren','Cruz','Lex','Una','Cal','Liv'], bench:['Dara','Taj','Benji','Lark']
+    keeper:'Ash', outfield:['Wyatt','Cruz','Lex','Una','Cal','Liv'], bench:['Dara','Taj','Benji','Lark']
   }, {
     name:'Peachy Puffs', stars:5, role:'The deceptively cute menace', kit:'Pastel green with peach and pink accents', crest:puffsCrest, kitArt:puffsKit,
     record:{wins:0, draws:1, losses:3, goalsFor:3, goalsAgainst:10},
-    keeper:'Jude', outfield:['Skye','Emery','Lola','Dario','Tariq','Bea'], bench:['Mara','Felix','Nina','Max']
+    keeper:'Jude', outfield:['Silas','Emery','Lola','Dario','Tariq','Bea'], bench:['Mara','Felix','Nina','Max']
   }, {
     name:'Shooting Stars FC', stars:5, role:'The final boss', kit:'Pink', crest:starsCrest, kitArt:starsKit,
     record:{wins:0, draws:1, losses:3, goalsFor:1, goalsAgainst:10},
-    keeper:'Casey', outfield:['Mika','Riley','Sasha','Andre','Val','Leo'], bench:['Kai','Iris','Rowan','Cleo']
+    keeper:'Casey', outfield:['Malik','Riley','Sasha','Andre','Val','Leo'], bench:['Kai','Iris','Rowan','Cleo']
   }
 ] satisfies Opponent[]
 
 export const alternateOpponent: Opponent = {
-  name:'Orange Slices', stars:3, role:'The scrappy rival', kit:'Mauve and orange', crest:orangeCrest, kitArt:orangeKit,
+  name:'Orange Slices', stars:2, role:'The scrappy rival', kit:'Mauve and orange', crest:orangeCrest, kitArt:orangeKit,
   record:{wins:0, draws:1, losses:2, goalsFor:3, goalsAgainst:5},
-  keeper:'Drew', outfield:['Finn','Zara','Blake','Omar','Inez','Rory'], bench:['Asha','Hugo','Nell','Eli']
+  keeper:'Drew', outfield:['Finn','Zane','Blake','Omar','Inez','Rory'], bench:['Asha','Hugo','Nell','Eli']
 }
 
 export const burners = {
@@ -87,4 +87,4 @@ const accents = [
   "#9dce90",
   "#f1529d",
 ];
-export function clubAccent(club:Club){return accents[clubs.indexOf(club)]}
+export function clubAccent(club:Club){return club.name===alternateOpponent.name?"#d68955":accents[clubs.indexOf(club)]}

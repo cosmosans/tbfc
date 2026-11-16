@@ -10,6 +10,7 @@ import kick1 from './audio/soccer-ball-kick.mp3?url'
 import kick2 from './audio/soccer-ball-kick-2.mp3?url'
 import kick3 from './audio/soccer-ball-kick-3.mp3?url'
 import kick4 from './audio/soccer-ball-kick-4.mp3?url'
+import tackle from './audio/tackle.wav?url'
 
 import nav from './audio/01_UI_Nav_Standard.wav?url'
 import success from './audio/13_UI_Success_Bloop.wav?url'
@@ -17,7 +18,7 @@ import open from './audio/06_UI_Menu_Open.wav?url'
 import close from './audio/07_UI_Menu_Close.wav?url'
 
 type MenuCue='nav'|'success'|'open'|'close'
-const recordings={nearGoal1,nearGoal2,blast,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4}
+const recordings={nearGoal1,nearGoal2,blast,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4,tackle}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 type Sound=keyof typeof recordings|Impact
 

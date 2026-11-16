@@ -159,17 +159,31 @@ export class GoalReplay {
     const yaw=Math.round(Math.atan2(cameraX,cameraZ)/(Math.PI/4))
     for(const [i,sprite] of this.sprites.entries()){
       const prev=a.poses[i],next=b.poses[i],pose=f<.5?prev:next
+      // Let the scorer's kick lead the recorded ball slightly in slow-motion replays.
+      // This changes only the sprite pose; positions and the recorded match stay intact.
+      let animationPose=pose
+      if(sprite===this.scorer&&this.cursor>=this.strike-.2&&this.cursor<this.strike+.6){
+        const fadeIn=T.MathUtils.clamp((this.cursor-this.strike+.2)/.12,0,1)
+        const fadeOut=T.MathUtils.clamp((this.strike+.6-this.cursor)/.2,0,1)
+        const poseTime=this.cursor+.16*Math.min(fadeIn,fadeOut)
+        const future=this.frames.find(frame=>frame.time>=poseTime)??this.frames[this.frames.length-1]
+        if(future.poses[i].mode===2)animationPose=future.poses[i]
+      }
       sprite.visible=pose.visible;sprite.scale.setScalar(pose.size)
       sprite.position.lerpVectors(prev.position,next.position,f)
-      sprite.material.rotation=T.MathUtils.lerp(prev.angle,next.angle,f)
-      sprite.material.map=pose.map
-      pose.map.offset.set(pose.u,pose.v);pose.map.repeat.set(pose.w,pose.h)
+      sprite.material.rotation=0
+      sprite.material.map=animationPose.map
+      animationPose.map.offset.set(animationPose.u,animationPose.v);animationPose.map.repeat.set(animationPose.w,animationPose.h)
       const actor=this.actors[i]
       if(actor){
         const facing=(pose.face-yaw+8)%8
-        if(pose.mode===0||pose.map.userData.directionalIdle)pose.map.offset.x=facing*pose.w
-        else if(pose.mode===1||pose.map.userData.directionalRun||pose.map.userData.directionalCelebration)pose.map.offset.y=1-(facing+1)*pose.h
-        else if(pose.mode===2&&facing!==0&&facing!==4)pose.map.offset.y=1-((facing<4?0:pose.westKickRow)+1)*pose.h
+        if(animationPose.mode===0||animationPose.map.userData.directionalIdle)animationPose.map.offset.x=facing*animationPose.w
+        else if(animationPose.mode===1||animationPose.map.userData.directionalRun||animationPose.map.userData.directionalCelebration)animationPose.map.offset.y=1-(facing+1)*animationPose.h
+        else if(animationPose.mode===2){
+          const directional=[384,512,544].includes(animationPose.map.image.height)
+          if(directional)animationPose.map.offset.y=1-(facing+1)*animationPose.h
+          else if(facing!==0&&facing!==4)animationPose.map.offset.y=1-((facing<4?0:pose.westKickRow)+1)*animationPose.h
+        }
       }
     }
     poseNet(Number.isFinite(a.netTime)&&Number.isFinite(b.netTime)?T.MathUtils.lerp(a.netTime,b.netTime,f):b.netTime)

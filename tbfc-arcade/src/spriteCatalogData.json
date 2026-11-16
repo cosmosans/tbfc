@@ -1,0 +1,6928 @@
+{
+  "slots": [
+    "Idle (rotations)",
+    "Run",
+    "Kick",
+    "Jump / header / air move",
+    "Tackle",
+    "Tackle reaction (stumble)",
+    "Foul reaction (fall)",
+    "Running celebration",
+    "Standing celebration"
+  ],
+  "teams": [
+    {
+      "name": "Turf Burners FC",
+      "players": [
+        {
+          "name": "Meghan",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "meghan-pixellab-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "meghan-pixellab-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "meghan-kick-preview.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "meghan-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "meghan-skate.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "meghan-hockey-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Pam",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "pam-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "pam-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "pam-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "pam-header.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "pam-skate-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "pam-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Jan",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "jan-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "jan-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "jan-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "jan-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Mandy",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "mandy-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "mandy-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "mandy-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "mandy-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "mandy-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Jeremy",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "jeremy-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "jeremy-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "jeremy-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "jeremy-goal-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Chris",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "chris-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "chris-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "chris-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "chris-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "chris-goal-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Stubbs",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stubbs-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "stubbs-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "stubbs-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stubbs-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "stubbs-slide.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "José",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "jose-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "jose-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "jose-kick-finals.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "jose-header.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "jose-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "jose-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "jose-foul-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "spider-jose-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "spider-jose-idle.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Steven",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "steven-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "steven-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "steven-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "steven-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "steven-goal-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "steven-goal-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Daniel",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "daniel-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "daniel-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "daniel-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "daniel-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "daniel-goal-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Sean",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sean-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sean-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sean-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sean-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Nelson",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "nelson-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "nelson-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "nelson-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "nelson-fall.png",
+              "status": "Individual",
+              "note": "Artwork exists but is not wired in matches"
+            },
+            "Standing celebration": {
+              "file": "nelson-goal.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Nadia",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "nadia-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "nadia-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "nadia-side-kicks.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "nadia-fall.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "nadia-goal-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fleet Feet FC",
+      "players": [
+        {
+          "name": "Aaron",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-ellis-idle.png",
+              "status": "Shared",
+              "note": "Uses ellis artwork"
+            },
+            "Run": {
+              "file": "ff-ellis-run.png",
+              "status": "Shared",
+              "note": "Uses ellis artwork"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Shared",
+              "note": "Uses ellis artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Ellis",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-ellis-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ff-ellis-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Oscar",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-lena-idle.png",
+              "status": "Shared",
+              "note": "Uses lena artwork"
+            },
+            "Run": {
+              "file": "ff-lena-run.png",
+              "status": "Shared",
+              "note": "Uses lena artwork"
+            },
+            "Kick": {
+              "file": "ff-lena-kick.png",
+              "status": "Shared",
+              "note": "Uses lena artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Noor",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-noor-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ff-noor-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-noor-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Remy",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "ff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Lena",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "ff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Jules",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "ff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Theo",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-theo-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ff-theo-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-theo-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Mina",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "ff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Cole",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ff-cole-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ff-cole-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-cole-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Robin",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "One Kick Wonders",
+      "players": [
+        {
+          "name": "Marcus",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-luca-idle.png",
+              "status": "Shared",
+              "note": "Uses luca artwork"
+            },
+            "Run": {
+              "file": "okw-luca-run.png",
+              "status": "Shared",
+              "note": "Uses luca artwork"
+            },
+            "Kick": {
+              "file": "okw-luca-kick.png",
+              "status": "Shared",
+              "note": "Uses luca artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Luca",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-luca-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-luca-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-luca-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Nico",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-avery-idle.png",
+              "status": "Shared",
+              "note": "Uses avery artwork"
+            },
+            "Run": {
+              "file": "okw-avery-run.png",
+              "status": "Shared",
+              "note": "Uses avery artwork"
+            },
+            "Kick": {
+              "file": "okw-avery-kick.png",
+              "status": "Shared",
+              "note": "Uses avery artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Avery",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-nico-idle.png",
+              "status": "Shared",
+              "note": "Uses nico artwork"
+            },
+            "Run": {
+              "file": "okw-nico-run.png",
+              "status": "Shared",
+              "note": "Uses nico artwork"
+            },
+            "Kick": {
+              "file": "okw-nico-kick.png",
+              "status": "Shared",
+              "note": "Uses nico artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Quinn",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-quinn-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-quinn-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-quinn-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Idris",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-idris-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-idris-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-idris-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Tessa",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-tessa-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-tessa-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-tessa-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Ezra",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-ezra-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-ezra-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-ezra-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "June",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-june-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-june-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-june-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Otto",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "okw-otto-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "okw-otto-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "okw-otto-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Devon",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Goal Dancers FC",
+      "players": [
+        {
+          "name": "Julian",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-bruno-idle.png",
+              "status": "Shared",
+              "note": "Uses bruno artwork"
+            },
+            "Run": {
+              "file": "gd-bruno-run.png",
+              "status": "Shared",
+              "note": "Uses bruno artwork"
+            },
+            "Kick": {
+              "file": "gd-bruno-kick.png",
+              "status": "Shared",
+              "note": "Uses bruno artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Bruno",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-bruno-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "gd-bruno-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "gd-bruno-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Elena",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "gd-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "gd-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Arlo",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-arlo-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "gd-arlo-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "gd-arlo-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Simone",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "gd-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "gd-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Rio",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-rio-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "gd-rio-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "gd-rio-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Naya",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "gd-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "gd-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Victor",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-victor-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "gd-victor-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "gd-victor-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Toby",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-toby-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "gd-toby-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "gd-toby-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Dani",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "gd-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "gd-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "gd-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Alexis",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inter Your Mom",
+      "players": [
+        {
+          "name": "Kieran",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-jasper-idle.png",
+              "status": "Shared",
+              "note": "Uses jasper artwork"
+            },
+            "Run": {
+              "file": "inter-jasper-run.png",
+              "status": "Shared",
+              "note": "Uses jasper artwork"
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Jasper",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-jasper-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "inter-jasper-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Freya",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "inter-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "inter-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Ada",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "inter-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "inter-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Miles",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-miles-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "inter-miles-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Ruben",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-ruben-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "inter-ruben-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Holly",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "inter-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "inter-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Alex",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-alex-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "inter-alex-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Isaac",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-isaac-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "inter-isaac-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ff-ellis-kick.png",
+              "status": "Placeholder",
+              "note": "Fallback kick art"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Gemma",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "inter-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "inter-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "inter-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Morgan",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Whiff City FC",
+      "players": [
+        {
+          "name": "Wyatt",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Cruz",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Lex",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Una",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "whiff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "whiff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "whiff-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Cal",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Liv",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "whiff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "whiff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "whiff-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Dara",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "whiff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "whiff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "whiff-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Taj",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Benji",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Lark",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "whiff-base-idle.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Run": {
+              "file": "whiff-base-run.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Kick": {
+              "file": "whiff-base-kick.png",
+              "status": "Shared",
+              "note": "Team base sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Ash",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Peachy Puffs",
+      "players": [
+        {
+          "name": "Silas",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-dario-idle.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Run": {
+              "file": "peach-dario-run.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Kick": {
+              "file": "peach-dario-kick.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Jump / header / air move": {
+              "file": "peach-dario-jump.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Tackle": {
+              "file": "peach-dario-tackle.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-dario-reaction.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-dario-foul.png",
+              "status": "Shared",
+              "note": "Uses dario artwork"
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Emery",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-emery-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-emery-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-emery-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-emery-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-emery-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-emery-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-emery-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Lola",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-lola-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-lola-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-lola-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-lola-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-lola-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-lola-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-lola-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Dario",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-dario-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-dario-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-dario-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-dario-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-dario-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-dario-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-dario-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Tariq",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-tariq-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-tariq-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-tariq-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-tariq-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-tariq-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-tariq-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-tariq-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Bea",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-bea-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-bea-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-bea-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-bea-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-bea-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-bea-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-bea-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Mara",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-mara-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-mara-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-mara-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-mara-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-mara-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-mara-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-mara-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Felix",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-felix-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-felix-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-felix-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-felix-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-felix-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-felix-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-felix-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Nina",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-nina-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-nina-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-nina-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-nina-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-nina-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-nina-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-nina-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Max",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "peach-max-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "peach-max-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "peach-max-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "peach-max-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "peach-max-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "peach-max-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "peach-max-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Jude",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shooting Stars FC",
+      "players": [
+        {
+          "name": "Malik",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-andre-idle.png",
+              "status": "Shared",
+              "note": "Uses andre artwork"
+            },
+            "Run": {
+              "file": "ss-andre-run.png",
+              "status": "Shared",
+              "note": "Uses andre artwork"
+            },
+            "Kick": {
+              "file": "ss-andre-kick.png",
+              "status": "Shared",
+              "note": "Uses andre artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Riley",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-riley-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ss-riley-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ss-riley-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Sasha",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-sasha-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ss-sasha-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ss-sasha-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Andre",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-andre-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ss-andre-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ss-andre-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Val",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-val-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ss-val-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ss-val-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Leo",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-leo-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ss-leo-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "ss-leo-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Kai",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-iris-idle.png",
+              "status": "Shared",
+              "note": "Uses iris artwork"
+            },
+            "Run": {
+              "file": "ss-iris-run.png",
+              "status": "Shared",
+              "note": "Uses iris artwork"
+            },
+            "Kick": {
+              "file": "ss-iris-kick.png",
+              "status": "Shared",
+              "note": "Uses iris artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Iris",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-kai-idle.png",
+              "status": "Shared",
+              "note": "Uses kai artwork"
+            },
+            "Run": {
+              "file": "ss-kai-run.png",
+              "status": "Shared",
+              "note": "Uses kai artwork"
+            },
+            "Kick": {
+              "file": "ss-kai-kick.png",
+              "status": "Shared",
+              "note": "Uses kai artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Rowan",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-cleo-idle.png",
+              "status": "Shared",
+              "note": "Uses cleo artwork"
+            },
+            "Run": {
+              "file": "ss-cleo-run.png",
+              "status": "Shared",
+              "note": "Uses cleo artwork"
+            },
+            "Kick": {
+              "file": "ss-cleo-kick.png",
+              "status": "Shared",
+              "note": "Uses cleo artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Cleo",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ss-rowan-idle.png",
+              "status": "Shared",
+              "note": "Uses rowan artwork"
+            },
+            "Run": {
+              "file": "ss-rowan-run.png",
+              "status": "Shared",
+              "note": "Uses rowan artwork"
+            },
+            "Kick": {
+              "file": "ss-rowan-kick.png",
+              "status": "Shared",
+              "note": "Uses rowan artwork"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Casey",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orange Slices",
+      "players": [
+        {
+          "name": "Finn",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Zane",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Blake",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Omar",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Inez",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Rory",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Asha",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Hugo",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Nell",
+          "gender": "Female",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Eli",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "stars-idle.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Run": {
+              "file": "stars-run.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Kick": {
+              "file": "stars-side-kicks.png",
+              "status": "Placeholder",
+              "note": "Generic match sprite"
+            },
+            "Foul reaction (fall)": {
+              "file": "stars-fall.png",
+              "status": "Placeholder",
+              "note": "Generic foul reaction"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Drew",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "rival-keeper-idle.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Run": {
+              "file": "rival-keeper-run.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Kick": {
+              "file": "rival-keeper-kick.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Foul reaction (fall)": {
+              "file": "rival-keeper-fall.png",
+              "status": "Shared",
+              "note": "Shared goalkeeper art"
+            },
+            "Jump / header / air move": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": ""
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "dimensions": {
+    "chris-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "chris-goal-group.png": {
+      "width": 528,
+      "height": 384,
+      "cell": 48,
+      "columns": 11,
+      "rows": 8
+    },
+    "chris-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "chris-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "chris-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "daniel-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "daniel-goal-group.png": {
+      "width": 624,
+      "height": 384,
+      "cell": 48,
+      "columns": 13,
+      "rows": 8
+    },
+    "daniel-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "daniel-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "daniel-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-base-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-base-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-cole-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-cole-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-cole-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-ellis-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-ellis-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-ellis-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-lena-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-lena-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-lena-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-noor-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-noor-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-noor-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-theo-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-theo-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ff-theo-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-arlo-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-arlo-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-arlo-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-base-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-base-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-base-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-bruno-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-bruno-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-bruno-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-rio-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-rio-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-rio-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-toby-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-toby-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-toby-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-victor-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-victor-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "gd-victor-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-alex-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-alex-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-base-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-base-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "inter-base-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-isaac-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-isaac-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-jasper-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-jasper-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-miles-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-miles-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "inter-ruben-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "inter-ruben-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "jan-goal.png": {
+      "width": 720,
+      "height": 48,
+      "cell": 48,
+      "columns": 15,
+      "rows": 1
+    },
+    "jan-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "jan-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "jan-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "jeremy-goal-group.png": {
+      "width": 816,
+      "height": 384,
+      "cell": 48,
+      "columns": 17,
+      "rows": 8
+    },
+    "jeremy-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "jeremy-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "jeremy-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "jose-foul-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "jose-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "jose-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "jose-kick-finals.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "jose-reaction.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "jose-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "jose-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "mandy-goal.png": {
+      "width": 624,
+      "height": 384,
+      "cell": 48,
+      "columns": 13,
+      "rows": 8
+    },
+    "mandy-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "mandy-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "mandy-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "meghan-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "meghan-hockey-goal.png": {
+      "width": 720,
+      "height": 48,
+      "cell": 48,
+      "columns": 15,
+      "rows": 1
+    },
+    "meghan-kick-preview.png": {
+      "width": 336,
+      "height": 240,
+      "cell": 48,
+      "columns": 7,
+      "rows": 5
+    },
+    "meghan-pixellab-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "meghan-pixellab-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "meghan-skate.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nadia-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "nadia-goal-group.png": {
+      "width": 720,
+      "height": 384,
+      "cell": 48,
+      "columns": 15,
+      "rows": 8
+    },
+    "nadia-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "nadia-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nadia-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "nelson-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "nelson-goal.png": {
+      "width": 720,
+      "height": 48,
+      "cell": 48,
+      "columns": 15,
+      "rows": 1
+    },
+    "nelson-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "nelson-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nelson-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-avery-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-avery-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-avery-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-ezra-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-ezra-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-ezra-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-idris-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-idris-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-idris-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-june-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-june-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-june-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-luca-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-luca-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-luca-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-nico-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-nico-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-nico-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-otto-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-otto-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-otto-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-quinn-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-quinn-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-quinn-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-tessa-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-tessa-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "okw-tessa-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "pam-goal.png": {
+      "width": 432,
+      "height": 48,
+      "cell": 48,
+      "columns": 9,
+      "rows": 1
+    },
+    "pam-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "pam-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "pam-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "pam-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "pam-skate-goal.png": {
+      "width": 624,
+      "height": 384,
+      "cell": 48,
+      "columns": 13,
+      "rows": 8
+    },
+    "peach-bea-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-bea-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-bea-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-bea-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-bea-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-bea-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-bea-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-dario-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-dario-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-dario-jump.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-dario-kick.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-dario-reaction.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-dario-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-dario-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-emery-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-emery-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-emery-jump.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-emery-kick.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-emery-reaction.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-emery-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-emery-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-felix-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-felix-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-felix-jump.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-felix-kick.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-felix-reaction.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-felix-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-felix-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-lola-foul.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-lola-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-lola-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-lola-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-lola-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-lola-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-lola-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-mara-foul.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-mara-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-mara-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-mara-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-mara-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-mara-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-mara-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-max-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-max-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-max-jump.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-max-kick.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-max-reaction.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-max-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-max-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-nina-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-nina-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-nina-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-nina-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-nina-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-nina-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-nina-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-tariq-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "peach-tariq-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "peach-tariq-jump.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-tariq-kick.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "peach-tariq-reaction.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-tariq-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "peach-tariq-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "rival-keeper-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "rival-keeper-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "rival-keeper-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "rival-keeper-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "sean-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "sean-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "sean-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "sean-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "spider-jose-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "spider-jose-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-andre-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-andre-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-andre-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-cleo-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-cleo-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-cleo-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-iris-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-iris-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-iris-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-kai-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-kai-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-kai-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-leo-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-leo-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-leo-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-riley-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-riley-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-riley-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-rowan-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-rowan-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-rowan-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-sasha-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-sasha-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-sasha-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-val-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-val-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "ss-val-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "stars-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "stars-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "stars-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "stars-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "steven-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "steven-goal-group.png": {
+      "width": 624,
+      "height": 384,
+      "cell": 48,
+      "columns": 13,
+      "rows": 8
+    },
+    "steven-goal-run.png": {
+      "width": 1200,
+      "height": 384,
+      "cell": 48,
+      "columns": 25,
+      "rows": 8
+    },
+    "steven-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "steven-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "steven-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "stubbs-fall.png": {
+      "width": 336,
+      "height": 384,
+      "cell": 48,
+      "columns": 7,
+      "rows": 8
+    },
+    "stubbs-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "stubbs-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "stubbs-side-kicks.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "stubbs-slide.png": {
+      "width": 624,
+      "height": 384,
+      "cell": 48,
+      "columns": 13,
+      "rows": 8
+    },
+    "whiff-base-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "whiff-base-kick.png": {
+      "width": 336,
+      "height": 96,
+      "cell": 48,
+      "columns": 7,
+      "rows": 2
+    },
+    "whiff-base-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    }
+  }
+}

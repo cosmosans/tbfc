@@ -1,3 +1,4 @@
+import {CurveGesture} from './burnCurve'
 import rivalFront from './art/rival-keeper-front.png?url'
 import rivalRear from './art/rival-keeper-rear.png?url'
 import rivalReady from './art/rival-keeper-ready.png?url'
@@ -24,11 +25,10 @@ function frame(actor:Actor,mode:number,column:number,row:number){
  actor.sprite.material.map=map
 }
 // New keeper sheets can replace the temporary poses here.
-function keeperPose(a:Actor,pose:KeeperPose,face:number,time:number,tilt:number){
+function keeperPose(a:Actor,pose:KeeperPose,face:number,time:number){
  a.sprite.userData.keeperPose=pose
  const moving=pose.startsWith('shuffle')
  frame(a,moving?1:0,moving?Math.floor(time*10):face,moving?face:0)
- a.sprite.material.rotation=tilt
 }
 export function playPenalties(a:Arena){
  function keeperTexture(url:string){
@@ -128,16 +128,18 @@ export function playPenalties(a:Arena){
  let phase:'ready'|'run'|'flight'|'result'|'end'='ready',age=0,time=0,wait=0,power=0,charging=false,held=true
  let z=0,y=.9,dive=-1,dir=0,origin=0,extension=0,pose:KeeperPose='ready',hitFrame=false
  let kicker:Actor,keeper:Actor,last=performance.now(),reaction=0,aimNoise=0,orderOffset=[0,0]
+ const curveGesture=new CurveGesture()
+ let curveRate=0,aimStartZ=0,aimStartY=0
  const velocity=new T.Vector3(),p=a.ball.position,cam=new T.Vector3(),look=new T.Vector3(19,1,0),target=new T.Vector3()
  // Keep only the current attempt. Replay poses never feed back into scoring.
- const samples:{t:number,ball:T.Vector3,taker:T.Vector3,keeper:T.Vector3,tilt:number,dive:number,direction:number,run:boolean}[]=[]
+ const samples:{t:number,ball:T.Vector3,taker:T.Vector3,keeper:T.Vector3,dive:number,direction:number,run:boolean}[]=[]
  let cut=-1,cutAge=0,recordTime=0,goalTime=0,skipHeld=false
  const skip=document.createElement('button');skip.className='pk-skip';skip.textContent='A · Skip';skip.hidden=true;panel.append(skip)
  skip.onclick=()=>{if(cut>=0&&!flying)advanceCut()}
  let nextRunner:Actor|null=null
  const nextFrom=new T.Vector3(),returnFrom=new T.Vector3(),returnTo=new T.Vector3(),goalVelocity=new T.Vector3()
  function sample(){
-  samples.push({t:recordTime,ball:p.clone(),taker:kicker.sprite.position.clone(),keeper:keeper.sprite.position.clone(),tilt:keeper.sprite.material.rotation,dive,direction:dir,run:phase==='run'&&age<.50})
+  samples.push({t:recordTime,ball:p.clone(),taker:kicker.sprite.position.clone(),keeper:keeper.sprite.position.clone(),dive,direction:dir,run:phase==='run'&&age<.50})
  }
  function faceFor(dx:number,dz:number){
   a.camera.getWorldDirection(cameraForward)
@@ -184,7 +186,7 @@ export function playPenalties(a:Arena){
    p.lerpVectors(prev.ball,b.ball,f);keeper.sprite.position.lerpVectors(prev.keeper,b.keeper,f)
    kicker.sprite.position.lerpVectors(prev.taker,b.taker,f)
    keeper.sprite.center.set(.5,2/48);keeper.sprite.scale.setScalar(1.7)
-   keeper.sprite.material.rotation=b.tilt;frame(keeper,0,faceFor(-1,0),0)
+   frame(keeper,0,faceFor(-1,0),0)
    showDive(keeper,b.dive,b.direction,right)
    const boot=t>=.50&&t<.82
    frame(kicker,boot?2:b.run?1:0,boot?Math.min(6,Math.floor((t-.5)*24)):b.run?Math.floor(t*14):faceFor(1,0),b.run?faceFor(1,0):0)
@@ -249,7 +251,7 @@ export function playPenalties(a:Arena){
   }
   kicker.sprite.position.set(13.5,0,.15);keeper.sprite.position.set(20.7,0,0)
   p.set(15,.16,0);a.ball.visible=true;a.ball.scale.setScalar(.36)
-  phase='ready';age=0;dive=-1;dir=0;extension=0;pose='ready';z=0;y=.9;power=0;charging=false;held=true;hitFrame=false
+  curveRate=0;phase='ready';age=0;dive=-1;dir=0;extension=0;pose='ready';z=0;y=.9;power=0;charging=false;held=true;hitFrame=false
   wait=1.6+Math.random()*.8-a.level*.12
   if(!shooting&&keeper.displayName==='Sean')wait+=3
   reaction=.23-a.level*.038+Math.random()*.07;aimNoise=(Math.random()-.5)*(.85-a.level*.14)
@@ -297,6 +299,12 @@ export function playPenalties(a:Arena){
   audio.state(false,false);audio.kick(power)
  }
  function physics(dt:number){
+  if(curveRate&&!hitFrame){
+   const angle=curveRate*dt,c=Math.cos(angle),s=Math.sin(angle)
+   const forward=velocity.x*c-velocity.z*s
+   velocity.z=velocity.x*s+velocity.z*c;velocity.x=forward
+   curveRate*=Math.exp(-1.25*dt)
+  }
   const prior=p.x;p.addScaledVector(velocity,dt);velocity.y-=4*dt
   if(p.y<.13){p.y=.13;velocity.y=Math.abs(velocity.y)*.3}
   const reach=a.rating(keeper,true)/100
@@ -357,10 +365,22 @@ export function playPenalties(a:Arena){
    held=nav
   }else{
    if(phase==='ready'&&shooting){
-    z=clamp(z+x*dt*2.4,-2.7,2.7);y=clamp(y+up*dt*1.9,.13,2.65)
-    if(down&&!held)charging=true
+    if(down&&!held){
+     charging=true;curveGesture.reset(0);aimStartZ=z;aimStartY=y
+    }
+    if(charging&&down)curveGesture.sample(x,-up,now)
+    if(charging&&curveGesture.engaged){z=aimStartZ;y=aimStartY}
+    else{
+     z=clamp(z+x*dt*2.4,-2.7,2.7);y=clamp(y+up*dt*1.9,.13,2.65)
+     if(charging&&Math.hypot(x,up)<.35){aimStartZ=z;aimStartY=y}
+    }
     if(charging){power=clamp(power+dt*.88,.08,1);setPower(power)}
-    if(charging&&!down){phase='run';age=0;charging=false}
+    if(charging&&!down){
+     const strike=curveGesture.finish(false)
+     curveRate=strike?.rate??0
+     if(strike)status.textContent=strike.style
+     phase='run';age=0;charging=false
+    }
    }else if(phase==='ready'&&age>wait){
     const spread=1.25-a.level*.17
     z=(Math.random()<.5?-1:1)*((Math.random()<.20?.4:1.62)+(Math.random()-.5)*spread)
@@ -406,7 +426,7 @@ export function playPenalties(a:Arena){
   if(phase==='run'&&age<.5)frame(kicker,1,Math.floor(age*14),face)
   else if(phase==='run'||phase==='flight'&&age<.18)frame(kicker,2,phase==='run'?Math.min(3,Math.floor((age-.5)*25)):Math.min(6,4+Math.floor(age*15)),0)
   else frame(kicker,0,face,0)
-  keeperPose(keeper,pose,shooting?0:4,time,dir*extension*(shooting?-1:1)*1.15)
+  keeperPose(keeper,pose,shooting?0:4,time)
   keeper.sprite.center.x=.5
   if(!shooting&&pose==='ready'&&phase==='ready'){
    const seanReady=keeperKit(keeper).ready

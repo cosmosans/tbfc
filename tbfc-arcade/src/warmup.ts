@@ -1,7 +1,7 @@
 import {hint as control} from './screenUI'
 export const drills=[
  {name:'Passing triangle',hint:`Aim at {target} with ${control('WASD','LS')}. Tap ${control('J','A')} to pass, or hold for a firmer ball.`},
- {name:'Angle finishing',hint:`Move into range. Hold ${control('K','B')} to build shot power, then release.`},
+ {name:'Angle finishing',hint:`Move into range. Hold ${control('K','B')} to build shot power. Sweep a quarter circle while charging for a Curler, then release.`},
  {name:'Cross & volley',hint:`Aim toward {target} and press ${control('X','X')} to cross. Hold ${control('K','B')} before the ball arrives.`},
  {name:'Chip the bins',hint:`Aim at the gold rim. Hold ${control('X','X')} for distance and release to chip. A clean drop through the center earns more.`},
  {name:'Free practice',hint:`Pass ${control('J','A')}　Shoot ${control('K','B')}　Cross ${control('X','X')}　Through Ball ${control('Y','Y')}`}

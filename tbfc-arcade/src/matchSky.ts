@@ -66,5 +66,5 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
   }
   attr.needsUpdate=true
  }
- update(0);return update
+ update(0);return {setSkyTime,updateWeather:update}
 }

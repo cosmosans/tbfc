@@ -5,10 +5,14 @@ import {matchSky} from './matchSky'
 import type {MatchSettings} from './matchSettings'
 import { boardX, boardZ, boardHeight, boardThickness } from './perimeter'
 import * as T from 'three'
+import westEndUrl from '../art/stadiums/stationsoccer-west-end.glb?url'
+import diamondUrl from '../art/stadiums/southside-diamond.glb?url'
+import parkUrl from '../art/stadiums/eastside-commons.glb?url'
 import schoolGroundUrl from '../art/stadiums/high-school-track.glb?url'
 import turfUrl from './art/ground/grass.jpg?url'
 
-export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,opponent:Club|null,schoolGround=false) {
+export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,opponent:Club|null,venue:'standard'|'school'|'eastside'|'southside'|'westend'='standard') {
+  const schoolGround=venue!=='standard',eastside=venue==='eastside'
   const night=settings.time==='Night',evening=settings.time==='Evening'
   const overcast=settings.weather!=='Sun'
   const fill=new T.HemisphereLight(night?0xadcaff:evening?0xffd9b9:0xfff9e8,0x899478,night?.75:1.65)
@@ -38,15 +42,17 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
 
   if(schoolGround){
     const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js')
-    const school=await new GLTFLoader().loadAsync(schoolGroundUrl)
+    const school=await new GLTFLoader().loadAsync(venue==='westend'?westEndUrl:venue==='southside'?diamondUrl:eastside?parkUrl:schoolGroundUrl)
     school.scene.traverse(object=>{
       if(object instanceof T.Mesh){object.receiveShadow=true;object.castShadow=true}
     })
     scene.add(school.scene)
     const {stadiumBallPhysics}=await import('./stadiumCollision')
-    const setSchoolNight=schoolLighting(scene,school.scene,renderer,fill,sun,setSkyTime)
+    const setSchoolNight=schoolLighting(scene,school.scene,renderer,fill,sun,setSkyTime,venue)
     if(night)setSchoolNight(true)
-    return {updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
+    const traffic=eastside?await (await import('./eastsideCrowd')).eastsideStreetLife(scene,school.scene):null
+    const updateTrain=venue==='westend'?(await import('./westEndTrain')).westEndTrain(scene,school.scene):null
+    return {updateTrain,updateWeather:traffic?(dt:number)=>{updateWeather(dt);traffic(dt)}:updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
   }
 
   const loader=new T.TextureLoader()
@@ -123,5 +129,5 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
   beams.forEach((m,i)=>{structures.setMatrixAt(i,m);structures.setColorAt(i,colors[i])})
   structures.castShadow=structures.receiveShadow=true
   scene.add(structures)
-  return {updateWeather,setSchoolNight:null,advanceStadiumBall:null}
+  return {updateTrain:null,updateWeather,setSchoolNight:null,advanceStadiumBall:null}
 }

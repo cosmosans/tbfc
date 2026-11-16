@@ -2,7 +2,7 @@ import * as T from 'three'
 
 // Pick up the lamp-head locations from the exported Blender lens geometry.
 export function schoolLighting(scene:T.Scene,school:T.Object3D,renderer:T.WebGLRenderer,
- fill:T.HemisphereLight,sun:T.DirectionalLight,setSkyTime:(time:'Evening'|'Night')=>void){
+ fill:T.HemisphereLight,sun:T.DirectionalLight,setSkyTime:(time:'Evening'|'Night')=>void,venue:'school'|'eastside'|'southside'|'westend'){
  const fixtures=new Map<string,T.Box3>()
  const windows=new Set<T.MeshStandardMaterial>()
  const vertex=new T.Vector3()
@@ -40,9 +40,9 @@ export function schoolLighting(scene:T.Scene,school:T.Object3D,renderer:T.WebGLR
   const flare=new T.Sprite(halo);flare.position.copy(lamp.position);flare.scale.set(4.3,2.2,1)
   rig.add(lamp,lamp.target,flare)
  }
- for(const x of [-12,-4,4]){
+ for(const x of venue==='westend'?[-32,16,43]:venue==='southside'?[]:venue==='eastside'?[-23,-7,10,26]:[-12,-4,4]){
   const spill=new T.PointLight(0xffae62,12,7,2)
-  spill.position.set(x,2.35,-18.6);rig.add(spill)
+  spill.position.set(x,venue==='westend'?4.8:2.35,venue==='westend'?-26:venue==='eastside'?-33.7:-18.6);rig.add(spill)
  }
  rig.visible=false
  scene.add(rig)

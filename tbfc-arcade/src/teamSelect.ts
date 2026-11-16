@@ -1,6 +1,6 @@
 import { audio } from "./matchAudio";
 import { hint, padBadge, reveal } from "./screenUI";
-import { clubAccent, clubs, type Fixture } from "./opponentSquads";
+import { alternateOpponent, clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
 
@@ -8,6 +8,7 @@ export function selectTeams(
   previous?: Fixture,
   standings?: ReadonlyMap<string, number>,
 ): Promise<Fixture | null> {
+  const selectable=[...clubs,alternateOpponent]
   const picks = [
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
@@ -17,7 +18,7 @@ export function selectTeams(
   root.setAttribute("aria-label", "Select teams");
   const style = document.createElement("style");
   style.textContent = css;
-  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Side Select</button></div></div>`;
+  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Select Stadium</button></div></div>`;
   root.prepend(style);
   document.body.append(root);
   const main = document.querySelector("main")!;
@@ -46,12 +47,12 @@ export function selectTeams(
     focusSide(side);
   }
   function cycle(i: number, step: number) {
-    let index = clubs.indexOf(picks[i]);
+    let index = selectable.indexOf(picks[i]);
     do {
-      index = (index + step + clubs.length) % clubs.length;
-    } while (clubs[index] === picks[1 - i]);
+      index = (index + step + selectable.length) % selectable.length;
+    } while (selectable[index] === picks[1 - i]);
     audio.menu("nav");
-    picks[i] = clubs[index];
+    picks[i] = selectable[index];
     paint(i);
     focusSide(i);
   }

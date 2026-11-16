@@ -12,7 +12,7 @@ export type Destination =
   | "practice"
   | "celebrations"
   | "simulate"
-  | "penalties" | "burnLab" | "stadiumTest";
+  | "penalties" | "burnLab" | "westendTest" | "southsideTest" | "eastsideTest" | "stadiumTest" | "curveLab" | "spriteViewer";
 
 export function mountMenuBackdrop() {
   const style = document.createElement("style");
@@ -113,7 +113,7 @@ export function mainMenu(
           '<nav aria-label="Main menu"><button data-action="career">Career Mode</button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML =
-          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="curveLab">Burn Curve Lab</button><button data-action="stadiumTest">Stadium Test</button><button data-action="eastsideTest">Eastside Commons</button><button data-action="southsideTest">Southside Diamond</button><button data-action="westendTest">Station Soccer West End</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
@@ -171,6 +171,11 @@ export function mainMenu(
           leave("simulate");
           break;
         case "penalties": leave("penalties"); break;
+        case "spriteViewer": leave("spriteViewer"); break;
+        case "curveLab": leave("curveLab"); break;
+        case "westendTest": leave("westendTest"); break;
+        case "southsideTest": leave("southsideTest"); break;
+        case "eastsideTest": leave("eastsideTest"); break;
         case "stadiumTest": leave("stadiumTest"); break;
         case "burnLab":
           leave("burnLab");

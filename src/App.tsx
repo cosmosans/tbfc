@@ -709,7 +709,7 @@ export default function App() {
           onClick={() => location.state?.fromClub ? navigate(-1) : navigate("/", { replace: true })}>
           ← Back to TBFC
         </Button>
-        <iframe title="TBFC Arcade" src="/tbfc-arcade/play.html" allow="gamepad; fullscreen"
+        <iframe title="TBFC Arcade" src="/tbfc-arcade/play.html" allow="autoplay; gamepad; fullscreen"
           onLoad={(event) => event.currentTarget.focus()}
           style={{ width: "100%", flex: 1, minHeight: 0, border: 0 }} />
       </Box>
