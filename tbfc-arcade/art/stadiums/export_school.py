@@ -1,6 +1,7 @@
 import bpy
 from pathlib import Path
 source=Path(bpy.data.filepath)
+output=globals().get("stadium_output", source.with_name(source.stem.lower().replace(" ", "-") + ".glb"))
 bpy.ops.object.select_all(action='DESELECT')
 for group in bpy.data.collections:
     selected=[o for o in group.objects if o.type in {'MESH','CURVE'} and not (group.name.startswith('02') and not o.name.startswith('Faded hash')) and not any(label in o.name for label in ('soccer frame',' • net'))]
@@ -20,4 +21,4 @@ for group in bpy.data.collections:
     obj.select_set(False)
 for o in bpy.context.scene.objects:
     o.select_set((o.name in bpy.data.collections and o.type=='MESH') or o.name.startswith('WestEndAnchor '))
-bpy.ops.export_scene.gltf(filepath=str(source.with_name(source.stem.lower().replace(' ', '-') + '.glb')),use_selection=True,export_yup=True)
+bpy.ops.export_scene.gltf(filepath=str(output),use_selection=True,export_yup=True)

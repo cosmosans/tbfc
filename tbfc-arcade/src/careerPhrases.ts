@@ -1,7 +1,7 @@
 // Each entry is one message. Specific jobs (like bringing the match ball) have one entry.
-const lines=(text:string)=>text.trim().split('\n')
-const pools={
- Yes:lines(`
+const lines = (text: string) => text.trim().split("\n");
+const pools = {
+  Yes: lines(`
 Count me in.
 See you Thursday!
 I’ll bring the ball.
@@ -43,7 +43,7 @@ Absolutely. Been a long week.
 Boots tied, emotionally prepared.
 Tell the turf I said see you soon.
 `),
- Maybe:lines(`
+  Maybe: lines(`
 Checking my schedule. Will confirm.
 Waiting on the shift list.
 Can you pencil me in for now?
@@ -73,7 +73,7 @@ I’ll text when I know for sure.
 Waiting on the kids’ schedule.
 I think so? Don’t lock me in just yet.
 `),
- No:lines(`
+  No: lines(`
 Working late, sorry everyone.
 Out of town Thursday night.
 Family dinner. Catch you next week.
@@ -99,7 +99,7 @@ Can someone send me the highlights later?
 I’m on call tonight.
 Family photo day. Apparently cleats aren’t formalwear.
 `),
- Late:lines(`
+  Late: lines(`
 This traffic sucks! Start without me.
 GPS just added ten minutes. I’m still coming.
 Wrong entrance. Coming around the other side.
@@ -112,18 +112,19 @@ Had to go back for my boots. Yes, both of them.
 My exit is closed. Taking the scenic route apparently.
 On my way from work. Might miss the whistle.
 I parked at the other field. Getting my warmup in.
-`)
-}
-type Vote={answer:keyof typeof pools,message:string}
-export function varyMessages(events:Vote[],seed:number,repair=false){
- const used=new Set<string>()
- for(const vote of events){
-  if(!vote.message)continue
-  if(!repair||used.has(vote.message)){
-   const choices=pools[vote.answer].filter(line=>!used.has(line))
-   seed=(Math.imul(seed,1664525)+1013904223)>>>0
-   vote.message=choices[Math.floor(seed/4294967296*choices.length)]??''
+`),
+};
+type Vote = { answer: keyof typeof pools; message: string };
+export function varyMessages(events: Vote[], seed: number, repair = false) {
+  const used = new Set<string>();
+  for (const vote of events) {
+    if (!vote.message) continue;
+    if (!repair || used.has(vote.message)) {
+      const choices = pools[vote.answer].filter((line) => !used.has(line));
+      seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+      vote.message =
+        choices[Math.floor((seed / 4294967296) * choices.length)] ?? "";
+    }
+    used.add(vote.message);
   }
-  used.add(vote.message)
- }
 }

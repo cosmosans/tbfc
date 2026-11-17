@@ -5,7 +5,7 @@ import {spriteGroundPadding} from './spriteGround'
 
 const art=import.meta.glob<string>('./art/*.png',{eager:true,query:'?url',import:'default'})
 const directions=['South','South East','East','North East','North','North West','West','South West']
-const rates=[0,8,12,14,16,16,12,8,8]
+const rates=[0,8,12,14,16,16,12,8,8,8]
 
 export function spriteViewer():Promise<void>{
  const style=document.createElement('style');style.textContent=css;document.head.append(style)

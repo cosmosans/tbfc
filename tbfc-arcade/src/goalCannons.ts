@@ -1,6 +1,9 @@
 import * as T from 'three'
 
-export function goalCannons(scene:T.Scene,line:number){
+import {goalSmoke} from './goalSmoke'
+
+export function goalCannons(scene:T.Scene,line:number,coloredSmoke=false){
+ const clouds:ReturnType<typeof goalSmoke>[]=[]
  const effects=new T.Group()
  scene.add(effects)
  const age={value:0}
@@ -11,6 +14,7 @@ export function goalCannons(scene:T.Scene,line:number){
   const x=line+Math.sign(line)*.85,z=side*2.9
   const base=new T.Mesh(nozzle,housing)
   base.position.set(x,.235,z);scene.add(base)
+  if(coloredSmoke){clouds.push(goalSmoke(effects,x,z));continue}
   const material=new T.ShaderMaterial({
    uniforms:{age,seed:{value:side===1?3.2:16.4}},transparent:true,depthWrite:false,
    vertexShader:`varying vec2 v;void main(){v=uv;vec4 p=modelViewMatrix*vec4(0.,0.,0.,1.);p.xy+=vec2(position.x*3.6,uv.y*6.);gl_Position=projectionMatrix*p;}`,
@@ -36,5 +40,10 @@ export function goalCannons(scene:T.Scene,line:number){
   const plume=new T.Mesh(plane,material);plume.position.set(x,.47,z);plume.frustumCulled=false;effects.add(plume)
  }
  effects.visible=false
- return (seconds:number)=>{effects.visible=seconds>=0&&seconds<7;age.value=seconds}
+ return (seconds:number,color:T.Color)=>{
+  effects.visible=seconds>=0&&seconds<(coloredSmoke?10.54:7)
+  if(!effects.visible)return
+  age.value=seconds
+  for(const update of clouds)update(seconds,color)
+ }
 }

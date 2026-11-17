@@ -1,5 +1,6 @@
 import burnersCrest from './art/ground/crest.png?url'
 import orangeKit from './art/kits/orange-slices.webp?url'
+import onsiderKit from './art/kits/onsider-trading-fc.webp?url'
 import whiffKit from './art/kits/whiff-city-fc.webp?url'
 import dancersKit from './art/kits/goal-dancers-fc.webp?url'
 import wondersKit from './art/kits/one-kick-wonders.webp?url'
@@ -15,10 +16,11 @@ import whiffCrest from './art/ground/whiff-city-fc.png?url'
 import puffsCrest from './art/ground/peachy-puffs.png?url'
 import starsCrest from './art/ground/shooting-stars.png?url'
 import orangeCrest from './art/ground/orange-slices-crest.png?url'
+import onsiderCrest from './art/ground/onsider-trading-fc.png?url'
 
 type Opponent = {
   name: string
-  stars: 1 | 2 | 3 | 4 | 5
+  stars: 1 | 2 | 2.5 | 3 | 3.5 | 4 | 5
   role: string
   kit: string
   kitArt: string
@@ -47,7 +49,7 @@ export const opponentLadder = [
   }, {
     name:'Inter Your Mom', stars:3, role:'The wildcard', kit:'Black with tonal diagonal stripes', crest:interCrest, kitArt:interKit,
     record:{wins:1, draws:1, losses:1, goalsFor:6, goalsAgainst:8},
-    keeper:'Morgan', outfield:['Kieran','Jasper','Freya','Ada','Miles','Ruben'], bench:['Holly','Alex','Isaac','Gemma']
+    keeper:'Morgan', outfield:['Kieran','Jasper','Freya','Ada','Miles','Ruben'], bench:['Holly','Alex','Isaac','Nora']
   }, {
     name:'Whiff City FC', stars:4, role:'The grudge match', kit:'Light blue with navy trim', crest:whiffCrest, kitArt:whiffKit,
     record:{wins:1, draws:0, losses:3, goalsFor:5, goalsAgainst:9},
@@ -69,6 +71,13 @@ export const alternateOpponent: Opponent = {
   keeper:'Drew', outfield:['Finn','Zane','Blake','Omar','Inez','Rory'], bench:['Asha','Hugo','Nell','Eli']
 }
 
+// Extra Kick Off club. Career seasons currently use a fixed eight-club bracket.
+export const onsiderTrading: Opponent = {
+  name:'Onsider Trading FC', stars:3.5, role:'The higher division challengers', kit:'Forest green with gold trim', crest:onsiderCrest, kitArt:onsiderKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Ledger', outfield:['Brooks','Sterling','Margo','Graham','Penny','Miles'], bench:['Ellis','Sloane','Reid','Harper']
+}
+
 export const burners = {
   name:'Turf Burners FC', crest:burnersCrest, stars:3, keeper:'Sean',
   outfield:['Meghan','Pam','Jan','Mandy','Jeremy','Chris'], bench:['Stubbs','José','Steven','Daniel']
@@ -87,4 +96,4 @@ const accents = [
   "#9dce90",
   "#f1529d",
 ];
-export function clubAccent(club:Club){return club.name===alternateOpponent.name?"#d68955":accents[clubs.indexOf(club)]}
+export function clubAccent(club:Club){return club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}

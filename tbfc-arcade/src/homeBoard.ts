@@ -1,6 +1,5 @@
 import * as T from 'three'
-import {burners,type Club} from './opponentSquads'
-import original from './art/ground/tbfc-board.png?url'
+import {clubAccent,type Club} from './opponentSquads'
 import vortex from './art/ground/board-vortex.png?url'
 
 // Vortex highlight, lettering and outer stroke, in that order.
@@ -12,15 +11,15 @@ const inks:Record<string,[string,string,string]>={
  'Whiff City FC':['#4586ca','#071326','#a8dcff'],
  'Peachy Puffs':['#87bb70','#102518','#ffccba'],
  'Shooting Stars FC':['#fa328b','#200a19','#ffacd6'],
+ 'Onsider Trading FC':['#0b7942','#fff4ca','#e2b52b'],
 }
 
 export async function homeBoard(loader:T.TextureLoader,club:Club){
- if(club===burners)return loader.loadAsync(original)
  const [pattern,badge]=await Promise.all([loader.loadAsync(vortex),loader.loadAsync(club.crest),document.fonts.load('95px Upheaval')])
  const canvas=document.createElement('canvas')
  canvas.width=1024;canvas.height=128
  const ctx=canvas.getContext('2d')!
- const [highlight,fill,stroke]=inks[club.name]
+ const [highlight,fill,stroke]=inks[club.name]??[clubAccent(club),'#fff5df',clubAccent(club)]
  const rgb=[1,3,5].map(i=>parseInt(highlight.slice(i,i+2),16))
  const image=pattern.image
  const scale=Math.max(1024/image.width,128/image.height)

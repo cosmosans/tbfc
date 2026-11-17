@@ -16,7 +16,7 @@ export type KeeperPose='ready'|'shuffleLeft'|'shuffleRight'|'diveLeft'|'diveRigh
 type Arena={scene:T.Scene,camera:T.PerspectiveCamera,renderer:T.WebGLRenderer,ball:T.Sprite,
  teams:[Actor[],Actor[]],keepers:[Actor,Actor],names:[string,string],level:number,
  rating:(actor:Actor,keeping:boolean)=>number,render:(dt:number)=>void,net:(p:T.Vector3,power:number)=>void,
- fire:(seconds:number)=>void,dissolve:()=>void,test:boolean,finish:(kicks:Kick[])=>void}
+ fire:(seconds:number,side:Side)=>void,dissolve:()=>void,test:boolean,finish:(kicks:Kick[])=>void}
 const clamp=T.MathUtils.clamp
 function frame(actor:Actor,mode:number,column:number,row:number){
  const map=actor.maps[mode],cols=mode===2?7:mode===1?actor.runFrames:8
@@ -160,7 +160,7 @@ export function playPenalties(a:Arena){
     if(index>=0)watcher.actor.sprite.position.z=(side===0?-1:1)*(3.8+1.28*index)
    }
   }else if(cut===4){
-   cut=-1;a.fire(-1);skip.hidden=true;nextRunner=null
+   cut=-1;a.fire(-1,side);skip.hidden=true;nextRunner=null
    if(shootout(kicks,first).winner===null)begin();else actions()
    held=true
   }
@@ -168,7 +168,7 @@ export function playPenalties(a:Arena){
  function playCut(dt:number){
   cutAge+=dt
   if(cut===0){
-   a.fire(cutAge);kicker.sprite.position.x-=8*dt
+   a.fire(cutAge,side);kicker.sprite.position.x-=8*dt
    frame(kicker,1,Math.floor(cutAge*12),faceFor(-1,0))
    p.addScaledVector(goalVelocity,dt)
    if(p.x>=22.05&&goalVelocity.x>0){a.net(p,power);goalVelocity.set(-.4,-.5,0)}
@@ -194,10 +194,10 @@ export function playPenalties(a:Arena){
    const saved=kicks.at(-1)?.outcome==='Save'
    if(saved&&t>=goalTime&&(cutAge-dt)*.72<goalTime)audio.play('post',.85)
    if(!saved&&after){p.x=Math.min(22.05,p.x+after*5);kicker.sprite.position.x-=after*8;frame(kicker,1,Math.floor(after*12),faceFor(-1,0))}
-   a.fire(!saved&&t>=goalTime?after:-1)
+   a.fire(!saved&&t>=goalTime?after:-1,side)
    if(t>=goalTime+.65)advanceCut()
   }else{
-   a.fire(-1);a.camera.position.set(5,10,22);a.camera.lookAt(6,0,0)
+   a.fire(-1,side);a.camera.position.set(5,10,22);a.camera.lookAt(6,0,0)
    const f=clamp(cutAge/3,0,1)
    kicker.sprite.position.lerpVectors(returnFrom,returnTo,f)
    frame(kicker,1,Math.floor(cutAge*10),faceFor(returnTo.x-returnFrom.x,returnTo.z-returnFrom.z))
@@ -266,7 +266,7 @@ export function playPenalties(a:Arena){
   status.textContent=outcome==='Goal'?'GOAL!':outcome==='Save'?'SAVED!':outcome==='Woodwork'?'OFF THE FRAME!':'MISS!'
   if(outcome==='Goal'){
    pose='concede';audio.goalFire();goalTime=recordTime;sample()
-   cut=0;cutAge=0;goalVelocity.copy(velocity).multiplyScalar(.55);meter.hidden=true;reticle.visible=false;skip.hidden=false;a.fire(0)
+   cut=0;cutAge=0;goalVelocity.copy(velocity).multiplyScalar(.55);meter.hidden=true;reticle.visible=false;skip.hidden=false;a.fire(0,side)
   }
   else{
    audio.nearGoal()

@@ -30,6 +30,9 @@
 .pause-score strong{font:clamp(36px,7vw,56px) Upheaval,monospace}.pause-score small{font:15px Oxanium,sans-serif}.pause-menu button{font:19px Upheaval,monospace}
 
 .full-time:not(.watching){background:#181310da}.full-time:not(.watching)::backdrop{background:#0003}
+.full-time .ft-heading{margin:0;padding:14px 0 18px;text-align:center;color:#ffb379;font:clamp(34px,5vw,56px)/1 Upheaval,monospace}
+.full-time .ft-legend{margin-top:0;padding:14px 0 0;font-size:14px}
+.full-time.watching .ft-heading,.full-time.watching .ft-legend{display:none}
 .full-time.watching{overflow:visible}
 @media(min-width:680px){
  .full-time .ft-scorers ul{columns:2;column-gap:8px}
@@ -43,3 +46,18 @@
 .stat-edge.away{left:50%;color:var(--stat-away)}
 
 .pause-score .pause-clock{font:600 13px/1 Oxanium,sans-serif;font-variant-numeric:tabular-nums;text-align:center}
+
+/* Keep the summary's controls outside its outlined stats panel. */
+.career-whistle.full-time{width:min(800px,94vw);max-height:100dvh;overflow:visible;padding:0;border:0;background:transparent}
+.full-time .ft-panel{box-sizing:border-box;max-height:calc(92dvh - 74px);overflow:auto;padding:20px;border:2px solid #c27942;background:#181310da}
+.full-time .ft-legend{position:fixed;left:50%;bottom:max(2%,env(safe-area-inset-bottom));transform:translateX(-50%);width:max-content;max-width:96vw;padding:0;margin:0;gap:8px 24px}
+.full-time .ft-legend button{padding:0;margin:0;border:0;background:transparent;color:#ffe5c9;font:16px Oxanium,system-ui;text-shadow:0 2px 3px #000}
+.full-time .ft-legend button:focus-visible{outline:2px solid #ffad63;outline-offset:4px}
+.full-time .ft-legend button[hidden]{display:none}
+.career-whistle.full-time.watching{inset:auto 0 2%;width:max-content;max-width:94vw;padding:0;background:transparent}
+.full-time.watching .ft-panel{display:none}
+.full-time.watching .ft-legend{display:flex;padding:0}
+.ft-footage .career-caption{display:flex;align-items:center;gap:8px;max-width:90%;font-size:clamp(14px,2.5vw,22px)}
+.ft-footage .career-caption[hidden]{display:none}
+.career-caption-face{display:inline-block;flex:none;width:32px;height:32px;background-size:800% 100%;background-position:left center;background-repeat:no-repeat;image-rendering:pixelated}
+.career-caption-face img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:pixelated}

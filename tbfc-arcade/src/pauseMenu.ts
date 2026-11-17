@@ -2,7 +2,7 @@ import type {Club} from './opponentSquads'
 import {menuDirection,menuPad} from './menuPad'
 import {hint,reveal} from './screenUI'
 
-type Choice='resume'|'squad'|'simulate'|'quit'
+type Choice='resume'|'squad'|'sides'|'simulate'|'quit'
 export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false):Promise<Choice>{
  const dialog=document.createElement('dialog')
  dialog.className='career-whistle pause-menu';dialog.setAttribute('aria-label',practice?'Practice Paused':'Match Paused')
@@ -18,7 +18,7 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
   function draw(){
    section.innerHTML=confirming?
     '<h3>Simulate Rest of Match?</h3><p>The AI will finish both teams’ remaining time. Your score and match events will count, and the final result will be saved before returning to Central.</p>'+button('back','Keep Playing')+button('simulate','Simulate Rest of Match'):
-    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match'):'')+(canSub?button('squad','Substitutions'):'')+button('resume',practice?'Resume Practice':'Resume Match')
+    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match')+button('sides','Side Select · Play or Spectate'):'')+(canSub?button('squad','Substitutions'):'')+button('resume',practice?'Resume Practice':'Resume Match')
    section.insertAdjacentHTML('beforeend',`<p>${hint('Esc','Menu')} Resume　${hint('Esc','B')} Back　${hint('Enter','A')} Select</p>`)
    section.querySelector<HTMLButtonElement>(confirming?'[data-choice=back]':'[data-choice=resume]')!.focus()
   }

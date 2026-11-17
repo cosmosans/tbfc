@@ -1,3 +1,4 @@
+import {millBoards,millBankAim,millContact,planMillBank} from './millBoards'
 import {CurveGesture,type CurveStrike} from './burnCurve'
 import './menuScale'
 import {playPenalties} from './penaltyArena'
@@ -7,6 +8,8 @@ import {costumeSmoke} from './costumeSmoke'
 import meghanGoalUrl from './art/meghan-hockey-goal.png?url'
 import meghanSkateUrl from './art/meghan-skate.png?url'
 import nelsonGoalUrl from './art/nelson-goal.png?url'
+import nelsonGoalRunUrl from './art/nelson-goal-run.png?url'
+import nelsonGoalSupportUrl from './art/nelson-goal-support.png?url'
 import janGoalUrl from './art/jan-goal.png?url'
 import stevenGoalRunUrl from './art/steven-goal-run.png?url'
 import stevenGoalGroupUrl from './art/steven-goal-group.png?url'
@@ -14,6 +17,7 @@ import pamSkateGoalUrl from './art/pam-skate-goal.png?url'
 import joseOverheadUrl from './art/jose-overhead.png?url'
 import joseTackleUrl from './art/jose-tackle.png?url'
 import joseReactionUrl from './art/jose-reaction.png?url'
+import joseReactionFlashUrl from './art/jose-reaction-flash.png?url'
 import joseHeaderUrl from './art/jose-header.png?url'
 import nadiaGoalGroupUrl from './art/nadia-goal-group.png?url'
 import danielGoalGroupUrl from './art/daniel-goal-group.png?url'
@@ -52,8 +56,11 @@ import nadiaKick from './art/nadia-side-kicks.png?url'
 import nadiaFall from './art/nadia-fall.png?url'
 import nelsonIdle from './art/nelson-idle.png?url'
 import nelsonRun from './art/nelson-run.png?url'
-import nelsonKick from './art/nelson-side-kicks.png?url'
-import nelsonFall from './art/nelson-fall.png?url'
+import nelsonKick from './art/nelson-kick.png?url'
+import nelsonFall from './art/nelson-foul.png?url'
+import nelsonJump from './art/nelson-jump.png?url'
+import nelsonTackle from './art/nelson-tackle.png?url'
+import nelsonReaction from './art/nelson-reaction.png?url'
 import stubbsFall from './art/stubbs-fall.png?url'
 import meghanFall from './art/meghan-fall.png?url'
 import chrisFall from './art/chris-fall.png?url'
@@ -68,7 +75,7 @@ import {rivalSprites} from './rivalSprites'
 import {clubAccent,burners,clubs,type Club,type Fixture} from './opponentSquads'
 import {selectSides,playerColor,type Seat} from './sideSelect'
 import {selectTeams} from './teamSelect'
-import {menuDirection,menuPad} from './menuPad'
+import {menuPad} from './menuPad'
 import type {Selection} from './lineup'
 import trainingIdle from './art/blue-chris-idle.png?url'
 import trainingRun from './art/blue-chris-run.png?url'
@@ -120,7 +127,7 @@ import burnerKeeperDiveRearUrl from './art/sean-keeper-dive.png?url'
 import stubbsIdle from './art/stubbs-idle.png?url'
 import stubbsRun from './art/stubbs-run.png?url'
 import {rivalWomen} from './rivalRoster'
-import {homeStadium,selectStadium,type StadiumId} from './stadiumSelect'
+import {homeStadium,randomStadium,selectStadium,stadiumName,type StadiumId} from './stadiumSelect'
 import { buildGrounds } from './grounds'
 import { createGoal } from './goal'
 import keeperImage from './art/practice-keeper.png?url'
@@ -139,6 +146,9 @@ import chris_idle from './art/chris-idle.png?url'
 import chris_run from './art/chris-run.png?url'
 import meghan_idle from './art/meghan-pixellab-idle.png?url'
 import meghan_run from './art/meghan-pixellab-run.png?url'
+const interMaleGoalUrls=import.meta.glob<string>('./art/inter-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
+const peachMaleGoalUrls=import.meta.glob<string>('./art/peach-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
+const starsMaleGoalUrls=import.meta.glob<string>('./art/ss-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
 const uiFont = new FontFace('Oxanium', 'url(' + oxaniumUrl + ')', {weight:'200 800', display:'swap'})
 document.fonts.add(uiFont)
 void uiFont.load()
@@ -149,7 +159,7 @@ void hudFont.load()
 const el=(id:string)=>document.getElementById(id)!
 async function start(){
  const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chris_idle,chris_run,chrisSideKicks],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
- const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisFall,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction}
+ const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisFall,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall}
  const settings=defaultSettings()
  const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
@@ -161,6 +171,8 @@ async function start(){
  const kickOffSettings:typeof settings={...settings,time:'Night'}
  let kickOffVenue:StadiumId|null=null
  let curveLab=false
+ let mill=false
+ let topdeck=false
  let westend=false
  let southside=false
  let eastside=false
@@ -201,6 +213,9 @@ async function start(){
     if(!ticket){destination=await mainMenu(music);continue}
     fixture=ticket.fixture;lineup=ticket.lineup
     portraits=Object.fromEntries([...lineup.starters,...lineup.bench].map(n=>[n,burnerPortraits[n]]))
+    seats=await selectSides(fixture,-1)
+    if(!seats){resume=ticket.slot;ticket=null;destination='career';continue}
+    kickOffVenue=randomStadium()
     break
    }
    if(destination==='simulate'){
@@ -223,15 +238,17 @@ async function start(){
     lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[]}
     break
    }
-   if(destination==='practice'||destination==='westendTest'||destination==='southsideTest'||destination==='eastsideTest'||destination==='stadiumTest'||destination==='curveLab'){
+   if(destination==='practice'||destination==='stadiumTest'||destination==='curveLab'){
     curveLab=destination==='curveLab'
-    westend=destination==='westendTest'
-    southside=destination==='southsideTest'
-    eastside=destination==='eastsideTest'
-    stadiumTest=westend||southside||eastside||destination==='stadiumTest'
-    if(stadiumTest)settings.time='Evening'
+    stadiumTest=destination==='stadiumTest'
+    if(stadiumTest){
+     const selected=await selectStadium()
+     if(!selected){destination=await mainMenu(music,false,undefined,'debug');continue}
+     mill=selected==='mill';topdeck=selected==='topdeck';westend=selected==='westend';southside=selected==='southside';eastside=selected==='eastside'
+     settings.time='Evening'
+    }
     history.replaceState({...history.state,practiceMenu:false},'')
-    const choice=curveLab?{drill:freeDrill,names:['José']}:stadiumTest?{drill:freeDrill,names:westend||southside?['José']:['Pam','José']}:await practiceMenu(burnerPortraits)
+    const choice=curveLab?{drill:freeDrill,names:['José']}:stadiumTest?{drill:freeDrill,names:topdeck||westend||southside?['José']:['Pam','José']}:await practiceMenu(burnerPortraits)
     if(!choice){destination=await mainMenu(music);continue}
     selectedDrill=choice.drill;practiceNames=choice.names;standalonePractice=true;fixture={home:burners,away:clubs[clubs.length-1]};lineup={shape:'1-3-3',starters:[...burners.outfield,burners.keeper],bench:[...burners.bench],warmup:true};break}
    const selected=await selectTeams(fixture)
@@ -265,7 +282,7 @@ async function start(){
  function trainingFactor(name:string,stat:Attribute){
   return ticket&&name===ticket.career.player?1+(gains.get(stat)??0)*.01:1
  }
- const aiHome=broadcast||simulation||!!seats&&!seats.some(s=>s.side===-1)
+ let aiHome=broadcast||simulation||!!seats&&!seats.some(s=>s.side===-1)
  const {home,away:matchOpponent}=fixture
  const homeLabel=home===burners?'TBFC':home.name
  const freePractice=selectedDrill===freeDrill
@@ -285,6 +302,7 @@ async function start(){
  const screenUp=new T.Vector3(0,1,0)
  const sprintSeconds=2, rechargeSeconds=8, capacityLossPerSecond=2.1, exhaustedLossPerSecond=10
  const kickPoseTimes=[0,.06,.12,.18,.25,.34,.44]
+ const eightKickPoseTimes=[0,.05,.10,.15,.21,.27,.34,.42]
  const joseKickPoseTimes=[0,.05,.10,.15,.21,.27,.33,.39,.45]
  const kickAnimationSeconds=.56
  const headerAnimationSeconds=.56
@@ -295,27 +313,40 @@ async function start(){
   mesh.position.set(x,y,z);scene.add(mesh);return mesh
  }
  if(!standalonePractice&&!celebrationLab&&!curveLab){
-  const assigned=seats!==null?kickOffVenue:homeStadium(home.name)
-  westend=assigned==='westend';eastside=assigned==='eastside';southside=assigned==='southside'
+  const assigned=broadcast?randomStadium():seats!==null?kickOffVenue:homeStadium(home.name)
+  mill=assigned==='mill';topdeck=assigned==='topdeck';westend=assigned==='westend';eastside=assigned==='eastside';southside=assigned==='southside'
  }
- const schoolGround=stadiumTest||seats!==null||eastside||southside||westend
- const venue=westend?'westend':southside?'southside':eastside?'eastside':schoolGround?'school':'standard'
- const venueName=westend?'Station Soccer West End':southside?'Southside Diamond':eastside?'Eastside Commons':'High School Track'
- const {updateTrain,updateWeather,advanceStadiumBall,setSchoolNight}=await buildGrounds(scene,renderer,settings,standalonePractice||celebrationLab?null:matchOpponent,venue)
+ const schoolGround=broadcast||stadiumTest||seats!==null||eastside||southside||westend
+ const venue=mill?'mill':topdeck?'topdeck':westend?'westend':southside?'southside':eastside?'eastside':schoolGround?'school':'standard'
+ const venueName=stadiumName(venue==='standard'?'school':venue)
+ const runX=mill?millBoards.x-.78:20.7
+ const runNorth=mill?millBoards.north+.53:-11.7,runSouth=mill?millBoards.south-.53:11.7
+ function outsidePitch(){
+  if(mill)return Math.abs(ball.position.x)>fieldX&&Math.abs(ball.position.z)<2
+  return Math.abs(ball.position.x)>fieldX||Math.abs(ball.position.z)>fieldZ
+ }
+ const {updateTrain,updateWeather,advanceStadiumBall,setSchoolNight}=await buildGrounds(scene,renderer,settings,standalonePractice||celebrationLab?null:home,venue,matchOpponent)
  if(stadiumTest&&(venue==='school'||venue==='westend'))setSchoolNight!(true)
- const lines=0xb8d9b1
- for(const z of [-fieldZ,fieldZ])box(0,.01,z,42,.02,.07,lines)
- for(const x of [-fieldX,0,fieldX])box(x,.01,0,.07,.02,24,lines)
- for(const sign of [-1,1]){
-  for(const z of [-4.6,4.6])box(sign*18.8,.02,z,4.4,.02,.07,lines)
-  box(sign*16.6,.02,0,.07,.02,9.2,lines)
-  if(sign===1)box(fieldX,.025,0,.12,.02,4,0xffebad)
+ // Top Deck and Southside carry their weathered markings on the ground material.
+ if(!topdeck&&!southside){
+  const lines=mill?0xe7e3d7:0xb8d9b1
+  for(const z of [-fieldZ,fieldZ])box(0,.01,z,42,.02,.07,lines)
+  for(const x of [-fieldX,0,fieldX])box(x,.01,0,.07,.02,24,lines)
+  for(const sign of [-1,1]){
+   for(const z of [-4.6,4.6])box(sign*18.8,.02,z,4.4,.02,.07,lines)
+   box(sign*16.6,.02,0,.07,.02,9.2,lines)
+   if(sign===1)box(fieldX,.025,0,.12,.02,4,0xffebad)
+  }
+  const circle=new T.Mesh(new T.RingGeometry(2.9,2.97,64),new T.MeshBasicMaterial({color:lines,side:T.DoubleSide}));circle.rotation.x=-Math.PI/2;circle.position.y=.035;scene.add(circle)
  }
  const makeCannons=stadiumTest?()=> (_time:number)=>{}:goalCannons
- const westCannons=makeCannons(scene,-fieldX),eastCannons=makeCannons(scene,fieldX)
+ const coloredSmoke=venue==='topdeck'||venue==='westend'
+ const goalColors=[home,matchOpponent].map(club=>new T.Color(clubAccent(club)))
+ const westCannons=makeCannons(scene,-fieldX,coloredSmoke),eastCannons=makeCannons(scene,fieldX,coloredSmoke)
+ let scoringColor=goalColors[0]
  let fireEnd=0
  function showGoalFire(time:number){
-  westCannons(fireEnd===-1?time:-1);eastCannons(fireEnd===1?time:-1)
+  westCannons(fireEnd===-1?time:-1,scoringColor);eastCannons(fireEnd===1?time:-1,scoringColor)
  }
  const matchView=renderer.domElement.parentElement!
  const freezeFrame=document.createElement('canvas')
@@ -352,7 +383,6 @@ async function start(){
  const aerialRecovery=new WeakSet<object>()
  let shotDirection=1
  let netTravel=false
- const circle=new T.Mesh(new T.RingGeometry(2.9,2.97,64),new T.MeshBasicMaterial({color:lines,side:T.DoubleSide}));circle.rotation.x=-Math.PI/2;circle.position.y=.035;scene.add(circle)
  async function createPlayer(name:string, displayName:string, urls:string[], runRows=8, frameSeconds=0, westKickRow=3, jumpUrl?:string, tackleUrl?:string, reactionUrl?:string, reactionFlashUrl?:string){
   const maps=await Promise.all(urls.map(async url=>{
   const tex=await new T.TextureLoader().loadAsync(url);tex.magFilter=tex.minFilter=T.NearestFilter;tex.generateMipmaps=false;tex.colorSpace=T.SRGBColorSpace;
@@ -360,7 +390,23 @@ async function start(){
   return tex
  }))
 
-  const [jumpMap,tackleMap,reactionMap,reactionFlashMap]=await Promise.all([jumpUrl,tackleUrl,reactionUrl,reactionFlashUrl].map(url=>url?new T.TextureLoader().loadAsync(url):Promise.resolve(undefined)))
+  const [jumpMap,tackleMap,reactionMap,suppliedReactionFlash]=await Promise.all([jumpUrl,tackleUrl,reactionUrl,reactionFlashUrl].map(url=>url?new T.TextureLoader().loadAsync(url):Promise.resolve(undefined)))
+  let reactionFlashMap=suppliedReactionFlash
+  if(reactionMap&&!reactionFlashMap){
+   const image=reactionMap.image as HTMLImageElement
+   const canvas=document.createElement('canvas')
+   canvas.width=image.width;canvas.height=image.height
+   const ctx=canvas.getContext('2d')!
+   ctx.drawImage(image,0,0)
+   const pixels=ctx.getImageData(0,0,canvas.width,canvas.height)
+   for(let i=0;i<pixels.data.length;i+=4)if(pixels.data[i+3]){
+    pixels.data[i]=255-pixels.data[i]
+    pixels.data[i+1]=255-pixels.data[i+1]
+    pixels.data[i+2]=255-pixels.data[i+2]
+   }
+   ctx.putImageData(pixels,0,0)
+   reactionFlashMap=new T.CanvasTexture(canvas)
+  }
   for(const map of [jumpMap,tackleMap,reactionMap,reactionFlashMap])if(map){map.magFilter=map.minFilter=T.NearestFilter;map.generateMipmaps=false;map.colorSpace=T.SRGBColorSpace}
   // Measure the front idle pose without its transparent cell padding.
   const idle=maps[0],size=idle.image.height,measure=document.createElement('canvas')
@@ -402,16 +448,27 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,undefined,name==='José'?joseTackleUrl:undefined,name==='José'?joseReactionUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
  const keeperSheets=[tealIdle,trainingRun,tealKick,rivalKeeperFall]
- function makeRival(club:Club,name:string,fallback:string[]){
+ const fleetCelebrations=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
+ async function makeRival(club:Club,name:string,fallback:string[]){
   const art=rivalSprites(club,name)
   const fall=art?.foul??fallback[3]
   const sheets=art?[art.idle,art.run??fallback[1],art.kick??fallback[2],...(fall?[fall]:[])]:fallback
-  return createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
+  const actor=await createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
+  if(art?.stand&&art.support){
+   const [stand,support]=await Promise.all([art.stand,art.support].map(celebrationSheet))
+   const run=actor.maps[1].clone()
+   for(const map of [run,stand,support]){
+    map.userData.directionalCelebration=true
+    map.repeat.set(48/map.image.width,1/8)
+   }
+   fleetCelebrations.set(actor.maps[0],{run,stand,support})
+  }
+  return actor
  }
  const makeHomePlayer=(name:string)=>home===burners?makeBurner(name):makeRival(home,name,name===home.keeper?keeperSheets:trainingSheets)
  // Parked teammates are scenery and stay outside the match actor lists.
@@ -563,6 +620,7 @@ async function start(){
   m.node.style.setProperty('--burn',String(m.value/100))
   m.node.setAttribute('aria-valuenow',String(m.value))
   m.node.toggleAttribute('data-on-fire',m.value===100)
+  scoreboard.toggleAttribute(side===0?'data-burn-home':'data-burn-away',m.value===100)
  }
  function resetBurn(side?:number){
   for(const i of side===undefined?[0,1]:[side]){
@@ -573,7 +631,7 @@ async function start(){
   const m=meters[side]
   if(!burnEnabled||crossingDrill||m.value===100||!delta)return
   m.value=T.MathUtils.clamp(m.value+delta,0,100)
-  if(m.value===100)m.seconds=20
+  if(m.value===100){m.seconds=20;audio.play('burnReady',.5)}
   renderBurn(side)
  }
  resetBurn()
@@ -603,7 +661,7 @@ async function start(){
   const goalEnd=Math.abs(ball.position.x)>fieldX?Math.sign(ball.position.x):0
   const corner=!!goalEnd&&(goalEnd===attackSign?lastBlue:!lastBlue)
   lastDelivery=null;homePasser=''
-  if(ticket&&corner)facts.corners[lastBlue?0:1]++
+  if(corner)facts.corners[lastBlue?0:1]++
   outBall={remaining:stadiumTest?5:freePractice?2:.95,goalEnd,spot:ball.position.clone(),blueRestart:!lastBlue,corner}
   outVelocity.set(dx,dy,dz)
   cancelCharge();endFollowUpRuns();clearPassCall();perfectPass=false
@@ -656,10 +714,10 @@ async function start(){
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
-  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl,chrisGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
+ const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
+  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl,chrisGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
- for(const map of [stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
  const [pamHeader,joseHeader]=await Promise.all([pamHeaderUrl,joseHeaderUrl].map(celebrationSheet))
  pamHeader.repeat.set(1/9,1/8);joseHeader.repeat.set(1/9,1/8)
@@ -672,7 +730,52 @@ async function start(){
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
  const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
+ function supportMap(actor:typeof sean){
+  const source=fleetCelebrations.get(actor.maps[0])?.support??groupCelebrations[actor.displayName]
+  if(!source)return undefined
+  const current=supportMaps.get(actor)
+  if(current?.source===source)return current.map
+  current?.map.dispose()
+  const map=source.clone();map.needsUpdate=true
+  supportMaps.set(actor,{source,map})
+  return map
+ }
+ const interMaleGoals:Partial<Record<string,{run:T.Texture,stand:T.Texture,support:T.Texture}>>={}
+ const peachMaleGoals:Partial<Record<string,{run:T.Texture,stand:T.Texture,support:T.Texture}>>={}
+ const starsMaleGoals:Partial<Record<string,{run:T.Texture,stand:T.Texture,support:T.Texture}>>={}
+ if(home.name==='Inter Your Mom'||matchOpponent.name==='Inter Your Mom'){
+  await Promise.all(['Kieran','Jasper','Miles','Ruben','Alex','Isaac'].map(async name=>{
+   const files=['run','stand','support'].map(action=>interMaleGoalUrls[`./art/inter-${name.toLowerCase()}-goal-${action}.png`])
+   if(files.some(file=>!file))return
+   const [run,stand,support]=await Promise.all(files.map(celebrationSheet))
+   for(const map of [run,stand,support]){map.userData.cell=64;map.userData.directionalCelebration=true;map.repeat.set(64/map.image.width,1/8)}
+   interMaleGoals[name]={run,stand,support}
+   groupCelebrations[name]=support
+  }))
+ }
+ if(home.name==='Peachy Puffs'||matchOpponent.name==='Peachy Puffs'){
+  await Promise.all(['Silas','Emery','Dario','Tariq','Felix','Max'].map(async name=>{
+   const variant=name==='Silas'?'dario':name.toLowerCase()
+   const files=['run','stand','support'].map(action=>peachMaleGoalUrls[`./art/peach-${variant}-goal-${action}.png`])
+   if(files.some(file=>!file))return
+   const [run,stand,support]=await Promise.all(files.map(celebrationSheet))
+   for(const map of [run,stand,support]){map.userData.cell=48;map.userData.directionalCelebration=true;map.repeat.set(48/map.image.width,1/8)}
+   peachMaleGoals[name]={run,stand,support}
+   groupCelebrations[name]=support
+  }))
+ }
+ if(home.name==='Shooting Stars FC'||matchOpponent.name==='Shooting Stars FC'){
+  await Promise.all(['Malik','Riley','Andre','Leo','Kai','Rowan'].map(async name=>{
+   const files=['run','stand','support'].map(action=>starsMaleGoalUrls[`./art/ss-${name.toLowerCase()}-goal-${action}.png`])
+   if(files.some(file=>!file))return
+   const [run,stand,support]=await Promise.all(files.map(celebrationSheet))
+   for(const map of [run,stand,support]){map.userData.cell=48;map.userData.directionalCelebration=true;map.repeat.set(48/map.image.width,1/8)}
+   starsMaleGoals[name]={run,stand,support}
+   groupCelebrations[name]=support
+  }))
+ }
  const costumeChange=costumeSmoke(scene)
  const costumeRevealTime=.20
  let costumeReveal=false
@@ -688,7 +791,7 @@ async function start(){
  const frontRow=new Set<typeof sean>()
  let scorer:typeof sean|null=null,goalAge=0
  let celebrant:typeof sean|null=null
- let walks:{actor:typeof sean,target:T.Vector3,gather:boolean}[]=[]
+ let walks:{actor:typeof sean,target:T.Vector3,gather:boolean,speed:number,delay:number,phase:number}[]=[]
  let celebrating=false
  const goalBanner=el('goalBanner'),replayPanel=el('replayPanel')
  function clearReplay(){
@@ -803,13 +906,13 @@ async function start(){
  }
  function press(action:Action,source:string){
   if(blastShooter)return
-  if(players[active]?.reactionTime>0)return
   if(!broadcast)audio.unlock()
   if(crossingDrill&&(bins.flying||repReset>=0||training.count===5))return
   if(replay.cut>=0&&action==='pass'){
    if(!paused&&!replay.nextAngle())reset(shotDirection===attackSign,true)
    return
   }
+  if(players[active]?.reactionTime>0)return
   if(freeKick&&(freeKick.blue||freeKick.wait>0))return
   if(celebrating||replay.cut>=0||phase==='halftime'||phase==='fulltime'||phase==='kickoff'&&(kickoffBlue||action==='shot'))return
   if(!paused&&action==='through'&&!held&&!inFlight){rushSource=source;return}
@@ -1168,9 +1271,9 @@ async function start(){
   const spot=victim.sprite.position.clone();spot.y=restingHeight
   const taker=team.indexOf(victim)
   lastDelivery=null;homePasser=''
-  if(ticket)facts.fouls[blue?0:1]++
+  facts.fouls[blue?0:1]++
   lateChallenge(offender)
-  if(ticket&&offender.lateChallenges===3)facts.yellow[blue?0:1]++
+  if(offender.lateChallenges===3)facts.yellow[blue?0:1]++
   audio.play('whistle',.72)
   if(offender.lateChallenges===3){cardScene={offender,time:0,start:replay.time};offender.sprite.visible=true}
   phase='freeKick';freeKick={spot,blue,taker,victimName:victim.displayName,fallAge:0,wait:offender.penalty?2.1:1}
@@ -1318,7 +1421,7 @@ async function start(){
  }
  function keeperTouch(){
   if(shot&&shotDirection!==attackSign)audio.nearGoal()
-  if(ticket&&shot&&shotDirection!==attackSign){careerShots[1]++;onTarget[1]++}
+  if(shot&&shotDirection!==attackSign){careerShots[1]++;onTarget[1]++}
   lastDelivery=null;homePasser=''
   const power=puntHold?heldPower(puntHold.start):puntPower
   cancelRush();cancelCharge();endFollowUpRuns()
@@ -1364,6 +1467,46 @@ async function start(){
   reboundVY=power>=.5?6+5*power:0
   clearanceLoose=struckLoose=true;held=inFlight=false;shot=null
  }
+ const nextCpuBank=[0,0]
+ let bankReceiver:typeof sean|null=null
+ let bankWindow=0
+ function tryCpuBank(blue:boolean){
+  const side=Number(blue)
+  if(!mill||phase!=='play'||performance.now()<nextCpuBank[side]||Math.random()>=.25)return false
+  const team=blue?opponents:players,sender=team[blue?blueCarrier:active]
+  const defenders=(blue?players:opponents).filter(p=>!p.penalty).map(p=>p.sprite.position)
+  const clearance=Math.max(.85,difficulty().laneClearance)
+  let bestScore=-Infinity,choice=null
+  for(const mate of team){
+   if(mate===sender||mate.penalty||mate.age>=0||mate.reactionTime>0)continue
+   const to=mate.sprite.position
+   const route=planMillBank(ball.position,to,defenders,clearance)
+   if(!route)continue
+   const progress=(to.x-ball.position.x)*(blue?-attackSign:attackSign)
+   const score=.4*progress-.25*route.distance
+   if(score>bestScore){bestScore=score;choice={mate,route}}
+  }
+  if(!choice)return false
+  const {mate,route}=choice
+  launchBank(route.x-ball.position.x,route.z-ball.position.z,route.power,blue)
+  bankReceiver=mate;bankWindow=2.5
+  if(blue){recentKicker=team.indexOf(sender);lateTime=lateTackleWindow}
+  else{recentHomeKicker=sender;homeLateTime=lateTackleWindow}
+  nextCpuBank[side]=performance.now()+10000
+  return true
+ }
+ function launchBank(dx:number,dz:number,power:number,blue:boolean){
+  const sender=blue?opponents[blueCarrier]:players[active]
+  const index=blue?blueCarrier:active
+  clearPassCall();perfectPass=false;windupReceiver=-1;kickSpot=null;centerPass=false
+  lastBlue=blue;lastDelivery=null;homePasser=blue?'':sender.displayName
+  held=inFlight=false;clearanceLoose=struckLoose=true;curveRate=0;flightCurve=null
+  const speed=15+8*power,length=Math.hypot(dx,dz)
+  vx=speed*dx/length;vz=speed*dz/length;reboundVY=0
+  lastSender=blue?-1:index;blueCarrier=-1;bluePass=null;rollingPass=!blue
+  sender.face=facing(dx,dz);sender.shooting=true;sender.age=0
+  audio.kick(power)
+ }
  function kick(){
   const p=players[active]
   if(paused||p.age>=0||!held||ballPlayer!==active)return
@@ -1372,9 +1515,9 @@ async function start(){
  }
  function receivePass(collector:number,aerialFinish:boolean){
   const receiver=players[collector].displayName
-  if(ticket&&homePasser&&homePasser!==receiver&&(inFlight||rollingPass)){
+  if(homePasser&&homePasser!==receiver&&(inFlight||rollingPass)){
    facts.passes[0]++
-   if(homePasser===ticket.career.player)facts.personalPasses++
+   if(ticket&&homePasser===ticket.career.player)facts.personalPasses++
    lastDelivery={sender:homePasser,receiver}
   }
   homePasser=''
@@ -1406,7 +1549,7 @@ async function start(){
    }
    actor.age=.12;actor.shooting=true;shotMultiplier=1+intent.power
    if(style&&!freePractice&&!canBlast(actor)&&!(crossingDrill&&training.drill===aerialDrill)){
-    held=false;blastShooter=actor;aerialWindup=true;blastWindup=0
+    held=false;blastShooter=actor;aerialWindup=true;blastWindup=0;actor.age=0
    }else launchShot(actor)
   }else{
    carry()
@@ -1417,8 +1560,7 @@ async function start(){
   if(!blast&&canBlast(shooter)){
    shooter.face=facing(attackSign*fieldX-shooter.sprite.position.x,-shooter.sprite.position.z)
    held=false;inFlight=false;blastShooter=shooter;blastWindup=0
-   shooter.age=.065;shooter.shooting=true
-   audio.play('blast',.95)
+   shooter.age=0;shooter.shooting=true
    return
   }
   if(blast){shotMultiplier=blastMultiplier;impactTime=.08;blastFlying=true;if(aerial)audio.kick(1)}
@@ -1500,11 +1642,11 @@ async function start(){
   active=nearest
  }
  function tackleReaction(actor:typeof sean|undefined){
-  if(!actor?.reactionMap)return
+  if(!actor)return
   actor.reactionTime=.5;actor.age=-1;actor.tackling=false;actor.shooting=false;actor.moving=false;actor.sprintTime=0
  }
  function blueWins(index:number,reason:string){
-  if(reason.includes('TACKLE WON')&&held)tackleReaction(players[ballPlayer])
+  if((reason.includes('TACKLE WON')||reason==='SPRINT STRIP')&&held)tackleReaction(players[ballPlayer])
   lastDelivery=null;homePasser=''
   if(!lastBlue)changeBurn(-15)
   if(reason.includes('TACKLE WON')||reason==='INTERCEPTED')changeBurn(6,1)
@@ -1552,7 +1694,8 @@ async function start(){
    if(o.penalty||o.age>=0||o.reactionTime>0){o.moving=false;o.sprintTime=0;continue}
    const human=owner(1,i)
    if(human){driveSeat(human,dt);continue}
-   if(keeperRestart?.blueBuild){
+   if(o===bankReceiver)o.goal.copy(pos)
+   else if(keeperRestart?.blueBuild){
     const depth=i<3?[-5,-8,-5][i]:[12,8,12][i-3]
     o.goal.set(attackSign*depth,0,lanes[i])
    }else if(blueCarrier===i){
@@ -1575,7 +1718,8 @@ async function start(){
     o.goal.set(attackSign*T.MathUtils.clamp(attackSign*ballPos.x+(i>=3?7:-1),-13,18),0,
      T.MathUtils.lerp(ballPos.z,lanes[i]+T.MathUtils.clamp(ballPos.z*.28,-2.5,2.5),difficulty().defensiveShape))
    }
-   o.goal.x=T.MathUtils.clamp(o.goal.x,-20.4,20.4);o.goal.z=T.MathUtils.clamp(o.goal.z,-11.4,11.4)
+   o.goal.x=T.MathUtils.clamp(o.goal.x,mill?-runX:-20.4,mill?runX:20.4)
+   o.goal.z=T.MathUtils.clamp(o.goal.z,mill?runNorth:-11.4,mill?runSouth:11.4)
    o.velocity.subVectors(o.goal,pos)
    const distance=o.velocity.length()
    o.moving=distance>(o.moving?.10:.32)
@@ -1588,6 +1732,9 @@ async function start(){
   }
   const carrier=held?players[ballPlayer]:homeLateTime>.18?recentHomeKicker:null
   const defender=opponents[nearest]
+  if(held&&carrier?.sprintTime>0&&turnoverGrace<=0&&!defender.penalty&&defender.age<0&&defender.reactionTime<=0&&defender.sprite.position.distanceTo(carrier.sprite.position)<.82){
+   blueWins(nearest,'SPRINT STRIP');return
+  }
   if(!owner(1,nearest)&&carrier&&turnoverGrace<=0&&!defender.penalty&&defender.age<0&&defender.reactionTime<=0){
    const target=held?ballPos:carrier.sprite.position
    const dx=target.x-defender.sprite.position.x,dz=target.z-defender.sprite.position.z
@@ -1713,8 +1860,8 @@ async function start(){
    if(score>best){best=score;target=z}
   }
   if(!blast&&meters[1].value===100){
-   blastShooter=carrier;blastWindup=0;carrier.face=facing(dx,-from.z);carrier.shooting=true;carrier.age=.065
-   audio.play('blast',.95);return true
+   blastShooter=carrier;blastWindup=0;carrier.face=facing(dx,-from.z);carrier.shooting=true;carrier.age=0
+   return true
   }
   if(best===-Infinity&&!blast&&!human)return false
   if(!blast&&!windupComplete&&matchOpponent.name==='Peachy Puffs'&&!rivalWomen['Peachy Puffs'].has(carrier.displayName)){
@@ -1749,7 +1896,7 @@ async function start(){
   blueCarrier=-1;noticeTime=0;el('shotResult').textContent=curve?.style??''
   return true
  }
- function decideBlueAttack(dt:number,human?:Seat){
+ function decideBlueAttack(dt:number,human?:Seat,action?:Action){
   if(peachShotWindup)return
   if(opponents[blueCarrier]?.reactionTime>0)return
   if(!human&&owner(1,blueCarrier))return
@@ -1761,6 +1908,13 @@ async function start(){
   if(!human&&inFinalThird&&tryBlueShot())return
   if(!human&&carrier.sprintTime>0)return
   if(!human&&!inFinalThird&&!players.some(m=>!m.penalty&&m.sprite.position.distanceToSquared(from)<3.7**2)&&Math.random()>.11)return
+  if(!human&&tryCpuBank(true))return
+  if(mill&&human&&action==='pass'){
+   const [x,z]=seatAim(human)
+   if(millBankAim(ball.position,x,z,opponents.filter(m=>m!==carrier&&!m.penalty).map(m=>m.sprite.position))){
+    launchBank(x,z,.45,true);return
+   }
+  }
   let receiver=-1,best=-Infinity
   for(const [i,mate] of opponents.entries()){
    if(mate.penalty)continue
@@ -1800,13 +1954,13 @@ async function start(){
   blueCarrier=-1
  }
  function winBack(index:number,reason:string){
-  if(reason==='TACKLE WON'&&blueCarrier>=0)tackleReaction(opponents[blueCarrier])
+  if((reason==='TACKLE WON'||reason==='SPRINT STRIP')&&blueCarrier>=0)tackleReaction(opponents[blueCarrier])
   lastDelivery=null;homePasser=''
   if(lastBlue)changeBurn(-15,1)
   meters[1].chain.clear();meters[1].pair=''
-  if(ticket&&(reason==='WON BACK'||reason==='TACKLE WON'))facts.tackles[0]++
+  if(reason==='TACKLE WON')facts.tackles[0]++
   if(['WON BACK','TACKLE WON','INTERCEPTED'].includes(reason))changeBurn(6)
-  if(reason==='WON BACK'||reason==='TACKLE WON')afterChallenge=performance.now()
+  if(reason==='TACKLE WON'||reason==='SPRINT STRIP')afterChallenge=performance.now()
   lastBlue=false
   cancelCharge();endFollowUpRuns()
   blueCarrier=-1;bluePass=null;active=ballPlayer=index;held=true;lastSender=-1;turnoverGrace=1
@@ -1874,16 +2028,17 @@ async function start(){
   const actor=teamActors(s)[s.actor],pos=actor.sprite.position,[x,z]=seatAim(s)
   if(awayCharge?.seat===s&&s.actor===blueCarrier){
    awayCharge.gesture.sample(x,z,performance.now())
-   if(awayCharge.gesture.engaged){actor.moving=false;return}
+   if(awayCharge.gesture.engaged){actor.moving=false;actor.sprintTime=0;return}
   }
-  if(actor.reactionTime>0){actor.moving=false;return}
+  if(actor.reactionTime>0){actor.moving=false;actor.sprintTime=0;return}
   actor.moving=actor.age<0&&Math.hypot(x,z)>.24
-  if(!actor.moving)return
+  if(!actor.moving){actor.sprintTime=0;return}
   actor.face=facing(x,z,actor.face)
   const [dx,dz]=dirs[actor.face]
   const sprint=(s.device<0&&couchKeys.has('ShiftLeft'))||seatPad(s)?.buttons[7]?.pressed
-  const step=4*dt+(sprint?2*spendSprint(actor,dt):0)
-  pos.x=T.MathUtils.clamp(pos.x+dx*step,-20.7,20.7);pos.z=T.MathUtils.clamp(pos.z+dz*step,-11.7,11.7);actor.travel+=step
+  actor.sprintTime=sprint?spendSprint(actor,dt):0
+  const step=4*dt+2*actor.sprintTime
+  pos.x=T.MathUtils.clamp(pos.x+dx*step,-runX,runX);pos.z=T.MathUtils.clamp(pos.z+dz*step,runNorth,runSouth);actor.travel+=step
  }
  function couchInput(s:Seat,index:number,down:boolean){
   const source='seat'+s.number+'-'+index
@@ -1922,7 +2077,7 @@ async function start(){
     input.reset(Math.atan2(dz,dx));input.sample(x,z,performance.now())
     awayCharge={seat:s,actor:s.actor,gesture:input}
    }
-   else decideBlueAttack(0,s)
+   else decideBlueAttack(0,s,faceActions[index])
   }else if(index===1&&(s.side===1?held:canTackle())){
    actor.age=0;actor.tackling=true;actor.shooting=false
   }
@@ -1943,6 +2098,9 @@ async function start(){
   const sender=players[active],from=sender.sprite.position
   const [aimX,aimZ]=readAim(broadcast?undefined:menuPad())
   const aimed=Math.hypot(aimX,aimZ)>.22
+  if(mill&&!aiHome&&(!seats||owner(-1,active))&&kind==='pass'&&aimed&&millBankAim(ball.position,aimX,aimZ,players.filter(m=>m!==sender&&!m.penalty).map(m=>m.sprite.position))){
+   launchBank(aimX,aimZ,multiplier-1,false);return
+  }
   let best=-Infinity,target=-1
   players.forEach((mate,i)=>{
    if(mate.penalty||i===active)return
@@ -2039,6 +2197,15 @@ async function start(){
     report.performance={name:c.player,goals:report.goals.filter(g=>g.club===0&&g.player===c.player).length,assists:facts.assists,passes:facts.personalPasses,xpBefore:ticket.career.xp,xpAfter:c.xp}
     try{saveSlot(ticket.slot,c)}catch(e){el('message').textContent='Save Failed · '+String(e);return}
     fullTimeScreen=true;audio.finishMatch();location.reload();return
+   }
+   if(choice==='sides'&&ticket){
+    const selected=await selectSides(fixture!,seats?.find(s=>s.device===-1)?.side??0)
+    if(selected){
+     cancelCharge();cancelRush();keys.clear();couchKeys.clear();buttons.clear()
+     seats=selected;aiHome=!seats.some(s=>s.side===-1)
+     simulation=false;padIndex=null
+    }
+    pause(false);return
    }
    if(choice==='resume'){pause(false);return}
   const current={shape:lineup.shape,starters:homeSlots.map(m=>m.displayName),bench:matchBench}
@@ -2180,7 +2347,7 @@ async function start(){
     const base=playerRatings[bios[actor.displayName]?.[0]]?.[keeping?5:2]??(65+matchOpponent.stars*4)
     return base*trainingFactor(actor.displayName,keeping?'Keeping':'Shooting')
    },
-   fire:eastCannons,
+   fire:(seconds,side)=>eastCannons(seconds,goalColors[side]),
    dissolve:()=>{
     if(reducedReplayMotion.matches)return
     const live=renderer.domElement
@@ -2232,7 +2399,7 @@ async function start(){
    lighting.title='Toggle sunset and night (N)'
    let night=venue==='school'||venue==='westend'
    function showLighting(){
-    lighting.textContent=night?'9 PM · N':'Sunset · N'
+    lighting.textContent=night?'9 PM · N':topdeck?'Twilight · N':'Sunset · N'
     lighting.setAttribute('aria-label',night?'9 PM lighting. Switch to sunset':'Sunset lighting. Switch to 9 PM')
    }
    showLighting()
@@ -2264,7 +2431,7 @@ async function start(){
  el('reset').onclick=()=>{
   if(standalonePractice){endWarmup();return}
   goalEvent=null;audio.restartMatch();facts=newFacts();lastDelivery=null;homePasser=''
-  if(ticket){careerGoals.length=0;highlights.length=0;careerShots.fill(0);onTarget.fill(0);woodwork.fill(0);appearances.clear()}
+  careerGoals.length=0;highlights.length=0;careerShots.fill(0);onTarget.fill(0);woodwork.fill(0);appearances.clear()
   music?.finish();audio.clear();resetBurn();half=1;attackSign=1;matchSeconds=homeScore=awayScore=0;paused=false;matchView.removeAttribute('data-paused');el('pause').textContent='Pause';el('pause').removeAttribute('disabled')
   applyTeam(lineup.starters,lineup.bench)
   for(const data of squad.values()){data.penalty=data.lateChallenges=0;data.sprintCharge=data.staminaCapacity=100}
@@ -2308,6 +2475,14 @@ async function start(){
   if(labControls?.key(e))return
   keys.add(e.code)
   if(['KeyB','KeyK','Space'].includes(e.code)){e.preventDefault();if(!e.repeat)press('shot',e.code)}
+  return
+ }
+ if(seats?.length===0&&replay.cut>=0&&['KeyJ','Enter'].includes(e.code)){
+  e.preventDefault();if(!e.repeat&&!paused&&!replay.nextAngle())reset(shotDirection===attackSign,true)
+  return
+ }
+ if(seats?.length===0&&e.code==='Escape'){
+  e.preventDefault();if(!e.repeat)void matchMenu()
   return
  }
  if(seats){
@@ -2392,11 +2567,16 @@ async function start(){
  let last=performance.now()
  function startGoalScene(){
   const homeGoalScored=shotDirection===attackSign
+  const scoringClub=homeGoalScored?home:matchOpponent
   const winners=homeGoalScored?homeSlots:[...opponents,awayGK]
   const losers=homeGoalScored?opponents:players
   celebrant=scorer
-  goalMap=scorer&&(homeGoalScored?home:matchOpponent)===burners?celebrations[scorer.displayName]:undefined
-  runCelebration=(homeGoalScored?home:matchOpponent)===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:undefined):undefined
+  const interGoal=scoringClub.name==='Inter Your Mom'&&scorer?interMaleGoals[scorer.displayName]:undefined
+  const peachGoal=scoringClub.name==='Peachy Puffs'&&scorer?peachMaleGoals[scorer.displayName]:undefined
+  const starsGoal=scoringClub.name==='Shooting Stars FC'&&scorer?starsMaleGoals[scorer.displayName]:undefined
+  const fleetGoal=scorer?fleetCelebrations.get(scorer.maps[0]):undefined
+  goalMap=fleetGoal?.stand??interGoal?.stand??peachGoal?.stand??starsGoal?.stand??(scorer&&scoringClub===burners?celebrations[scorer.displayName]:undefined)
+  runCelebration=fleetGoal?.run??interGoal?.run??peachGoal?.run??starsGoal?.run??(scoringClub===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:scorer?.displayName==='Nelson'?nelsonGoalRun:undefined):undefined)
   costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun||runCelebration===pamSkateGoal
   celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:3.5
   slideX=-shotDirection;slideZ=0
@@ -2408,14 +2588,18 @@ async function start(){
    actor.age=-1;actor.runClock=0;actor.sprite.material.rotation=0;actor.sprite.position.y=0
   }
   walks=losers.filter(a=>a.sprite.visible&&!a.penalty).map((actor,i)=>({
-   actor,gather:false,target:new T.Vector3(-shotDirection*(1+Math.floor(i/3)),0,2*(i%3-1))
+   actor,gather:false,target:new T.Vector3(-shotDirection*(1+Math.floor(i/3)),0,2*(i%3-1)),speed:1.65,delay:0,phase:0
   }))
   // Gathering targets are offsets from the scorer, so the chase follows every turn.
   const keeper=homeGoalScored?sean:awayGK
   const mates=winners.filter(a=>a!==celebrant&&a!==keeper&&a.sprite.visible&&!a.penalty)
+  // Keep the south, camera-facing side of the scorer open. Spread the
+  // teammates around the far half of the circle with a little variation.
+  const spread=Math.min(Math.PI-.32,Math.max(.75,(mates.length-1)*.68))
   mates.forEach((actor,i)=>{
-   const angle=2*Math.PI*i/mates.length
-   walks.push({actor,gather:true,target:new T.Vector3(1.8*Math.cos(angle),0,1.8*Math.sin(angle))})
+   const angle=1.5*Math.PI+(mates.length>1?(i/(mates.length-1)-.5)*spread:0)+(Math.random()-.5)*.12
+   const radius=1.55+Math.random()*.65
+   walks.push({actor,gather:true,target:new T.Vector3(radius*Math.cos(angle),0,radius*Math.sin(angle)),speed:4.1+Math.random()*2.6,delay:Math.random()*.65,phase:i*.27+Math.random()*.04})
   })
   resultTime=celebrationRunSeconds+2.8
  }
@@ -2424,7 +2608,8 @@ async function start(){
   if(!celebrant)return
   celebrant.moving=false;celebrant.runClock=0
   if(goalMap===spiderIdle)celebrant.face=celebrant.drawFace=0
-  resultTime=goalMap===pamGoal||goalMap===nelsonGoal||goalMap===janGoal?2*goalMap.image.width/48*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/48*.2:2.8
+  const goalCell=goalMap?.userData.cell??48
+  resultTime=goalMap===pamGoal||goalMap===nelsonGoal||goalMap===janGoal?2*goalMap.image.width/goalCell*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/goalCell*.2:2.8
   if(goalMap!==mandyGoal)return
   const center=celebrant.sprite.position
   const mates=walks.filter(w=>w.gather)
@@ -2464,7 +2649,8 @@ async function start(){
    }else celebrant.runClock=0
   }
   if(!groupStarted&&goalAge>=celebrationRunSeconds)startGroupCelebration()
-  for(const {actor,target,gather} of walks){
+  for(const {actor,target,gather,speed,delay} of walks){
+   if(gather&&goalAge<delay){actor.moving=false;continue}
    const center=gather?celebrant?.sprite.position:undefined
    const pos=actor.sprite.position
    const dx=T.MathUtils.clamp(target.x+(center?.x??0),-fieldX+.25,fieldX-.25)-pos.x
@@ -2475,9 +2661,9 @@ async function start(){
     if(center&&groupStarted)actor.face=facing(center.x-pos.x,center.z-pos.z,actor.face)
     continue
    }
-   const step=Math.min(d,realDt*(gather?6:1.65))
+   const step=Math.min(d,realDt*speed)
    pos.x+=step*dx/d;pos.z+=step*dz/d;actor.face=facing(dx,dz,actor.face)
-   actor.travel+=step;actor.runClock+=realDt*(gather?1.2:.55)
+   actor.travel+=step;actor.runClock+=realDt*(gather?speed/5:.55)
   }
   if(groupStarted&&goalMap===mandyGoal){
    const groupAge=goalAge-celebrationRunSeconds
@@ -2533,6 +2719,7 @@ async function start(){
    if(phase==='play'&&range<12){shotMultiplier=1.7+Math.random()*.3;kick();return}
    const pressure=opponents.some(o=>!o.penalty&&o.sprite.position.distanceTo(pos)<3.4)
    if(phase==='kickoff'||pressure||Math.random()<.52){
+    if(tryCpuBank(false))return
     let best=-Infinity
     for(const mate of players){
      if(mate===player||mate.penalty)continue
@@ -2552,17 +2739,19 @@ async function start(){
   }
  }
  function matchCard(status:string){
-  const rival=opponent(ticket!.career),control=facts.control[0]+facts.control[1]
+  const rival=ticket?opponent(ticket.career):1,control=facts.control[0]+facts.control[1]
   const percent=control?Math.round(100*facts.control[0]/control):0
   const scorers=[0,rival].map(club=>{
    const entries=careerGoals.filter(g=>g.club===club).map(g=>{
-    const face=club===0?`<img src="${headshots[g.player]}" alt="">`:
-     `<span class="ft-rival" style="background-image:url('${rivalSprites(matchOpponent,g.player)?.idle??blueIdle}')"></span>`
+    const face=club===0&&headshots[g.player]?`<img src="${headshots[g.player]}" alt="">`:
+     `<span class="ft-rival" style="background-image:url('${rivalSprites(club===0?home:matchOpponent,g.player)?.idle??blueIdle}')"></span>`
     return `<li>${face}<b>${g.player}</b> ${g.minute}′</li>`
    }).join('')
    return '<ul aria-label="'+(club===0?home.name:matchOpponent.name)+' scorers">'+(entries||'<li>No goals</li>')+'</ul>'
   }).join('')
-  return `<div style="--stat-home:${clubAccent(home)};--stat-away:${clubAccent(matchOpponent)}">`+scoreRow(0,rival,[homeScore,awayScore],status)+'<div class="ft-scorers">'+scorers+'</div>'+
+  const score=ticket?scoreRow(0,rival,[homeScore,awayScore],status):
+   `<div class="lb-row"><span class="lb-side"><img src="${home.crest}" alt=""><b>${home.name}</b></span><div class="lb-score"><strong>${homeScore} – ${awayScore}</strong><small>${status}</small></div><span class="lb-side"><img src="${matchOpponent.crest}" alt=""><b>${matchOpponent.name}</b></span></div>`
+  return `<div style="--stat-home:${clubAccent(home)};--stat-away:${clubAccent(matchOpponent)}">`+score+'<div class="ft-scorers">'+scorers+'</div>'+ 
    statRow('Possession',control?[percent+'%',100-percent+'%']:['—','—'])+
    statRow('Total shots',careerShots)+statRow('Shots on target',onTarget)+
    statRow('Saves',[onTarget[1]-awayScore,onTarget[0]-homeScore])+statRow('Woodwork',woodwork)+
@@ -2572,14 +2761,14 @@ async function start(){
 
  }
  function halfTimeLeague(){
-  const c=ticket!.career,dialog=document.createElement('dialog')
-  const rows=c.schedule[c.round].filter(g=>g.a&&g.b).map(g=>{
-   const kickoff=c.schedule[c.round].find(match=>match.a===0||match.b===0)!.kickoff!
+  const dialog=document.createElement('dialog')
+  const rows=ticket?ticket.career.schedule[ticket.career.round].filter(g=>g.a&&g.b).map(g=>{
+   const kickoff=ticket.career.schedule[ticket.career.round].find(match=>match.a===0||match.b===0)!.kickoff!
    const at=scoreboardAt(g,kickoff+25)
    return scoreRow(g.a,g.b,at.score,at.label)
-  }).join('')
+  }).join(''):''
   dialog.className='career-whistle half-time'
-  dialog.innerHTML='<h2>Half time</h2>'+matchCard('HT')+'<h3>Around the League</h3>'+rows+'<button>START SECOND HALF ▸</button>'
+  dialog.innerHTML='<h2>Half time</h2>'+matchCard('HT')+(rows?'<h3>Around the League</h3>'+rows:'')+'<button>START SECOND HALF ▸</button>'
   document.body.append(dialog);dialog.showModal();reveal(dialog,'h2,h3,button');squadOpen=true
   const go=()=>{dialog.close();dialog.remove();squadOpen=false;keys.clear();breakSeconds=0;last=performance.now()}
   dialog.querySelector('button')!.onclick=go;dialog.scrollTop=0
@@ -2588,36 +2777,44 @@ async function start(){
   function poll(){if(!dialog.isConnected)return;const pad=menuPad(),down=!!pad?.buttons[0]?.pressed;if(pad&&Math.abs(pad.axes[3]??0)>.2)dialog.scrollTop+=pad.axes[3]*9;if(down&&!held){go();return}held=down;requestAnimationFrame(poll)}
   requestAnimationFrame(poll)
  }
- function showFullTime(performanceReport:NonNullable<Report['performance']>,pens:Report['pens']){
+ function showFullTime(performanceReport?:NonNullable<Report['performance']>,pens?:Report['pens']){
   const summary=document.createElement('dialog')
   summary.className='career-whistle full-time'
-  summary.innerHTML='<small>FULL TIME</small><h2></h2><p></p><div class="reel-actions"></div>'
+  summary.innerHTML='<div class="ft-panel"><h1 class="ft-heading">FULL TIME</h1><h2></h2><p></p></div><div class="ft-legend menu-legend"><button class="ft-watch">'+hint('Enter','Start')+' Watch Highlights</button><button class="ft-next">'+hint('Enter','A')+' Next Clip</button><button class="ft-back">'+hint('Esc','B')+' Back to Summary</button><button class="ft-proceed">'+hint('Esc','B')+' Main Menu</button></div>'
   summary.querySelector('h2')!.outerHTML='<div class="ft-card">'+matchCard(pens?'FINAL · '+pens.join('–')+' PENS':'FINAL')+'</div>'
-  const c=ticket!.career,{name,goals,xpAfter}=performanceReport
-  const personal=document.createElement('section');personal.className='ft-player'
-  personal.innerHTML=`<span class="ft-sprite" style="background-image:url('${burnerPortraits[name]}')"></span><div><small>Player-manager</small><h3>${name}</h3><div>Goals ${goals} · Assists ${facts.assists} · Completed passes ${facts.personalPasses}</div><b class="ft-xp"></b><progress max="100" aria-label="Progress to next level"></progress></div>`
-  summary.querySelector('p')!.replaceWith(personal)
+  let personal:HTMLElement|null=null
+  if(ticket&&performanceReport){
+   const {name,goals}=performanceReport
+   personal=document.createElement('section');personal.className='ft-player'
+   personal.innerHTML=`<span class="ft-sprite" style="background-image:url('${burnerPortraits[name]}')"></span><div><small>Player-manager</small><h3>${name}</h3><div>Goals ${goals} · Assists ${facts.assists} · Completed passes ${facts.personalPasses}</div><b class="ft-xp"></b><progress max="100" aria-label="Progress to next level"></progress></div>`
+   summary.querySelector('p')!.replaceWith(personal)
+  }else summary.querySelector('p')!.remove()
   document.body.append(summary);summary.showModal()
-  const start=performance.now(),meter=personal.querySelector('progress')!,xpText=personal.querySelector('.ft-xp')!
+  const start=performance.now(),meter=personal?.querySelector('progress'),xpText=personal?.querySelector('.ft-xp')
   function animateXP(now:number){
+   if(!ticket||!performanceReport||!meter||!xpText)return
    const t=matchMedia('(prefers-reduced-motion: reduce)').matches?1:Math.min(1,(now-start)/1100)
-   const xp=Math.floor(c.xp+(xpAfter-c.xp)*t)
-   xpText.textContent='Level '+(1+Math.floor(xp/100))+' · '+xp+' XP · +'+(xpAfter-c.xp)+' XP'
+   const xp=Math.floor(ticket.career.xp+(performanceReport.xpAfter-ticket.career.xp)*t)
+   xpText.textContent='Level '+(1+Math.floor(xp/100))+' · '+xp+' XP · +'+(performanceReport.xpAfter-ticket.career.xp)+' XP'
    meter.value=xp%100
    if(t<1)requestAnimationFrame(animateXP)
   }
   animateXP(start)
-  summary.oncancel=e=>e.preventDefault()
-  const actions=summary.querySelector('.reel-actions')!
   let cycle=0,slide=0,started=0,watching=false
   const caption=document.createElement('div');caption.className='career-caption';matchView.append(caption);matchView.classList.add('ft-footage');caption.hidden=true
+  const watch=summary.querySelector<HTMLButtonElement>('.ft-watch')!
+  const nextClip=summary.querySelector<HTMLButtonElement>('.ft-next')!
+  const skip=summary.querySelector<HTMLButtonElement>('.ft-back')!
+  const proceed=summary.querySelector<HTMLButtonElement>('.ft-proceed')!
+  const panel=summary.querySelector<HTMLElement>('.ft-panel')!
   async function finish(){cancelAnimationFrame(cycle);music?.carryOver();await music?.finish();location.reload()}
   function openSummary(){
    watching=false;caption.hidden=true;summary.classList.remove('watching')
    watch.hidden=!highlights.length;skip.hidden=true;nextClip.hidden=true;proceed.hidden=false
-   reveal(summary,':scope > small,.ft-card,.ft-player,.reel-actions')
+   reveal(summary,'.ft-heading,.ft-card,.ft-player,.ft-legend')
    if(highlights.length)watch.focus({preventScroll:true})
-   summary.scrollTop=0
+   else proceed.focus({preventScroll:true})
+   panel.scrollTop=0
   }
   let transition:{index:number,start:number,time:number}|null=null
   function advanceClip(now:number){
@@ -2642,34 +2839,52 @@ async function start(){
      dissolveLayer.style.opacity=String(1-age)
     }
    }
-   if(watching)caption.textContent=highlights[slide].label
+   if(watching&&caption.dataset.slide!==String(slide)){
+    const label=highlights[slide].label,parts=label.split(' · '),name=parts[1]
+    caption.replaceChildren()
+    if(parts.length===3&&name){
+     const minute=document.createElement('span');minute.textContent=parts[0]+' -'
+     const face=document.createElement('span');face.className='career-caption-face'
+     const homePlayer=[home.keeper,...home.outfield,...home.bench].includes(name)
+     const portrait=homePlayer&&home===burners?headshots[name]:undefined
+     if(portrait){const img=document.createElement('img');img.src=portrait;img.alt='';face.append(img)}
+     else face.style.backgroundImage=`url("${rivalSprites(homePlayer?home:matchOpponent,name)?.idle??(homePlayer?portraits[name]:blueIdle)}")`
+     const event=document.createElement('span');event.textContent=name.toUpperCase()+' - '+parts[2].toUpperCase()
+     caption.append(minute,face,event)
+    }else caption.textContent=label
+    caption.dataset.slide=String(slide)
+   }
    if(!drawClip(slide,(now-started)/1000))advanceClip(now)
    cycle=requestAnimationFrame(show)
   }
-  const button=(label:string,fn:()=>void)=>{const b=document.createElement('button');b.textContent=label;b.onclick=fn;actions.append(b);return b}
-  const watch=button('Watch Highlights',()=>{
+  watch.onclick=()=>{
    transition=null;endDissolve();slide=0;started=performance.now();watching=true;caption.hidden=false;summary.classList.add('watching')
+   delete caption.dataset.slide
    watch.hidden=true;skip.hidden=false;nextClip.hidden=false;proceed.hidden=true;nextClip.focus()
+  }
+  nextClip.onclick=()=>advanceClip(performance.now())
+  skip.onclick=openSummary
+  proceed.onclick=finish
+  summary.oncancel=e=>{e.preventDefault();if(watching)openSummary();else void finish()}
+  summary.addEventListener('keydown',e=>{
+   if(e.code!=='Enter'&&e.code!=='NumpadEnter')return
+   e.preventDefault();e.stopPropagation()
+   if(watching)advanceClip(performance.now())
+   else if(highlights.length)watch.click()
   })
-  const nextClip=button('Next Clip',()=>advanceClip(performance.now()))
-  nextClip.innerHTML=hint('Enter','A')+' Next Clip'
-  const skip=button('Back to Summary',openSummary)
-  skip.innerHTML=hint('Esc','B')+' Back to Summary'
-  summary.oncancel=e=>{e.preventDefault();if(watching)openSummary()}
-  const proceed=button('League Results ▸',finish)
   openSummary()
   if(highlights.length){started=performance.now();cycle=requestAnimationFrame(show)}
-  ;(watch.hidden?proceed:watch).focus({preventScroll:true});summary.scrollTop=0
-  let held=!!menuPad()?.buttons[0]?.pressed,backHeld=!!menuPad()?.buttons[1]?.pressed,direction=''
+  ;(watch.hidden?proceed:watch).focus({preventScroll:true});panel.scrollTop=0
+  let held=!!menuPad()?.buttons[0]?.pressed,backHeld=!!menuPad()?.buttons[1]?.pressed,startHeld=!!menuPad()?.buttons[9]?.pressed
   function poll(){
-   const pad=menuPad(),down=!!pad?.buttons[0]?.pressed,dir=pad?menuDirection(pad):''
-   if(pad&&Math.abs(pad.axes[3]??0)>.2)summary.scrollTop+=pad.axes[3]*9
-   if(!watching&&dir&&dir!==direction){const choices=[watch,skip,proceed].filter(b=>!b.hidden);choices[(choices.indexOf(document.activeElement as HTMLButtonElement)+1)%choices.length].focus()}
+   const pad=menuPad(),down=!!pad?.buttons[0]?.pressed,start=!!pad?.buttons[9]?.pressed
+   if(pad&&Math.abs(pad.axes[3]??0)>.2)panel.scrollTop+=pad.axes[3]*9
    const back=!!pad?.buttons[1]?.pressed
    if(watching&&back&&!backHeld)openSummary()
    else if(watching&&down&&!held)advanceClip(performance.now())
-   else if(down&&!held)(document.activeElement as HTMLButtonElement)?.click()
-   backHeld=back;held=down;direction=dir;requestAnimationFrame(poll)
+   else if(!watching&&back&&!backHeld)void finish()
+   else if(!watching&&start&&!startHeld&&highlights.length)watch.click()
+   backHeld=back;held=down;startHeld=start;requestAnimationFrame(poll)
   }
   requestAnimationFrame(poll)
  }
@@ -2702,13 +2917,13 @@ async function start(){
   const elapsed=(now-last)/1000,dt=Math.min(.04,elapsed)*(blastShooter?0:impactTime>0?.08:celebrating?.38:1);last=now
   if(!paused&&!document.hidden&&!squadOpen&&!fullTimeScreen)updateTrain?.(Math.min(elapsed,.2),half,matchSeconds,stadiumTest)
   if(flying){
-   if(eastside)updateWeather(Math.min(elapsed,.1))
+   if(eastside||topdeck||mill)updateWeather(Math.min(elapsed,.1))
    const axis=(positive:string,negative:string)=>Number(flyKeys.has(positive))-Number(flyKeys.has(negative))
    const step=dt*(flyKeys.has('ShiftLeft')||flyKeys.has('ShiftRight')?22:9)
    camera.rotation.y+=axis('ArrowLeft','ArrowRight')*dt*1.7
    camera.rotation.x=T.MathUtils.clamp(camera.rotation.x+axis('ArrowUp','ArrowDown')*dt*1.7,-1.54,1.54)
    camera.translateZ(step*axis('KeyS','KeyW'));camera.translateX(step*axis('KeyD','KeyA'))
-   camera.position.y=Math.max(.25,camera.position.y+step*axis('KeyE','KeyQ'))
+   camera.position.y=Math.max(topdeck?-15.8:.25,camera.position.y+step*axis('KeyE','KeyQ'))
    for(const guest of sidelineGuests)guest.map.offset.x=T.MathUtils.euclideanModulo(guest.face-Math.round(camera.rotation.y/(Math.PI/4)),8)/8
    renderer.render(scene,camera);requestAnimationFrame(tick);return
   }
@@ -2719,8 +2934,12 @@ async function start(){
    impactTime=Math.max(0,impactTime-elapsed)
    if(blastShooter){
     blastWindup+=elapsed
+    const progress=Math.min(1,blastWindup/.65)
+    blastShooter.age=progress*.34
+    if(aerialWindup&&aerial)aerial.age=progress*(['Pam','José'].includes(blastShooter.displayName)?.45:.32)
     if(blastWindup>=.65){
-     const shooter=blastShooter;blastShooter=null;shooter.age=.12
+     const shooter=blastShooter;blastShooter=null
+     audio.play('blast',aerialWindup?.85:.95)
      if(aerialWindup){aerialWindup=false;impactTime=.08;launchShot(shooter)}
      else if(opponents.includes(shooter))tryBlueShot(true);else launchShot(shooter,true)
     }
@@ -2741,7 +2960,7 @@ async function start(){
    buttons.set(s,next)
   }
   if((aiHome||seats&&!owner(-1,active))&&!paused&&replay.cut<0)playForHome(dt)
-  const inputPad=seats?.length?undefined:connectedPad
+  const inputPad=seats?undefined:connectedPad
   labControls?.poll(inputPad)
   const pad=celebrationLab||simulation?undefined:inputPad
   const controlsPad=celebrationLab?undefined:inputPad
@@ -2811,6 +3030,10 @@ async function start(){
    }
   }
   if(!crossingDrill)updatePenalties(!paused&&!celebrating&&phase==='play'?elapsed:0)
+  if(bankReceiver){
+   bankWindow-=paused?0:dt
+   if(bankWindow<=0||!clearanceLoose||held||blueCarrier>=0||outBall||keeperRestart||shot)bankReceiver=null
+  }
   if(!clearanceLoose||held||inFlight||blueCarrier>=0||shot||keeperRestart||outBall)struckLoose=false
   const keeperX=homeKeeper.position.x,keeperZ=homeKeeper.position.z
   if(!paused&&freeKick){
@@ -2851,7 +3074,7 @@ async function start(){
     if(m.seconds===0)resetBurn(side)
     else if(previous!==Math.ceil(m.seconds))renderBurn(side)
    }
-   if(ticket&&!outBall&&!keeperRestart){
+   if(!outBall&&!keeperRestart){
     if(held||inFlight||keeperGather>0)facts.control[0]+=dt
     else if(blueCarrier>=0||bluePass)facts.control[1]+=dt
    }
@@ -2860,7 +3083,7 @@ async function start(){
     audio.play('whistle',.75,half===1?1:.88)
     phase=half===1?'halftime':'fulltime';breakSeconds=3;cancelCharge();cancelRush()
     el('message').textContent=half===1?'Halftime':'Full time · '+homeLabel+' '+homeScore+' – '+awayScore+' '+matchOpponent.name
-    if(phase==='halftime'){music?.startBreak();if(ticket)halfTimeLeague()}
+    if(phase==='halftime'){music?.startBreak();if(!broadcast)halfTimeLeague()}
     if(phase==='fulltime'){
      if(!ticket)music?.startBreak()
      audio.finishMatch()
@@ -2885,7 +3108,7 @@ async function start(){
       const game=complete.schedule[complete.round].find(g=>g.a===0||g.b===0)!
       if(homeScore===awayScore&&fixtureRequiresWinner(complete,game)){enterPenalties(settle);return}
       settle()
-     }
+     }else if(!broadcast){fullTimeScreen=true;showFullTime()}
     }
    }
    updateScore()
@@ -2943,8 +3166,8 @@ async function start(){
    if(p.moving){
     p.face=facing(x,z,p.face);const [dx,dz]=dirs[p.face]
     const distance=(4*dt+2*burst)*trainingFactor(p.displayName,'Pace')
-    pos.x=T.MathUtils.clamp(pos.x+dx*distance,-20.7,20.7)
-    pos.z=T.MathUtils.clamp(pos.z+dz*distance,-11.7,11.7);p.travel+=4*strideTime
+    pos.x=T.MathUtils.clamp(pos.x+dx*distance,-runX,runX)
+    pos.z=T.MathUtils.clamp(pos.z+dz*distance,runNorth,runSouth);p.travel+=4*strideTime
    }
    if(!celebrationLab&&!freePractice){organizeAttack(dt);organizeDefense()}
    for(const [i,partner] of players.entries()){
@@ -2952,10 +3175,11 @@ async function start(){
     const human=owner(-1,i)
     if(human){driveSeat(human,dt);continue}
     const other=partner.sprite.position
-    if(nearCover<0&&i===reboundRunner&&canSwitch()){
+    if(partner===bankReceiver)partner.goal.copy(other)
+    else if(nearCover<0&&i===reboundRunner&&canSwitch()){
      // Lead a moving rebound briefly, then close on the resting ball.
-     partner.goal.set(T.MathUtils.clamp(ball.position.x+vx*.25,-20.7,20.7),0,
-      T.MathUtils.clamp(ball.position.z+vz*.25,-11.7,11.7))
+     partner.goal.set(T.MathUtils.clamp(ball.position.x+vx*.25,-runX,runX),0,
+      T.MathUtils.clamp(ball.position.z+vz*.25,runNorth,runSouth))
     }
     if(partner.reactionTime>0||(partner.shooting||partner.tackling)&&partner.age>=0){partner.moving=false;partner.velocity.set(0,0,0);continue}
    const distance=other.distanceTo(partner.goal)
@@ -2992,7 +3216,7 @@ async function start(){
    if(held){
     lastBlue=false;carry()
     if(!kickSpot&&drillKeeper.visible&&p.age<0&&attackSign*ball.position.x>=fieldX-1.35&&Math.abs(ball.position.z)<=2)claimDribble()
-    else if(Math.abs(ball.position.x)>fieldX||Math.abs(ball.position.z)>fieldZ){
+    else if(outsidePitch()){
      const [dx,dz]=dirs[p.face];ballOut(dx*4,0,dz*4)
     }
    }
@@ -3013,8 +3237,8 @@ async function start(){
     if(actor.tackling){
      const foot=actor.sprite.position,[dx,dz]=dirs[actor.face]
      const step=3.5*(Math.min(.12,actor.age)-Math.min(.12,prev))
-     foot.x=T.MathUtils.clamp(foot.x+dx*step,-20.7,20.7)
-     foot.z=T.MathUtils.clamp(foot.z+dz*step,-11.7,11.7)
+     foot.x=T.MathUtils.clamp(foot.x+dx*step,-runX,runX)
+     foot.z=T.MathUtils.clamp(foot.z+dz*step,runNorth,runSouth)
      if(prev<.12&&actor.age>=.12){
       const reaches=(point:T.Vector3,reach=.93)=>{
        const x=point.x-foot.x,z=point.z-foot.z
@@ -3026,7 +3250,7 @@ async function start(){
        (!held&&lateTime>0&&recentKicker!==blueCarrier?opponents[recentKicker]:null)
       if(playable&&ball.position.y<.85&&reaches(ball.position,.93*trainingFactor(actor.displayName,'Tackling'))){
        audio.play('tackle',.4)
-       if(isBlue){if(ticket)facts.tackles[1]++;blueWins(blueIndex,matchOpponent.name+' TACKLE WON')}
+       if(isBlue){facts.tackles[1]++;blueWins(blueIndex,matchOpponent.name+' TACKLE WON')}
        else winBack(players.indexOf(actor),'TACKLE WON')
       }else if(latePlayer&&reaches(latePlayer.sprite.position)&&!reaches(ball.position)){
        awardFreeKick(actor,latePlayer)
@@ -3136,7 +3360,16 @@ async function start(){
     const interceptor=perfectPass?-1:interceptPass(previousPassPosition,ball.position)
     const wantsFinish=passKind==='cross'&&(charge?.action==='shot'||queued?.action==='shot')
     const collector=perfectPass?(fraction===1?ballPlayer:-1):interceptPass(previousPassPosition,ball.position,players,lastSender,wantsFinish?1.15:.78,wantsFinish?2:.84)
-    if(Math.abs(ball.position.x)>fieldX||Math.abs(ball.position.z)>fieldZ){
+    let passContact:'bounce'|'out'|'live'='live'
+    if(mill){
+     outVelocity.subVectors(ball.position,previousPassPosition).divideScalar(Math.max(.000001,dt))
+     passContact=millContact(previousPassPosition,ball.position,outVelocity)
+    }
+    if(passContact==='bounce'){
+     inFlight=perfectPass=false;rollingPass=clearanceLoose=struckLoose=true;curveRate=0
+     vx=outVelocity.x;vz=outVelocity.z;reboundVY=outVelocity.y
+     audio.play('board',.42)
+    }else if(passContact==='out'||outsidePitch()){
      const step=Math.max(.000001,dt)
      ballOut((ball.position.x-previousPassPosition.x)/step,(ball.position.y-previousPassPosition.y)/step,(ball.position.z-previousPassPosition.z)/step)
     }
@@ -3191,16 +3424,22 @@ async function start(){
        ball.position.set(goalie.position.x,y,z);shot.result='Save';curveContact=true
       }
      }
-     if(!curveContact&&Math.abs(ball.position.z)>fieldZ){shot.result='Wide';curveContact=true}
+     if(!mill&&!curveContact&&Math.abs(ball.position.z)>fieldZ){shot.result='Wide';curveContact=true}
      if(!curveContact&&t===1&&Math.abs(ball.position.z)<2.08&&ball.position.y>=1.92){
       shot.result=ball.position.y>2.08?'Over':'Crossbar'
      }
+    }
+    let shotBoard:'live'|'out'|'bounce'='live'
+    if(mill&&(shot.result==='Wide'||flightCurve&&!curveContact)){
+     outVelocity.subVectors(ball.position,previousPassPosition).divideScalar(Math.max(.000001,dt))
+     shotBoard=millContact(previousPassPosition,ball.position,outVelocity)
+     if(shotBoard!=='live'){shot.result='Wide';curveContact=true}
     }
     const blocker=shotDirection!==attackSign?interceptPass(previousPassPosition,ball.position,players):blastFlying?blastBlocker(previousPassPosition,ball.position):flightCurve?interceptPass(previousPassPosition,ball.position):-1
     if(canCollect())keeperTouch()
     else if(blocker>=0){
      shot=null
-     if(ticket)careerShots[shotDirection===attackSign?0:1]++
+     careerShots[shotDirection===attackSign?0:1]++
      if(shotDirection===attackSign){blastFlying=false;blueWins(blocker,'BLOCKED')}
      else winBack(blocker,'BLOCKED')
     }else if(t===1||curveContact){
@@ -3218,7 +3457,7 @@ async function start(){
       for(const [i,m] of meters.entries())if(m.value===100)resetBurn(i)
       if(!wasOnFire)changeBurn(20,shootingSide)
      }
-     if(ticket){
+     {
       const side=shotDirection===attackSign?0:1
       careerShots[side]++
       if(shot.result==='Goal'||shot.result==='Save')onTarget[side]++
@@ -3231,15 +3470,21 @@ async function start(){
      }
      if(shotDirection===attackSign)recordAttempt(shot.result)
      el('shotResult').textContent=shotDirection!==attackSign&&shot.result==='Goal'?matchOpponent.name+' GOAL':shot.result.toUpperCase()
-     if(shot.result==='Wide'||shot.result==='Over'){
+     if(mill&&shot.result==='Wide'&&shotBoard!=='out'&&(shotBoard==='bounce'||ball.position.y<=millBoards.top+millBoards.radius)){
+      if(shotBoard==='bounce')audio.play('board',.42)
+      else outVelocity.subVectors(ball.position,previousPassPosition).divideScalar(Math.max(.000001,dt))
+      vx=outVelocity.x;vz=outVelocity.z;reboundVY=outVelocity.y
+      clearanceLoose=struckLoose=true;rollingPass=false;curveRate=0
+     }else if(shot.result==='Wide'||shot.result==='Over'){
       ballOut((shot.targetX-shotStart.x)/shot.duration,
        (ball.position.y-previousPassPosition.y)/Math.max(dt,.000001),(shot.targetZ-shotStart.z)/shot.duration,shot.result)
      }else if(shot.result==='Goal'){
       cancelCharge()
       if(ticket&&shotDirection===attackSign&&lastDelivery&&lastDelivery.receiver===scorer?.displayName&&lastDelivery.sender===ticket.career.player)facts.assists++
-      if(ticket)careerGoals.push({minute:Math.min(50,(half-1)*25+Math.ceil(matchSeconds/60)),club:shotDirection===attackSign?0:opponent(ticket.career),player:scorer?.displayName??'Team goal'})
+      careerGoals.push({minute:Math.min(50,(half-1)*25+Math.ceil(matchSeconds/60)),club:shotDirection===attackSign?0:ticket?opponent(ticket.career):1,player:scorer?.displayName??'Team goal'})
       if(shotDirection===attackSign)homeScore++;else awayScore++
       audio.goalFire()
+      scoringColor=goalColors[shotDirection===attackSign?0:1]
       fireEnd=shotDirection;showGoalFire(0)
       updateScore();endFollowUpRuns()
       celebrating=true;replay.goal=replay.time
@@ -3277,7 +3522,7 @@ async function start(){
     else if(cut>=0)winBack(cut,'INTERCEPTED')
     else if(t===1){
      passBurn(1,bluePass.sender,opponents[bluePass.receiver].displayName,bluePass.loft?8:5)
-     if(ticket)facts.passes[1]++
+     facts.passes[1]++
      blueCarrier=bluePass.receiver;bluePass=null;blueDecisionTime=difficulty().reactionDelayMs/1000
     }
    }else if(blueCarrier>=0){
@@ -3285,14 +3530,15 @@ async function start(){
     const o=opponents[blueCarrier],foot=o.sprite.position
     const [dx,dz]=dirs[o.face]
     ball.position.set(foot.x+dx*.48,restingHeight,foot.z+dz*.38)
-    if(turnoverGrace<=0&&p.moving&&Math.hypot(pos.x-foot.x,pos.z-foot.z)<1.05){
-     winBack(active,'WON BACK')
+    if(turnoverGrace<=0&&o.sprintTime>0&&p.age<0&&p.reactionTime<=0&&Math.hypot(pos.x-foot.x,pos.z-foot.z)<.82){
+     winBack(active,'SPRINT STRIP')
     }else{
-     const tackler=players.findIndex((mate,i)=>!mate.penalty&&i!==active&&marks?.[i]===blueCarrier&&mate.age<0&&mate.sprite.position.distanceTo(foot)<.70)
-     if(turnoverGrace<=0&&tackler>=0)winBack(tackler,'WON BACK')
+     const tackler=o.sprintTime>0&&turnoverGrace<=0?players.findIndex((mate,i)=>!mate.penalty&&i!==active&&mate.age<0&&mate.reactionTime<=0&&mate.sprite.position.distanceTo(foot)<.82):-1
+     if(tackler>=0)winBack(tackler,'SPRINT STRIP')
      else decideBlueAttack(dt)
     }
    }else if(!held){
+    previousPassPosition.copy(ball.position)
     if(reboundVY!==0||ball.position.y>restingHeight){
      reboundVY-=17*dt
      ball.position.y+=reboundVY*dt
@@ -3320,9 +3566,16 @@ async function start(){
      ball.position.x+=vx*dt;ball.position.z+=vz*dt
      const drag=Math.exp(-1.25*dt);vx*=drag;vz*=drag
     }
+    let boardExit=false
+    if(mill){
+     outVelocity.set(vx,reboundVY,vz)
+     const contact=millContact(previousPassPosition,ball.position,outVelocity)
+     if(contact==='bounce'){vx=outVelocity.x;vz=outVelocity.z;audio.play('board',.42)}
+     boardExit=contact==='out'
+    }
     if(clearanceLoose&&claimAirball()){ /* Claimed in flight. */ }
     else if(clearanceLoose&&attackSign*vx>0&&gatherPunt()){ /* Keeper takes possession before the line. */ }
-    else if(Math.abs(ball.position.x)>fieldX||Math.abs(ball.position.z)>fieldZ)ballOut(vx,reboundVY,vz)
+    else if(boardExit||outsidePitch())ballOut(vx,reboundVY,vz)
     else if(ball.position.y<=restingHeight+.28){
      let collector=-1,closest=.8
      for(const [i,mate] of players.entries()){
@@ -3340,7 +3593,11 @@ async function start(){
      }
      if(blueCollector>=0){
       clearanceLoose=false;vx=vz=reboundVY=0
-      blueWins(blueCollector,matchOpponent.name+' BALL')
+      if(lastBlue&&bankReceiver===opponents[blueCollector]){
+       passBurn(1,opponents[recentKicker].displayName,bankReceiver.displayName,5)
+       facts.passes[1]++;blueCarrier=blueCollector;bankReceiver=null
+       blueDecisionTime=difficulty().reactionDelayMs/1000
+      }else blueWins(blueCollector,matchOpponent.name+' BALL')
      }else if(collector>=0){
       lastBlue=false;clearanceLoose=false
       endFollowUpRuns()
@@ -3415,34 +3672,35 @@ async function start(){
      actor.sprite.material.map=spiderIdle;continue
     }
     if(celebrating&&actor===celebrant&&!groupStarted&&runCelebration&&(!costumeReveal||goalAge>=costumeRevealTime)){
-     const frames=runCelebration.image.width/48
+     const cell=runCelebration.userData.cell??48,frames=runCelebration.image.width/cell
      if(runCelebration===stubbsSlide)runCelebration.offset.set(Math.min(frames-1,Math.floor(goalAge/.2))/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      else runCelebration.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      actor.sprite.material.map=runCelebration
-     actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/48)
+     actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/cell)
      continue
     }
-    const groupMap=groupCelebrations[actor.displayName]
-    if(celebrating&&groupStarted&&!actor.moving&&actor!==celebrant&&groupMap&&walks.some(w=>w.actor===actor&&w.gather)){
-     const frames=groupMap.image.width/48
-     groupMap.offset.x=Math.floor((goalAge-celebrationRunSeconds)/.2)%frames/frames
+    const groupMap=celebrating&&groupStarted?supportMap(actor):undefined
+    const groupWalk=walks.find(w=>w.actor===actor&&w.gather)
+    if(celebrating&&groupStarted&&!actor.moving&&actor!==celebrant&&groupMap&&groupWalk){
+     const cell=groupMap.userData.cell??48,frames=groupMap.image.width/cell
+     groupMap.offset.x=Math.floor((goalAge-celebrationRunSeconds+groupWalk.phase)/.2)%frames/frames
      if(groupMap.userData.directionalCelebration)groupMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
      actor.sprite.material.map=groupMap
-     const rows=groupMap.image.height/48
-     actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/48)
+     const rows=groupMap.image.height/cell
+     actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
     if(celebrating&&actor===celebrant&&goalMap&&groupStarted){
      const groupAge=groupStarted?goalAge-celebrationRunSeconds:goalAge
-     const frames=goalMap.image.width/48
+     const cell=goalMap.userData.cell??48,frames=goalMap.image.width/cell
      const frame=goalMap===mandyGoal
       ? Math.min(frames-1,Math.floor(Math.max(0,groupAge-photoStart)/.2))
       : Math.floor(groupAge/.2)%frames
      if(goalMap.userData.directionalCelebration)goalMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
      goalMap.offset.x=frame/frames
      actor.sprite.material.map=goalMap
-     const rows=goalMap.image.height/48
-     actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/48)
+     const rows=goalMap.image.height/cell
+     actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
     const running=actor.moving&&actor.age<0
@@ -3497,10 +3755,10 @@ async function start(){
     if(actor.age<0)aerialRecovery.delete(actor)
     const mode=actor.age>=0&&!aerialRecovery.has(actor)&&(actor.shooting||(actor.tackling&&actor.displayName!=='José'))&&actor.maps[2]?2:(running||actor.tackling)&&actor.maps[1]?1:0
     const kickFrames=directionalKick?actor.maps[2].image.width/(actor.maps[2].image.height/8):kickPoseTimes.length
-    const poseTimes=kickFrames>=9||actor.displayName==='José'||actor.displayName==='Pam'?joseKickPoseTimes:kickPoseTimes
-    const cols=[8,actor.runFrames,poseTimes.length][mode],rows=mode===2?(directionalKick?8:actor.maps[2].image.height/48):mode===1?actor.runRows:1
+    const poseTimes=kickFrames>=9||actor.displayName==='José'||actor.displayName==='Pam'?joseKickPoseTimes:kickFrames===8?eightKickPoseTimes:kickPoseTimes
+    const cols=[8,actor.runFrames,directionalKick?kickFrames:poseTimes.length][mode],rows=mode===2?(directionalKick?8:actor.maps[2].image.height/48):mode===1?actor.runRows:1
     const runFrame=actor.tackling?Math.min(actor.runFrames-1,Math.floor(actor.age/.42*actor.runFrames)):actor.frameSeconds?Math.floor(actor.runClock/actor.frameSeconds):Math.floor(actor.travel/.28)
-    const col=mode===2?poseTimes.findLastIndex(time=>actor.age>=time):mode===1?runFrame%cols:spriteFace
+    const col=mode===2?(cols>poseTimes.length?Math.min(cols-1,Math.floor(actor.age/kickAnimationSeconds*cols)):poseTimes.findLastIndex(time=>actor.age>=time)):mode===1?runFrame%cols:spriteFace
     const row=mode===2?kickRow:mode===0?0:spriteFace
     const tex=celebrating&&groupStarted&&goalMap===mandyGoal&&frontRow.has(actor)&&!actor.moving&&mode===0? kneelingPose(actor.maps[0]):actor.maps[mode]
     tex.repeat.set(1/cols,1/rows)

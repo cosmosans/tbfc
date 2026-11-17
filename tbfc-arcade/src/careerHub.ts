@@ -309,7 +309,7 @@ export function careerHub(
           gameIndex = s.schedule[s.round].findIndex((g) => !g.a || !g.b);
         const visible = s.week.events.filter((e) => e.day <= s.day);
         const report = s.reports[s.round];
-        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper('previous','Previous career section','data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${btn("slots", "Save slots")}${menuBumper('next','Next career section','data-action="next-tab"')}</nav>`;
+        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper('previous','Previous career section','data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${menuBumper('next','Next career section','data-action="next-tab"')}</nav>`;
         if (tab === "Central") {
           content += weekStrip(s);
           const title = stage(s.round, gameIndex);

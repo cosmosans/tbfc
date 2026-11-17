@@ -1,8 +1,28 @@
 import * as T from 'three'
+import {clubAccent,type Club} from './opponentSquads'
 import supportersUrl from './art/eastside-supporters-pink.png?url'
 
-export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D){
- const atlas=await new T.TextureLoader().loadAsync(supportersUrl)
+export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D,homeClub:Club|null){
+ const source=await new T.TextureLoader().loadAsync(supportersUrl)
+ const canvas=document.createElement('canvas')
+ canvas.width=source.image.width;canvas.height=source.image.height
+ const ctx=canvas.getContext('2d')!
+ ctx.drawImage(source.image,0,0)
+ const pixels=ctx.getImageData(0,0,canvas.width,canvas.height)
+ const hex=homeClub?clubAccent(homeClub):'#888888'
+ const color=[1,3,5].map(offset=>parseInt(hex.slice(offset,offset+2),16))
+ for(let i=0;i<pixels.data.length;i+=4){
+  const [r,g,b]=pixels.data.slice(i,i+3)
+  if(r>70&&r>g*1.3&&b>g*1.2){
+   const shade=Math.max(.36,Math.min(1,(r+b)/370))
+   pixels.data[i]=color[0]*shade
+   pixels.data[i+1]=color[1]*shade
+   pixels.data[i+2]=color[2]*shade
+  }
+ }
+ ctx.putImageData(pixels,0,0)
+ const atlas=new T.CanvasTexture(canvas)
+ source.dispose()
  atlas.colorSpace=T.SRGBColorSpace
  atlas.magFilter=T.NearestFilter
  const fans=[
@@ -16,7 +36,7 @@ export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D){
   const map=atlas.clone()
   map.repeat.x=.25;map.offset.x=fan.frame*.25
   const sprite=new T.Sprite(new T.SpriteMaterial({map,alphaTest:.2}))
-  sprite.name='Shooting Stars supporter'
+  sprite.name='Home supporter template'
   sprite.center.set(.5,.025);sprite.scale.setScalar(1.91)
   sprite.position.set(fan.x,fan.y,fan.z)
   scene.add(sprite)

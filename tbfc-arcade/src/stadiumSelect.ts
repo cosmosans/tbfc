@@ -3,17 +3,23 @@ import {audio} from './matchAudio'
 import {hint} from './screenUI'
 import maynard from './art/stadium-previews/maynard.jpg'
 import eastside from './art/stadium-previews/eastside.jpg'
+import mill from './art/stadium-previews/cottonmill.jpg'
+import topdeck from './art/stadium-previews/topdeck.jpg'
 import westend from './art/stadium-previews/westend.jpg'
 import southside from './art/stadium-previews/southside.jpg'
 import './stadiumSelect.css'
 
 const grounds=[
- {id:'school',name:'Maynard Jackson High School',details:'Running track · Floodlights',image:maynard},
- {id:'eastside',name:'Eastside Commons',details:'Neighborhood park · Natural grass',image:eastside},
- {id:'southside',name:'Southside Diamond',details:'Baseball outfield · Georgia clay',image:southside},
- {id:'westend',name:'Station Soccer West End',details:'Transit station · Night turf',image:westend},
+ {id:'school',name:'Summerhill',area:'High School',surface:'Turf',image:maynard},
+ {id:'westend',name:'West End',area:'Transit Station',surface:'Turf',image:westend},
+ {id:'southside',name:'Old 4th Ward',area:'Park',surface:'Natural Grass',image:southside},
+ {id:'mill',name:'Cabbagetown',area:'Cotton Mill',surface:'Concrete',image:mill},
+ {id:'eastside',name:'Candler Park',area:'Neighborhood',surface:'Natural Grass',image:eastside},
+ {id:'topdeck',name:'Midtown',area:'Rooftop',surface:'Asphalt',image:topdeck},
 ] as const
 export type StadiumId=typeof grounds[number]['id']
+export function stadiumName(id:StadiumId){return grounds.find(g=>g.id===id)!.name}
+export function randomStadium():StadiumId{return grounds[Math.floor(Math.random()*grounds.length)].id}
 export function homeStadium(club:string):StadiumId{
  if(club==='Goal Dancers FC')return 'westend'
  if(club==='Orange Slices')return 'southside'
@@ -21,15 +27,15 @@ export function homeStadium(club:string):StadiumId{
  return 'school'
 }
 
-export function selectStadium(home:StadiumId,initial=home):Promise<StadiumId|null>{
+export function selectStadium(home?:StadiumId,initial:StadiumId=home??'school'):Promise<StadiumId|null>{
  const dialog=document.createElement('dialog')
  dialog.className='stadium-picker'
  dialog.setAttribute('aria-labelledby','stadium-title')
  dialog.innerHTML=`<div class="stadium-inner"><h1 id="stadium-title">Select Stadium</h1>
  <div class="stadium-cards">${grounds.map(g=>`<button type="button" class="stadium-card">
- <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.details}</small></span>
+ <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.area} · ${g.surface}</small></span>
  ${g.id===home?'<span class="stadium-home">Home field</span>':''}</button>`).join('')}</div>
- <div class="stadium-nav"><button data-back>Back</button><span>${hint('← →','LS ↔')} Choose field</span><button data-next>Continue ${hint('Enter','A')}</button></div></div>`
+ <div class="stadium-nav"><button data-back>Back</button><span>${hint('Arrows','LS / D-pad')} Choose field</span><button data-next>Continue ${hint('Enter','A')}</button></div></div>`
  document.body.append(dialog);dialog.showModal()
  const cards=Array.from(dialog.querySelectorAll<HTMLButtonElement>('.stadium-card'))
  let index=grounds.findIndex(g=>g.id===initial)
@@ -51,7 +57,8 @@ export function selectStadium(home:StadiumId,initial=home):Promise<StadiumId|nul
   dialog.querySelector<HTMLButtonElement>('[data-next]')!.onclick=()=>finish(false)
   dialog.oncancel=e=>{e.preventDefault();finish(true)}
   dialog.onkeydown=e=>{
-   if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();cycle(e.key==='ArrowLeft'?-1:1)}
+   const arrows:Record<string,number>={ArrowLeft:-1,ArrowRight:1,ArrowUp:-3,ArrowDown:3}
+   if(e.key in arrows){e.preventDefault();cycle(arrows[e.key])}
    if(e.key==='Enter'&&cards.includes(document.activeElement as HTMLButtonElement)){
     e.preventDefault();if(!e.repeat){index=cards.indexOf(document.activeElement as HTMLButtonElement);finish(false)}
    }
@@ -65,8 +72,8 @@ export function selectStadium(home:StadiumId,initial=home):Promise<StadiumId|nul
    const current=input()
    if(current.back&&!previous.back){finish(true);return}
    if(current.ok&&!previous.ok){finish(false);return}
-   if((current.dir==='l'||current.dir==='r')&&(current.dir!==previous.dir||now>=repeatAt)){
-    cycle(current.dir==='l'?-1:1);repeatAt=now+(current.dir===previous.dir?230:460)
+   if(current.dir&&(current.dir!==previous.dir||now>=repeatAt)){
+    cycle(({l:-1,r:1,u:-3,d:3} as const)[current.dir]);repeatAt=now+(current.dir===previous.dir?230:460)
    }
    previous=current;frame=requestAnimationFrame(poll)
   }

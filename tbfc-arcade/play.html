@@ -34,6 +34,13 @@ header>div{justify-self:end}
 .bug-team{display:flex;gap:7px;align-items:center;background:#172c25;padding:1px 9px 0;border-top:3px solid #f37932;justify-content:flex-end;white-space:nowrap}
 .bug-team img{width:27px;height:27px;object-fit:contain}
 .bug-team.away{justify-content:flex-start;background:#311622;border-color:#ed408d}
+#scoreboard[data-burn-home] :is(.bug-team:not(.away),#homeGoals),
+#scoreboard[data-burn-away] :is(.bug-team.away,#awayGoals){background:#ffde4c;border-color:#fff8a0;color:#2c2100;box-shadow:inset 0 0 14px #fff2a0,0 0 12px #ffdf4c}
+@media(prefers-reduced-motion:no-preference){
+ #scoreboard[data-burn-home] :is(.bug-team:not(.away),#homeGoals),
+ #scoreboard[data-burn-away] :is(.bug-team.away,#awayGoals){animation:burn-side-pulse .9s ease-in-out infinite alternate}
+}
+@keyframes burn-side-pulse{to{background:#664800;color:#fff7bc;box-shadow:inset 0 0 5px #f8a91e,0 0 4px #ffdb36}}
 .bug-shirt{width:23px;height:22px;background:linear-gradient(90deg,#3975a6 36%,#78b9e6 36% 55%,#4892c8 55%);clip-path:polygon(23% 5%,39% 0,43% 13%,58% 13%,62% 0,78% 5%,100% 27%,82% 49%,73% 40%,73% 100%,27% 100%,27% 40%,17% 49%,0 27%)}
 .bug-goals{display:grid;place-items:center;font:normal 32px/1 Upheaval,monospace;color:#fff9e9;background:#a34620;border-top:3px solid #fb9a50}
 .bug-time{background:#101c19;display:grid;align-content:center;justify-items:center;gap:1px;border-top:3px solid #a88559}

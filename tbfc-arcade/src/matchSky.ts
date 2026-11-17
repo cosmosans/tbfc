@@ -1,7 +1,7 @@
 import * as T from 'three'
 import type {MatchSettings} from './matchSettings'
 
-export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalLight){
+export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalLight,rooftop=false,indoor=false){
  const cover={Sun:.22,Clouds:.74,Rain:.94,Snow:.87}[settings.weather]
  const horizon=new T.Color(),zenith=new T.Color(),grey=new T.Color()
  scene.background=horizon
@@ -36,10 +36,18 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
   grey.setHex(night?0x273345:evening?0xae98a0:0x98a7ad)
   horizon.setHex(night?0x182941:evening?0xffbf89:0xcfdfdf).lerp(grey,cover*.6)
   zenith.setHex(night?0x080f24:evening?0x586eaa:0x3984ba).lerp(grey,cover*.65)
+  if(rooftop&&(evening||night)){
+   horizon.setHex(night?0x55476d:0xf6a494)
+   zenith.setHex(night?0x12132e:0x403c88)
+  }
   fog.color.copy(horizon)
   const uniforms=sky.material.uniforms
   uniforms.night.value=Number(night)
   uniforms.lightDir.value.copy(sun.position).normalize()
+  if(rooftop&&(evening||night)){
+   uniforms.night.value=night?1:.8
+   uniforms.lightDir.value.set(.31,.14,-1).normalize()
+  }
   uniforms.cloudLit.value.setHex(night?0x424e69:evening?0xffccb1:0xffffff)
  }
  setSkyTime(settings.time)
@@ -54,6 +62,8 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
  geom.setAttribute('position',attr)
  const particles=rain?new T.LineSegments(geom,new T.LineBasicMaterial({color:0xc5d8df,transparent:true,opacity:.36,depthWrite:false})):
   new T.Points(geom,new T.PointsMaterial({color:0xf4f8ff,size:.075,transparent:true,opacity:.85,depthWrite:false}))
+ // On the mill, the full precipitation volume sits outside the glazed north wall.
+ if(indoor)particles.position.z=-52
  particles.frustumCulled=false;scene.add(particles)
  let time=0
  function update(dt:number){

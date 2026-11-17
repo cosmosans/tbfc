@@ -12,7 +12,11 @@ export type Destination =
   | "practice"
   | "celebrations"
   | "simulate"
-  | "penalties" | "burnLab" | "westendTest" | "southsideTest" | "eastsideTest" | "stadiumTest" | "curveLab" | "spriteViewer";
+  | "penalties"
+  | "burnLab"
+  | "stadiumTest"
+  | "curveLab"
+  | "spriteViewer";
 
 export function mountMenuBackdrop() {
   const style = document.createElement("style");
@@ -20,7 +24,9 @@ export function mountMenuBackdrop() {
   document.head.append(style);
   let feed: HTMLIFrameElement | undefined;
   let finishReady = () => {};
-  const ready = new Promise<void>((resolve) => { finishReady = resolve; });
+  const ready = new Promise<void>((resolve) => {
+    finishReady = resolve;
+  });
   let observer: MutationObserver | undefined;
   let fallback = 0;
   if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -42,7 +48,11 @@ export function mountMenuBackdrop() {
     });
     observer.observe(feed, { attributes: true, attributeFilter: ["class"] });
     // If the demo cannot render, keep the menu usable rather than loading forever.
-    fallback = window.setTimeout(() => { observer?.disconnect(); feed?.remove(); finishReady(); }, 15000);
+    fallback = window.setTimeout(() => {
+      observer?.disconnect();
+      feed?.remove();
+      finishReady();
+    }, 15000);
   } else finishReady();
   const remove = () => {
     observer?.disconnect();
@@ -57,6 +67,7 @@ export function mainMenu(
   music: MenuMusic,
   showIntro = false,
   backdropReady: Promise<void> = Promise.resolve(),
+  initialMenu: "menu" | "debug" = "menu",
 ): Promise<Destination> {
   const root = document.createElement("section");
   root.id = "main-menu";
@@ -76,7 +87,7 @@ export function mainMenu(
     const title =
       '<div class="menu-title"><img src="' +
       crest +
-      '" alt=""><div><span>TURF BURNERS FC</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
+      '" alt=""><div><span style="letter-spacing: 3.5px">TURF BURNERS</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
     function audioButton(
       action: "music" | "sound",
       label: string,
@@ -102,7 +113,10 @@ export function mainMenu(
       screen = next;
       root.dataset.screen = next;
       if (next === "loading")
-        shell.innerHTML = '<div class="menu-loading" role="status" aria-label="Loading"><img src="' + pamLoading + '" alt=""><strong>LOADING <span class="menu-loading-dots" aria-hidden="true">. . .</span></strong></div>';
+        shell.innerHTML =
+          '<div class="menu-loading" role="status" aria-label="Loading"><img src="' +
+          pamLoading +
+          '" alt=""><strong>LOADING <span class="menu-loading-dots" aria-hidden="true">. . .</span></strong></div>';
       if (next === "intro")
         shell.innerHTML =
           title +
@@ -113,7 +127,7 @@ export function mainMenu(
           '<nav aria-label="Main menu"><button data-action="career">Career Mode</button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML =
-          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="simulate">Random Match</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="curveLab">Burn Curve Lab</button><button data-action="stadiumTest">Stadium Test</button><button data-action="eastsideTest">Eastside Commons</button><button data-action="southsideTest">Southside Diamond</button><button data-action="westendTest">Station Soccer West End</button><button data-action="back">Back</button></nav>';
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
@@ -128,7 +142,8 @@ export function mainMenu(
             : '[data-action="' + returnFocus + '"]',
         )
         ?.focus({ preventScroll: true });
-      if (next !== "loading") reveal(shell, ".menu-title img,.menu-title>div,:scope>h1,button");
+      if (next !== "loading")
+        reveal(shell, ".menu-title img,.menu-title>div,:scope>h1,button");
       if (next === "menu") {
         const brand = shell.querySelector<HTMLElement>(".menu-title span")!;
         const arcade = shell.querySelector<HTMLElement>(".menu-title h1")!;
@@ -167,16 +182,15 @@ export function mainMenu(
         case "debug":
           draw("debug");
           break;
-        case "simulate":
-          leave("simulate");
+        case "penalties":
+          leave("penalties");
           break;
-        case "penalties": leave("penalties"); break;
-        case "spriteViewer": leave("spriteViewer"); break;
-        case "curveLab": leave("curveLab"); break;
-        case "westendTest": leave("westendTest"); break;
-        case "southsideTest": leave("southsideTest"); break;
-        case "eastsideTest": leave("eastsideTest"); break;
-        case "stadiumTest": leave("stadiumTest"); break;
+        case "spriteViewer":
+          leave("spriteViewer");
+          break;
+        case "stadiumTest":
+          leave("stadiumTest");
+          break;
         case "burnLab":
           leave("burnLab");
           break;
@@ -231,8 +245,12 @@ export function mainMenu(
       }
     };
     draw("loading");
-    const minimum = new Promise<void>(resolve => setTimeout(resolve, Math.max(0, 1500 - (performance.now() - openedAt))));
-    void Promise.all([backdropReady, minimum]).then(() => { if (root.isConnected) draw(showIntro ? "intro" : "menu"); });
+    const minimum = new Promise<void>((resolve) =>
+      setTimeout(resolve, Math.max(0, 1500 - (performance.now() - openedAt))),
+    );
+    void Promise.all([backdropReady, minimum]).then(() => {
+      if (root.isConnected) draw(showIntro ? "intro" : initialMenu);
+    });
     const confirm = (pad?: Gamepad) =>
       !!(pad?.buttons[0]?.pressed || pad?.buttons[9]?.pressed);
     const initial = menuPad();
@@ -244,7 +262,12 @@ export function mainMenu(
         dir = pad ? menuDirection(pad) : "";
       if (screen === "loading") {
         const dots = shell.querySelector(".menu-loading-dots");
-        if (dots) dots.textContent = Array(1 + Math.floor((performance.now() - openedAt) / 350) % 3).fill(".").join(" ");
+        if (dots)
+          dots.textContent = Array(
+            1 + (Math.floor((performance.now() - openedAt) / 350) % 3),
+          )
+            .fill(".")
+            .join(" ");
       }
       if (controllerStatus && controllerStatus.textContent !== padStatus)
         controllerStatus.textContent = padStatus;

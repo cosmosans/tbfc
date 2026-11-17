@@ -2,7 +2,7 @@ import * as T from 'three'
 
 // Pick up the lamp-head locations from the exported Blender lens geometry.
 export function schoolLighting(scene:T.Scene,school:T.Object3D,renderer:T.WebGLRenderer,
- fill:T.HemisphereLight,sun:T.DirectionalLight,setSkyTime:(time:'Evening'|'Night')=>void,venue:'school'|'eastside'|'southside'|'westend'){
+ fill:T.HemisphereLight,sun:T.DirectionalLight,setSkyTime:(time:'Evening'|'Night')=>void,venue:'school'|'eastside'|'southside'|'westend'|'topdeck'){
  const fixtures=new Map<string,T.Box3>()
  const windows=new Set<T.MeshStandardMaterial>()
  const vertex=new T.Vector3()
@@ -40,9 +40,9 @@ export function schoolLighting(scene:T.Scene,school:T.Object3D,renderer:T.WebGLR
   const flare=new T.Sprite(halo);flare.position.copy(lamp.position);flare.scale.set(4.3,2.2,1)
   rig.add(lamp,lamp.target,flare)
  }
- for(const x of venue==='westend'?[-32,16,43]:venue==='southside'?[]:venue==='eastside'?[-23,-7,10,26]:[-12,-4,4]){
+ for(const x of venue==='topdeck'?[-19,3]:venue==='westend'?[-32,16,43]:venue==='southside'?[]:venue==='eastside'?[-23,-7,10,26]:[-12,-4,4]){
   const spill=new T.PointLight(0xffae62,12,7,2)
-  spill.position.set(x,venue==='westend'?4.8:2.35,venue==='westend'?-26:venue==='eastside'?-33.7:-18.6);rig.add(spill)
+  spill.position.set(x,venue==='westend'?4.8:2.35,venue==='westend'?-26:venue==='topdeck'?-15.9:venue==='eastside'?-33.7:-18.6);rig.add(spill)
  }
  rig.visible=false
  scene.add(rig)
@@ -50,13 +50,17 @@ export function schoolLighting(scene:T.Scene,school:T.Object3D,renderer:T.WebGLR
  const sunsetSun=sun.color.clone(),sunsetSunIntensity=sun.intensity
  const sunsetPosition=sun.position.clone()
  function setNight(night:boolean){
-  rig.visible=night
+  rig.visible=night||venue==='topdeck'
   if(night){
    fill.color.setHex(0xa7c7ff);fill.groundColor.setHex(0x646b82);fill.intensity=.46
    sun.color.setHex(0xb4c9ff);sun.position.set(-28,30,-19);sun.intensity=.17
   }else{
    fill.color.copy(sunsetFill);fill.groundColor.copy(sunsetGround);fill.intensity=sunsetIntensity
    sun.color.copy(sunsetSun);sun.position.copy(sunsetPosition);sun.intensity=sunsetSunIntensity
+  }
+  if(venue==='topdeck'&&!night){
+   fill.color.setHex(0xbdbcf5);fill.intensity=.75
+   sun.color.setHex(0xffbdaf);sun.intensity=.55
   }
   for(const material of windows)material.emissive.setHex(night?0xffba71:0)
   setSkyTime(night?'Night':'Evening')
