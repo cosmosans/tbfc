@@ -5,12 +5,13 @@ import {playPenalties} from './penaltyArena'
 import type {Kick} from './shootoutRules'
 import {fixtureRequiresWinner} from './careerSeason'
 import {costumeSmoke} from './costumeSmoke'
-import meghanGoalUrl from './art/meghan-hockey-goal.png?url'
+import meghanGoalUrl from './art/meghan-new-goal-stand.png?url'
 import meghanSkateUrl from './art/meghan-skate.png?url'
 import nelsonGoalUrl from './art/nelson-goal.png?url'
 import nelsonGoalRunUrl from './art/nelson-goal-run.png?url'
 import nelsonGoalSupportUrl from './art/nelson-goal-support.png?url'
-import janGoalUrl from './art/jan-goal.png?url'
+import janGoalUrl from './art/jan-new-goal-stand.png?url'
+import janGoalRunUrl from './art/jan-new-goal-run.png?url'
 import stevenGoalRunUrl from './art/steven-goal-run.png?url'
 import stevenGoalGroupUrl from './art/steven-goal-group.png?url'
 import pamSkateGoalUrl from './art/pam-skate-goal.png?url'
@@ -19,9 +20,18 @@ import joseTackleUrl from './art/jose-tackle.png?url'
 import joseReactionUrl from './art/jose-reaction.png?url'
 import joseReactionFlashUrl from './art/jose-reaction-flash.png?url'
 import joseHeaderUrl from './art/jose-header.png?url'
-import nadiaGoalGroupUrl from './art/nadia-goal-group.png?url'
+import nadiaNewGoalStandUrl from './art/nadia-new-goal-stand.png?url'
+import nadiaNewGoalRunUrl from './art/nadia-new-goal-run.png?url'
 import danielGoalGroupUrl from './art/daniel-goal-group.png?url'
-import chrisGoalGroupUrl from './art/chris-goal-group.png?url'
+import chrisNewIdle from './art/chris-new-idle.png?url'
+import chrisNewRun from './art/chris-new-run.png?url'
+import chrisNewKick from './art/chris-new-kick.png?url'
+import chrisNewHeader from './art/chris-new-header.png?url'
+import chrisNewTackle from './art/chris-new-tackle.png?url'
+import chrisNewReaction from './art/chris-new-reaction.png?url'
+import chrisNewFoul from './art/chris-new-foul.png?url'
+import chrisNewGoalRun from './art/chris-new-goal-run.png?url'
+import chrisNewGoalStand from './art/chris-new-goal-stand.png?url'
 import jeremyGoalGroupUrl from './art/jeremy-goal-group.png?url'
 import stubbsSlideUrl from './art/stubbs-slide.png?url'
 import {careerRating,type Attribute} from './careerDevelopment'
@@ -29,6 +39,7 @@ import {playerRatings,ratingLabels} from './playerRatings'
 import {scoreRow,statRow} from './leagueBoard'
 import './fullTime.css'
 import {careerHub,headshots,ratings,type Ticket} from './careerHub'
+import {rivalHeadshot} from './rivalHeadshots'
 import {pauseMenu} from './pauseMenu'
 import {simulateRemainder,scoreboardAt,finishRound,opponent,type Report} from './careerSeason'
 import {saveSlot} from './careerStore'
@@ -50,10 +61,13 @@ import {goalCannons} from './goalCannons'
 import {kneelingPose} from './kneelingPose'
 import mandyGoalUrl from './art/mandy-goal.png?url'
 import pamGoalUrl from './art/pam-goal.png?url'
-import nadiaIdle from './art/nadia-idle.png?url'
-import nadiaRun from './art/nadia-run.png?url'
-import nadiaKick from './art/nadia-side-kicks.png?url'
-import nadiaFall from './art/nadia-fall.png?url'
+import nadiaIdle from './art/nadia-new-idle.png?url'
+import nadiaRun from './art/nadia-new-run.png?url'
+import nadiaKick from './art/nadia-new-kick.png?url'
+import nadiaHeader from './art/nadia-new-header.png?url'
+import nadiaTackle from './art/nadia-new-tackle.png?url'
+import nadiaReaction from './art/nadia-new-reaction.png?url'
+import nadiaFall from './art/nadia-new-foul.png?url'
 import nelsonIdle from './art/nelson-idle.png?url'
 import nelsonRun from './art/nelson-run.png?url'
 import nelsonKick from './art/nelson-kick.png?url'
@@ -62,8 +76,7 @@ import nelsonJump from './art/nelson-jump.png?url'
 import nelsonTackle from './art/nelson-tackle.png?url'
 import nelsonReaction from './art/nelson-reaction.png?url'
 import stubbsFall from './art/stubbs-fall.png?url'
-import meghanFall from './art/meghan-fall.png?url'
-import chrisFall from './art/chris-fall.png?url'
+import meghanFall from './art/meghan-new-foul.png?url'
 import mandyFall from './art/mandy-fall.png?url'
 import seanFall from './art/sean-fall.png?url'
 import danielFall from './art/daniel-fall.png?url'
@@ -93,9 +106,13 @@ import joseIdle from './art/jose-idle.png?url'
 import joseRun from './art/jose-run.png?url'
 import joseKick from './art/jose-kick-finals.png?url'
 import {selectLineup, positions, bios, burnerEligibility} from './lineup'
-import janIdle from './art/jan-idle.png?url'
-import janRun from './art/jan-run.png?url'
-import janKick from './art/jan-side-kicks.png?url'
+import janIdle from './art/jan-new-idle.png?url'
+import janRun from './art/jan-new-run.png?url'
+import janKick from './art/jan-new-kick.png?url'
+import janJump from './art/jan-new-jump.png?url'
+import janTackle from './art/jan-new-tackle.png?url'
+import janReaction from './art/jan-new-reaction.png?url'
+import janFoul from './art/jan-new-foul.png?url'
 import { audio } from './matchAudio'
 import cardSheet from './art/ref-yellow-card.png?url'
 import stubbsKick from './art/stubbs-side-kicks.png?url'
@@ -117,8 +134,10 @@ import refereeRun from './art/ref-run.png?url'
 import { advanceOutBall } from './perimeter'
 import pamSideKicks from './art/pam-kick.png?url'
 import pamHeaderUrl from './art/pam-header.png?url'
-import chrisSideKicks from './art/chris-side-kicks.png?url'
-import meghanKick from './art/meghan-kick-preview.png?url'
+import meghanKick from './art/meghan-new-kick.png?url'
+import meghanHeader from './art/meghan-new-header.png?url'
+import meghanTackle from './art/meghan-new-tackle.png?url'
+import meghanReaction from './art/meghan-new-reaction.png?url'
 import awayKeeperEnd from './art/keeper-end.png?url'
 import rivalKeeperDiveFrontUrl from './art/rival-keeper-front.png?url'
 import rivalKeeperDiveRearUrl from './art/rival-keeper-rear.png?url'
@@ -142,13 +161,12 @@ import pam_run from './art/pam-run.png?url'
 
 import blueIdle from './art/stars-idle.png?url'
 import blueRun from './art/stars-run.png?url'
-import chris_idle from './art/chris-idle.png?url'
-import chris_run from './art/chris-run.png?url'
-import meghan_idle from './art/meghan-pixellab-idle.png?url'
-import meghan_run from './art/meghan-pixellab-run.png?url'
+import meghan_idle from './art/meghan-new-idle.png?url'
+import meghan_run from './art/meghan-new-run.png?url'
 const interMaleGoalUrls=import.meta.glob<string>('./art/inter-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
 const peachMaleGoalUrls=import.meta.glob<string>('./art/peach-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
 const starsMaleGoalUrls=import.meta.glob<string>('./art/ss-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
+const onsiderMaleGoalUrls=import.meta.glob<string>('./art/onsider-*-goal-{run,stand,support}.png',{eager:true,query:'?url',import:'default'})
 const uiFont = new FontFace('Oxanium', 'url(' + oxaniumUrl + ')', {weight:'200 800', display:'swap'})
 document.fonts.add(uiFont)
 void uiFont.load()
@@ -158,8 +176,8 @@ void hudFont.load()
 
 const el=(id:string)=>document.getElementById(id)!
 async function start(){
- const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chris_idle,chris_run,chrisSideKicks],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
- const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisFall,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall}
+ const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chrisNewIdle,chrisNewRun,chrisNewKick],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
+ const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall}
  const settings=defaultSettings()
  const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
@@ -448,7 +466,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -461,10 +479,12 @@ async function start(){
   const actor=await createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
   if(art?.stand&&art.support){
    const [stand,support]=await Promise.all([art.stand,art.support].map(celebrationSheet))
-   const run=actor.maps[1].clone()
+   const run=art.goalRun?await celebrationSheet(art.goalRun):actor.maps[1].clone()
    for(const map of [run,stand,support]){
+    const cell=map.image.height/8
+    map.userData.cell=cell
     map.userData.directionalCelebration=true
-    map.repeat.set(48/map.image.width,1/8)
+    map.repeat.set(cell/map.image.width,1/8)
    }
    fleetCelebrations.set(actor.maps[0],{run,stand,support})
   }
@@ -714,10 +734,12 @@ async function start(){
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
-  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaGoalGroupUrl,danielGoalGroupUrl,chrisGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
+ const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,janGoalRun,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
+  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,janGoalRunUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaNewGoalStandUrl,nadiaNewGoalRunUrl,danielGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
- for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,danielGoalGroup,chrisGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ const [chrisGoalRun,chrisGoalStand]=await Promise.all([chrisNewGoalRun,chrisNewGoalStand].map(celebrationSheet))
+ for(const map of [chrisGoalRun,chrisGoalStand]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
  const [pamHeader,joseHeader]=await Promise.all([pamHeaderUrl,joseHeaderUrl].map(celebrationSheet))
  pamHeader.repeat.set(1/9,1/8);joseHeader.repeat.set(1/9,1/8)
@@ -725,15 +747,18 @@ async function start(){
  spiderRun.repeat.y=1/8;spiderRun.userData.directionalRun=true
  meghanSkate.repeat.y=1/8
  meghanSkate.userData.directionalRun=true
+ meghanGoal.repeat.y=1/8;meghanGoal.userData.directionalCelebration=true;meghanGoal.userData.cell=54
+ for(const map of [janGoal,janGoalRun]){map.repeat.y=1/8;map.userData.directionalCelebration=true;map.userData.cell=64}
  pamSkateGoal.repeat.y=1/8; pamSkateGoal.userData.directionalRun=true
  joseOverhead.repeat.y=1/8
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalGroup,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const onsiderMaleGoals=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
  const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
  function supportMap(actor:typeof sean){
-  const source=fleetCelebrations.get(actor.maps[0])?.support??groupCelebrations[actor.displayName]
+  const source=fleetCelebrations.get(actor.maps[0])?.support??onsiderMaleGoals.get(actor.maps[0])?.support??groupCelebrations[actor.displayName]
   if(!source)return undefined
   const current=supportMaps.get(actor)
   if(current?.source===source)return current.map
@@ -767,13 +792,24 @@ async function start(){
   }))
  }
  if(home.name==='Shooting Stars FC'||matchOpponent.name==='Shooting Stars FC'){
-  await Promise.all(['Malik','Riley','Andre','Leo','Kai','Rowan'].map(async name=>{
+  await Promise.all(['Malik','Riley','Andre','Leo','Kai','Rowan','Sasha','Val','Iris','Cleo'].map(async name=>{
    const files=['run','stand','support'].map(action=>starsMaleGoalUrls[`./art/ss-${name.toLowerCase()}-goal-${action}.png`])
    if(files.some(file=>!file))return
    const [run,stand,support]=await Promise.all(files.map(celebrationSheet))
-   for(const map of [run,stand,support]){map.userData.cell=48;map.userData.directionalCelebration=true;map.repeat.set(48/map.image.width,1/8)}
+   const cell=['Sasha','Val','Iris','Cleo'].includes(name)?50:48
+   for(const map of [run,stand,support]){map.userData.cell=cell;map.userData.directionalCelebration=true;map.repeat.set(cell/map.image.width,1/8)}
    starsMaleGoals[name]={run,stand,support}
    groupCelebrations[name]=support
+  }))
+ }
+ if(home.name==='Onsider Trading FC'||matchOpponent.name==='Onsider Trading FC'){
+  const actors=home.name==='Onsider Trading FC'?[...homeSlots,...reserves]:[...opponents,awayGK]
+  await Promise.all(['Ledger','Brooks','Sterling','Graham','Miles','Ellis','Reid'].map(async name=>{
+   const files=['run','stand','support'].map(action=>onsiderMaleGoalUrls[`./art/onsider-${name.toLowerCase()}-goal-${action}.png`])
+   if(files.some(file=>!file))return
+   const [run,stand,support]=await Promise.all(files.map(celebrationSheet))
+   for(const map of [run,stand,support]){map.userData.cell=48;map.userData.directionalCelebration=true;map.repeat.set(48/map.image.width,1/8)}
+   for(const actor of actors)if(actor.displayName===name)onsiderMaleGoals.set(actor.maps[0],{run,stand,support})
   }))
  }
  const costumeChange=costumeSmoke(scene)
@@ -1120,7 +1156,7 @@ async function start(){
  function showGoalCard(){
   const club=shotDirection===attackSign?home:matchOpponent
   const name=scorer?.displayName??club.name
-  const portrait=club===burners?headshots[name]:undefined
+  const portrait=club===burners?headshots[name]:rivalHeadshot(club,name)
   goalCard.innerHTML='<div><strong>Goal</strong><i></i><span></span><em></em></div>'
   goalCard.querySelector('i')!.style.backgroundImage='url('+ballSheet+')'
   const face=goalCard.querySelector('span')!
@@ -2575,8 +2611,9 @@ async function start(){
   const peachGoal=scoringClub.name==='Peachy Puffs'&&scorer?peachMaleGoals[scorer.displayName]:undefined
   const starsGoal=scoringClub.name==='Shooting Stars FC'&&scorer?starsMaleGoals[scorer.displayName]:undefined
   const fleetGoal=scorer?fleetCelebrations.get(scorer.maps[0]):undefined
-  goalMap=fleetGoal?.stand??interGoal?.stand??peachGoal?.stand??starsGoal?.stand??(scorer&&scoringClub===burners?celebrations[scorer.displayName]:undefined)
-  runCelebration=fleetGoal?.run??interGoal?.run??peachGoal?.run??starsGoal?.run??(scoringClub===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:scorer?.displayName==='Nelson'?nelsonGoalRun:undefined):undefined)
+  const onsiderGoal=scorer?onsiderMaleGoals.get(scorer.maps[0]):undefined
+  goalMap=fleetGoal?.stand??onsiderGoal?.stand??interGoal?.stand??peachGoal?.stand??starsGoal?.stand??(scorer&&scoringClub===burners?celebrations[scorer.displayName]:undefined)
+  runCelebration=fleetGoal?.run??onsiderGoal?.run??interGoal?.run??peachGoal?.run??starsGoal?.run??(scoringClub===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:scorer?.displayName==='Nelson'?nelsonGoalRun:scorer?.displayName==='Chris'?chrisGoalRun:scorer?.displayName==='Nadia'?nadiaGoalRun:scorer?.displayName==='Jan'?janGoalRun:undefined):undefined)
   costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun||runCelebration===pamSkateGoal
   celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:3.5
   slideX=-shotDirection;slideZ=0
@@ -2609,7 +2646,7 @@ async function start(){
   celebrant.moving=false;celebrant.runClock=0
   if(goalMap===spiderIdle)celebrant.face=celebrant.drawFace=0
   const goalCell=goalMap?.userData.cell??48
-  resultTime=goalMap===pamGoal||goalMap===nelsonGoal||goalMap===janGoal?2*goalMap.image.width/goalCell*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/goalCell*.2:2.8
+  resultTime=goalMap===pamGoal||goalMap===nelsonGoal?2*goalMap.image.width/goalCell*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/goalCell*.2:2.8
   if(goalMap!==mandyGoal)return
   const center=celebrant.sprite.position
   const mates=walks.filter(w=>w.gather)
@@ -2743,7 +2780,8 @@ async function start(){
   const percent=control?Math.round(100*facts.control[0]/control):0
   const scorers=[0,rival].map(club=>{
    const entries=careerGoals.filter(g=>g.club===club).map(g=>{
-    const face=club===0&&headshots[g.player]?`<img src="${headshots[g.player]}" alt="">`:
+    const portrait=club===0&&home===burners?headshots[g.player]:rivalHeadshot(club===0?home:matchOpponent,g.player)
+    const face=portrait?`<img src="${portrait}" alt="">`:
      `<span class="ft-rival" style="background-image:url('${rivalSprites(club===0?home:matchOpponent,g.player)?.idle??blueIdle}')"></span>`
     return `<li>${face}<b>${g.player}</b> ${g.minute}′</li>`
    }).join('')
@@ -2846,7 +2884,7 @@ async function start(){
      const minute=document.createElement('span');minute.textContent=parts[0]+' -'
      const face=document.createElement('span');face.className='career-caption-face'
      const homePlayer=[home.keeper,...home.outfield,...home.bench].includes(name)
-     const portrait=homePlayer&&home===burners?headshots[name]:undefined
+     const portrait=homePlayer&&home===burners?headshots[name]:rivalHeadshot(homePlayer?home:matchOpponent,name)
      if(portrait){const img=document.createElement('img');img.src=portrait;img.alt='';face.append(img)}
      else face.style.backgroundImage=`url("${rivalSprites(homePlayer?home:matchOpponent,name)?.idle??(homePlayer?portraits[name]:blueIdle)}")`
      const event=document.createElement('span');event.textContent=name.toUpperCase()+' - '+parts[2].toUpperCase()
@@ -3676,6 +3714,7 @@ async function start(){
      if(runCelebration===stubbsSlide)runCelebration.offset.set(Math.min(frames-1,Math.floor(goalAge/.2))/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      else runCelebration.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      actor.sprite.material.map=runCelebration
+     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/cell)
      continue
     }
@@ -3687,6 +3726,7 @@ async function start(){
      if(groupMap.userData.directionalCelebration)groupMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
      actor.sprite.material.map=groupMap
      const rows=groupMap.image.height/cell
+     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
@@ -3700,6 +3740,7 @@ async function start(){
      goalMap.offset.x=frame/frames
      actor.sprite.material.map=goalMap
      const rows=goalMap.image.height/cell
+     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }

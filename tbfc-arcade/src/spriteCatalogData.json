@@ -20,54 +20,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "meghan-pixellab-idle.png",
+              "file": "meghan-new-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Meghan animation set"
             },
             "Run": {
-              "file": "meghan-pixellab-run.png",
+              "file": "meghan-new-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Meghan animation set"
             },
             "Kick": {
-              "file": "meghan-kick-preview.png",
+              "file": "meghan-new-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Meghan animation set"
             },
             "Foul reaction (fall)": {
-              "file": "meghan-fall.png",
+              "file": "meghan-new-foul.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Meghan animation set"
             },
             "Running celebration": {
               "file": "meghan-skate.png",
               "status": "Individual",
-              "note": ""
+              "note": "Existing skating goal celebration; no replacement in the new package"
             },
             "Standing celebration": {
-              "file": "meghan-hockey-goal.png",
+              "file": "meghan-new-goal-stand.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Meghan animation set"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "meghan-new-header.png",
+              "status": "Individual",
+              "note": "New Meghan animation set"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "meghan-new-tackle.png",
+              "status": "Individual",
+              "note": "New Meghan animation set"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "meghan-new-reaction.png",
+              "status": "Individual",
+              "note": "New Meghan animation set"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "meghan-new-goal-support.png",
+              "status": "Individual",
+              "note": "New Meghan animation set"
             }
           }
         },
@@ -132,54 +132,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "jan-idle.png",
+              "file": "jan-new-idle.png",
               "status": "Individual",
               "note": ""
             },
             "Run": {
-              "file": "jan-run.png",
+              "file": "jan-new-run.png",
               "status": "Individual",
               "note": ""
             },
             "Kick": {
-              "file": "jan-side-kicks.png",
+              "file": "jan-new-kick.png",
               "status": "Individual",
               "note": ""
             },
             "Standing celebration": {
-              "file": "jan-goal.png",
+              "file": "jan-new-goal-stand.png",
+              "status": "Individual",
+              "note": "Group celebration finisher"
+            },
+            "Jump / header / air move": {
+              "file": "jan-new-jump.png",
               "status": "Individual",
               "note": ""
             },
-            "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
-            },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "jan-new-tackle.png",
+              "status": "Individual",
+              "note": "North-east and north use east; north-west uses west"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "jan-new-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "jan-new-foul.png",
+              "status": "Individual",
+              "note": "North-east and north use east; north-west uses west"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "jan-new-goal-run.png",
+              "status": "Individual",
+              "note": "Uses new run animation; no separate running celebration supplied"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "jan-new-goal-support.png",
+              "status": "Individual",
+              "note": "Uses same group celebration"
             }
           }
         },
@@ -300,54 +300,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "chris-idle.png",
+              "file": "chris-new-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Chris replacement art"
             },
             "Run": {
-              "file": "chris-run.png",
+              "file": "chris-new-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Chris replacement art"
             },
             "Kick": {
-              "file": "chris-side-kicks.png",
+              "file": "chris-new-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Chris replacement art"
             },
             "Foul reaction (fall)": {
-              "file": "chris-fall.png",
+              "file": "chris-new-foul.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Chris replacement art"
             },
             "Standing celebration": {
-              "file": "chris-goal-group.png",
+              "file": "chris-new-goal-stand.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Chris replacement art"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "chris-new-header.png",
+              "status": "Individual",
+              "note": "New Chris replacement art"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "chris-new-tackle.png",
+              "status": "Individual",
+              "note": "New Chris replacement art"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "chris-new-reaction.png",
+              "status": "Individual",
+              "note": "New Chris replacement art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "chris-new-goal-run.png",
+              "status": "Individual",
+              "note": "New Chris replacement art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "chris-new-goal-stand.png",
+              "status": "Individual",
+              "note": "New Chris replacement art"
             }
           }
         },
@@ -692,54 +692,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "nadia-idle.png",
+              "file": "nadia-new-idle.png",
               "status": "Individual",
               "note": ""
             },
             "Run": {
-              "file": "nadia-run.png",
+              "file": "nadia-new-run.png",
               "status": "Individual",
               "note": ""
             },
             "Kick": {
-              "file": "nadia-side-kicks.png",
+              "file": "nadia-new-kick.png",
               "status": "Individual",
               "note": ""
             },
             "Foul reaction (fall)": {
-              "file": "nadia-fall.png",
+              "file": "nadia-new-foul.png",
               "status": "Individual",
               "note": ""
             },
             "Standing celebration": {
-              "file": "nadia-goal-group.png",
+              "file": "nadia-new-goal-stand.png",
               "status": "Individual",
               "note": ""
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
+              "file": "nadia-new-header.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "nadia-new-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "nadia-new-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "nadia-new-goal-run.png",
+              "status": "Individual",
+              "note": "Uses new run sheet; no separate running celebration supplied"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "nadia-new-goal-support.png",
+              "status": "Individual",
+              "note": "Uses new group celebration"
             }
           }
         }
@@ -753,54 +753,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ff-ellis-idle.png",
-              "status": "Shared",
-              "note": "Uses ellis artwork"
+              "file": "ff-aaron-idle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
-              "file": "ff-ellis-run.png",
-              "status": "Shared",
-              "note": "Uses ellis artwork"
+              "file": "ff-aaron-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
-              "file": "ff-ellis-kick.png",
-              "status": "Shared",
-              "note": "Uses ellis artwork"
+              "file": "ff-aaron-kick.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-aaron-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-aaron-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -811,52 +811,52 @@
             "Idle (rotations)": {
               "file": "ff-ellis-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
               "file": "ff-ellis-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
               "file": "ff-ellis-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-ellis-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-ellis-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -865,54 +865,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ff-lena-idle.png",
-              "status": "Shared",
-              "note": "Uses lena artwork"
+              "file": "ff-oscar-idle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
-              "file": "ff-lena-run.png",
-              "status": "Shared",
-              "note": "Uses lena artwork"
+              "file": "ff-oscar-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
-              "file": "ff-lena-kick.png",
-              "status": "Shared",
-              "note": "Uses lena artwork"
+              "file": "ff-oscar-kick.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-oscar-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-oscar-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -923,52 +923,52 @@
             "Idle (rotations)": {
               "file": "ff-noor-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
               "file": "ff-noor-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
               "file": "ff-noor-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-noor-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-noor-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -1089,54 +1089,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ff-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "ff-jules-idle.png",
+              "status": "Individual",
+              "note": ""
             },
             "Run": {
-              "file": "ff-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "ff-jules-run.png",
+              "status": "Individual",
+              "note": ""
             },
             "Kick": {
-              "file": "ff-ellis-kick.png",
-              "status": "Placeholder",
-              "note": "Fallback kick art"
+              "file": "ff-jules-kick.png",
+              "status": "Individual",
+              "note": ""
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-jules-foul.png",
+              "status": "Individual",
+              "note": "Uses one of the two supplied foul reactions"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-jules-jump.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-jules-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-jules-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-jules-goal-run.png",
+              "status": "Individual",
+              "note": "Uses the new run sheet; no separate running celebration supplied"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-jules-goal-stand.png",
+              "status": "Individual",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-jules-goal-support.png",
+              "status": "Individual",
+              "note": "Uses the supplied group celebration"
             }
           }
         },
@@ -1147,52 +1147,52 @@
             "Idle (rotations)": {
               "file": "ff-theo-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
               "file": "ff-theo-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
               "file": "ff-theo-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-theo-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-theo-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -1201,54 +1201,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ff-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "ff-mina-idle.png",
+              "status": "Individual",
+              "note": ""
             },
             "Run": {
-              "file": "ff-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "ff-mina-run.png",
+              "status": "Individual",
+              "note": ""
             },
             "Kick": {
-              "file": "ff-ellis-kick.png",
-              "status": "Placeholder",
-              "note": "Fallback kick art"
+              "file": "ff-mina-kick.png",
+              "status": "Individual",
+              "note": ""
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-mina-foul.png",
+              "status": "Individual",
+              "note": "Uses one of the two supplied foul reactions"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-mina-jump.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-mina-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-mina-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-mina-goal-run.png",
+              "status": "Individual",
+              "note": "Uses the new run sheet; no separate running celebration supplied"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "ff-mina-goal-stand.png",
+              "status": "Individual",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-mina-goal-support.png",
+              "status": "Individual",
+              "note": "Uses the supplied group celebration"
             }
           }
         },
@@ -1259,52 +1259,52 @@
             "Idle (rotations)": {
               "file": "ff-cole-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
               "file": "ff-cole-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
               "file": "ff-cole-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ff-cole-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-cole-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         },
@@ -1313,54 +1313,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "rival-keeper-idle.png",
-              "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "file": "ff-robin-idle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Run": {
-              "file": "rival-keeper-run.png",
-              "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "file": "ff-robin-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Kick": {
-              "file": "rival-keeper-kick.png",
-              "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "file": "ff-robin-kick.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Foul reaction (fall)": {
-              "file": "rival-keeper-fall.png",
-              "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "file": "ff-robin-foul.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-jump.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-tackle.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-reaction.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ff-robin-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle Fleet Feet male variant"
             }
           }
         }
@@ -4593,52 +4593,52 @@
             "Idle (rotations)": {
               "file": "ss-sasha-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Run": {
               "file": "ss-sasha-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Kick": {
               "file": "ss-sasha-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ss-sasha-foul.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-jump.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-tackle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-reaction.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-goal-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-goal-stand.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-sasha-goal-support.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant; group finisher reused for support"
             }
           }
         },
@@ -4705,52 +4705,52 @@
             "Idle (rotations)": {
               "file": "ss-val-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Run": {
               "file": "ss-val-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Kick": {
               "file": "ss-val-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Shooting Stars female palette variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ss-val-foul.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-jump.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-tackle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-reaction.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-goal-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-goal-stand.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-val-goal-support.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant; group finisher reused for support"
             }
           }
         },
@@ -4871,54 +4871,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-iris-placeholder-idle.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-iris-idle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Run": {
-              "file": "ss-iris-placeholder-run.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-iris-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Kick": {
-              "file": "ss-iris-placeholder-kick.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-iris-kick.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ss-iris-foul.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-jump.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-tackle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-reaction.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-goal-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-goal-stand.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-iris-goal-support.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant; group finisher reused for support"
             }
           }
         },
@@ -4983,54 +4983,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-cleo-placeholder-idle.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-cleo-idle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Run": {
-              "file": "ss-cleo-placeholder-run.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-cleo-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Kick": {
-              "file": "ss-cleo-placeholder-kick.png",
-              "status": "Shared",
-              "note": "Existing female placeholder art"
+              "file": "ss-cleo-kick.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "ss-cleo-foul.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-jump.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-tackle.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-reaction.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-goal-run.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-goal-stand.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "ss-cleo-goal-support.png",
+              "status": "Individual",
+              "note": "Shooting Stars female palette variant; group finisher reused for support"
             }
           }
         },
@@ -5721,54 +5721,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ledger-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -5777,54 +5777,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-brooks-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -5833,54 +5833,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-sterling-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -5945,54 +5945,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-graham-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -6057,54 +6057,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-miles-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -6113,54 +6113,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-ellis-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -6225,54 +6225,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-idle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Run": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Kick": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-kick.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-jump.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-tackle.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-reaction.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-foul.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": "Awaiting player sprites"
+              "file": "onsider-reid-goal-support.png",
+              "status": "Individual",
+              "note": "Subtle male base variant"
             }
           }
         },
@@ -6428,11 +6428,11 @@
       "rows": 1
     },
     "ff-cole-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ff-cole-run.png": {
       "width": 384,
@@ -6449,11 +6449,11 @@
       "rows": 1
     },
     "ff-ellis-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ff-ellis-run.png": {
       "width": 384,
@@ -6491,11 +6491,11 @@
       "rows": 1
     },
     "ff-noor-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ff-noor-run.png": {
       "width": 384,
@@ -6512,11 +6512,11 @@
       "rows": 1
     },
     "ff-theo-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ff-theo-run.png": {
       "width": 384,
@@ -7765,16 +7765,16 @@
       "rows": 1
     },
     "ss-cleo-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ss-cleo-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 416,
+      "height": 416,
+      "cell": 52,
       "columns": 8,
       "rows": 8
     },
@@ -7786,16 +7786,16 @@
       "rows": 1
     },
     "ss-iris-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ss-iris-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 416,
+      "height": 416,
+      "cell": 52,
       "columns": 8,
       "rows": 8
     },
@@ -7891,16 +7891,16 @@
       "rows": 1
     },
     "ss-sasha-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ss-sasha-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 416,
+      "height": 416,
+      "cell": 52,
       "columns": 8,
       "rows": 8
     },
@@ -7912,16 +7912,16 @@
       "rows": 1
     },
     "ss-val-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
     },
     "ss-val-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 416,
+      "height": 416,
+      "cell": 52,
       "columns": 8,
       "rows": 8
     },
@@ -9673,6 +9673,1504 @@
       "height": 384,
       "cell": 48,
       "columns": 15,
+      "rows": 8
+    },
+    "onsider-ledger-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-ledger-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-ledger-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ledger-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-brooks-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-brooks-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-brooks-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-sterling-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-sterling-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-sterling-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-graham-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-graham-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-graham-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-miles-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-miles-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-miles-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-ellis-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-ellis-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-ellis-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "onsider-reid-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "onsider-reid-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "onsider-reid-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-aaron-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-aaron-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-aaron-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-ellis-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-oscar-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-oscar-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-oscar-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-noor-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-theo-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-cole-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-robin-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-robin-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-jump.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-robin-goal-support.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "chris-new-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "chris-new-kick.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-header.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-foul.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-goal-run.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "chris-new-goal-stand.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "nadia-new-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "nadia-new-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nadia-new-kick.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nadia-new-header.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "nadia-new-tackle.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "nadia-new-reaction.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "nadia-new-foul.png": {
+      "width": 432,
+      "height": 384,
+      "cell": 48,
+      "columns": 9,
+      "rows": 8
+    },
+    "nadia-new-goal-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "nadia-new-goal-stand.png": {
+      "width": 720,
+      "height": 384,
+      "cell": 48,
+      "columns": 15,
+      "rows": 8
+    },
+    "nadia-new-goal-support.png": {
+      "width": 720,
+      "height": 384,
+      "cell": 48,
+      "columns": 15,
+      "rows": 8
+    },
+    "meghan-new-idle.png": {
+      "width": 432,
+      "height": 54,
+      "cell": 54,
+      "columns": 8,
+      "rows": 1
+    },
+    "meghan-new-run.png": {
+      "width": 432,
+      "height": 432,
+      "cell": 54,
+      "columns": 8,
+      "rows": 8
+    },
+    "meghan-new-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-reaction.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-foul.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-goal-stand.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "meghan-new-goal-support.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-jump.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-tackle.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-foul.png": {
+      "width": 468,
+      "height": 416,
+      "cell": 52,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-goal-run.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-goal-stand.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-sasha-goal-support.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-jump.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-tackle.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-foul.png": {
+      "width": 468,
+      "height": 416,
+      "cell": 52,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-goal-run.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-goal-stand.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-val-goal-support.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-jump.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-tackle.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-foul.png": {
+      "width": 468,
+      "height": 416,
+      "cell": 52,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-goal-run.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-goal-stand.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-iris-goal-support.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-jump.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-tackle.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-foul.png": {
+      "width": 468,
+      "height": 416,
+      "cell": 52,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-goal-run.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-goal-stand.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-cleo-goal-support.png": {
+      "width": 450,
+      "height": 400,
+      "cell": 50,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "jan-new-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "jan-new-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-jump.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-foul.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "jan-new-goal-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "jan-new-goal-stand.png": {
+      "width": 960,
+      "height": 512,
+      "cell": 64,
+      "columns": 15,
+      "rows": 8
+    },
+    "jan-new-goal-support.png": {
+      "width": 960,
+      "height": 512,
+      "cell": 64,
+      "columns": 15,
+      "rows": 8
+    },
+    "ff-jules-idle.png": {
+      "width": 544,
+      "height": 68,
+      "cell": 68,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-jules-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-jules-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-jump.png": {
+      "width": 684,
+      "height": 608,
+      "cell": 76,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-goal-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-jules-goal-stand.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-jules-goal-support.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-idle.png": {
+      "width": 544,
+      "height": 68,
+      "cell": 68,
+      "columns": 8,
+      "rows": 1
+    },
+    "ff-mina-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-mina-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-jump.png": {
+      "width": 684,
+      "height": 608,
+      "cell": 76,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-goal-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ff-mina-goal-stand.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ff-mina-goal-support.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
       "rows": 8
     }
   }
