@@ -7,7 +7,8 @@ import { FourColumnGrid } from "./layout";
 import PanelHeader from "./PanelHeader";
 import PageHeading from "./PageHeading";
 import { canEditClub } from "../editAccess";
-import { Box, Card, CardContent, Skeleton, Stack } from "@mui/material";
+import { Link } from "react-router-dom";
+import { Box, Button, Card, CardContent, Skeleton, Stack } from "@mui/material";
 
 function TeamsPlaceholder({ count }: { count: number }) {
   return (
@@ -67,7 +68,7 @@ function TeamsPlaceholder({ count }: { count: number }) {
 function RosterPlaceholder() {
   return (
     <Stack gap={2}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
+      <Stack direction="row" alignItems="center" justifyContent="space-between" gap={2} flexWrap="wrap">
         <PageHeading>Roster</PageHeading>
         {canEditClub && (
           <Stack direction="row" gap={2}>
@@ -75,6 +76,9 @@ function RosterPlaceholder() {
             <Skeleton variant="rectangular" width={110} height={36} />
           </Stack>
         )}
+        <Button component={Link} to="/lineup-builder" variant="outlined" sx={{ ml: "auto", flexShrink: 0 }}>
+          Lineup Builder
+        </Button>
       </Stack>
       {["Active", "Inactive"].map((title, index) => (
         <Box key={title} sx={{ bgcolor: "background.paper" }}>

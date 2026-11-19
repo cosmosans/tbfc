@@ -159,9 +159,9 @@ export default function Roster({
         justifyContent="space-between"
         alignItems="center"
         gap={2}
+        flexWrap="wrap"
       >
         <PageHeading>Roster</PageHeading>
-        <Button component={Link} to="/lineup-builder" variant="outlined">Lineup Builder</Button>
         {canEditClub && (
           <Stack direction="row" gap={2}>
             <Button variant="outlined" onClick={() => setStartersOpen(true)}>
@@ -176,6 +176,9 @@ export default function Roster({
             </Button>
           </Stack>
         )}
+        <Button component={Link} to="/lineup-builder" variant="outlined" sx={{ ml: "auto", flexShrink: 0 }}>
+          Lineup Builder
+        </Button>
       </Stack>
       {canEditClub && (
         <Dialog open={addOpen} onClose={closeAdd} fullWidth maxWidth="sm">

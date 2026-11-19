@@ -166,12 +166,6 @@ export default function LineupEditor({
   const duplicated = lineup.starters.filter(
     (id, index) => id && lineup.starters.indexOf(id) !== index,
   );
-  let missingStarters = false;
-  lineup.starters.forEach((id) => {
-    if (!id || !id.length) {
-      missingStarters = true;
-    }
-  });
   const slots = formationSlots[lineup.formation];
   return (
     <Stack gap={2}>
