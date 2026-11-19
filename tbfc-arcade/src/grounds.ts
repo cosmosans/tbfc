@@ -50,6 +50,7 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
       if(object instanceof T.Mesh){object.receiveShadow=true;object.castShadow=true}
     })
     scene.add(school.scene)
+    if(venue==='topdeck'||venue==='westend')(await import('./urbanTrees')).urbanTrees(scene,venue)
     if(homeClub)await stadiumBranding(scene,homeClub,venue,school.scene)
     if(venue==='mill'){
       if(homeClub&&awayClub)await stadiumBranding(scene,awayClub,venue,school.scene,'away')

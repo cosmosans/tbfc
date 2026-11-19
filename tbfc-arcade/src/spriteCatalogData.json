@@ -408,7 +408,7 @@
           }
         },
         {
-          "name": "José",
+          "name": "Jos\u00e9",
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
@@ -1542,54 +1542,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-nico-idle.png",
-              "status": "Shared",
-              "note": "Uses nico artwork"
+              "file": "okw-avery-idle.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Run": {
-              "file": "okw-nico-run.png",
-              "status": "Shared",
-              "note": "Uses nico artwork"
+              "file": "okw-avery-run.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Kick": {
-              "file": "okw-nico-kick.png",
-              "status": "Shared",
-              "note": "Uses nico artwork"
+              "file": "okw-avery-kick.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-avery-foul.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-jump.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-tackle.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-reaction.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-goal-run.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-goal-stand.png",
+              "status": "Individual",
+              "note": "Female 1 animation set"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-avery-goal-support.png",
+              "status": "Shared",
+              "note": "Uses standing celebration"
             }
           }
         },
@@ -1600,52 +1600,52 @@
             "Idle (rotations)": {
               "file": "okw-quinn-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Run": {
               "file": "okw-quinn-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Kick": {
               "file": "okw-quinn-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-quinn-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-quinn-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle color variant from Female 1"
             }
           }
         },
@@ -1712,52 +1712,52 @@
             "Idle (rotations)": {
               "file": "okw-tessa-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Run": {
               "file": "okw-tessa-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Kick": {
               "file": "okw-tessa-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-tessa-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-tessa-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle color variant from Female 1"
             }
           }
         },
@@ -1824,52 +1824,52 @@
             "Idle (rotations)": {
               "file": "okw-june-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Run": {
               "file": "okw-june-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Kick": {
               "file": "okw-june-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant from Female 1"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-june-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant from Female 1"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-june-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle color variant from Female 1"
             }
           }
         },
@@ -1995,54 +1995,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "gd-bruno-idle.png",
-              "status": "Shared",
-              "note": "Uses bruno artwork"
+              "file": "gd-julian-idle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
-              "file": "gd-bruno-run.png",
-              "status": "Shared",
-              "note": "Uses bruno artwork"
+              "file": "gd-julian-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
-              "file": "gd-bruno-kick.png",
-              "status": "Shared",
-              "note": "Uses bruno artwork"
+              "file": "gd-julian-kick.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-julian-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-julian-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2053,52 +2053,52 @@
             "Idle (rotations)": {
               "file": "gd-bruno-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
               "file": "gd-bruno-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
               "file": "gd-bruno-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-bruno-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-bruno-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2107,54 +2107,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "gd-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-elena-idle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
-              "file": "gd-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-elena-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
-              "file": "gd-base-kick.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-elena-kick.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-elena-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-elena-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2165,52 +2165,52 @@
             "Idle (rotations)": {
               "file": "gd-arlo-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
               "file": "gd-arlo-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
               "file": "gd-arlo-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-arlo-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-arlo-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2219,54 +2219,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "gd-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-simone-idle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
-              "file": "gd-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-simone-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
-              "file": "gd-base-kick.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-simone-kick.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-simone-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-simone-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2277,52 +2277,52 @@
             "Idle (rotations)": {
               "file": "gd-rio-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
               "file": "gd-rio-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
               "file": "gd-rio-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-rio-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-rio-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2331,54 +2331,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "gd-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-naya-idle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
-              "file": "gd-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-naya-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
-              "file": "gd-base-kick.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-naya-kick.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-naya-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-naya-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2389,52 +2389,52 @@
             "Idle (rotations)": {
               "file": "gd-victor-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
               "file": "gd-victor-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
               "file": "gd-victor-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-victor-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-victor-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2445,52 +2445,52 @@
             "Idle (rotations)": {
               "file": "gd-toby-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
               "file": "gd-toby-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
               "file": "gd-toby-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-toby-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-toby-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -2499,54 +2499,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "gd-base-idle.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-dani-idle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Run": {
-              "file": "gd-base-run.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-dani-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Kick": {
-              "file": "gd-base-kick.png",
-              "status": "Shared",
-              "note": "Team base sprite"
+              "file": "gd-dani-kick.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "gd-dani-foul.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-jump.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-tackle.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-reaction.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle color variant; verify in Sprite Viewer"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "gd-dani-goal-support.png",
+              "status": "Shared",
+              "note": "Uses the finisher as a group support pose"
             }
           }
         },
@@ -6526,23 +6526,23 @@
       "rows": 8
     },
     "gd-arlo-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "gd-arlo-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "gd-arlo-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
@@ -6568,86 +6568,86 @@
       "rows": 8
     },
     "gd-bruno-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "gd-bruno-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "gd-bruno-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
     "gd-rio-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "gd-rio-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "gd-rio-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
     "gd-toby-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "gd-toby-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "gd-toby-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
     "gd-victor-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "gd-victor-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "gd-victor-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
@@ -6995,23 +6995,23 @@
       "rows": 2
     },
     "okw-avery-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "okw-avery-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "okw-avery-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
@@ -7058,23 +7058,23 @@
       "rows": 8
     },
     "okw-june-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "okw-june-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "okw-june-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
@@ -7142,44 +7142,44 @@
       "rows": 8
     },
     "okw-quinn-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "okw-quinn-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "okw-quinn-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
     "okw-tessa-idle.png": {
-      "width": 384,
-      "height": 48,
-      "cell": 48,
+      "width": 640,
+      "height": 80,
+      "cell": 80,
       "columns": 8,
       "rows": 1
     },
     "okw-tessa-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
     },
     "okw-tessa-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 640,
+      "height": 640,
+      "cell": 80,
       "columns": 8,
       "rows": 8
     },
@@ -11311,6 +11311,797 @@
       "height": 432,
       "cell": 54,
       "columns": 13,
+      "rows": 8
+    },
+    "gd-julian-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-julian-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-julian-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-julian-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-julian-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-bruno-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-bruno-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-elena-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-elena-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-elena-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-arlo-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-arlo-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-simone-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-simone-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-simone-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-rio-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-rio-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-naya-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-naya-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-naya-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-victor-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-victor-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-goal-run.png": {
+      "width": 1040,
+      "height": 640,
+      "cell": 80,
+      "columns": 13,
+      "rows": 8
+    },
+    "gd-toby-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-toby-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "gd-dani-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "gd-dani-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "gd-dani-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-avery-goal-stand.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-avery-goal-support.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-quinn-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-quinn-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-quinn-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-quinn-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-quinn-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-quinn-goal-stand.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-quinn-goal-support.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-tessa-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-tessa-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-tessa-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-tessa-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-tessa-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-tessa-goal-stand.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-tessa-goal-support.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-june-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-june-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-june-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-june-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-june-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-june-goal-stand.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-june-goal-support.png": {
+      "width": 1200,
+      "height": 640,
+      "cell": 80,
+      "columns": 15,
       "rows": 8
     }
   }

@@ -9,9 +9,8 @@ button.stadium-card[aria-pressed=true]{outline:3px solid #ffb078;outline-offset:
 .stadium-copy strong{font:clamp(15px,2.3vw,29px)/1 Upheaval,monospace}
 .stadium-copy small,.stadium-nav span{font:500 clamp(11px,1.3vw,15px) var(--ui-font);color:#d4c4b6}
 .stadium-copy small{letter-spacing:.1em;font-size:clamp(9px,.9vw,12px)}
-.stadium-home{position:absolute;left:9px;top:9px;background:#211913ec;color:#ffd9a8;padding:4px 7px;font:700 11px var(--ui-font);text-transform:uppercase}
 .stadium-nav{display:flex;align-items:center;justify-content:space-between;margin-top:clamp(18px,4vh,35px);gap:8px}
 .stadium-nav button{font:20px Upheaval,monospace;padding:7px 15px;background:#241d19;color:#fff2df;border:1px solid #71513c}
 .stadium-nav [data-next]{background:#ad4726}
-@media(max-width:560px){dialog.stadium-picker[open]{padding:10px}.stadium-cards{gap:7px}.stadium-card img{height:clamp(60px,16vw,90px)}.stadium-copy{padding:5px}.stadium-home{left:2px;top:2px;font-size:8px}.stadium-nav button{font-size:16px}}
+@media(max-width:560px){dialog.stadium-picker[open]{padding:10px}.stadium-cards{gap:7px}.stadium-card img{height:clamp(60px,16vw,90px)}.stadium-copy{padding:5px}.stadium-nav button{font-size:16px}}
 .stadium-picker::backdrop{background:transparent}

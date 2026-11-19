@@ -33,8 +33,7 @@ export function selectStadium(home?:StadiumId,initial:StadiumId=home??'school'):
  dialog.setAttribute('aria-labelledby','stadium-title')
  dialog.innerHTML=`<div class="stadium-inner"><h1 id="stadium-title">Select Stadium</h1>
  <div class="stadium-cards">${grounds.map(g=>`<button type="button" class="stadium-card">
- <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.area} · ${g.surface}</small></span>
- ${g.id===home?'<span class="stadium-home">Home field</span>':''}</button>`).join('')}</div>
+ <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.area} · ${g.surface}</small></span></button>`).join('')}</div>
  <div class="stadium-nav"><button data-back>Back</button><span>${hint('Arrows','LS / D-pad')} Choose field</span><button data-next>Continue ${hint('Enter','A')}</button></div></div>`
  document.body.append(dialog);dialog.showModal()
  const cards=Array.from(dialog.querySelectorAll<HTMLButtonElement>('.stadium-card'))

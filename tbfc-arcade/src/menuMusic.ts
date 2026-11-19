@@ -10,7 +10,6 @@ import hitslab from "./audio/MUSIC_MENU_HIT_LAB.mp3?url";
 import hypeJump from "./audio/MUSIC_MENU_HYPE_JUMP.mp3?url";
 
 import pixelChips from "./audio/MUSIC_MENU_PIXEL_CHIPS.mp3?url";
-import sport from "./audio/MUSIC_MENU_SPORT.mp3?url";
 
 import halfTime from "./audio/MUSIC_HALFTIME_LULL_BEAT.mp3?url";
 const tracks = [
@@ -20,7 +19,6 @@ const tracks = [
   football,
   hypeJump,
   pixelChips,
-  sport,
   halfTime,
 ];
 
@@ -42,10 +40,16 @@ export function createMusicCue(
   const failedTracks = new Set<number>();
   let blockedWarning = false;
   function skipFailedTrack(failedIndex: number | null) {
-    if (!active || failedIndex === null || index !== failedIndex || failedTracks.has(failedIndex)) return;
+    if (
+      !active ||
+      failedIndex === null ||
+      index !== failedIndex ||
+      failedTracks.has(failedIndex)
+    )
+      return;
     failedTracks.add(failedIndex);
     if (failedTracks.size === tracks.length) {
-      console.warn('No menu music tracks could be played.');
+      console.warn("No menu music tracks could be played.");
       return;
     }
     index = (failedIndex + 1) % tracks.length;
@@ -85,11 +89,13 @@ export function createMusicCue(
     }
     if (player.paused) {
       const attemptedIndex = index;
-      void player.play().catch(error => {
-        if (error?.name === 'NotAllowedError') {
-          if (!blockedWarning) console.warn('Menu music will retry after the next interaction.');
+      void player.play().catch((error) => {
+        if (error?.name === "NotAllowedError") {
+          if (!blockedWarning)
+            console.warn("Menu music will retry after the next interaction.");
           blockedWarning = true;
-        } else if (error?.name !== 'AbortError') skipFailedTrack(attemptedIndex);
+        } else if (error?.name !== "AbortError")
+          skipFailedTrack(attemptedIndex);
       });
     }
   }
@@ -180,8 +186,8 @@ export function startMenuMusic(
   });
   // A returning page can start before the browser has granted audio playback.
   // Retry while the user is actively interacting, without changing their setting.
-  document.addEventListener('pointerdown', play);
-  document.addEventListener('keydown', play);
+  document.addEventListener("pointerdown", play);
+  document.addEventListener("keydown", play);
   window.addEventListener("pagehide", pauseMenu);
   window.addEventListener("pageshow", play);
   return {
@@ -206,7 +212,10 @@ export function startMenuMusic(
         localStorage.setItem(musicKey, musicEnabled ? "no" : "yes");
       } catch {}
       if (musicEnabled) play();
-      else { music.pause(); breakPlayer.pause(); }
+      else {
+        music.pause();
+        breakPlayer.pause();
+      }
     },
     toggleSound() {
       soundEnabled = !soundEnabled;
@@ -225,7 +234,10 @@ export function startMenuMusic(
     },
     carryOver() {
       history.replaceState(
-        { ...history.state, arcadeMusic: breakActive ? undefined : music.bookmark() },
+        {
+          ...history.state,
+          arcadeMusic: breakActive ? undefined : music.bookmark(),
+        },
         "",
       );
     },
@@ -238,12 +250,15 @@ export function startMenuMusic(
         cancelAnimationFrame(breakFade);
         const volume = breakPlayer.volume;
         const start = performance.now();
-        return new Promise<void>(resolve => {
+        return new Promise<void>((resolve) => {
           function fadeOut(now: number) {
             const progress = Math.min(1, (now - start) / 650);
             breakPlayer.volume = volume * (1 - progress);
             if (progress < 1) breakFade = requestAnimationFrame(fadeOut);
-            else { breakPlayer.pause(); resolve(); }
+            else {
+              breakPlayer.pause();
+              resolve();
+            }
           }
           breakFade = requestAnimationFrame(fadeOut);
         });

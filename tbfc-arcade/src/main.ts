@@ -494,6 +494,7 @@ async function start(){
   const fall=art?.foul??fallback[3]
   const sheets=art?[art.idle,art.run??fallback[1],art.kick??fallback[2],...(fall?[fall]:[])]:fallback
   const actor=await createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
+  if(club.name==='Fleet Feet FC'&&!rivalWomen[club.name].has(name))actor.maps[0].userData.celebrationScale=.84
   if(art?.stand&&art.support){
    const [stand,support]=await Promise.all([art.stand,art.support].map(celebrationSheet))
    const run=art.goalRun?await celebrationSheet(art.goalRun):actor.maps[1].clone()
@@ -3741,7 +3742,9 @@ async function start(){
      if(runCelebration===stubbsSlide)runCelebration.offset.set(Math.min(frames-1,Math.floor(goalAge/.2))/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      else runCelebration.offset.set(Math.floor(actor.runClock/.12)%frames/frames,(7-(actor.face+screenRotation()+8)%8)/8)
      actor.sprite.material.map=runCelebration
-     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
+     if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/cell)
      continue
     }
@@ -3753,7 +3756,9 @@ async function start(){
      if(groupMap.userData.directionalCelebration)groupMap.offset.y=(7-(actor.face+screenRotation()+8)%8)/8
      actor.sprite.material.map=groupMap
      const rows=groupMap.image.height/cell
-     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
+     if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
@@ -3767,7 +3772,9 @@ async function start(){
      goalMap.offset.x=frame/frames
      actor.sprite.material.map=goalMap
      const rows=goalMap.image.height/cell
-     if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
+     if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
@@ -3818,7 +3825,7 @@ async function start(){
      }
     }
     if(spriteFace!==0&&spriteFace!==4)actor.lastSideFace=spriteFace<4?2:6
-    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544
+    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544||actor.maps[2]?.image.height===640
     const kickRow=directionalKick?spriteFace:actor.lastSideFace===2?0:actor.westKickRow
     if(actor.age<0)aerialRecovery.delete(actor)
     const mode=actor.age>=0&&!aerialRecovery.has(actor)&&(actor.shooting||(actor.tackling&&actor.displayName!=='José'))&&actor.maps[2]?2:(running||actor.tackling)&&actor.maps[1]?1:0

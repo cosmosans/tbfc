@@ -23,6 +23,19 @@ export async function stadiumBranding(scene:T.Scene,club:Club,venue:string,model
  fabric.colorSpace=T.SRGBColorSpace;fabric.magFilter=T.NearestFilter
  crest.dispose()
  const material=new T.MeshBasicMaterial({map:fabric,side:T.DoubleSide})
+ // The same club artwork is used on fabric and boards visible from either side.
+ // A two-sided plane otherwise reads backwards when viewed from behind.
+ material.onBeforeCompile=shader=>{
+  shader.fragmentShader=shader.fragmentShader.replace(
+   '#include <map_fragment>',
+   `#ifdef USE_MAP
+      vec2 brandUv = vMapUv;
+      if (!gl_FrontFacing) brandUv.x = 1.0 - brandUv.x;
+      vec4 sampledDiffuseColor = texture2D(map, brandUv);
+      diffuseColor *= sampledDiffuseColor;
+    #endif`,
+  )
+ }
 
  if(venue==='mill'){
   const panel=new T.Mesh(new T.PlaneGeometry(2.45,.79),material)
