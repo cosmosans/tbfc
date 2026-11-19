@@ -35,20 +35,20 @@ export function goalSmoke(parent:T.Group,x:number,z:number){
  return (seconds:number,color:T.Color)=>{
   puffs.forEach((sprite,i)=>{
    const t=seconds-i*.14
-   sprite.visible=t>0&&t<9
+   sprite.visible=t>0&&t<40
    if(!sprite.visible)return
    const phase=i*2.4+Math.sign(z)
    const lift=1-Math.exp(-t*2)
-   const drift=t*.28
+   const drift=1-Math.exp(-t*.13)
    sprite.position.set(
-    x+Math.sign(x)*(drift*.65+Math.cos(phase)*lift*.58),
-    .5+lift*(.65+.8*Math.sin(phase)**2)+t*.24,
-    z+Math.sign(z)*(drift+lift*(.65+Math.sin(phase)*.74))
+    x+Math.sign(x)*(drift*1.1+Math.cos(phase)*lift*.58),
+    .5+lift*(.65+.8*Math.sin(phase)**2)+Math.min(t,12)*.13,
+    z+Math.sign(z)*(drift*1.4+lift*(.65+Math.sin(phase)*.74))
    )
-   sprite.scale.setScalar(.22+lift*(1.3+.35*Math.cos(phase))+t*.36)
+   sprite.scale.setScalar(.3+lift*(2.1+.45*Math.cos(phase))+Math.min(t,10)*.24)
    sprite.material.rotation=phase+Math.sin(phase)*t*.09
    sprite.material.color.copy(color)
-   sprite.material.opacity=.84*(1-T.MathUtils.smoothstep(t,3.4,9))
+   sprite.material.opacity=.84*(1-T.MathUtils.smoothstep(t,12,40))
   })
  }
 }

@@ -41,7 +41,7 @@ export function goalCannons(scene:T.Scene,line:number,coloredSmoke=false){
  }
  effects.visible=false
  return (seconds:number,color:T.Color)=>{
-  effects.visible=seconds>=0&&seconds<(coloredSmoke?10.54:7)
+  effects.visible=seconds>=0&&seconds<(coloredSmoke?41.54:7)
   if(!effects.visible)return
   age.value=seconds
   for(const update of clouds)update(seconds,color)

@@ -12,8 +12,8 @@ import nelsonGoalRunUrl from './art/nelson-goal-run.png?url'
 import nelsonGoalSupportUrl from './art/nelson-goal-support.png?url'
 import janGoalUrl from './art/jan-new-goal-stand.png?url'
 import janGoalRunUrl from './art/jan-new-goal-run.png?url'
-import stevenGoalRunUrl from './art/steven-goal-run.png?url'
-import stevenGoalGroupUrl from './art/steven-goal-group.png?url'
+import stevenGoalRunUrl from './art/steven-new-goal-run.png?url'
+import stevenGoalGroupUrl from './art/steven-new-goal-stand.png?url'
 import pamSkateGoalUrl from './art/pam-skate-goal.png?url'
 import joseOverheadUrl from './art/jose-overhead.png?url'
 import joseTackleUrl from './art/jose-tackle.png?url'
@@ -22,7 +22,8 @@ import joseReactionFlashUrl from './art/jose-reaction-flash.png?url'
 import joseHeaderUrl from './art/jose-header.png?url'
 import nadiaNewGoalStandUrl from './art/nadia-new-goal-stand.png?url'
 import nadiaNewGoalRunUrl from './art/nadia-new-goal-run.png?url'
-import danielGoalGroupUrl from './art/daniel-goal-group.png?url'
+import danielGoalGroupUrl from './art/daniel-new-goal-stand.png?url'
+import danielGoalRunUrl from './art/daniel-new-goal-run.png?url'
 import chrisNewIdle from './art/chris-new-idle.png?url'
 import chrisNewRun from './art/chris-new-run.png?url'
 import chrisNewKick from './art/chris-new-kick.png?url'
@@ -79,8 +80,8 @@ import stubbsFall from './art/stubbs-fall.png?url'
 import meghanFall from './art/meghan-new-foul.png?url'
 import mandyFall from './art/mandy-fall.png?url'
 import seanFall from './art/sean-fall.png?url'
-import danielFall from './art/daniel-fall.png?url'
-import stevenFall from './art/steven-fall.png?url'
+import danielFall from './art/daniel-new-foul.png?url'
+import stevenFall from './art/steven-new-foul.png?url'
 import joseFoulReaction from './art/jose-foul-reaction.png?url'
 import starsFall from './art/stars-fall.png?url'
 import rivalKeeperFall from './art/rival-keeper-fall.png?url'
@@ -93,13 +94,19 @@ import type {Selection} from './lineup'
 import trainingIdle from './art/blue-chris-idle.png?url'
 import trainingRun from './art/blue-chris-run.png?url'
 import trainingKick from './art/blue-side-kicks.png?url'
-import danielIdle from './art/daniel-idle.png?url'
-import danielRun from './art/daniel-run.png?url'
-import danielKick from './art/daniel-side-kicks.png?url'
+import danielIdle from './art/daniel-new-idle.png?url'
+import danielRun from './art/daniel-new-run.png?url'
+import danielKick from './art/daniel-new-kick.png?url'
+import danielJump from './art/daniel-new-jump.png?url'
+import danielTackle from './art/daniel-new-tackle.png?url'
+import danielReaction from './art/daniel-new-reaction.png?url'
 import {defaultSettings} from './matchSettings'
-import stevenIdle from './art/steven-idle.png?url'
-import stevenRun from './art/steven-run.png?url'
-import stevenKick from './art/steven-side-kicks.png?url'
+import stevenIdle from './art/steven-new-idle.png?url'
+import stevenRun from './art/steven-new-run.png?url'
+import stevenKick from './art/steven-new-kick.png?url'
+import stevenJump from './art/steven-new-jump.png?url'
+import stevenTackle from './art/steven-new-tackle.png?url'
+import stevenReaction from './art/steven-new-reaction.png?url'
 import spiderIdleUrl from './art/spider-jose-idle.png?url'
 import spiderRunUrl from './art/spider-jose-run.png?url'
 import joseIdle from './art/jose-idle.png?url'
@@ -363,6 +370,16 @@ async function start(){
  const westCannons=makeCannons(scene,-fieldX,coloredSmoke),eastCannons=makeCannons(scene,fieldX,coloredSmoke)
  let scoringColor=goalColors[0]
  let fireEnd=0
+ const lingeringSmoke=[{age:-1,color:goalColors[0].clone()},{age:-1,color:goalColors[0].clone()}]
+ function updateLingeringSmoke(dt:number){
+  for(const [i,update] of [westCannons,eastCannons].entries()){
+   const cloud=lingeringSmoke[i]
+   if(cloud.age<0)continue
+   cloud.age+=dt
+   update(cloud.age,cloud.color)
+   if(cloud.age>=40)cloud.age=-1
+  }
+ }
  function showGoalFire(time:number){
   westCannons(fireEnd===-1?time:-1,scoringColor);eastCannons(fireEnd===1?time:-1,scoringColor)
  }
@@ -466,7 +483,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -727,19 +744,19 @@ async function start(){
   const sprite=new T.Sprite(new T.SpriteMaterial({color:i<4?0xffdd54:0xff5616,transparent:true,depthWrite:false,opacity:1-i/14,blending:T.AdditiveBlending}))
   sprite.visible=false;scene.add(sprite);return sprite
  })
- const replay=new GoalReplay([...pitchActors.map(m=>m.sprite),ball],ball,pitchActors,fieldX,[burningBall.fire,...flames])
+ const replay=new GoalReplay([...pitchActors.map(m=>m.sprite),ball],ball,pitchActors,fieldX,[burningBall.fire,...flames],coloredSmoke)
  async function celebrationSheet(url:string){
   const map=await new T.TextureLoader().loadAsync(url)
   map.minFilter=map.magFilter=T.NearestFilter;map.generateMipmaps=false;map.colorSpace=T.SRGBColorSpace
   map.repeat.set(48/map.image.width,1)
   return map
  }
- const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,janGoalRun,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
-  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,janGoalRunUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaNewGoalStandUrl,nadiaNewGoalRunUrl,danielGoalGroupUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
+ const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,janGoalRun,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
+  pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,janGoalRunUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaNewGoalStandUrl,nadiaNewGoalRunUrl,danielGoalGroupUrl,danielGoalRunUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
  const [chrisGoalRun,chrisGoalStand]=await Promise.all([chrisNewGoalRun,chrisNewGoalStand].map(celebrationSheet))
  for(const map of [chrisGoalRun,chrisGoalStand]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
- for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
  const [pamHeader,joseHeader]=await Promise.all([pamHeaderUrl,joseHeaderUrl].map(celebrationSheet))
  pamHeader.repeat.set(1/9,1/8);joseHeader.repeat.set(1/9,1/8)
@@ -747,8 +764,10 @@ async function start(){
  spiderRun.repeat.y=1/8;spiderRun.userData.directionalRun=true
  meghanSkate.repeat.y=1/8
  meghanSkate.userData.directionalRun=true
- meghanGoal.repeat.y=1/8;meghanGoal.userData.directionalCelebration=true;meghanGoal.userData.cell=54
- for(const map of [janGoal,janGoalRun]){map.repeat.y=1/8;map.userData.directionalCelebration=true;map.userData.cell=64}
+ meghanGoal.repeat.set(54/meghanGoal.image.width,1/8);meghanGoal.userData.directionalCelebration=true;meghanGoal.userData.cell=54
+ for(const map of [danielGoalGroup,danielGoalRun]){map.userData.cell=54;map.repeat.x=54/map.image.width}
+ for(const map of [janGoal,janGoalRun]){map.repeat.set(64/map.image.width,1/8);map.userData.directionalCelebration=true;map.userData.cell=64}
+ for(const map of [stevenGoalRun,stevenGoalGroup]){map.userData.cell=54;map.repeat.x=54/map.image.width}
  pamSkateGoal.repeat.y=1/8; pamSkateGoal.userData.directionalRun=true
  joseOverhead.repeat.y=1/8
  mandyGoal.repeat.y=1/8
@@ -830,7 +849,14 @@ async function start(){
  let walks:{actor:typeof sean,target:T.Vector3,gather:boolean,speed:number,delay:number,phase:number}[]=[]
  let celebrating=false
  const goalBanner=el('goalBanner'),replayPanel=el('replayPanel')
- function clearReplay(){
+ function clearReplay(preserveSmoke=false){
+  if(coloredSmoke&&preserveSmoke&&fireEnd){
+   const cloud=lingeringSmoke[fireEnd===-1?0:1]
+   cloud.age=10
+   cloud.color.copy(scoringColor)
+  }else if(!preserveSmoke){
+   for(const cloud of lingeringSmoke)cloud.age=-1
+  }
   finishGoalEvent()
   endDissolve();lastAngle=-1
   costumeChange.hide()
@@ -1180,7 +1206,7 @@ async function start(){
   pendingCurve=flightCurve=awayCharge=null;curveRate=0
   burningBall.clear()
   jumps.clear();aerialWindup=false;blastShooter=null;blastFlying=false;impactTime=0;for(const m of meters){m.chain.clear();m.pair=''}
-  afterChallenge=-Infinity;struckLoose=false;finishCard();clearReplay();freeKick=null;kickSpot=null
+  afterChallenge=-Infinity;struckLoose=false;finishCard();clearReplay(afterGoal);freeKick=null;kickSpot=null
   recentHomeKicker=null;homeLateTime=0;sean.age=awayGK.age=-1;recentKicker=-1;lateTime=0;feedbackActor=null;callout.hidden=true;aerial=null;marks=null;centerPass=false;kickoffBlue=blue;phase='kickoff';breakSeconds=.9;lastBlue=blue
   supportOwner=-1;returnRunTime=0;clearPassCall();perfectPass=false
   if(freePractice){
@@ -2613,9 +2639,9 @@ async function start(){
   const fleetGoal=scorer?fleetCelebrations.get(scorer.maps[0]):undefined
   const onsiderGoal=scorer?onsiderMaleGoals.get(scorer.maps[0]):undefined
   goalMap=fleetGoal?.stand??onsiderGoal?.stand??interGoal?.stand??peachGoal?.stand??starsGoal?.stand??(scorer&&scoringClub===burners?celebrations[scorer.displayName]:undefined)
-  runCelebration=fleetGoal?.run??onsiderGoal?.run??interGoal?.run??peachGoal?.run??starsGoal?.run??(scoringClub===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:scorer?.displayName==='Nelson'?nelsonGoalRun:scorer?.displayName==='Chris'?chrisGoalRun:scorer?.displayName==='Nadia'?nadiaGoalRun:scorer?.displayName==='Jan'?janGoalRun:undefined):undefined)
+  runCelebration=fleetGoal?.run??onsiderGoal?.run??interGoal?.run??peachGoal?.run??starsGoal?.run??(scoringClub===burners?(scorer?.displayName==='Stubbs'?stubbsSlide:scorer?.displayName==='Meghan'?meghanSkate:scorer?.displayName==='José'?spiderRun:scorer?.displayName==='Steven'?stevenGoalRun:scorer?.displayName==='Pam'?pamSkateGoal:scorer?.displayName==='Nelson'?nelsonGoalRun:scorer?.displayName==='Chris'?chrisGoalRun:scorer?.displayName==='Nadia'?nadiaGoalRun:scorer?.displayName==='Jan'?janGoalRun:scorer?.displayName==='Daniel'?danielGoalRun:undefined):undefined)
   costumeReveal=runCelebration===meghanSkate||runCelebration===spiderRun||runCelebration===pamSkateGoal
-  celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:3.5
+  celebrationRunSeconds=runCelebration===stubbsSlide?slideDuration:runCelebration===stevenGoalRun?3:3.5
   slideX=-shotDirection;slideZ=0
   groupStarted=false
   frontRow.clear()
@@ -3067,6 +3093,7 @@ async function start(){
     return
    }
   }
+  if(!celebrating)updateLingeringSmoke(paused?0:Math.min(elapsed,.1))
   if(!crossingDrill)updatePenalties(!paused&&!celebrating&&phase==='play'?elapsed:0)
   if(bankReceiver){
    bankWindow-=paused?0:dt

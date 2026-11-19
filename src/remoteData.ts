@@ -1,3 +1,4 @@
+import { cacheClub, cacheMatchday } from "./clubCache";
 import { clubApiRequest } from "./clubApiRequest";
 import { eventOnlyPlayerData } from "./playerData";
 import { canEditClub } from "./editAccess";
@@ -42,7 +43,9 @@ async function readPublicApi(path: `/api/${string}`) {
 export type Matchday = { data: ClubData; headToHead: ReturnType<typeof import("./model").record> };
 
 export async function fetchMatchday(): Promise<Matchday> {
-  return readPublicApi(`/api/matchday?offset=${new Date().getTimezoneOffset()}`);
+  const summary: Matchday = await readPublicApi(`/api/matchday?offset=${new Date().getTimezoneOffset()}`);
+  cacheMatchday(summary);
+  return summary;
 }
 
 type ClubSnapshot = RemoteClub & { access?: string };
@@ -93,7 +96,9 @@ export async function fetchClubData(): Promise<RemoteClub> {
   }
   baseline = snapshot;
   if (canEditClub && baseline.data && baseline.admin === false) throw new Error('The club admin key is not accepted. Check it before editing or publishing, so private chats stay intact.');
-  return { ...baseline, data: baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null };
+  const data = baseline.data ? withFirstChoice(eventOnlyPlayerData(baseline.data)) : null;
+  cacheClub(data);
+  return { ...baseline, data };
 }
 
 export async function fetchMatchEvents(matchId: string): Promise<{ match: Match | null; events: MatchEvent[] }> {

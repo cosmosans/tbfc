@@ -33,7 +33,7 @@ export class GoalReplay {
   private start=0
   readonly camera=new T.PerspectiveCamera(43,1,.1,140)
   constructor(private sprites:T.Sprite[],private ball:T.Sprite,
-    private actors:{drawFace:number,maps:T.Texture[],westKickRow:number}[],private goalLine:number,private fireSprites:T.Sprite[]=[]){}
+    private actors:{drawFace:number,maps:T.Texture[],westKickRow:number}[],private goalLine:number,private fireSprites:T.Sprite[]=[],private smokeBackdrop=false){}
   private shotOrigin=new T.Vector3()
   markStrike(scorer:T.Sprite,origin:T.Vector3){
     this.strike=this.time;this.scorer=scorer;this.shotOrigin.copy(origin)
@@ -86,7 +86,7 @@ export class GoalReplay {
   }
   begin(){
     if(this.frames.length<2)return false
-    this.cut=0
+    this.cut=1
     this.start=Math.max(this.frames[0].time,this.goal-leadIn)
     this.cursor=this.start
     return true
@@ -98,12 +98,12 @@ export class GoalReplay {
     try{renderer.render(scene,this.camera)}
     finally{this.sprites.forEach((sprite,i)=>sprite.scale.setScalar(liveSizes[i]))}
   }
-  get label(){return 'REPLAY '+(this.cut+1)+'/'+angles.length+' · '+angles[this.cut].label}
+  get label(){return 'REPLAY '+this.cut+'/3'+' · '+angles[this.cut].label}
   advance(dt:number){
     const slow=Math.abs(this.cursor-this.strike)<.3||Math.abs(this.cursor-this.goal)<.17
-    this.cursor+=dt*(this.cut===3?.55:slow?.34:1.35)
+    this.cursor+=dt*(this.cut===3?.45:this.cut===1&&this.cursor>=this.goal?.4:slow?.34:1.35)
     const end=this.frames[this.frames.length-1].time
-    if(this.cursor<=(this.cut===3?end:Math.min(end,this.goal+.52)))return true
+    if(this.cursor<=(this.cut===3?end:Math.min(end,this.goal+(this.cut===1?3:.52))))return true
     return this.nextAngle()
   }
   nextAngle(){
@@ -153,8 +153,17 @@ export class GoalReplay {
       const distance=6.7-2*progress
       cameraX=Math.sin(yaw)*distance;cameraZ=Math.cos(yaw)*distance
       this.camera.position.set(subject.x+cameraX,2.7-.4*progress,subject.z+cameraZ)
-      this.camera.lookAt(subject.x,1,subject.z)
-      this.camera.aspect=aspect;this.camera.fov=38;this.camera.updateProjectionMatrix()
+      if(this.smokeBackdrop){
+        // Look from the pitch through the celebrant toward the scored-on goal.
+        const dx=direction*this.goalLine-subject.x,dz=-subject.z
+        const length=Math.hypot(dx,dz)||1
+        const distance=10-progress
+        cameraX=-dx/length*distance
+        cameraZ=-dz/length*distance
+        this.camera.position.set(subject.x+cameraX,3.1,subject.z+cameraZ)
+        this.camera.lookAt(subject.x+dx*.18,1.6,subject.z+dz*.18)
+      }else this.camera.lookAt(subject.x,1,subject.z)
+      this.camera.aspect=aspect;this.camera.fov=this.smokeBackdrop?52:38;this.camera.updateProjectionMatrix()
     }
     const yaw=Math.round(Math.atan2(cameraX,cameraZ)/(Math.PI/4))
     for(const [i,sprite] of this.sprites.entries()){

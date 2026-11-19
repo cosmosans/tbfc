@@ -1,3 +1,4 @@
+import { readCachedClub, readCachedMatchday } from "./clubCache";
 import { clubApiRequest } from "./clubApiRequest";
 import { eventOnlyPlayerData } from "./playerData";
 import { Capacitor } from "@capacitor/core";
@@ -20,6 +21,7 @@ import {
   Box,
   Button,
   Container,
+  CircularProgress,
   FormControl,
   InputLabel,
   MenuItem,
@@ -115,18 +117,24 @@ export default function App() {
   const summaryOnly = !needsFullClub && location.pathname === "/";
   const summaryActive = useRef(summaryOnly);
   useLayoutEffect(() => { summaryActive.current = summaryOnly; }, [summaryOnly]);
-  const [previousRecord, setPreviousRecord] = useState<Matchday["headToHead"]>();
-  const [summaryLoaded, setSummaryLoaded] = useState(false);
+  const [cached] = useState(() => ({
+    club: readCachedClub(),
+    matchday: summaryOnly ? readCachedMatchday() : undefined,
+  }));
+  const [hasDisplayData, setHasDisplayData] = useState(!!(cached.club || cached.matchday));
+  const [previousRecord, setPreviousRecord] = useState<Matchday["headToHead"] | undefined>(cached.matchday?.headToHead);
+  const [summaryLoaded, setSummaryLoaded] = useState(!!cached.matchday);
   const applyMatchday = useCallback((summary: Matchday) => {
     setData(summary.data);
+    setHasDisplayData(true);
     setPreviousRecord(summary.headToHead);
     setSummaryLoaded(true);
     setSyncState("ready");
   }, []);
-  const [sourceData, setData] = useState<ClubData>(() => summaryOnly ? {
+  const [sourceData, setData] = useState<ClubData>(() => cached.matchday?.data ?? cached.club ?? (summaryOnly ? {
     matches: [], players: [], opponents: [], seasons: [], locations: [],
     events: [], lineups: [], boards: [], standings: [],
-  } : loadData());
+  } : loadData()));
   const [clockTime, setClockTime] = useState(Date.now);
   const data = useMemo(
     () => withCleanSheets({
@@ -157,6 +165,11 @@ export default function App() {
       return () => { active = false; };
     }
     setNeedsFullClub(true);
+    if (summaryLoaded) {
+      const saved = readCachedClub();
+      setData(saved ?? loadData());
+      setHasDisplayData(!!saved);
+    }
     setSummaryLoaded(false);
     setSyncState("loading");
     void (async () => {
@@ -188,16 +201,19 @@ export default function App() {
       if (!active) return;
       if (draft) {
         setData(eventOnlyPlayerData(draft.data));
+        setHasDisplayData(true);
         revision.current = draft.revision;
         setDirty(draft.dirty);
       }
+      const version = editVersion.current;
       try {
         const remote = await fetchClubData();
         if (!active) return;
-        if (!draft?.dirty) {
+        if (!draft?.dirty && version === editVersion.current) {
           revision.current = remote.revision;
           setData(remote.data ?? loadData());
         }
+        setHasDisplayData(true);
         setSyncState(remote.data ? "ready" : "empty");
       } catch (error) {
         if (!active) return;
@@ -206,7 +222,7 @@ export default function App() {
             ? error.message
             : "Could not connect to the shared database.",
         );
-        setData(current => draft ? current : loadData());
+
         setSyncState("error");
       }
     })();
@@ -876,7 +892,7 @@ export default function App() {
             {backupMessage}
           </Alert>
         )}
-        {syncState === "loading" || (summaryLoaded && !summaryOnly) ? (
+        {(syncState === "loading" && !hasDisplayData) || (summaryLoaded && !summaryOnly) ? (
           <ClubDataSkeleton
             teamCount={data.opponents.length}
             view={
@@ -1193,6 +1209,15 @@ export default function App() {
           </>
         )}
       </Container>
+      {syncState === "loading" && hasDisplayData && (
+        <Stack role="status" aria-live="polite" direction="row" spacing={1} alignItems="center"
+          sx={{ position: "fixed", bottom: "calc(12px + env(safe-area-inset-bottom))", left: "50%",
+            transform: "translateX(-50%)", zIndex: 1200, px: 1.5, py: 0.75,
+            borderRadius: 2, bgcolor: "background.paper", boxShadow: 2, pointerEvents: "none" }}>
+          <CircularProgress size={14} color="inherit" />
+          <Typography variant="caption" color="text.secondary">Updating…</Typography>
+        </Stack>
+      )}
       <PublishingMatchEventDialog open={publishing} />
       {notice && noticeMatch && (
         <MatchEventSnackbar

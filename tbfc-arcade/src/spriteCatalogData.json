@@ -468,54 +468,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "steven-idle.png",
+              "file": "steven-new-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Run": {
-              "file": "steven-run.png",
+              "file": "steven-new-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Kick": {
-              "file": "steven-side-kicks.png",
+              "file": "steven-new-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Foul reaction (fall)": {
-              "file": "steven-fall.png",
+              "file": "steven-new-foul.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Running celebration": {
-              "file": "steven-goal-run.png",
+              "file": "steven-new-goal-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Standing celebration": {
-              "file": "steven-goal-group.png",
+              "file": "steven-new-goal-stand.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Steven animation set"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "steven-new-jump.png",
+              "status": "Individual",
+              "note": "New Steven animation set"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "steven-new-tackle.png",
+              "status": "Individual",
+              "note": "New Steven animation set"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "steven-new-reaction.png",
+              "status": "Individual",
+              "note": "New Steven animation set"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "steven-new-goal-support.png",
+              "status": "Individual",
+              "note": "New Steven animation set; group celebration reused for support"
             }
           }
         },
@@ -524,54 +524,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "daniel-idle.png",
+              "file": "daniel-new-idle.png",
               "status": "Individual",
               "note": ""
             },
             "Run": {
-              "file": "daniel-run.png",
+              "file": "daniel-new-run.png",
               "status": "Individual",
               "note": ""
             },
             "Kick": {
-              "file": "daniel-side-kicks.png",
+              "file": "daniel-new-kick.png",
               "status": "Individual",
               "note": ""
             },
             "Foul reaction (fall)": {
-              "file": "daniel-fall.png",
+              "file": "daniel-new-foul.png",
               "status": "Individual",
               "note": ""
             },
             "Standing celebration": {
-              "file": "daniel-goal-group.png",
+              "file": "daniel-new-goal-stand.png",
+              "status": "Individual",
+              "note": "Group clapping celebration"
+            },
+            "Jump / header / air move": {
+              "file": "daniel-new-jump.png",
               "status": "Individual",
               "note": ""
             },
-            "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
-            },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "daniel-new-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "daniel-new-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "daniel-new-goal-run.png",
+              "status": "Individual",
+              "note": "Uses the new run animation; no separate running celebration supplied"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "daniel-new-goal-support.png",
+              "status": "Individual",
+              "note": "Uses the same group clapping celebration"
             }
           }
         },
@@ -11171,6 +11171,146 @@
       "height": 544,
       "cell": 68,
       "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-idle.png": {
+      "width": 432,
+      "height": 54,
+      "cell": 54,
+      "columns": 8,
+      "rows": 1
+    },
+    "daniel-new-run.png": {
+      "width": 432,
+      "height": 432,
+      "cell": 54,
+      "columns": 8,
+      "rows": 8
+    },
+    "daniel-new-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-jump.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-tackle.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-reaction.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-foul.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "daniel-new-goal-run.png": {
+      "width": 432,
+      "height": 432,
+      "cell": 54,
+      "columns": 8,
+      "rows": 8
+    },
+    "daniel-new-goal-stand.png": {
+      "width": 702,
+      "height": 432,
+      "cell": 54,
+      "columns": 13,
+      "rows": 8
+    },
+    "daniel-new-goal-support.png": {
+      "width": 702,
+      "height": 432,
+      "cell": 54,
+      "columns": 13,
+      "rows": 8
+    },
+    "steven-new-idle.png": {
+      "width": 432,
+      "height": 54,
+      "cell": 54,
+      "columns": 8,
+      "rows": 1
+    },
+    "steven-new-run.png": {
+      "width": 432,
+      "height": 432,
+      "cell": 54,
+      "columns": 8,
+      "rows": 8
+    },
+    "steven-new-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "steven-new-jump.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "steven-new-tackle.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "steven-new-reaction.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "steven-new-foul.png": {
+      "width": 486,
+      "height": 432,
+      "cell": 54,
+      "columns": 9,
+      "rows": 8
+    },
+    "steven-new-goal-run.png": {
+      "width": 1350,
+      "height": 432,
+      "cell": 54,
+      "columns": 25,
+      "rows": 8
+    },
+    "steven-new-goal-stand.png": {
+      "width": 702,
+      "height": 432,
+      "cell": 54,
+      "columns": 13,
+      "rows": 8
+    },
+    "steven-new-goal-support.png": {
+      "width": 702,
+      "height": 432,
+      "cell": 54,
+      "columns": 13,
       "rows": 8
     }
   }
