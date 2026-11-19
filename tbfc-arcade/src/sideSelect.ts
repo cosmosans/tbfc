@@ -24,7 +24,7 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0):Promise<Seat
   if(side){
    const club=side===-1?fixture.home:fixture.away
    card.innerHTML='<img class="side-crest" src="'+club.crest+'" alt=""><h2>'+club.name+'</h2><p class="side-cpu">CPU</p>'
-  }else card.innerHTML='<h2>Spectate</h2><p class="side-cpu">AI controls both teams when everyone is here</p>'
+  }else card.innerHTML='<h2>Spectate</h2>'
   card.onclick=()=>{choose(-1,side);paint()}
   grid.append(card)
   return card
