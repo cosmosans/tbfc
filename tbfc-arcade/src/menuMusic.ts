@@ -13,12 +13,12 @@ import pixelChips from "./audio/MUSIC_MENU_PIXEL_CHIPS.mp3?url";
 
 import halfTime from "./audio/MUSIC_HALFTIME_LULL_BEAT.mp3?url";
 const tracks = [
+  pixelChips,
   hitslab,
   arcade,
   retro,
   football,
   hypeJump,
-  pixelChips,
   halfTime,
 ];
 

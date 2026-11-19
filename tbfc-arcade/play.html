@@ -79,6 +79,9 @@ kbd[data-pad=A]{background:linear-gradient(#3b994c,#24642e)}kbd[data-pad=B]{back
 .pad-direction{display:none}[data-controller] .pad-direction{display:inline}kbd.pad-hint[data-pad=LS]{border-radius:50%;width:1.7em;padding:0}
 kbd.pad-hint:is([data-pad=RB],[data-pad=LB],[data-pad=RT]){border-radius:8px 8px 3px 3px}
 html[data-broadcast] main{width:100vw;height:100dvh;aspect-ratio:auto}
+@media (pointer:coarse) and (max-width:900px), (pointer:coarse) and (max-height:500px){
+ main{width:100vw;height:100dvh;aspect-ratio:auto}
+}
 html[data-broadcast] main>:not(canvas){display:none!important}
 main[data-paused]>canvas{filter:brightness(.55)}
 main[data-loading]{visibility:hidden}

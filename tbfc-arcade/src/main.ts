@@ -2305,10 +2305,11 @@ async function start(){
  function pause(on:boolean){if(phase==='fulltime')return;cancelRush();cancelCharge();paused=on;matchView.toggleAttribute('data-paused',on);keys.clear();axisX=axisZ=0;el('knob').style.transform='';el('pause').textContent=on?'Resume':'Pause';if(!on&&phase==='kickoff')showKickoffPrompt(kickoffBlue);else el('message').textContent=!on&&phase==='halftime'?'Halftime':''}
  function snap(value:number,step:number){return Math.round(value/step)*step}
  function screenRotation(){return broadcast?broadcastRotation:view.end?2*attackSign:0}
+ function viewportAspect(){const bounds=renderer.domElement.parentElement!;return bounds.clientWidth/Math.max(1,bounds.clientHeight)}
  function resize(){
   const ratio=window.devicePixelRatio||1
   camera.fov=view.fov
-  camera.aspect=broadcast?innerWidth/innerHeight:16/9
+  camera.aspect=viewportAspect()
   camera.updateProjectionMatrix()
   renderer.setPixelRatio(Math.min(ratio,broadcast?1:1.5));renderer.setSize(renderer.domElement.parentElement!.clientWidth,renderer.domElement.parentElement!.clientHeight,false)
   const canvas=renderer.domElement
@@ -3097,13 +3098,13 @@ async function start(){
       if(dissolveLayer.width!==live.width||dissolveLayer.height!==live.height){
        dissolveLayer.width=live.width;dissolveLayer.height=live.height
       }
-      replay.drawAngle(outgoing.angle,outgoing.cursor,16/9,shotDirection,poseNet)
+      replay.drawAngle(outgoing.angle,outgoing.cursor,viewportAspect(),shotDirection,poseNet)
       renderReplayView()
       dissolveContext.drawImage(live,0,0)
       dissolveLayer.style.opacity=String(1-outgoing.age)
      }
     }
-    replay.draw(16/9,shotDirection,poseNet)
+    replay.draw(viewportAspect(),shotDirection,poseNet)
     renderReplayView()
     lastAngle=replay.cut;lastCursor=replay.cursor
     requestAnimationFrame(tick)
@@ -3767,6 +3768,7 @@ async function start(){
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
      else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate||runCelebration===spiderRun)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/cell)
      continue
     }
@@ -3781,6 +3783,7 @@ async function start(){
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
      else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
@@ -3797,6 +3800,7 @@ async function start(){
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
      else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }
@@ -3935,7 +3939,7 @@ async function start(){
   if(cardScene&&cardScene.time>0){
    const center=referee.sprite.position,t=cardScene.time/1.55,yaw=Math.atan2(cardScene.offender.sprite.position.x-center.x,cardScene.offender.sprite.position.z-center.z)+.65
    camera.position.set(center.x+Math.sin(yaw)*(6-1.4*t),2.4-.5*t,center.z+Math.cos(yaw)*(6-1.4*t));camera.lookAt(center.x,.9,center.z)
-  }else if(!broadcast)frameAction(camera,view,camTarget,16/9,view.end?attackSign:1,view.end?.8:0)
+  }else if(!broadcast)frameAction(camera,view,camTarget,viewportAspect(),view.end?attackSign:1,view.end?.8:0)
   camera.updateMatrixWorld()
   const canvas=renderer.domElement
   for(const actor of pitchActors){
