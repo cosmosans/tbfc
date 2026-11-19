@@ -33,7 +33,11 @@ import chrisNewReaction from './art/chris-new-reaction.png?url'
 import chrisNewFoul from './art/chris-new-foul.png?url'
 import chrisNewGoalRun from './art/chris-new-goal-run.png?url'
 import chrisNewGoalStand from './art/chris-new-goal-stand.png?url'
-import jeremyGoalGroupUrl from './art/jeremy-goal-group.png?url'
+import jeremyGoalGroupUrl from './art/jeremy-new-goal-group.png?url'
+import jeremyHeader from './art/jeremy-new-header.png?url'
+import jeremyTackle from './art/jeremy-new-tackle.png?url'
+import jeremyReaction from './art/jeremy-new-reaction.png?url'
+import jeremyFoul from './art/jeremy-new-foul.png?url'
 import stubbsSlideUrl from './art/stubbs-new-goal-run.png?url'
 import stubbsGoalStandUrl from './art/stubbs-new-goal-stand.png?url'
 import stubbsGoalSupportUrl from './art/stubbs-new-goal-support.png?url'
@@ -131,15 +135,15 @@ import { audio } from './matchAudio'
 import cardSheet from './art/ref-yellow-card.png?url'
 import stubbsKick from './art/stubbs-new-kick.png?url'
 import mandyKick from './art/mandy-side-kicks.png?url'
-import jeremyKick from './art/jeremy-side-kicks.png?url'
+import jeremyKick from './art/jeremy-new-kick.png?url'
 import seanKick from './art/sean-side-kicks.png?url'
 import blueKick from './art/stars-side-kicks.png?url'
 import tealKick from './art/teal-side-kicks.png?url'
 import tealIdle from './art/teal-idle.png?url'
 import mandyIdle from './art/mandy-idle.png?url'
 import mandyRun from './art/mandy-run.png?url'
-import jeremyIdle from './art/jeremy-idle.png?url'
-import jeremyRun from './art/jeremy-run.png?url'
+import jeremyIdle from './art/jeremy-new-idle.png?url'
+import jeremyRun from './art/jeremy-new-run.png?url'
 import seanIdle from './art/sean-idle.png?url'
 import seanRun from './art/sean-run.png?url'
 import { GoalReplay, strikerView, frameAction, cinematicPlayerSize, cinematicBallSize } from './replay'
@@ -191,7 +195,7 @@ void hudFont.load()
 const el=(id:string)=>document.getElementById(id)!
 async function start(){
  const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chrisNewIdle,chrisNewRun,chrisNewKick],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
- const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall}
+ const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall,Jeremy:jeremyFoul}
  const settings=defaultSettings()
  const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
@@ -490,7 +494,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -768,6 +772,7 @@ async function start(){
  const [chrisGoalRun,chrisGoalStand]=await Promise.all([chrisNewGoalRun,chrisNewGoalStand].map(celebrationSheet))
  for(const map of [chrisGoalRun,chrisGoalStand]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
+ jeremyGoalGroup.repeat.set(60/jeremyGoalGroup.image.width,1/8);jeremyGoalGroup.userData.cell=60
  for(const map of [stubbsSlide,stubbsGoalStand,stubbsGoalSupport]){
   map.repeat.set(64/map.image.width,1/8)
   map.userData.cell=64
@@ -3782,7 +3787,7 @@ async function start(){
      const rows=groupMap.image.height/cell
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
@@ -3799,7 +3804,7 @@ async function start(){
      const rows=goalMap.image.height/cell
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
@@ -3851,7 +3856,7 @@ async function start(){
      }
     }
     if(spriteFace!==0&&spriteFace!==4)actor.lastSideFace=spriteFace<4?2:6
-    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544||actor.maps[2]?.image.height===640
+    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===480||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544||actor.maps[2]?.image.height===640
     const kickRow=directionalKick?spriteFace:actor.lastSideFace===2?0:actor.westKickRow
     if(actor.age<0)aerialRecovery.delete(actor)
     const mode=actor.age>=0&&!aerialRecovery.has(actor)&&(actor.shooting||(actor.tackling&&actor.displayName!=='José'))&&actor.maps[2]?2:(running||actor.tackling)&&actor.maps[1]?1:0

@@ -244,53 +244,53 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "jeremy-idle.png",
+              "file": "jeremy-new-idle.png",
               "status": "Individual",
               "note": ""
             },
             "Run": {
-              "file": "jeremy-run.png",
+              "file": "jeremy-new-run.png",
               "status": "Individual",
               "note": ""
             },
             "Kick": {
-              "file": "jeremy-side-kicks.png",
+              "file": "jeremy-new-kick.png",
               "status": "Individual",
               "note": ""
             },
             "Standing celebration": {
-              "file": "jeremy-goal-group.png",
+              "file": "jeremy-new-goal-group.png",
               "status": "Individual",
               "note": ""
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
+              "file": "jeremy-new-header.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "jeremy-new-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "jeremy-new-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Foul reaction (fall)": {
-              "file": null,
-              "status": "Missing",
+              "file": "jeremy-new-foul.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
               "file": null,
               "status": "Missing",
-              "note": ""
+              "note": "No separate running celebration in this package"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "jeremy-new-goal-group.png",
+              "status": "Individual",
               "note": ""
             }
           }
@@ -12612,6 +12612,62 @@
       "width": 952,
       "height": 448,
       "cell": 56,
+      "columns": 17,
+      "rows": 8
+    },
+    "jeremy-new-idle.png": {
+      "width": 480,
+      "height": 60,
+      "cell": 60,
+      "columns": 8,
+      "rows": 1
+    },
+    "jeremy-new-run.png": {
+      "width": 480,
+      "height": 480,
+      "cell": 60,
+      "columns": 8,
+      "rows": 8
+    },
+    "jeremy-new-kick.png": {
+      "width": 540,
+      "height": 480,
+      "cell": 60,
+      "columns": 9,
+      "rows": 8
+    },
+    "jeremy-new-header.png": {
+      "width": 540,
+      "height": 480,
+      "cell": 60,
+      "columns": 9,
+      "rows": 8
+    },
+    "jeremy-new-tackle.png": {
+      "width": 540,
+      "height": 480,
+      "cell": 60,
+      "columns": 9,
+      "rows": 8
+    },
+    "jeremy-new-reaction.png": {
+      "width": 540,
+      "height": 480,
+      "cell": 60,
+      "columns": 9,
+      "rows": 8
+    },
+    "jeremy-new-foul.png": {
+      "width": 540,
+      "height": 480,
+      "cell": 60,
+      "columns": 9,
+      "rows": 8
+    },
+    "jeremy-new-goal-group.png": {
+      "width": 1020,
+      "height": 480,
+      "cell": 60,
       "columns": 17,
       "rows": 8
     }

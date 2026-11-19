@@ -9,6 +9,7 @@ import seanReadySheet from './art/sean-keeper-ready.png?url'
 import {audio} from './matchAudio'
 import {menuPad} from './menuPad'
 import {shootout,type Kick,type Outcome,type Side} from './shootoutRules'
+import {spriteGroundPadding} from './spriteGround'
 import './penaltyArena.css'
 
 type Actor={displayName:string,sprite:T.Sprite,maps:T.Texture[],runFrames:number,runRows:number,staminaCapacity:number}
@@ -19,10 +20,18 @@ type Arena={scene:T.Scene,camera:T.PerspectiveCamera,renderer:T.WebGLRenderer,ba
  fire:(seconds:number,side:Side)=>void,dissolve:()=>void,test:boolean,finish:(kicks:Kick[])=>void}
 const clamp=T.MathUtils.clamp
 function frame(actor:Actor,mode:number,column:number,row:number){
- const map=actor.maps[mode],cols=mode===2?7:mode===1?actor.runFrames:8
- const rows=mode===2?map.image.height/48:mode===1?actor.runRows:1
- map.repeat.set(1/cols,1/rows);map.offset.set((column%cols)/cols,(rows-1-row)/rows)
+ const map=actor.maps[mode]
+ const directionalKick=mode===2&&map.image.height>=384
+ const rows=mode===2?(directionalKick?8:map.image.height/48):mode===1?actor.runRows:1
+ const cell=map.image.height/rows
+ const cols=mode===0?8:mode===1?actor.runFrames:Math.round(map.image.width/cell)
+ const face=mode===2&&!directionalKick?(rows===2?row>=4?1:0:0):mode===0?0:row%rows
+ const index=((column%cols)+cols)%cols
+ map.repeat.set(1/cols,1/rows);map.offset.set(index/cols,(rows-1-face)/rows)
  actor.sprite.material.map=map
+ actor.sprite.material.rotation=0
+ actor.sprite.scale.setScalar(1.7*cell/48)
+ actor.sprite.center.set(.5,spriteGroundPadding(map.image,cols,rows,face,index,true)/cell)
 }
 // New keeper sheets can replace the temporary poses here.
 function keeperPose(a:Actor,pose:KeeperPose,face:number,time:number){
@@ -189,7 +198,7 @@ export function playPenalties(a:Arena){
    frame(keeper,0,faceFor(-1,0),0)
    showDive(keeper,b.dive,b.direction,right)
    const boot=t>=.50&&t<.82
-   frame(kicker,boot?2:b.run?1:0,boot?Math.min(6,Math.floor((t-.5)*24)):b.run?Math.floor(t*14):faceFor(1,0),b.run?faceFor(1,0):0)
+   frame(kicker,boot?2:b.run?1:0,boot?Math.min(6,Math.floor((t-.5)*24)):b.run?Math.floor(t*14):faceFor(1,0),faceFor(1,0))
    const after=Math.max(0,t-goalTime)
    const saved=kicks.at(-1)?.outcome==='Save'
    if(saved&&t>=goalTime&&(cutAge-dt)*.72<goalTime)audio.play('post',.85)
@@ -424,7 +433,7 @@ export function playPenalties(a:Arena){
   }
   const face=shooting?4:0
   if(phase==='run'&&age<.5)frame(kicker,1,Math.floor(age*14),face)
-  else if(phase==='run'||phase==='flight'&&age<.18)frame(kicker,2,phase==='run'?Math.min(3,Math.floor((age-.5)*25)):Math.min(6,4+Math.floor(age*15)),0)
+  else if(phase==='run'||phase==='flight'&&age<.18)frame(kicker,2,phase==='run'?Math.min(3,Math.floor((age-.5)*25)):Math.min(6,4+Math.floor(age*15)),faceFor(1,0))
   else frame(kicker,0,face,0)
   keeperPose(keeper,pose,shooting?0:4,time)
   keeper.sprite.center.x=.5
