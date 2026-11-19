@@ -13,7 +13,6 @@ const interGirlsWithIndividualArt=new Set(['Freya','Ada','Holly','Nora'])
 
 // Keep the existing kit sheets and assign each fictional character their roster artwork.
 const artAliases:Record<string,Record<string,string>>={
- okw:{marcus:'luca'},
  peach:{silas:'dario'}
 }
 export function rivalSprites(club:Club,name:string){
@@ -21,7 +20,8 @@ export function rivalSprites(club:Club,name:string){
  const kit=clubs[club.name],key=name.toLowerCase()
  const shared=kit!=='peach'&&kit!=='gd'&&!(kit==='inter'&&interGirlsWithIndividualArt.has(name))&&!!rivalWomen[club.name]?.has(name)&&!!assets['./art/'+kit+'-base-idle.png']
  const fleetPrefix=kit==='ff'?fleetWomen[name]:undefined
- const prefix='./art/'+(fleetPrefix??(kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)))
+ const wondersMale=kit==='okw'&&!rivalWomen[club.name]?.has(name)?`okw-male-${key}`:undefined
+ const prefix='./art/'+(fleetPrefix??wondersMale??(kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)))
  const idle=assets[prefix+'-idle.png']
  if(!idle)return undefined
  return {idle,goalRun:clubGoalRuns[prefix+'-goal-run.png'],stand:clubGoals[prefix+'-goal-stand.png'],support:clubGoals[prefix+'-goal-support.png'],run:assets[prefix+'-run.png'],kick:assets[prefix+'-kick.png']??assets['./art/ff-ellis-kick.png'],jump:assets[prefix+'-jump.png'],tackle:assets[prefix+'-tackle.png'],reaction:assets[prefix+'-reaction.png'],reactionFlash:assets[prefix+'-reaction-flash.png'],foul:assets[prefix+'-foul.png']}

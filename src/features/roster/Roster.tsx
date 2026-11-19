@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import GoalIcon from "../../img/soccer-ball-variant.svg";
 import AssistIcon from "../../img/cleats.svg";
 import CardIcon from "../../img/cards.svg";
@@ -160,6 +161,7 @@ export default function Roster({
         gap={2}
       >
         <PageHeading>Roster</PageHeading>
+        <Button component={Link} to="/lineup-builder" variant="outlined">Lineup Builder</Button>
         {canEditClub && (
           <Stack direction="row" gap={2}>
             <Button variant="outlined" onClick={() => setStartersOpen(true)}>

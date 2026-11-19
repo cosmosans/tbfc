@@ -34,7 +34,13 @@ import chrisNewFoul from './art/chris-new-foul.png?url'
 import chrisNewGoalRun from './art/chris-new-goal-run.png?url'
 import chrisNewGoalStand from './art/chris-new-goal-stand.png?url'
 import jeremyGoalGroupUrl from './art/jeremy-goal-group.png?url'
-import stubbsSlideUrl from './art/stubbs-slide.png?url'
+import stubbsSlideUrl from './art/stubbs-new-goal-run.png?url'
+import stubbsGoalStandUrl from './art/stubbs-new-goal-stand.png?url'
+import stubbsGoalSupportUrl from './art/stubbs-new-goal-support.png?url'
+import stubbsHeader from './art/stubbs-new-header.png?url'
+import stubbsTackle from './art/stubbs-new-tackle.png?url'
+import stubbsReaction from './art/stubbs-new-reaction.png?url'
+import stubbsReactionFlash from './art/stubbs-new-reaction-flash.png?url'
 import {careerRating,type Attribute} from './careerDevelopment'
 import {playerRatings,ratingLabels} from './playerRatings'
 import {scoreRow,statRow} from './leagueBoard'
@@ -76,7 +82,7 @@ import nelsonFall from './art/nelson-foul.png?url'
 import nelsonJump from './art/nelson-jump.png?url'
 import nelsonTackle from './art/nelson-tackle.png?url'
 import nelsonReaction from './art/nelson-reaction.png?url'
-import stubbsFall from './art/stubbs-fall.png?url'
+import stubbsFall from './art/stubbs-new-foul.png?url'
 import meghanFall from './art/meghan-new-foul.png?url'
 import mandyFall from './art/mandy-fall.png?url'
 import seanFall from './art/sean-fall.png?url'
@@ -122,7 +128,7 @@ import janReaction from './art/jan-new-reaction.png?url'
 import janFoul from './art/jan-new-foul.png?url'
 import { audio } from './matchAudio'
 import cardSheet from './art/ref-yellow-card.png?url'
-import stubbsKick from './art/stubbs-side-kicks.png?url'
+import stubbsKick from './art/stubbs-new-kick.png?url'
 import mandyKick from './art/mandy-side-kicks.png?url'
 import jeremyKick from './art/jeremy-side-kicks.png?url'
 import seanKick from './art/sean-side-kicks.png?url'
@@ -150,8 +156,8 @@ import rivalKeeperDiveFrontUrl from './art/rival-keeper-front.png?url'
 import rivalKeeperDiveRearUrl from './art/rival-keeper-rear.png?url'
 import burnerKeeperDiveFrontUrl from './art/keeper-dive-front.png?url'
 import burnerKeeperDiveRearUrl from './art/sean-keeper-dive.png?url'
-import stubbsIdle from './art/stubbs-idle.png?url'
-import stubbsRun from './art/stubbs-run.png?url'
+import stubbsIdle from './art/stubbs-new-idle.png?url'
+import stubbsRun from './art/stubbs-new-run.png?url'
 import {rivalWomen} from './rivalRoster'
 import {homeStadium,randomStadium,selectStadium,stadiumName,type StadiumId} from './stadiumSelect'
 import { buildGrounds } from './grounds'
@@ -483,7 +489,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:undefined,name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:undefined,name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:undefined,name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -653,10 +659,12 @@ async function start(){
  })
  let aerialWindup=false
  let blastShooter:typeof sean|null=null,blastWindup=0,impactTime=0,blastFlying=false
+ const burnWindowSeconds=20
  function renderBurn(side:number){
   const m=meters[side]
-  m.node.style.setProperty('--burn',String(m.value/100))
+  m.node.style.setProperty('--burn',String(m.value===100&&m.seconds>0?m.seconds/burnWindowSeconds:m.value/100))
   m.node.setAttribute('aria-valuenow',String(m.value))
+  m.node.setAttribute('aria-valuetext',m.value===100&&m.seconds>0?`Burn available for ${Math.ceil(m.seconds)} more seconds`:`${Math.round(m.value)} percent charged`)
   m.node.toggleAttribute('data-on-fire',m.value===100)
   scoreboard.toggleAttribute(side===0?'data-burn-home':'data-burn-away',m.value===100)
  }
@@ -669,7 +677,7 @@ async function start(){
   const m=meters[side]
   if(!burnEnabled||crossingDrill||m.value===100||!delta)return
   m.value=T.MathUtils.clamp(m.value+delta,0,100)
-  if(m.value===100){m.seconds=20;audio.play('burnReady',.5)}
+  if(m.value===100){m.seconds=burnWindowSeconds;audio.play('burnReady',.5)}
   renderBurn(side)
  }
  resetBurn()
@@ -755,10 +763,16 @@ async function start(){
  const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,janGoalRun,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
   pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,janGoalRunUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaNewGoalStandUrl,nadiaNewGoalRunUrl,danielGoalGroupUrl,danielGoalRunUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
+ const [stubbsGoalStand,stubbsGoalSupport]=await Promise.all([stubbsGoalStandUrl,stubbsGoalSupportUrl].map(celebrationSheet))
  const [chrisGoalRun,chrisGoalStand]=await Promise.all([chrisNewGoalRun,chrisNewGoalStand].map(celebrationSheet))
  for(const map of [chrisGoalRun,chrisGoalStand]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
  for(const map of [stevenGoalRun,nelsonGoalRun,nelsonGoalSupport,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
- stubbsSlide.repeat.y=1/8;stubbsSlide.userData.directionalRun=true
+ for(const map of [stubbsSlide,stubbsGoalStand,stubbsGoalSupport]){
+  map.repeat.set(64/map.image.width,1/8)
+  map.userData.cell=64
+  map.userData.directionalCelebration=true
+ }
+ stubbsSlide.userData.directionalRun=true
  const [pamHeader,joseHeader]=await Promise.all([pamHeaderUrl,joseHeaderUrl].map(celebrationSheet))
  pamHeader.repeat.set(1/9,1/8);joseHeader.repeat.set(1/9,1/8)
  spiderIdle.userData.directionalIdle=true
@@ -773,8 +787,8 @@ async function start(){
  joseOverhead.repeat.y=1/8
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup}
+ const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalStand}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
  const onsiderMaleGoals=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
  const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
  function supportMap(actor:typeof sean){
@@ -3138,7 +3152,10 @@ async function start(){
     if(m.seconds<=0)continue
     const previous=Math.ceil(m.seconds);m.seconds=Math.max(0,m.seconds-elapsed)
     if(m.seconds===0)resetBurn(side)
-    else if(previous!==Math.ceil(m.seconds))renderBurn(side)
+    else{
+     m.node.style.setProperty('--burn',String(m.seconds/burnWindowSeconds))
+     if(previous!==Math.ceil(m.seconds))renderBurn(side)
+    }
    }
    if(!outBall&&!keeperRestart){
     if(held||inFlight||keeperGather>0)facts.control[0]+=dt

@@ -19,7 +19,9 @@ export default function ShareLineupButton({
   data,
   match,
   lineup,
+  freestyle = false,
 }: {
+  freestyle?: boolean;
   data: ClubData;
   match: Match;
   lineup: Lineup;
@@ -29,7 +31,7 @@ export default function ShareLineupButton({
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const filename = `tbfc-${match.date}-${match.opponent.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-lineup.png`;
+  const filename = freestyle ? "tbfc-freestyle-lineup.png" : `tbfc-${match.date}-${match.opponent.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-lineup.png`;
 
   useEffect(() => {
     if (!blob) return;
@@ -42,7 +44,7 @@ export default function ShareLineupButton({
     setBusy(true);
     setError("");
     try {
-      setBlob(await createShareLineupImage(data, match, lineup));
+      setBlob(await createShareLineupImage(data, match, lineup, freestyle));
       setOpen(true);
     } catch (cause) {
       setError(
@@ -104,7 +106,7 @@ export default function ShareLineupButton({
         fullWidth
         aria-labelledby="lineup-share-title"
       >
-        <DialogTitle id="lineup-share-title">Match & Lineup Image</DialogTitle>
+        <DialogTitle id="lineup-share-title">{freestyle ? "Lineup Image" : "Match & Lineup Image"}</DialogTitle>
         <DialogContent>
           <Typography color="text.secondary" sx={{ mb: 2 }}>
             Ready for WhatsApp stories or chats. Preview the image, then share
@@ -114,7 +116,7 @@ export default function ShareLineupButton({
             <Box
               component="img"
               src={preview}
-              alt="Portrait match banner and lineup preview"
+              alt={freestyle ? "Freestyle lineup preview" : "Portrait match banner and lineup preview"}
               sx={{
                 display: "block",
                 width: "100%",

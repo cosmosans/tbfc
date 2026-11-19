@@ -41,7 +41,7 @@ Opponent crests on match views, schedule cards, Teams, and standings link to `/t
 
 **Standings** appears on Matchday. Select a season, download the CSV template, update its league table rows, and upload it. The app previews the team count before replacing that season's standings. Point difference is calculated from scored minus allowed; PI and ranking points use the values in the league CSV. The initial Fall 2026 table was transcribed from the supplied league screenshot.
 
-Lineups offer `1-2-3-1` (CAM and ST) and `1-3-3` (CDM and CAM). Switching keeps players in roles shared by both formations and moves players from removed roles to the bench.
+Lineups offer `1-2-3-1` (CM and ST) and `1-3-3` (CDM and CAM). Switching keeps players in roles shared by both formations and moves players from removed roles to the bench.
 
 ## Source-of-truth rules
 
@@ -98,3 +98,5 @@ Available now: match archive and filtering, score-derived record and season char
 Head-to-head record bars use the opposing Team's saved color on the left and TBFC orange on the right. Peachy Puffs starts with `#2d5337`; other Teams can set their own color in the editor.
 
 Next: import review for disputed rows, match availability and lineup export, richer opponent/kit graphs, managed image storage, and coaching annotations. Animated scenarios and set pieces remain later roadmap work.
+
+The standalone `/lineup-builder` lets anyone experiment with the club roster, formations, substitutes, and kits. Its draft is saved only on the current device, separate from match records, and can be shared as a lineup image.

@@ -85,7 +85,7 @@ export default function LineupPitch({
   }
   // Reserve vertical space for a starter and two substitutes in each central role.
   const centralRoleY: Partial<Record<string, number>> =
-    lineup.formation === "1-2-3-1" ? { ST: 22, CAM: 53, GK: 84 } : {};
+    lineup.formation === "1-2-3-1" ? { ST: 22, CM: 53, GK: 84 } : {};
   const floaters = benchPlayers.filter(player => !lineup.benchPositions?.[player.id]);
   const kit = data.matches.find((match) => match.id === lineup.matchId)?.kit;
 

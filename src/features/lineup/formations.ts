@@ -1,9 +1,9 @@
 import type { Formation, Lineup, Position } from "../../model";
 
 export const formationSlots: Record<Formation, readonly Position[]> = {
-  "1-2-3-1": ["GK", "LB", "RB", "LW", "CAM", "RW", "ST"],
+  "1-2-3-1": ["GK", "LB", "RB", "LW", "CM", "RW", "ST"],
   "1-3-3": ["GK", "LB", "CDM", "RB", "LW", "CAM", "RW"],
-  "1-2-1-2-1": ["GK", "LB", "RB", "CAM", "LW", "RW", "ST"],
+  "1-2-1-2-1": ["GK", "LB", "RB", "CM", "LW", "RW", "ST"],
   "1-2-1-3": ["GK", "LB", "RB", "CM", "LW", "ST", "RW"],
   "1-3-1-2": ["GK", "LB", "CDM", "RB", "CAM", "LW", "RW"],
 };
@@ -60,12 +60,13 @@ export const formationPoints: Record<
 };
 
 export function normalizeLineupRoles(lineup: Lineup): Lineup {
-  const previousRole = lineup.formation === "1-2-1-2-1" ? "CDM" : lineup.formation === "1-2-1-3" ? "CAM" : null;
-  const currentRole = lineup.formation === "1-2-1-2-1" ? "CAM" : "CM";
-  if (!previousRole || !Object.values(lineup.benchPositions ?? {}).includes(previousRole)) return lineup;
+  const previousRoles: readonly Position[] = lineup.formation === "1-2-1-2-1"
+    ? ["CDM", "CAM"]
+    : lineup.formation === "1-2-3-1" || lineup.formation === "1-2-1-3" ? ["CAM"] : [];
+  if (!Object.values(lineup.benchPositions ?? {}).some(role => previousRoles.includes(role))) return lineup;
   const benchPositions = { ...lineup.benchPositions };
   for (const id of Object.keys(benchPositions)) {
-    if (benchPositions[id] === previousRole) benchPositions[id] = currentRole;
+    if (previousRoles.includes(benchPositions[id])) benchPositions[id] = "CM";
   }
   return { ...lineup, benchPositions };
 }

@@ -51,6 +51,7 @@ import { matchTabs, normalizeMatchTab, visibleMatchTabs } from "./features/match
 import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
+import FreestyleLineupBuilder from "./features/lineup/FreestyleLineupBuilder";
 import LineupEditor from "./features/lineup/LineupEditor";
 import StandingsWidget from "./features/standings/StandingsWidget";
 import Matchboard from "./features/board/Matchboard";
@@ -1072,6 +1073,8 @@ export default function App() {
               )}
             </>
           )
+        ) : location.pathname === "/lineup-builder" ? (
+          <FreestyleLineupBuilder data={data} />
         ) : page === null ? (
           <Alert severity="warning">
             Page not found.{" "}

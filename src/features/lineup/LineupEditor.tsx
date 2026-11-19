@@ -36,20 +36,31 @@ export default function LineupEditor({
   data,
   match,
   update,
+  freestyle = false,
 }: {
+  freestyle?: boolean;
   data: ClubData;
   match: Match;
   update: (data: ClubData) => void;
 }) {
+  const editable = freestyle || canEditClub;
   const [activeSquadOnly, setActiveSquadOnly] = useState(false);
   const lineup = normalizeLineupRoles(
-    data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id));
+    data.lineups.find((l) => l.matchId === match.id) ?? defaultLineup(match.id),
+  );
   const confirmedOutIds = new Set(lineup.confirmedOutIds ?? []);
-  if (!canEditClub) {
-    return <Stack gap={2} sx={{ mt: 2 }}>
-      <ShareLineupButton data={data} match={match} lineup={lineup} />
-      <LineupPitch data={data} lineup={lineup} showTitle={false} />
-    </Stack>;
+  if (!editable) {
+    return (
+      <Stack gap={2} sx={{ mt: 2 }}>
+        <ShareLineupButton
+          data={data}
+          match={match}
+          lineup={lineup}
+          freestyle={freestyle}
+        />
+        <LineupPitch data={data} lineup={lineup} showTitle={false} />
+      </Stack>
+    );
   }
 
   function save(next: typeof lineup) {
@@ -95,14 +106,21 @@ export default function LineupEditor({
     const displaced = lineup.starters.filter(
       (id) => id && !starters.includes(id),
     );
-    const empty = nextRoles.findIndex(role => !previousRoles.includes(role));
+    const empty = nextRoles.findIndex((role) => !previousRoles.includes(role));
     if (empty >= 0 && displaced.length) starters[empty] = displaced.shift()!;
     const benchPositions = { ...lineup.benchPositions };
     for (const [id, role] of Object.entries(benchPositions)) {
       if (nextRoles.includes(role)) continue;
-      const player = data.players.find(candidate => candidate.id === id);
-      benchPositions[id] = player?.secondaryPosition && nextRoles.includes(player.secondaryPosition)
-        ? player.secondaryPosition : nextRoles.includes("CAM") ? "CAM" : nextRoles.includes("CM") ? "CM" : nextRoles[0];
+      const player = data.players.find((candidate) => candidate.id === id);
+      benchPositions[id] =
+        player?.secondaryPosition &&
+        nextRoles.includes(player.secondaryPosition)
+          ? player.secondaryPosition
+          : nextRoles.includes("CAM")
+            ? "CAM"
+            : nextRoles.includes("CM")
+              ? "CM"
+              : nextRoles[0];
     }
     save({
       ...lineup,
@@ -113,7 +131,10 @@ export default function LineupEditor({
     });
   }
   function loadFirstChoice() {
-    save({ ...lineup, ...fullStrength(data, lineup.formation, confirmedOutIds) });
+    save({
+      ...lineup,
+      ...fullStrength(data, lineup.formation, confirmedOutIds),
+    });
   }
   function toggleConfirmedOut(playerId: string) {
     const next = new Set(confirmedOutIds);
@@ -135,7 +156,9 @@ export default function LineupEditor({
   const visiblePlayers = data.players
     .filter((player) => !activeSquadOnly || player.active)
     .sort(byPlayerNumber);
-  const eligiblePlayers = visiblePlayers.filter(player => !confirmedOutIds.has(player.id));
+  const eligiblePlayers = visiblePlayers.filter(
+    (player) => !confirmedOutIds.has(player.id),
+  );
   const availablePlayers = visiblePlayers.filter(
     (player) =>
       !lineup.starters.includes(player.id) && !lineup.bench.includes(player.id),
@@ -152,12 +175,6 @@ export default function LineupEditor({
   const slots = formationSlots[lineup.formation];
   return (
     <Stack gap={2}>
-      {missingStarters && (
-        <Alert severity="info">
-          Choose seven starters. The matchboard loads this saved lineup and
-          keeps coaching movements separate.
-        </Alert>
-      )}
       {duplicated.length > 0 && (
         <Alert severity="warning">
           A player occupies more than one starting slot.
@@ -174,7 +191,10 @@ export default function LineupEditor({
           alignItems: "start",
         }}
       >
-        <Stack gap={2} sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}>
+        <Stack
+          gap={2}
+          sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}
+        >
           <Card sx={{ order: { xs: 3, md: 0 } }}>
             <CardContent>
               <Stack
@@ -184,12 +204,14 @@ export default function LineupEditor({
                 flexWrap="wrap"
                 gap={1}
               >
-                <Typography variant="h6">Full Strength Lineup</Typography>
+                <Typography variant="h6">
+                  {freestyle ? "Your Lineup" : "Full Strength Lineup"}
+                </Typography>
                 <Stack direction="row" gap={1} flexWrap="wrap">
                   <Button
                     size="small"
                     variant="outlined"
-                    disabled={!canEditClub || !lineup.starters.some(Boolean)}
+                    disabled={!editable || !lineup.starters.some(Boolean)}
                     onClick={() =>
                       save({
                         ...lineup,
@@ -203,8 +225,11 @@ export default function LineupEditor({
                     size="small"
                     variant="contained"
                     disabled={
-                      !canEditClub ||
-                      !data.players.some(player => player.active && !confirmedOutIds.has(player.id))
+                      !editable ||
+                      !data.players.some(
+                        (player) =>
+                          player.active && !confirmedOutIds.has(player.id),
+                      )
                     }
                     onClick={loadFirstChoice}
                   >
@@ -219,7 +244,9 @@ export default function LineupEditor({
                   const selected = data.players.find(
                     (player) => player.id === id,
                   );
-                  const options = data.players.filter(player => !confirmedOutIds.has(player.id)).sort(byPlayerNumber);
+                  const options = data.players
+                    .filter((player) => !confirmedOutIds.has(player.id))
+                    .sort(byPlayerNumber);
                   const playerLabel = (player: (typeof options)[number]) =>
                     `#${player.number} ${player.name}`;
                   return (
@@ -295,13 +322,13 @@ export default function LineupEditor({
                     >
                       <ButtonBase
                         type="button"
-                        disabled={!canEditClub}
+                        disabled={!editable}
                         aria-label={`Move #${player.number} ${player.name} off the bench`}
                         title={`#${player.number} ${player.name}`}
                         sx={{
                           width: 180,
                           flexShrink: 0,
-                          cursor: canEditClub ? "pointer" : "default",
+                          cursor: editable ? "pointer" : "default",
                           "&:focus-visible": {
                             outline: "2px solid",
                             outlineColor: "primary.main",
@@ -309,7 +336,7 @@ export default function LineupEditor({
                           },
                         }}
                         onClick={
-                          canEditClub
+                          editable
                             ? () =>
                                 save({
                                   ...lineup,
@@ -344,7 +371,7 @@ export default function LineupEditor({
                           value={
                             lineup.benchPositions?.[player.id] ?? "Floater"
                           }
-                          disabled={!canEditClub}
+                          disabled={!editable}
                           onChange={(event) => {
                             const benchPositions = { ...lineup.benchPositions };
                             if (event.target.value !== "Floater")
@@ -382,15 +409,23 @@ export default function LineupEditor({
             </CardContent>
           </Card>
         </Stack>
-        <Stack gap={2} sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}>
+        <Stack
+          gap={2}
+          sx={{ minWidth: 0, display: { xs: "contents", md: "flex" } }}
+        >
           <Box sx={{ order: { xs: 1, md: 0 } }}>
-            <ShareLineupButton data={data} match={match} lineup={lineup} />
+            <ShareLineupButton
+              data={data}
+              match={match}
+              lineup={lineup}
+              freestyle={freestyle}
+            />
           </Box>
           <Box sx={{ order: { xs: 2, md: 0 }, minWidth: 0 }}>
             <LineupPitch
               data={data}
               lineup={lineup}
-              onFormationChange={canEditClub ? changeFormation : undefined}
+              onFormationChange={editable ? changeFormation : undefined}
             />
           </Box>
           <Card sx={{ order: { xs: 5, md: 0 } }}>
@@ -403,7 +438,13 @@ export default function LineupEditor({
                 sx={{ mb: 1 }}
               >
                 <Typography variant="h6">
-                  Available Players ({availablePlayers.filter(player => !confirmedOutIds.has(player.id)).length})
+                  Available Players (
+                  {
+                    availablePlayers.filter(
+                      (player) => !confirmedOutIds.has(player.id),
+                    ).length
+                  }
+                  )
                 </Typography>
                 <FormControlLabel
                   sx={{ ml: "auto", mr: 0 }}
@@ -469,7 +510,9 @@ export default function LineupEditor({
                             bgcolor: isOut ? "#eee" : "#333",
                           },
                           opacity: isOut ? 1 : 0,
-                          transform: isOut ? "translateY(0)" : "translateY(8px)",
+                          transform: isOut
+                            ? "translateY(0)"
+                            : "translateY(8px)",
                           pointerEvents: isOut ? "auto" : "none",
                           transition: "opacity .18s ease, transform .18s ease",
                         }}
@@ -480,7 +523,11 @@ export default function LineupEditor({
                         type="button"
                         disabled={isOut}
                         aria-label={`Move #${player.number} ${player.name} to Bench`}
-                        title={isOut ? `${player.name} is confirmed out` : `#${player.number} ${player.name}`}
+                        title={
+                          isOut
+                            ? `${player.name} is confirmed out`
+                            : `#${player.number} ${player.name}`
+                        }
                         sx={{
                           width: "100%",
                           cursor: isOut ? "default" : "pointer",
@@ -492,7 +539,12 @@ export default function LineupEditor({
                             outlineOffset: 2,
                           },
                         }}
-                        onClick={() => save({ ...lineup, bench: [...lineup.bench, player.id] })}
+                        onClick={() =>
+                          save({
+                            ...lineup,
+                            bench: [...lineup.bench, player.id],
+                          })
+                        }
                       >
                         <LineupNameplate kit={match.kit} sx={{ width: "100%" }}>
                           <NameplateText

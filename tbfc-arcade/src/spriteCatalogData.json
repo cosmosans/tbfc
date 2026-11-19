@@ -356,54 +356,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "stubbs-idle.png",
+              "file": "stubbs-new-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Stubbs animation set"
             },
             "Run": {
-              "file": "stubbs-run.png",
+              "file": "stubbs-new-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Stubbs animation set"
             },
             "Kick": {
-              "file": "stubbs-side-kicks.png",
+              "file": "stubbs-new-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Stubbs animation set"
             },
             "Foul reaction (fall)": {
-              "file": "stubbs-fall.png",
+              "file": "stubbs-new-foul.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Stubbs animation set"
             },
             "Running celebration": {
-              "file": "stubbs-slide.png",
+              "file": "stubbs-new-goal-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "New Stubbs animation set"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "stubbs-new-header.png",
+              "status": "Individual",
+              "note": "New Stubbs animation set"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "stubbs-new-tackle.png",
+              "status": "Individual",
+              "note": "New Stubbs animation set"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "stubbs-new-reaction.png",
+              "status": "Individual",
+              "note": "New Stubbs animation set"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "stubbs-new-goal-stand.png",
+              "status": "Individual",
+              "note": "New Stubbs animation set"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "stubbs-new-goal-support.png",
+              "status": "Shared",
+              "note": "Uses standing finisher as support pose"
             }
           }
         },
@@ -1374,54 +1374,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-luca-idle.png",
-              "status": "Shared",
-              "note": "Uses luca artwork"
+              "file": "okw-male-marcus-idle.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Run": {
-              "file": "okw-luca-run.png",
-              "status": "Shared",
-              "note": "Uses luca artwork"
+              "file": "okw-male-marcus-run.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Kick": {
-              "file": "okw-luca-kick.png",
-              "status": "Shared",
-              "note": "Uses luca artwork"
+              "file": "okw-male-marcus-kick.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-marcus-foul.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-jump.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-tackle.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-reaction.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-goal-run.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-goal-stand.png",
+              "status": "Individual",
+              "note": "One Kick Wonders male animation set"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-marcus-goal-support.png",
+              "status": "Shared",
+              "note": "One Kick Wonders male animation set"
             }
           }
         },
@@ -1430,54 +1430,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-luca-idle.png",
+              "file": "okw-male-luca-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Run": {
-              "file": "okw-luca-run.png",
+              "file": "okw-male-luca-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Kick": {
-              "file": "okw-luca-kick.png",
+              "file": "okw-male-luca-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-luca-foul.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-jump.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-tackle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-reaction.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-luca-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle skin and hair variant from male base"
             }
           }
         },
@@ -1486,54 +1486,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-avery-idle.png",
-              "status": "Shared",
-              "note": "Uses avery artwork"
+              "file": "okw-male-nico-idle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Run": {
-              "file": "okw-avery-run.png",
-              "status": "Shared",
-              "note": "Uses avery artwork"
+              "file": "okw-male-nico-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Kick": {
-              "file": "okw-avery-kick.png",
-              "status": "Shared",
-              "note": "Uses avery artwork"
+              "file": "okw-male-nico-kick.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-nico-foul.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-jump.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-tackle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-reaction.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-nico-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle skin and hair variant from male base"
             }
           }
         },
@@ -1654,54 +1654,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-idris-idle.png",
+              "file": "okw-male-idris-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Run": {
-              "file": "okw-idris-run.png",
+              "file": "okw-male-idris-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Kick": {
-              "file": "okw-idris-kick.png",
+              "file": "okw-male-idris-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-idris-foul.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-jump.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-tackle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-reaction.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-idris-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle skin and hair variant from male base"
             }
           }
         },
@@ -1766,54 +1766,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-ezra-idle.png",
+              "file": "okw-male-ezra-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Run": {
-              "file": "okw-ezra-run.png",
+              "file": "okw-male-ezra-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Kick": {
-              "file": "okw-ezra-kick.png",
+              "file": "okw-male-ezra-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-ezra-foul.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-jump.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-tackle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-reaction.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-ezra-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle skin and hair variant from male base"
             }
           }
         },
@@ -1878,54 +1878,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "okw-otto-idle.png",
+              "file": "okw-male-otto-idle.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Run": {
-              "file": "okw-otto-run.png",
+              "file": "okw-male-otto-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Kick": {
-              "file": "okw-otto-kick.png",
+              "file": "okw-male-otto-kick.png",
               "status": "Individual",
-              "note": ""
+              "note": "Subtle skin and hair variant from male base"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "okw-male-otto-foul.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-jump.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-tackle.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-reaction.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-goal-run.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-goal-stand.png",
+              "status": "Individual",
+              "note": "Subtle skin and hair variant from male base"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "okw-male-otto-goal-support.png",
+              "status": "Shared",
+              "note": "Subtle skin and hair variant from male base"
             }
           }
         },
@@ -12102,6 +12102,496 @@
       "height": 640,
       "cell": 80,
       "columns": 15,
+      "rows": 8
+    },
+    "stubbs-new-idle.png": {
+      "width": 512,
+      "height": 64,
+      "cell": 64,
+      "columns": 8,
+      "rows": 1
+    },
+    "stubbs-new-run.png": {
+      "width": 512,
+      "height": 512,
+      "cell": 64,
+      "columns": 8,
+      "rows": 8
+    },
+    "stubbs-new-kick.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "stubbs-new-header.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "stubbs-new-tackle.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "stubbs-new-reaction.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
+      "rows": 8
+    },
+    "stubbs-new-foul.png": {
+      "width": 448,
+      "height": 512,
+      "cell": 64,
+      "columns": 7,
+      "rows": 8
+    },
+    "stubbs-new-goal-run.png": {
+      "width": 832,
+      "height": 512,
+      "cell": 64,
+      "columns": 13,
+      "rows": 8
+    },
+    "stubbs-new-goal-stand.png": {
+      "width": 960,
+      "height": 512,
+      "cell": 64,
+      "columns": 15,
+      "rows": 8
+    },
+    "stubbs-new-goal-support.png": {
+      "width": 960,
+      "height": 512,
+      "cell": 64,
+      "columns": 15,
+      "rows": 8
+    },
+    "okw-male-marcus-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-marcus-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-marcus-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-marcus-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-luca-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-luca-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-luca-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-nico-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-nico-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-nico-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-idris-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-idris-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-idris-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-ezra-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-ezra-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-ezra-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-idle.png": {
+      "width": 640,
+      "height": 80,
+      "cell": 80,
+      "columns": 8,
+      "rows": 1
+    },
+    "okw-male-otto-run.png": {
+      "width": 640,
+      "height": 640,
+      "cell": 80,
+      "columns": 8,
+      "rows": 8
+    },
+    "okw-male-otto-kick.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-jump.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-tackle.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-reaction.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-foul.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-goal-run.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-goal-stand.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
+      "rows": 8
+    },
+    "okw-male-otto-goal-support.png": {
+      "width": 720,
+      "height": 640,
+      "cell": 80,
+      "columns": 9,
       "rows": 8
     }
   }
