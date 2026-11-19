@@ -408,7 +408,7 @@
           }
         },
         {
-          "name": "Jos\u00e9",
+          "name": "José",
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
@@ -447,12 +447,12 @@
               "note": ""
             },
             "Running celebration": {
-              "file": "spider-jose-run.png",
+              "file": "spider-jose-new-run.png",
               "status": "Individual",
-              "note": ""
+              "note": "Northeast uses east; northwest uses west."
             },
             "Standing celebration": {
-              "file": "spider-jose-idle.png",
+              "file": "spider-jose-new-stand.png",
               "status": "Individual",
               "note": ""
             },
@@ -12592,6 +12592,27 @@
       "height": 640,
       "cell": 80,
       "columns": 9,
+      "rows": 8
+    },
+    "spider-jose-new-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "spider-jose-new-run.png": {
+      "width": 448,
+      "height": 448,
+      "cell": 56,
+      "columns": 8,
+      "rows": 8
+    },
+    "spider-jose-new-stand.png": {
+      "width": 952,
+      "height": 448,
+      "cell": 56,
+      "columns": 17,
       "rows": 8
     }
   }

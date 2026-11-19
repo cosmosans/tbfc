@@ -113,8 +113,9 @@ import stevenKick from './art/steven-new-kick.png?url'
 import stevenJump from './art/steven-new-jump.png?url'
 import stevenTackle from './art/steven-new-tackle.png?url'
 import stevenReaction from './art/steven-new-reaction.png?url'
-import spiderIdleUrl from './art/spider-jose-idle.png?url'
-import spiderRunUrl from './art/spider-jose-run.png?url'
+import spiderIdleUrl from './art/spider-jose-new-idle.png?url'
+import spiderRunUrl from './art/spider-jose-new-run.png?url'
+import spiderGoalStandUrl from './art/spider-jose-new-stand.png?url'
 import joseIdle from './art/jose-idle.png?url'
 import joseRun from './art/jose-run.png?url'
 import joseKick from './art/jose-kick-finals.png?url'
@@ -775,8 +776,10 @@ async function start(){
  stubbsSlide.userData.directionalRun=true
  const [pamHeader,joseHeader]=await Promise.all([pamHeaderUrl,joseHeaderUrl].map(celebrationSheet))
  pamHeader.repeat.set(1/9,1/8);joseHeader.repeat.set(1/9,1/8)
+ const spiderGoalStand=await celebrationSheet(spiderGoalStandUrl)
  spiderIdle.userData.directionalIdle=true
- spiderRun.repeat.y=1/8;spiderRun.userData.directionalRun=true
+ for(const map of [spiderRun,spiderGoalStand]){map.repeat.set(56/map.image.width,1/8);map.userData.cell=56;map.userData.directionalCelebration=true}
+ spiderRun.userData.directionalRun=true
  meghanSkate.repeat.y=1/8
  meghanSkate.userData.directionalRun=true
  meghanGoal.repeat.set(54/meghanGoal.image.width,1/8);meghanGoal.userData.directionalCelebration=true;meghanGoal.userData.cell=54
@@ -787,7 +790,7 @@ async function start(){
  joseOverhead.repeat.y=1/8
  mandyGoal.repeat.y=1/8
  mandyGoal.userData.directionalCelebration=true
- const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderIdle,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalStand}
+ const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderGoalStand,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalStand}
  const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
  const onsiderMaleGoals=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
  const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
@@ -2685,7 +2688,6 @@ async function start(){
   groupStarted=true
   if(!celebrant)return
   celebrant.moving=false;celebrant.runClock=0
-  if(goalMap===spiderIdle)celebrant.face=celebrant.drawFace=0
   const goalCell=goalMap?.userData.cell??48
   resultTime=goalMap===pamGoal||goalMap===nelsonGoal?2*goalMap.image.width/goalCell*.2:goalMap===meghanGoal||goalMap?.userData.directionalCelebration?goalMap.image.width/goalCell*.2:2.8
   if(goalMap!==mandyGoal)return
@@ -3750,9 +3752,12 @@ async function start(){
    ring.visible=false
   }
   for(const actor of pitchActors){
-    if(celebrating&&actor===celebrant&&runCelebration===spiderRun&&goalAge>=costumeRevealTime&&(groupStarted||!actor.moving)){
+    if(celebrating&&actor===celebrant&&runCelebration===spiderRun&&goalAge>=costumeRevealTime&&!groupStarted&&!actor.moving){
      spiderIdle.offset.x=((actor.face+screenRotation()+8)%8)/8
-     actor.sprite.material.map=spiderIdle;continue
+     actor.sprite.material.map=spiderIdle
+     actor.sprite.scale.setScalar(cinematicPlayerSize)
+     actor.sprite.center.set(.5,spriteGroundPadding(spiderIdle.image,8,1,0,(actor.face+screenRotation()+8)%8,true)/48)
+     continue
     }
     if(celebrating&&actor===celebrant&&!groupStarted&&runCelebration&&(!costumeReveal||goalAge>=costumeRevealTime)){
      const cell=runCelebration.userData.cell??48,frames=runCelebration.image.width/cell
@@ -3761,7 +3766,7 @@ async function start(){
      actor.sprite.material.map=runCelebration
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||runCelebration===meghanSkate||runCelebration===spiderRun)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(runCelebration.image,frames,8,(actor.face+screenRotation()+8)%8,0,true)/cell)
      continue
     }
@@ -3791,7 +3796,7 @@ async function start(){
      const rows=goalMap.image.height/cell
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
     }

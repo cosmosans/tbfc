@@ -33,7 +33,7 @@ export class GoalReplay {
   private start=0
   readonly camera=new T.PerspectiveCamera(43,1,.1,140)
   constructor(private sprites:T.Sprite[],private ball:T.Sprite,
-    private actors:{drawFace:number,maps:T.Texture[],westKickRow:number}[],private goalLine:number,private fireSprites:T.Sprite[]=[],private smokeBackdrop=false){}
+    private actors:{face:number,drawFace:number,maps:T.Texture[],westKickRow:number}[],private goalLine:number,private fireSprites:T.Sprite[]=[],private smokeBackdrop=false){}
   private shotOrigin=new T.Vector3()
   markStrike(scorer:T.Sprite,origin:T.Vector3){
     this.strike=this.time;this.scorer=scorer;this.shotOrigin.copy(origin)
@@ -50,7 +50,12 @@ export class GoalReplay {
     if(last&&this.time-last.time<frameInterval-.001)return
     const poses=this.sprites.map((sprite,i)=>{
       const map=sprite.material.map!
-      return {visible:sprite.visible,size:sprite.scale.x,position:sprite.position.clone(),angle:sprite.material.rotation,face:this.actors[i]?.drawFace??0,mode:this.actors[i]?.maps.indexOf(map)??-1,westKickRow:this.actors[i]?.westKickRow??0,map,
+      const actor=this.actors[i],mode=actor?.maps.indexOf(map)??-1
+      // Custom celebrations bypass the normal drawFace smoothing in the live renderer.
+      // Record the facing they actually use, rather than the last pre-celebration pose.
+      const customDirectional=mode<0&&(map.userData.directionalIdle||map.userData.directionalRun||map.userData.directionalCelebration)
+      const face=actor?(customDirectional?actor.face:actor.drawFace):0
+      return {visible:sprite.visible,size:sprite.scale.x,position:sprite.position.clone(),angle:sprite.material.rotation,face,mode,westKickRow:actor?.westKickRow??0,map,
         u:map.offset.x,v:map.offset.y,w:map.repeat.x,h:map.repeat.y}
     })
     const fire=this.fireSprites.some(s=>s.visible)?this.fireSprites.map(s=>s.visible?{
