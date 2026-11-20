@@ -1,0 +1,35 @@
+{
+  "sourceSHA256": "2d8d3837e472ef9eec089a56933ad34065f9464fa34d55bbc39c01d2ae0d3d25",
+  "durationSeconds": 300,
+  "cameraSeconds": {
+    "Cam A": 180,
+    "Cam B": 120
+  },
+  "switches": 4,
+  "averageShotSeconds": 60,
+  "tracking": "Not run: interchange test only",
+  "audio": "Both angles enabled in every segment",
+  "sourceRegionSeconds": [
+    60,
+    360
+  ],
+  "mediaAvailable": {
+    "GH016130": true,
+    "GH026130": true,
+    "GH036130": true,
+    "GH046130": true,
+    "GH056130": true,
+    "GH066130": true,
+    "GH076130": true,
+    "GH086130": true,
+    "GX016155": true,
+    "GX026155": true,
+    "GX036155": true
+  },
+  "finalCutImportVerified": false,
+  "notes": [
+    "Cam A starts at 36.4333s; test starts at 60s.",
+    "Project is 60fps; source clips are 59.94fps with existing conform-rate preserved.",
+    "Original resources, synchronization, media references, and source file preserved."
+  ]
+}

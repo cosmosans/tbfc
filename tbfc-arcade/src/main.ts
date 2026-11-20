@@ -74,6 +74,13 @@ import mandyGoalUrl from './art/mandy-new-goal-team.png?url'
 import mandyHeader from './art/mandy-new-header.png?url'
 import mandyTackle from './art/mandy-new-tackle.png?url'
 import mandyReaction from './art/mandy-new-reaction.png?url'
+import spencerIdle from './art/spencer-idle.png?url'
+import spencerRun from './art/spencer-run.png?url'
+import spencerKick from './art/spencer-kick.png?url'
+import spencerHeader from './art/spencer-header.png?url'
+import spencerTackle from './art/spencer-tackle.png?url'
+import spencerReaction from './art/spencer-reaction.png?url'
+import spencerFoul from './art/spencer-foul.png?url'
 import pamGoalUrl from './art/pam-goal.png?url'
 import nadiaIdle from './art/nadia-new-idle.png?url'
 import nadiaRun from './art/nadia-new-run.png?url'
@@ -197,8 +204,8 @@ void hudFont.load()
 
 const el=(id:string)=>document.getElementById(id)!
 async function start(){
- const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chrisNewIdle,chrisNewRun,chrisNewKick],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
- const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall,Jeremy:jeremyFoul}
+ const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chrisNewIdle,chrisNewRun,chrisNewKick],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],Spencer:[spencerIdle,spencerRun,spencerKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
+ const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Spencer:spencerFoul,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall,Jeremy:jeremyFoul}
  const settings=defaultSettings()
  const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
@@ -497,7 +504,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:name==='Mandy'?mandyHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:name==='Mandy'?mandyTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:name==='Mandy'?mandyReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:name==='Mandy'?mandyHeader:name==='Spencer'?spencerHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:name==='Mandy'?mandyTackle:name==='Spencer'?spencerTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:name==='Mandy'?mandyReaction:name==='Spencer'?spencerReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]

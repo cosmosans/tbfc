@@ -11,6 +11,7 @@ import jeremyHead from "./art/headshots/jeremy.png?url";
 import joseHead from "./art/headshots/jose.png?url";
 import pamHead from "./art/headshots/pam.png?url";
 import stubbsHead from "./art/headshots/stubbs.png?url";
+import spencerHead from "./art/headshots/spencer.png?url";
 import { hint, menuBumper } from "./screenUI";
 import { scoreRow } from "./leagueBoard";
 import { burners, clubs, type Fixture } from "./opponentSquads";
@@ -64,6 +65,7 @@ export const headshots: Partial<Record<string, string>> = {
   José: joseHead,
   Pam: pamHead,
   Stubbs: stubbsHead,
+  Spencer: spencerHead,
 };
 
 export type Ticket = {

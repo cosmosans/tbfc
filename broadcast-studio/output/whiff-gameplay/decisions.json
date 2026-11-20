@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "timelineTimebase": "frames",
+  "fps": 60,
+  "sourceStart": "2633/12",
+  "audioAngles": [
+    "Cam A",
+    "Cam B"
+  ],
+  "segments": [
+    {
+      "startFrame": 0,
+      "endFrame": 2280,
+      "videoAngle": "Cam A",
+      "reason": "initial_camera",
+      "evidenceStrength": 0.07005334438744217
+    },
+    {
+      "startFrame": 2280,
+      "endFrame": 3300,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.2909695233126155
+    },
+    {
+      "startFrame": 3300,
+      "endFrame": 4620,
+      "videoAngle": "Cam A",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.14703382570307502
+    },
+    {
+      "startFrame": 4620,
+      "endFrame": 4920,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.2755324779386917
+    },
+    {
+      "startFrame": 4920,
+      "endFrame": 6930,
+      "videoAngle": "Cam A",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.5392846263416475
+    },
+    {
+      "startFrame": 6930,
+      "endFrame": 7740,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.5801774972652421
+    },
+    {
+      "startFrame": 7740,
+      "endFrame": 10350,
+      "videoAngle": "Cam A",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.4261438135262142
+    },
+    {
+      "startFrame": 10350,
+      "endFrame": 12510,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.4720361053243972
+    },
+    {
+      "startFrame": 12510,
+      "endFrame": 12990,
+      "videoAngle": "Cam A",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.2370747166781052
+    },
+    {
+      "startFrame": 12990,
+      "endFrame": 14190,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.7260070081737062
+    },
+    {
+      "startFrame": 14190,
+      "endFrame": 16530,
+      "videoAngle": "Cam A",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.5224953828180893
+    },
+    {
+      "startFrame": 16530,
+      "endFrame": 18000,
+      "videoAngle": "Cam B",
+      "reason": "sustained_near_pitch_motion",
+      "evidenceStrength": 0.3557503162635729
+    }
+  ]
+}

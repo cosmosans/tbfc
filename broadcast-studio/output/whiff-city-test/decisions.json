@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "timelineTimebase": "seconds",
+  "fps": 60,
+  "sourceRegion": [
+    60,
+    360
+  ],
+  "segments": [
+    {
+      "start": 0,
+      "end": 60,
+      "sourceStart": 60,
+      "videoAngle": "Cam A",
+      "audioAngles": [
+        "Cam A",
+        "Cam B"
+      ],
+      "reason": "manual_roundtrip_test"
+    },
+    {
+      "start": 60,
+      "end": 120,
+      "sourceStart": 120,
+      "videoAngle": "Cam B",
+      "audioAngles": [
+        "Cam A",
+        "Cam B"
+      ],
+      "reason": "manual_roundtrip_test"
+    },
+    {
+      "start": 120,
+      "end": 180,
+      "sourceStart": 180,
+      "videoAngle": "Cam A",
+      "audioAngles": [
+        "Cam A",
+        "Cam B"
+      ],
+      "reason": "manual_roundtrip_test"
+    },
+    {
+      "start": 180,
+      "end": 240,
+      "sourceStart": 240,
+      "videoAngle": "Cam B",
+      "audioAngles": [
+        "Cam A",
+        "Cam B"
+      ],
+      "reason": "manual_roundtrip_test"
+    },
+    {
+      "start": 240,
+      "end": 300,
+      "sourceStart": 300,
+      "videoAngle": "Cam A",
+      "audioAngles": [
+        "Cam A",
+        "Cam B"
+      ],
+      "reason": "manual_roundtrip_test"
+    }
+  ]
+}

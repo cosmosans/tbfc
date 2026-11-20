@@ -1,0 +1,1 @@
+{"minimumShotSeconds":3,"sustainedTransitionSeconds":1.5,"smoothingSeconds":3,"minimumEvidence":0.08,"switchMargin":0.2,"sampleFps":2,"durationSeconds":300,"method":"near-pitch motion fallback; no ball detector", "pitchMasks":{"Cam A":[[55,201],[470,205],[565,219],[328,285],[50,286]],"Cam B":[[149,217],[450,221],[560,238],[341,272],[155,266]]}}

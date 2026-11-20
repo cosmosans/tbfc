@@ -1,0 +1,3984 @@
+{
+  "durationSeconds": 300,
+  "method": "near-pitch motion fallback; no ball detector",
+  "changes": 11,
+  "averageShotSeconds": 25.0,
+  "screenTimeSeconds": {
+    "Cam A": 184.0,
+    "Cam B": 116.0
+  },
+  "lowEvidenceIntervalsSeconds": [
+    [
+      0.0,
+      0.5
+    ],
+    [
+      0.5,
+      1.0
+    ],
+    [
+      1.0,
+      1.5
+    ],
+    [
+      1.5,
+      2.0
+    ],
+    [
+      2.0,
+      2.5
+    ],
+    [
+      2.5,
+      3.0
+    ],
+    [
+      3.0,
+      3.5
+    ],
+    [
+      3.5,
+      4.0
+    ],
+    [
+      5.5,
+      6.0
+    ],
+    [
+      6.0,
+      6.5
+    ],
+    [
+      6.5,
+      7.0
+    ],
+    [
+      7.0,
+      7.5
+    ],
+    [
+      7.5,
+      8.0
+    ],
+    [
+      8.0,
+      8.5
+    ],
+    [
+      8.5,
+      9.0
+    ],
+    [
+      9.0,
+      9.5
+    ],
+    [
+      9.5,
+      10.0
+    ],
+    [
+      10.0,
+      10.5
+    ],
+    [
+      10.5,
+      11.0
+    ],
+    [
+      11.0,
+      11.5
+    ],
+    [
+      11.5,
+      12.0
+    ],
+    [
+      12.0,
+      12.5
+    ],
+    [
+      12.5,
+      13.0
+    ],
+    [
+      13.0,
+      13.5
+    ],
+    [
+      13.5,
+      14.0
+    ],
+    [
+      14.0,
+      14.5
+    ],
+    [
+      14.5,
+      15.0
+    ],
+    [
+      15.0,
+      15.5
+    ],
+    [
+      15.5,
+      16.0
+    ],
+    [
+      26.5,
+      27.0
+    ],
+    [
+      27.0,
+      27.5
+    ],
+    [
+      27.5,
+      28.0
+    ],
+    [
+      28.0,
+      28.5
+    ],
+    [
+      28.5,
+      29.0
+    ],
+    [
+      29.0,
+      29.5
+    ],
+    [
+      29.5,
+      30.0
+    ],
+    [
+      30.0,
+      30.5
+    ],
+    [
+      30.5,
+      31.0
+    ],
+    [
+      31.0,
+      31.5
+    ],
+    [
+      31.5,
+      32.0
+    ],
+    [
+      33.0,
+      33.5
+    ],
+    [
+      33.5,
+      34.0
+    ],
+    [
+      34.0,
+      34.5
+    ],
+    [
+      34.5,
+      35.0
+    ],
+    [
+      35.0,
+      35.5
+    ],
+    [
+      35.5,
+      36.0
+    ],
+    [
+      36.0,
+      36.5
+    ],
+    [
+      52.5,
+      53.0
+    ],
+    [
+      53.0,
+      53.5
+    ],
+    [
+      70.0,
+      70.5
+    ],
+    [
+      70.5,
+      71.0
+    ],
+    [
+      71.0,
+      71.5
+    ],
+    [
+      74.0,
+      74.5
+    ],
+    [
+      74.5,
+      75.0
+    ],
+    [
+      75.0,
+      75.5
+    ],
+    [
+      80.0,
+      80.5
+    ],
+    [
+      86.0,
+      86.5
+    ],
+    [
+      88.5,
+      89.0
+    ],
+    [
+      89.0,
+      89.5
+    ],
+    [
+      113.5,
+      114.0
+    ],
+    [
+      126.5,
+      127.0
+    ],
+    [
+      137.0,
+      137.5
+    ],
+    [
+      137.5,
+      138.0
+    ],
+    [
+      138.0,
+      138.5
+    ],
+    [
+      160.0,
+      160.5
+    ],
+    [
+      160.5,
+      161.0
+    ],
+    [
+      162.5,
+      163.0
+    ],
+    [
+      163.0,
+      163.5
+    ],
+    [
+      163.5,
+      164.0
+    ],
+    [
+      169.5,
+      170.0
+    ],
+    [
+      170.0,
+      170.5
+    ],
+    [
+      178.5,
+      179.0
+    ],
+    [
+      179.0,
+      179.5
+    ],
+    [
+      179.5,
+      180.0
+    ],
+    [
+      180.0,
+      180.5
+    ],
+    [
+      180.5,
+      181.0
+    ],
+    [
+      201.5,
+      202.0
+    ],
+    [
+      202.0,
+      202.5
+    ],
+    [
+      202.5,
+      203.0
+    ],
+    [
+      203.0,
+      203.5
+    ],
+    [
+      203.5,
+      204.0
+    ],
+    [
+      214.0,
+      214.5
+    ],
+    [
+      214.5,
+      215.0
+    ],
+    [
+      234.0,
+      234.5
+    ],
+    [
+      234.5,
+      235.0
+    ],
+    [
+      273.5,
+      274.0
+    ],
+    [
+      282.0,
+      282.5
+    ],
+    [
+      296.0,
+      296.5
+    ],
+    [
+      296.5,
+      297.0
+    ],
+    [
+      297.0,
+      297.5
+    ],
+    [
+      297.5,
+      298.0
+    ]
+  ],
+  "limitations": [
+    "Motion evidence is not ball tracking or calibrated probability.",
+    "Pitch masks are manually estimated and exclude neighboring games; SuperView geometry is not metrically calibrated.",
+    "Audio enabled for both angles; no audio gain changes.",
+    "Final Cut review required; full-match processing not yet validated."
+  ],
+  "evidence": [
+    {
+      "frame": 0,
+      "activityA": 0.0,
+      "activityB": 0.0,
+      "evidenceStrength": 0.0
+    },
+    {
+      "frame": 30,
+      "activityA": 0.07061848307384659,
+      "activityB": 0.04975609756097561,
+      "evidenceStrength": 0.01043119275643549
+    },
+    {
+      "frame": 60,
+      "activityA": 0.1444365090701328,
+      "activityB": 0.10146341463414635,
+      "evidenceStrength": 0.02148654721799323
+    },
+    {
+      "frame": 90,
+      "activityA": 0.1630052849592915,
+      "activityB": 0.13902439024390242,
+      "evidenceStrength": 0.011990447357694542
+    },
+    {
+      "frame": 120,
+      "activityA": 0.16249107270389945,
+      "activityB": 0.19434146341463412,
+      "evidenceStrength": 0.015925195355367336
+    },
+    {
+      "frame": 150,
+      "activityA": 0.17437508927296103,
+      "activityB": 0.22829268292682922,
+      "evidenceStrength": 0.0269587968269341
+    },
+    {
+      "frame": 180,
+      "activityA": 0.21288387373232395,
+      "activityB": 0.32780487804878045,
+      "evidenceStrength": 0.05746050215822825
+    },
+    {
+      "frame": 210,
+      "activityA": 0.23002428224539348,
+      "activityB": 0.3834146341463414,
+      "evidenceStrength": 0.07669517595047397
+    },
+    {
+      "frame": 240,
+      "activityA": 0.22168261676903298,
+      "activityB": 0.4058536585365854,
+      "evidenceStrength": 0.09208552088377621
+    },
+    {
+      "frame": 270,
+      "activityA": 0.2235109270104271,
+      "activityB": 0.44195121951219507,
+      "evidenceStrength": 0.109220146250884
+    },
+    {
+      "frame": 300,
+      "activityA": 0.2472789601485502,
+      "activityB": 0.4224390243902439,
+      "evidenceStrength": 0.08758003212084686
+    },
+    {
+      "frame": 330,
+      "activityA": 0.27276103413798025,
+      "activityB": 0.39902439024390246,
+      "evidenceStrength": 0.0631316780529611
+    },
+    {
+      "frame": 360,
+      "activityA": 0.31389801456934724,
+      "activityB": 0.32487804878048776,
+      "evidenceStrength": 0.005490017105570261
+    },
+    {
+      "frame": 390,
+      "activityA": 0.33846593343808024,
+      "activityB": 0.2995121951219512,
+      "evidenceStrength": 0.019476869158064514
+    },
+    {
+      "frame": 420,
+      "activityA": 0.3863448078845879,
+      "activityB": 0.32878048780487806,
+      "evidenceStrength": 0.028782160039854926
+    },
+    {
+      "frame": 450,
+      "activityA": 0.44999285816311957,
+      "activityB": 0.3385365853658537,
+      "evidenceStrength": 0.055728136398632944
+    },
+    {
+      "frame": 480,
+      "activityA": 0.49798600199971427,
+      "activityB": 0.36097560975609755,
+      "evidenceStrength": 0.06850519612180836
+    },
+    {
+      "frame": 510,
+      "activityA": 0.5129552921011284,
+      "activityB": 0.3980487804878048,
+      "evidenceStrength": 0.05745325580666183
+    },
+    {
+      "frame": 540,
+      "activityA": 0.5236966147693187,
+      "activityB": 0.4146341463414634,
+      "evidenceStrength": 0.054531234213927665
+    },
+    {
+      "frame": 570,
+      "activityA": 0.5430081416940437,
+      "activityB": 0.42341463414634145,
+      "evidenceStrength": 0.0597967537738511
+    },
+    {
+      "frame": 600,
+      "activityA": 0.5396943293815168,
+      "activityB": 0.41365853658536583,
+      "evidenceStrength": 0.0630178963980755
+    },
+    {
+      "frame": 630,
+      "activityA": 0.5292958148835881,
+      "activityB": 0.3912195121951219,
+      "evidenceStrength": 0.0690381513442331
+    },
+    {
+      "frame": 660,
+      "activityA": 0.5260962719611484,
+      "activityB": 0.3863414634146341,
+      "evidenceStrength": 0.06987740427325714
+    },
+    {
+      "frame": 690,
+      "activityA": 0.5270104270818453,
+      "activityB": 0.3902439024390244,
+      "evidenceStrength": 0.06838326232141045
+    },
+    {
+      "frame": 720,
+      "activityA": 0.4978717326096272,
+      "activityB": 0.4604878048780487,
+      "evidenceStrength": 0.01869196386578925
+    },
+    {
+      "frame": 750,
+      "activityA": 0.496843308098843,
+      "activityB": 0.4887804878048781,
+      "evidenceStrength": 0.004031410146982439
+    },
+    {
+      "frame": 780,
+      "activityA": 0.46770461362662474,
+      "activityB": 0.4712195121951219,
+      "evidenceStrength": 0.0017574492842485911
+    },
+    {
+      "frame": 810,
+      "activityA": 0.4375374946436223,
+      "activityB": 0.46048780487804875,
+      "evidenceStrength": 0.011475155117213226
+    },
+    {
+      "frame": 840,
+      "activityA": 0.4392515354949293,
+      "activityB": 0.4409756097560975,
+      "evidenceStrength": 0.0008620371305841091
+    },
+    {
+      "frame": 870,
+      "activityA": 0.4535352092558206,
+      "activityB": 0.3863414634146342,
+      "evidenceStrength": 0.033596872920593185
+    },
+    {
+      "frame": 900,
+      "activityA": 0.5025567776031995,
+      "activityB": 0.3453658536585365,
+      "evidenceStrength": 0.0785954619723315
+    },
+    {
+      "frame": 930,
+      "activityA": 0.5024425082131124,
+      "activityB": 0.34341463414634144,
+      "evidenceStrength": 0.0795139370333855
+    },
+    {
+      "frame": 960,
+      "activityA": 0.5409512926724753,
+      "activityB": 0.375609756097561,
+      "evidenceStrength": 0.08267076828745717
+    },
+    {
+      "frame": 990,
+      "activityA": 0.5919154406513355,
+      "activityB": 0.4009756097560976,
+      "evidenceStrength": 0.09546991544761896
+    },
+    {
+      "frame": 1020,
+      "activityA": 0.616940437080417,
+      "activityB": 0.44878048780487806,
+      "evidenceStrength": 0.08407997463776948
+    },
+    {
+      "frame": 1050,
+      "activityA": 0.6416226253392373,
+      "activityB": 0.4799999999999999,
+      "evidenceStrength": 0.08081131266961869
+    },
+    {
+      "frame": 1080,
+      "activityA": 0.6328238823025281,
+      "activityB": 0.4526829268292683,
+      "evidenceStrength": 0.09007047773662988
+    },
+    {
+      "frame": 1110,
+      "activityA": 0.6476789030138551,
+      "activityB": 0.3941463414634146,
+      "evidenceStrength": 0.12676628077522026
+    },
+    {
+      "frame": 1140,
+      "activityA": 0.6384230824167976,
+      "activityB": 0.32878048780487806,
+      "evidenceStrength": 0.15482129730595975
+    },
+    {
+      "frame": 1170,
+      "activityA": 0.6100842736751892,
+      "activityB": 0.2682926829268293,
+      "evidenceStrength": 0.17089579537417998
+    },
+    {
+      "frame": 1200,
+      "activityA": 0.5720325667761749,
+      "activityB": 0.18341463414634146,
+      "evidenceStrength": 0.1943089663149167
+    },
+    {
+      "frame": 1230,
+      "activityA": 0.528381659762891,
+      "activityB": 0.1424390243902439,
+      "evidenceStrength": 0.19297131768632353
+    },
+    {
+      "frame": 1260,
+      "activityA": 0.5026710469932867,
+      "activityB": 0.13365853658536583,
+      "evidenceStrength": 0.18450625520396044
+    },
+    {
+      "frame": 1290,
+      "activityA": 0.4686187687473218,
+      "activityB": 0.14341463414634145,
+      "evidenceStrength": 0.16260206730049015
+    },
+    {
+      "frame": 1320,
+      "activityA": 0.47113269532923874,
+      "activityB": 0.1931707317073171,
+      "evidenceStrength": 0.1389809818109608
+    },
+    {
+      "frame": 1350,
+      "activityA": 0.4702185402085416,
+      "activityB": 0.24390243902439027,
+      "evidenceStrength": 0.11315805059207566
+    },
+    {
+      "frame": 1380,
+      "activityA": 0.4666761891158406,
+      "activityB": 0.25853658536585367,
+      "evidenceStrength": 0.10406980187499346
+    },
+    {
+      "frame": 1410,
+      "activityA": 0.45764890729895735,
+      "activityB": 0.2604878048780488,
+      "evidenceStrength": 0.09858055121045428
+    },
+    {
+      "frame": 1440,
+      "activityA": 0.46267676046279105,
+      "activityB": 0.2634146341463415,
+      "evidenceStrength": 0.09963106315822477
+    },
+    {
+      "frame": 1470,
+      "activityA": 0.4666761891158406,
+      "activityB": 0.2731707317073171,
+      "evidenceStrength": 0.09675272870426174
+    },
+    {
+      "frame": 1500,
+      "activityA": 0.435480645622054,
+      "activityB": 0.2653658536585366,
+      "evidenceStrength": 0.08505739598175871
+    },
+    {
+      "frame": 1530,
+      "activityA": 0.3866876160548493,
+      "activityB": 0.19512195121951217,
+      "evidenceStrength": 0.09578283241766856
+    },
+    {
+      "frame": 1560,
+      "activityA": 0.3415512069704328,
+      "activityB": 0.17853658536585368,
+      "evidenceStrength": 0.08150731080228955
+    },
+    {
+      "frame": 1590,
+      "activityA": 0.30452792458220257,
+      "activityB": 0.17658536585365855,
+      "evidenceStrength": 0.06397127936427201
+    },
+    {
+      "frame": 1620,
+      "activityA": 0.2707041851164119,
+      "activityB": 0.2321951219512195,
+      "evidenceStrength": 0.019254531582596213
+    },
+    {
+      "frame": 1650,
+      "activityA": 0.2521925439222968,
+      "activityB": 0.25365853658536586,
+      "evidenceStrength": 0.0007329963315345356
+    },
+    {
+      "frame": 1680,
+      "activityA": 0.24796457648907294,
+      "activityB": 0.2751219512195122,
+      "evidenceStrength": 0.013578687365219638
+    },
+    {
+      "frame": 1710,
+      "activityA": 0.26921868304527924,
+      "activityB": 0.31707317073170727,
+      "evidenceStrength": 0.023927243843214013
+    },
+    {
+      "frame": 1740,
+      "activityA": 0.29310098557348946,
+      "activityB": 0.3570731707317073,
+      "evidenceStrength": 0.03198609257910892
+    },
+    {
+      "frame": 1770,
+      "activityA": 0.32121125553492363,
+      "activityB": 0.40682926829268296,
+      "evidenceStrength": 0.04280900637887966
+    },
+    {
+      "frame": 1800,
+      "activityA": 0.33789458648764464,
+      "activityB": 0.3882926829268292,
+      "evidenceStrength": 0.025199048219592294
+    },
+    {
+      "frame": 1830,
+      "activityA": 0.3381231252678189,
+      "activityB": 0.4146341463414634,
+      "evidenceStrength": 0.038255510536822246
+    },
+    {
+      "frame": 1860,
+      "activityA": 0.35206399085844886,
+      "activityB": 0.44292682926829263,
+      "evidenceStrength": 0.045431419204921886
+    },
+    {
+      "frame": 1890,
+      "activityA": 0.37274675046421935,
+      "activityB": 0.5141463414634146,
+      "evidenceStrength": 0.07069979549959765
+    },
+    {
+      "frame": 1920,
+      "activityA": 0.3790315669190115,
+      "activityB": 0.5492682926829269,
+      "evidenceStrength": 0.08511836288195768
+    },
+    {
+      "frame": 1950,
+      "activityA": 0.3748035994857878,
+      "activityB": 0.5375609756097561,
+      "evidenceStrength": 0.08137868806198417
+    },
+    {
+      "frame": 1980,
+      "activityA": 0.3589201542636766,
+      "activityB": 0.5170731707317073,
+      "evidenceStrength": 0.07907650823401535
+    },
+    {
+      "frame": 2010,
+      "activityA": 0.3550349950007142,
+      "activityB": 0.5141463414634146,
+      "evidenceStrength": 0.07955567323135021
+    },
+    {
+      "frame": 2040,
+      "activityA": 0.3438365947721754,
+      "activityB": 0.42829268292682926,
+      "evidenceStrength": 0.04222804407732694
+    },
+    {
+      "frame": 2070,
+      "activityA": 0.3233823739465791,
+      "activityB": 0.3785365853658536,
+      "evidenceStrength": 0.02757710570963726
+    },
+    {
+      "frame": 2100,
+      "activityA": 0.3106984716469076,
+      "activityB": 0.31219512195121946,
+      "evidenceStrength": 0.0007483251521559209
+    },
+    {
+      "frame": 2130,
+      "activityA": 0.29161548350235683,
+      "activityB": 0.33658536585365856,
+      "evidenceStrength": 0.022484941175650863
+    },
+    {
+      "frame": 2160,
+      "activityA": 0.2712755320668476,
+      "activityB": 0.40682926829268296,
+      "evidenceStrength": 0.06777686811291767
+    },
+    {
+      "frame": 2190,
+      "activityA": 0.25059277246107703,
+      "activityB": 0.44780487804878044,
+      "evidenceStrength": 0.0986060527938517
+    },
+    {
+      "frame": 2220,
+      "activityA": 0.2262533923725182,
+      "activityB": 0.568780487804878,
+      "evidenceStrength": 0.1712635477161799
+    },
+    {
+      "frame": 2250,
+      "activityA": 0.19265819168690188,
+      "activityB": 0.6673170731707315,
+      "evidenceStrength": 0.2373294407419148
+    },
+    {
+      "frame": 2280,
+      "activityA": 0.15620625624910728,
+      "activityB": 0.8770731707317072,
+      "evidenceStrength": 0.36043345724129994
+    },
+    {
+      "frame": 2310,
+      "activityA": 0.14352235394943577,
+      "activityB": 1.0185365853658537,
+      "evidenceStrength": 0.43750711570820894
+    },
+    {
+      "frame": 2340,
+      "activityA": 0.1379231538351664,
+      "activityB": 0.9970731707317073,
+      "evidenceStrength": 0.42957500844827046
+    },
+    {
+      "frame": 2370,
+      "activityA": 0.13963719468647337,
+      "activityB": 1.0126829268292683,
+      "evidenceStrength": 0.43652286607139745
+    },
+    {
+      "frame": 2400,
+      "activityA": 0.14146550492786744,
+      "activityB": 0.9717073170731708,
+      "evidenceStrength": 0.4151209060726517
+    },
+    {
+      "frame": 2430,
+      "activityA": 0.15083559491501214,
+      "activityB": 0.8956097560975609,
+      "evidenceStrength": 0.37238708059127434
+    },
+    {
+      "frame": 2460,
+      "activityA": 0.1706041994000857,
+      "activityB": 0.7336585365853657,
+      "evidenceStrength": 0.28152716859264004
+    },
+    {
+      "frame": 2490,
+      "activityA": 0.1879731466933295,
+      "activityB": 0.5863414634146341,
+      "evidenceStrength": 0.19918415836065226
+    },
+    {
+      "frame": 2520,
+      "activityA": 0.21779745750607055,
+      "activityB": 0.5541463414634146,
+      "evidenceStrength": 0.168174441978672
+    },
+    {
+      "frame": 2550,
+      "activityA": 0.23802313955149262,
+      "activityB": 0.5307317073170731,
+      "evidenceStrength": 0.14635428388279023
+    },
+    {
+      "frame": 2580,
+      "activityA": 0.23813740894157975,
+      "activityB": 0.5336585365853659,
+      "evidenceStrength": 0.14776056382189307
+    },
+    {
+      "frame": 2610,
+      "activityA": 0.23436651906870445,
+      "activityB": 0.6370731707317072,
+      "evidenceStrength": 0.2013533258315014
+    },
+    {
+      "frame": 2640,
+      "activityA": 0.2288815883445222,
+      "activityB": 0.7697560975609757,
+      "evidenceStrength": 0.27043725460822676
+    },
+    {
+      "frame": 2670,
+      "activityA": 0.2206541922582488,
+      "activityB": 0.8868292682926828,
+      "evidenceStrength": 0.333087538017217
+    },
+    {
+      "frame": 2700,
+      "activityA": 0.20945579202971001,
+      "activityB": 0.9434146341463414,
+      "evidenceStrength": 0.3669794210583157
+    },
+    {
+      "frame": 2730,
+      "activityA": 0.22076846164833597,
+      "activityB": 0.9834146341463414,
+      "evidenceStrength": 0.38132308624900274
+    },
+    {
+      "frame": 2760,
+      "activityA": 0.24179402942436795,
+      "activityB": 1.04,
+      "evidenceStrength": 0.39910298528781607
+    },
+    {
+      "frame": 2790,
+      "activityA": 0.256763319525782,
+      "activityB": 0.9678048780487803,
+      "evidenceStrength": 0.3555207792614992
+    },
+    {
+      "frame": 2820,
+      "activityA": 0.25459220111412656,
+      "activityB": 0.9853658536585366,
+      "evidenceStrength": 0.365386826272205
+    },
+    {
+      "frame": 2850,
+      "activityA": 0.25242108270247104,
+      "activityB": 1.031219512195122,
+      "evidenceStrength": 0.38939921474632544
+    },
+    {
+      "frame": 2880,
+      "activityA": 0.24876446221968293,
+      "activityB": 1.0975609756097562,
+      "evidenceStrength": 0.4243982566950366
+    },
+    {
+      "frame": 2910,
+      "activityA": 0.23436651906870445,
+      "activityB": 1.0965853658536586,
+      "evidenceStrength": 0.4311094233924771
+    },
+    {
+      "frame": 2940,
+      "activityA": 0.23550921296957578,
+      "activityB": 1.0653658536585364,
+      "evidenceStrength": 0.41492832034448035
+    },
+    {
+      "frame": 2970,
+      "activityA": 0.2581345522068276,
+      "activityB": 1.1492682926829267,
+      "evidenceStrength": 0.44556687023804953
+    },
+    {
+      "frame": 3000,
+      "activityA": 0.3079560062848165,
+      "activityB": 1.1229268292682926,
+      "evidenceStrength": 0.407485411491738
+    },
+    {
+      "frame": 3030,
+      "activityA": 0.365433509498643,
+      "activityB": 1.0204878048780488,
+      "evidenceStrength": 0.3275271476897029
+    },
+    {
+      "frame": 3060,
+      "activityA": 0.4211969718611627,
+      "activityB": 0.9385365853658536,
+      "evidenceStrength": 0.25866980675234547
+    },
+    {
+      "frame": 3090,
+      "activityA": 0.4739894300814169,
+      "activityB": 0.8419512195121951,
+      "evidenceStrength": 0.1839808947153891
+    },
+    {
+      "frame": 3120,
+      "activityA": 0.49855734895015,
+      "activityB": 0.7346341463414634,
+      "evidenceStrength": 0.1180383986956567
+    },
+    {
+      "frame": 3150,
+      "activityA": 0.5046136266247678,
+      "activityB": 0.5668292682926829,
+      "evidenceStrength": 0.031107820833957522
+    },
+    {
+      "frame": 3180,
+      "activityA": 0.5038137408941579,
+      "activityB": 0.4097560975609756,
+      "evidenceStrength": 0.04702882166659114
+    },
+    {
+      "frame": 3210,
+      "activityA": 0.502099700042851,
+      "activityB": 0.31219512195121946,
+      "evidenceStrength": 0.09495228904581576
+    },
+    {
+      "frame": 3240,
+      "activityA": 0.48998714469361515,
+      "activityB": 0.2575609756097561,
+      "evidenceStrength": 0.11621308454192952
+    },
+    {
+      "frame": 3270,
+      "activityA": 0.48427367518925873,
+      "activityB": 0.21463414634146338,
+      "evidenceStrength": 0.13481976442389768
+    },
+    {
+      "frame": 3300,
+      "activityA": 0.4917011855449222,
+      "activityB": 0.1970731707317073,
+      "evidenceStrength": 0.14731400740660744
+    },
+    {
+      "frame": 3330,
+      "activityA": 0.5007284673618054,
+      "activityB": 0.18634146341463415,
+      "evidenceStrength": 0.15719350197358564
+    },
+    {
+      "frame": 3360,
+      "activityA": 0.5024425082131125,
+      "activityB": 0.16585365853658537,
+      "evidenceStrength": 0.16829442483826354
+    },
+    {
+      "frame": 3390,
+      "activityA": 0.4918154549350093,
+      "activityB": 0.13365853658536583,
+      "evidenceStrength": 0.17907845917482174
+    },
+    {
+      "frame": 3420,
+      "activityA": 0.488044565062134,
+      "activityB": 0.08390243902439025,
+      "evidenceStrength": 0.20207106301887187
+    },
+    {
+      "frame": 3450,
+      "activityA": 0.47661762605342084,
+      "activityB": 0.07317073170731707,
+      "evidenceStrength": 0.20172344717305188
+    },
+    {
+      "frame": 3480,
+      "activityA": 0.4667904585059277,
+      "activityB": 0.0878048780487805,
+      "evidenceStrength": 0.1894927902285736
+    },
+    {
+      "frame": 3510,
+      "activityA": 0.4568490215683474,
+      "activityB": 0.08390243902439026,
+      "evidenceStrength": 0.18647329127197856
+    },
+    {
+      "frame": 3540,
+      "activityA": 0.4329667190401371,
+      "activityB": 0.07804878048780489,
+      "evidenceStrength": 0.1774589692761661
+    },
+    {
+      "frame": 3570,
+      "activityA": 0.42188258820168545,
+      "activityB": 0.07121951219512195,
+      "evidenceStrength": 0.17533153800328174
+    },
+    {
+      "frame": 3600,
+      "activityA": 0.40474217968861587,
+      "activityB": 0.06341463414634146,
+      "evidenceStrength": 0.1706637727711372
+    },
+    {
+      "frame": 3630,
+      "activityA": 0.3790315669190115,
+      "activityB": 0.059512195121951224,
+      "evidenceStrength": 0.15975968589853015
+    },
+    {
+      "frame": 3660,
+      "activityA": 0.3704613626624768,
+      "activityB": 0.037073170731707315,
+      "evidenceStrength": 0.16669409596538476
+    },
+    {
+      "frame": 3690,
+      "activityA": 0.3752606770461363,
+      "activityB": 0.018536585365853658,
+      "evidenceStrength": 0.17836204584014131
+    },
+    {
+      "frame": 3720,
+      "activityA": 0.3845164976431938,
+      "activityB": 0.012682926829268294,
+      "evidenceStrength": 0.18591678540696274
+    },
+    {
+      "frame": 3750,
+      "activityA": 0.3910298528781603,
+      "activityB": 0.012682926829268294,
+      "evidenceStrength": 0.189173463024446
+    },
+    {
+      "frame": 3780,
+      "activityA": 0.4097700328524496,
+      "activityB": 0.012682926829268294,
+      "evidenceStrength": 0.19854355301159066
+    },
+    {
+      "frame": 3810,
+      "activityA": 0.4359377231824025,
+      "activityB": 0.012682926829268294,
+      "evidenceStrength": 0.2116273981765671
+    },
+    {
+      "frame": 3840,
+      "activityA": 0.4462219682902442,
+      "activityB": 0.019512195121951216,
+      "evidenceStrength": 0.21335488658414647
+    },
+    {
+      "frame": 3870,
+      "activityA": 0.4511355520639908,
+      "activityB": 0.03414634146341464,
+      "evidenceStrength": 0.20849460530028807
+    },
+    {
+      "frame": 3900,
+      "activityA": 0.4523925153549492,
+      "activityB": 0.060487804878048786,
+      "evidenceStrength": 0.1959523552384502
+    },
+    {
+      "frame": 3930,
+      "activityA": 0.4454220825596343,
+      "activityB": 0.11219512195121949,
+      "evidenceStrength": 0.1666134803042074
+    },
+    {
+      "frame": 3960,
+      "activityA": 0.4217683188115983,
+      "activityB": 0.14536585365853658,
+      "evidenceStrength": 0.13820123257653089
+    },
+    {
+      "frame": 3990,
+      "activityA": 0.4160548493072418,
+      "activityB": 0.15414634146341463,
+      "evidenceStrength": 0.13095425392191357
+    },
+    {
+      "frame": 4020,
+      "activityA": 0.40062848164547915,
+      "activityB": 0.14829268292682926,
+      "evidenceStrength": 0.12616789935932493
+    },
+    {
+      "frame": 4050,
+      "activityA": 0.38760177117554634,
+      "activityB": 0.1473170731707317,
+      "evidenceStrength": 0.12014234900240732
+    },
+    {
+      "frame": 4080,
+      "activityA": 0.370689901442651,
+      "activityB": 0.12682926829268293,
+      "evidenceStrength": 0.12193031657498404
+    },
+    {
+      "frame": 4110,
+      "activityA": 0.36726181974003713,
+      "activityB": 0.11804878048780489,
+      "evidenceStrength": 0.12460651962611613
+    },
+    {
+      "frame": 4140,
+      "activityA": 0.3862305384945008,
+      "activityB": 0.1404878048780488,
+      "evidenceStrength": 0.122871366808226
+    },
+    {
+      "frame": 4170,
+      "activityA": 0.38257391801171264,
+      "activityB": 0.18536585365853658,
+      "evidenceStrength": 0.09860403217658803
+    },
+    {
+      "frame": 4200,
+      "activityA": 0.39217254677903157,
+      "activityB": 0.25365853658536586,
+      "evidenceStrength": 0.06925700509683286
+    },
+    {
+      "frame": 4230,
+      "activityA": 0.39182973860877013,
+      "activityB": 0.39024390243902435,
+      "evidenceStrength": 0.0007929180848728902
+    },
+    {
+      "frame": 4260,
+      "activityA": 0.4107984573632338,
+      "activityB": 0.528780487804878,
+      "evidenceStrength": 0.05899101522082209
+    },
+    {
+      "frame": 4290,
+      "activityA": 0.4168547350378517,
+      "activityB": 0.655609756097561,
+      "evidenceStrength": 0.11937751052985465
+    },
+    {
+      "frame": 4320,
+      "activityA": 0.4141122696757606,
+      "activityB": 0.6839024390243902,
+      "evidenceStrength": 0.1348950846743148
+    },
+    {
+      "frame": 4350,
+      "activityA": 0.4097700328524496,
+      "activityB": 0.7024390243902439,
+      "evidenceStrength": 0.14633449576889712
+    },
+    {
+      "frame": 4380,
+      "activityA": 0.39274389372946716,
+      "activityB": 0.68,
+      "evidenceStrength": 0.14362805313526644
+    },
+    {
+      "frame": 4410,
+      "activityA": 0.3884016569061562,
+      "activityB": 0.5648780487804879,
+      "evidenceStrength": 0.08823819593716584
+    },
+    {
+      "frame": 4440,
+      "activityA": 0.36371946864733606,
+      "activityB": 0.44780487804878044,
+      "evidenceStrength": 0.04204270470072219
+    },
+    {
+      "frame": 4470,
+      "activityA": 0.3594915012141122,
+      "activityB": 0.37658536585365854,
+      "evidenceStrength": 0.00854693231977316
+    },
+    {
+      "frame": 4500,
+      "activityA": 0.36326239108698755,
+      "activityB": 0.44487804878048776,
+      "evidenceStrength": 0.040807828846750105
+    },
+    {
+      "frame": 4530,
+      "activityA": 0.35423510927010426,
+      "activityB": 0.5678048780487804,
+      "evidenceStrength": 0.10678488438933809
+    },
+    {
+      "frame": 4560,
+      "activityA": 0.3393800885587774,
+      "activityB": 0.7317073170731707,
+      "evidenceStrength": 0.19616361425719667
+    },
+    {
+      "frame": 4590,
+      "activityA": 0.3432652478217398,
+      "activityB": 0.9443902439024391,
+      "evidenceStrength": 0.3005624980403496
+    },
+    {
+      "frame": 4620,
+      "activityA": 0.37720325667761745,
+      "activityB": 1.1717073170731707,
+      "evidenceStrength": 0.3972520301977766
+    },
+    {
+      "frame": 4650,
+      "activityA": 0.399600057134695,
+      "activityB": 1.335609756097561,
+      "evidenceStrength": 0.46800484948143306
+    },
+    {
+      "frame": 4680,
+      "activityA": 0.41571204113698035,
+      "activityB": 1.3443902439024387,
+      "evidenceStrength": 0.46433910138272916
+    },
+    {
+      "frame": 4710,
+      "activityA": 0.4576489072989573,
+      "activityB": 1.2068292682926827,
+      "evidenceStrength": 0.37459018049686266
+    },
+    {
+      "frame": 4740,
+      "activityA": 0.5153549492929581,
+      "activityB": 0.9951219512195121,
+      "evidenceStrength": 0.23988350096327699
+    },
+    {
+      "frame": 4770,
+      "activityA": 0.5632338237394657,
+      "activityB": 0.8029268292682925,
+      "evidenceStrength": 0.11984650276441339
+    },
+    {
+      "frame": 4800,
+      "activityA": 0.6167118983002428,
+      "activityB": 0.6087804878048779,
+      "evidenceStrength": 0.003965705247682416
+    },
+    {
+      "frame": 4830,
+      "activityA": 0.6740751321239822,
+      "activityB": 0.4458536585365853,
+      "evidenceStrength": 0.11411073679369843
+    },
+    {
+      "frame": 4860,
+      "activityA": 0.8051421225539209,
+      "activityB": 0.31512195121951214,
+      "evidenceStrength": 0.2450100856672044
+    },
+    {
+      "frame": 4890,
+      "activityA": 0.9932295386373375,
+      "activityB": 0.33658536585365856,
+      "evidenceStrength": 0.32832208639183946
+    },
+    {
+      "frame": 4920,
+      "activityA": 1.1576631909727182,
+      "activityB": 0.40682926829268296,
+      "evidenceStrength": 0.3754169613400176
+    },
+    {
+      "frame": 4950,
+      "activityA": 1.3075846307670331,
+      "activityB": 0.504390243902439,
+      "evidenceStrength": 0.40159719343229705
+    },
+    {
+      "frame": 4980,
+      "activityA": 1.3151264105127838,
+      "activityB": 0.5453658536585366,
+      "evidenceStrength": 0.3848802784271236
+    },
+    {
+      "frame": 5010,
+      "activityA": 1.3964862162548208,
+      "activityB": 0.537560975609756,
+      "evidenceStrength": 0.4294626203225324
+    },
+    {
+      "frame": 5040,
+      "activityA": 1.3785459220111413,
+      "activityB": 0.6409756097560975,
+      "evidenceStrength": 0.3652203260292117
+    },
+    {
+      "frame": 5070,
+      "activityA": 1.3251821168404512,
+      "activityB": 0.648780487804878,
+      "evidenceStrength": 0.3382008145177866
+    },
+    {
+      "frame": 5100,
+      "activityA": 1.2559348664476502,
+      "activityB": 0.7014634146341464,
+      "evidenceStrength": 0.2772357259067519
+    },
+    {
+      "frame": 5130,
+      "activityA": 1.0871589772889585,
+      "activityB": 0.8360975609756095,
+      "evidenceStrength": 0.1255307081566745
+    },
+    {
+      "frame": 5160,
+      "activityA": 1.060305670618483,
+      "activityB": 1.0351219512195122,
+      "evidenceStrength": 0.012018415304118691
+    },
+    {
+      "frame": 5190,
+      "activityA": 1.0223682331095556,
+      "activityB": 1.2146341463414634,
+      "evidenceStrength": 0.08594801462799141
+    },
+    {
+      "frame": 5220,
+      "activityA": 1.0542493929438652,
+      "activityB": 1.3590243902439025,
+      "evidenceStrength": 0.12629109859945134
+    },
+    {
+      "frame": 5250,
+      "activityA": 1.0359662905299245,
+      "activityB": 1.4858536585365854,
+      "evidenceStrength": 0.17839789401824407
+    },
+    {
+      "frame": 5280,
+      "activityA": 1.0856734752178259,
+      "activityB": 1.5346341463414632,
+      "evidenceStrength": 0.17133891739645077
+    },
+    {
+      "frame": 5310,
+      "activityA": 1.2154835023568062,
+      "activityB": 1.377560975609756,
+      "evidenceStrength": 0.06250470234126071
+    },
+    {
+      "frame": 5340,
+      "activityA": 1.3412941008427366,
+      "activityB": 1.153170731707317,
+      "evidenceStrength": 0.07541632444787924
+    },
+    {
+      "frame": 5370,
+      "activityA": 1.4197971718325955,
+      "activityB": 0.9229268292682926,
+      "evidenceStrength": 0.21209085762164667
+    },
+    {
+      "frame": 5400,
+      "activityA": 1.423110984145122,
+      "activityB": 0.6448780487804877,
+      "evidenceStrength": 0.37632353120541384
+    },
+    {
+      "frame": 5430,
+      "activityA": 1.4091701185544923,
+      "activityB": 0.4341463414634146,
+      "evidenceStrength": 0.4875118885455388
+    },
+    {
+      "frame": 5460,
+      "activityA": 1.3857448935866303,
+      "activityB": 0.29658536585365847,
+      "evidenceStrength": 0.544579763866486
+    },
+    {
+      "frame": 5490,
+      "activityA": 1.3380945579202972,
+      "activityB": 0.16585365853658537,
+      "evidenceStrength": 0.586120449691856
+    },
+    {
+      "frame": 5520,
+      "activityA": 1.2979860019997143,
+      "activityB": 0.09560975609756099,
+      "evidenceStrength": 0.6011881229510766
+    },
+    {
+      "frame": 5550,
+      "activityA": 1.2141122696757605,
+      "activityB": 0.05463414634146341,
+      "evidenceStrength": 0.5797390616671485
+    },
+    {
+      "frame": 5580,
+      "activityA": 1.1677188973003856,
+      "activityB": 0.05463414634146341,
+      "evidenceStrength": 0.5565423754794611
+    },
+    {
+      "frame": 5610,
+      "activityA": 1.1583488073132409,
+      "activityB": 0.045853658536585365,
+      "evidenceStrength": 0.5562475743883277
+    },
+    {
+      "frame": 5640,
+      "activityA": 1.0855592058277388,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.5398527736455767
+    },
+    {
+      "frame": 5670,
+      "activityA": 1.0856734752178259,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.5399099083406202
+    },
+    {
+      "frame": 5700,
+      "activityA": 1.0851021282673903,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5425510641336951
+    },
+    {
+      "frame": 5730,
+      "activityA": 1.1220111412655334,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5610055706327667
+    },
+    {
+      "frame": 5760,
+      "activityA": 1.1829167261819737,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5914583630909869
+    },
+    {
+      "frame": 5790,
+      "activityA": 1.222339665762034,
+      "activityB": 0.0,
+      "evidenceStrength": 0.611169832881017
+    },
+    {
+      "frame": 5820,
+      "activityA": 1.261191258391658,
+      "activityB": 0.0,
+      "evidenceStrength": 0.630595629195829
+    },
+    {
+      "frame": 5850,
+      "activityA": 1.276617626053421,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6383088130267105
+    },
+    {
+      "frame": 5880,
+      "activityA": 1.3632338237394659,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6816169118697329
+    },
+    {
+      "frame": 5910,
+      "activityA": 1.4940722753892302,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7470361376946151
+    },
+    {
+      "frame": 5940,
+      "activityA": 1.5484645050707042,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.7713054232670594
+    },
+    {
+      "frame": 5970,
+      "activityA": 1.5997714612198257,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.7969589013416202
+    },
+    {
+      "frame": 6000,
+      "activityA": 1.713698043136695,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.8539221923000548
+    },
+    {
+      "frame": 6030,
+      "activityA": 1.7861448364519354,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.890145588957675
+    },
+    {
+      "frame": 6060,
+      "activityA": 1.7365519211541207,
+      "activityB": 0.020487804878048778,
+      "evidenceStrength": 0.858032058138036
+    },
+    {
+      "frame": 6090,
+      "activityA": 1.6109698614483647,
+      "activityB": 0.04390243902439024,
+      "evidenceStrength": 0.7835337112119872
+    },
+    {
+      "frame": 6120,
+      "activityA": 1.5348664476503358,
+      "activityB": 0.05560975609756097,
+      "evidenceStrength": 0.7396283457763874
+    },
+    {
+      "frame": 6150,
+      "activityA": 1.4939580059991429,
+      "activityB": 0.07121951219512195,
+      "evidenceStrength": 0.7113692469020104
+    },
+    {
+      "frame": 6180,
+      "activityA": 1.4504213683759464,
+      "activityB": 0.07121951219512195,
+      "evidenceStrength": 0.6896009280904122
+    },
+    {
+      "frame": 6210,
+      "activityA": 1.5437794600771317,
+      "activityB": 0.07121951219512195,
+      "evidenceStrength": 0.7362799739410049
+    },
+    {
+      "frame": 6240,
+      "activityA": 1.6205684902156834,
+      "activityB": 0.056585365853658524,
+      "evidenceStrength": 0.7819915621810124
+    },
+    {
+      "frame": 6270,
+      "activityA": 1.728895872018283,
+      "activityB": 0.03317073170731707,
+      "evidenceStrength": 0.8478625701554829
+    },
+    {
+      "frame": 6300,
+      "activityA": 1.7080988430224255,
+      "activityB": 0.015609756097560976,
+      "evidenceStrength": 0.8462445434624323
+    },
+    {
+      "frame": 6330,
+      "activityA": 1.7475217826024854,
+      "activityB": 0.0,
+      "evidenceStrength": 0.8737608913012427
+    },
+    {
+      "frame": 6360,
+      "activityA": 1.6530209970004284,
+      "activityB": 0.0,
+      "evidenceStrength": 0.8265104985002142
+    },
+    {
+      "frame": 6390,
+      "activityA": 1.5277817454649336,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7638908727324668
+    },
+    {
+      "frame": 6420,
+      "activityA": 1.3785459220111411,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6892729610055706
+    },
+    {
+      "frame": 6450,
+      "activityA": 1.330324239394372,
+      "activityB": 0.0,
+      "evidenceStrength": 0.665162119697186
+    },
+    {
+      "frame": 6480,
+      "activityA": 1.3376374803599487,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6688187401799743
+    },
+    {
+      "frame": 6510,
+      "activityA": 1.205542065419226,
+      "activityB": 0.0,
+      "evidenceStrength": 0.602771032709613
+    },
+    {
+      "frame": 6540,
+      "activityA": 1.3866590487073274,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6933295243536637
+    },
+    {
+      "frame": 6570,
+      "activityA": 1.38974432223968,
+      "activityB": 0.0,
+      "evidenceStrength": 0.69487216111984
+    },
+    {
+      "frame": 6600,
+      "activityA": 1.5049278674475075,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7524639337237538
+    },
+    {
+      "frame": 6630,
+      "activityA": 1.4602485359234392,
+      "activityB": 0.02048780487804878,
+      "evidenceStrength": 0.7198803655226952
+    },
+    {
+      "frame": 6660,
+      "activityA": 1.4460791315526353,
+      "activityB": 0.05170731707317073,
+      "evidenceStrength": 0.6971859072397323
+    },
+    {
+      "frame": 6690,
+      "activityA": 1.48093129552921,
+      "activityB": 0.1317073170731707,
+      "evidenceStrength": 0.6746119892280197
+    },
+    {
+      "frame": 6720,
+      "activityA": 1.282902442508213,
+      "activityB": 0.24585365853658536,
+      "evidenceStrength": 0.5185243919858138
+    },
+    {
+      "frame": 6750,
+      "activityA": 1.1773175260677047,
+      "activityB": 0.39024390243902435,
+      "evidenceStrength": 0.39353681181434014
+    },
+    {
+      "frame": 6780,
+      "activityA": 1.0071704042279674,
+      "activityB": 0.6117073170731707,
+      "evidenceStrength": 0.19773154357739836
+    },
+    {
+      "frame": 6810,
+      "activityA": 0.8668475932009714,
+      "activityB": 0.9141463414634147,
+      "evidenceStrength": 0.023649374131221645
+    },
+    {
+      "frame": 6840,
+      "activityA": 0.7398943008141694,
+      "activityB": 1.3004878048780486,
+      "evidenceStrength": 0.27474927490294415
+    },
+    {
+      "frame": 6870,
+      "activityA": 0.6255106413369519,
+      "activityB": 1.7668292682926827,
+      "evidenceStrength": 0.4770721009843547
+    },
+    {
+      "frame": 6900,
+      "activityA": 0.520497071846879,
+      "activityB": 2.2487804878048783,
+      "evidenceStrength": 0.6240917996588738
+    },
+    {
+      "frame": 6930,
+      "activityA": 0.43959434366519073,
+      "activityB": 2.7609756097560973,
+      "evidenceStrength": 0.7253024617098084
+    },
+    {
+      "frame": 6960,
+      "activityA": 0.38543065276389094,
+      "activityB": 3.3873170731707316,
+      "evidenceStrength": 0.7956764243130472
+    },
+    {
+      "frame": 6990,
+      "activityA": 0.31881159834309386,
+      "activityB": 3.7960975609756096,
+      "evidenceStrength": 0.8450456202071402
+    },
+    {
+      "frame": 7020,
+      "activityA": 0.27253249535780605,
+      "activityB": 3.937560975609756,
+      "evidenceStrength": 0.8705337554915745
+    },
+    {
+      "frame": 7050,
+      "activityA": 0.2513926581916869,
+      "activityB": 3.734634146341463,
+      "evidenceStrength": 0.8738630367935368
+    },
+    {
+      "frame": 7080,
+      "activityA": 0.2591629767176118,
+      "activityB": 3.5063414634146337,
+      "evidenceStrength": 0.862348866751829
+    },
+    {
+      "frame": 7110,
+      "activityA": 0.24579345807741748,
+      "activityB": 3.510243902439024,
+      "evidenceStrength": 0.8691208662292847
+    },
+    {
+      "frame": 7140,
+      "activityA": 0.2401942579631481,
+      "activityB": 3.1024390243902444,
+      "evidenceStrength": 0.8562844095215624
+    },
+    {
+      "frame": 7170,
+      "activityA": 0.2572203970861305,
+      "activityB": 2.8721951219512194,
+      "evidenceStrength": 0.8356112216346042
+    },
+    {
+      "frame": 7200,
+      "activityA": 0.27996000571346946,
+      "activityB": 2.9160975609756092,
+      "evidenceStrength": 0.8248091594898956
+    },
+    {
+      "frame": 7230,
+      "activityA": 0.2998428795886302,
+      "activityB": 2.9356097560975605,
+      "evidenceStrength": 0.8146516649439141
+    },
+    {
+      "frame": 7260,
+      "activityA": 0.32726753320954144,
+      "activityB": 2.952195121951219,
+      "evidenceStrength": 0.8004139289742889
+    },
+    {
+      "frame": 7290,
+      "activityA": 0.37983145264962154,
+      "activityB": 2.765853658536585,
+      "evidenceStrength": 0.758506373508955
+    },
+    {
+      "frame": 7320,
+      "activityA": 0.43959434366519073,
+      "activityB": 2.6887804878048773,
+      "evidenceStrength": 0.7189631247233766
+    },
+    {
+      "frame": 7350,
+      "activityA": 0.4999285816311956,
+      "activityB": 2.4214634146341463,
+      "evidenceStrength": 0.657746319377683
+    },
+    {
+      "frame": 7380,
+      "activityA": 0.543236680474218,
+      "activityB": 2.0429268292682927,
+      "evidenceStrength": 0.5798899192353812
+    },
+    {
+      "frame": 7410,
+      "activityA": 0.5617483216683331,
+      "activityB": 1.9200000000000002,
+      "evidenceStrength": 0.547296301753352
+    },
+    {
+      "frame": 7440,
+      "activityA": 0.5960291386944722,
+      "activityB": 1.7970731707317074,
+      "evidenceStrength": 0.5018774280173682
+    },
+    {
+      "frame": 7470,
+      "activityA": 0.5951149835737751,
+      "activityB": 1.4380487804878048,
+      "evidenceStrength": 0.4145921798400196
+    },
+    {
+      "frame": 7500,
+      "activityA": 0.6066561919725754,
+      "activityB": 1.1278048780487802,
+      "evidenceStrength": 0.2605743430381024
+    },
+    {
+      "frame": 7530,
+      "activityA": 0.6520211398371661,
+      "activityB": 1.0604878048780486,
+      "evidenceStrength": 0.20423333252044124
+    },
+    {
+      "frame": 7560,
+      "activityA": 0.6882445364947863,
+      "activityB": 0.9912195121951219,
+      "evidenceStrength": 0.1514874878501678
+    },
+    {
+      "frame": 7590,
+      "activityA": 0.7544065133552349,
+      "activityB": 0.7873170731707317,
+      "evidenceStrength": 0.01645527990774842
+    },
+    {
+      "frame": 7620,
+      "activityA": 0.789487216111984,
+      "activityB": 0.5414634146341464,
+      "evidenceStrength": 0.12401190073891882
+    },
+    {
+      "frame": 7650,
+      "activityA": 0.8548493072418226,
+      "activityB": 0.42634146341463414,
+      "evidenceStrength": 0.21425392191359424
+    },
+    {
+      "frame": 7680,
+      "activityA": 0.8585059277246108,
+      "activityB": 0.3882926829268292,
+      "evidenceStrength": 0.23510662239889077
+    },
+    {
+      "frame": 7710,
+      "activityA": 0.8405656334809313,
+      "activityB": 0.22829268292682922,
+      "evidenceStrength": 0.306136475277051
+    },
+    {
+      "frame": 7740,
+      "activityA": 0.8355377803170976,
+      "activityB": 0.09268292682926829,
+      "evidenceStrength": 0.37142742674391466
+    },
+    {
+      "frame": 7770,
+      "activityA": 0.8162262533923724,
+      "activityB": 0.0624390243902439,
+      "evidenceStrength": 0.3768936145010643
+    },
+    {
+      "frame": 7800,
+      "activityA": 0.7941722611055563,
+      "activityB": 0.04682926829268293,
+      "evidenceStrength": 0.37367149640643665
+    },
+    {
+      "frame": 7830,
+      "activityA": 0.7429795743465217,
+      "activityB": 0.04682926829268293,
+      "evidenceStrength": 0.3480751530269194
+    },
+    {
+      "frame": 7860,
+      "activityA": 0.7555492072561063,
+      "activityB": 0.03219512195121951,
+      "evidenceStrength": 0.3616770426524434
+    },
+    {
+      "frame": 7890,
+      "activityA": 0.7402371089844308,
+      "activityB": 0.025365853658536587,
+      "evidenceStrength": 0.3574356276629471
+    },
+    {
+      "frame": 7920,
+      "activityA": 0.7460648478788744,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.3701055946711445
+    },
+    {
+      "frame": 7950,
+      "activityA": 0.7470932723896586,
+      "activityB": 0.0,
+      "evidenceStrength": 0.3735466361948293
+    },
+    {
+      "frame": 7980,
+      "activityA": 0.783430938437366,
+      "activityB": 0.0,
+      "evidenceStrength": 0.391715469218683
+    },
+    {
+      "frame": 8010,
+      "activityA": 0.8482216826167689,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.42118401204009176
+    },
+    {
+      "frame": 8040,
+      "activityA": 0.8863876589058707,
+      "activityB": 0.09073170731707317,
+      "evidenceStrength": 0.39782797579439877
+    },
+    {
+      "frame": 8070,
+      "activityA": 0.9400942722468217,
+      "activityB": 0.16585365853658537,
+      "evidenceStrength": 0.38712030685511817
+    },
+    {
+      "frame": 8100,
+      "activityA": 0.9978003142408226,
+      "activityB": 0.2975609756097561,
+      "evidenceStrength": 0.3501196693155333
+    },
+    {
+      "frame": 8130,
+      "activityA": 1.0588201685473504,
+      "activityB": 0.4926829268292683,
+      "evidenceStrength": 0.28306862085904105
+    },
+    {
+      "frame": 8160,
+      "activityA": 1.0934437937437511,
+      "activityB": 0.7141463414634147,
+      "evidenceStrength": 0.1896487261401682
+    },
+    {
+      "frame": 8190,
+      "activityA": 1.1008713040994142,
+      "activityB": 0.8858536585365854,
+      "evidenceStrength": 0.10750882278141444
+    },
+    {
+      "frame": 8220,
+      "activityA": 1.0756177688901585,
+      "activityB": 0.9453658536585365,
+      "evidenceStrength": 0.06444976286713257
+    },
+    {
+      "frame": 8250,
+      "activityA": 1.0713898014569345,
+      "activityB": 0.9717073170731706,
+      "evidenceStrength": 0.048789890348178815
+    },
+    {
+      "frame": 8280,
+      "activityA": 0.9871732609627196,
+      "activityB": 0.9297560975609758,
+      "evidenceStrength": 0.028708581700871927
+    },
+    {
+      "frame": 8310,
+      "activityA": 0.9984859305813455,
+      "activityB": 0.7902439024390244,
+      "evidenceStrength": 0.10412101407116053
+    },
+    {
+      "frame": 8340,
+      "activityA": 0.9104985002142552,
+      "activityB": 0.5980487804878047,
+      "evidenceStrength": 0.1562248598632252
+    },
+    {
+      "frame": 8370,
+      "activityA": 0.8054849307241821,
+      "activityB": 0.43902439024390244,
+      "evidenceStrength": 0.18323027024013988
+    },
+    {
+      "frame": 8400,
+      "activityA": 0.736123410941294,
+      "activityB": 0.33463414634146343,
+      "evidenceStrength": 0.20074463229991527
+    },
+    {
+      "frame": 8430,
+      "activityA": 0.7185259248678759,
+      "activityB": 0.2780487804878049,
+      "evidenceStrength": 0.2202385721900355
+    },
+    {
+      "frame": 8460,
+      "activityA": 0.879874303670904,
+      "activityB": 0.21951219512195122,
+      "evidenceStrength": 0.3301810542744764
+    },
+    {
+      "frame": 8490,
+      "activityA": 0.7869732895300671,
+      "activityB": 0.21756097560975607,
+      "evidenceStrength": 0.2847061569601555
+    },
+    {
+      "frame": 8520,
+      "activityA": 0.8154263676617626,
+      "activityB": 0.20585365853658535,
+      "evidenceStrength": 0.3047863545625886
+    },
+    {
+      "frame": 8550,
+      "activityA": 0.8675332095414939,
+      "activityB": 0.24097560975609758,
+      "evidenceStrength": 0.3132787998926982
+    },
+    {
+      "frame": 8580,
+      "activityA": 0.9942579631481216,
+      "activityB": 0.2380487804878048,
+      "evidenceStrength": 0.3781045913301584
+    },
+    {
+      "frame": 8610,
+      "activityA": 1.0544779317240394,
+      "activityB": 0.22341463414634144,
+      "evidenceStrength": 0.41553164878884896
+    },
+    {
+      "frame": 8640,
+      "activityA": 1.0969861448364517,
+      "activityB": 0.24097560975609753,
+      "evidenceStrength": 0.4280052675401771
+    },
+    {
+      "frame": 8670,
+      "activityA": 1.2738751606913297,
+      "activityB": 0.1873170731707317,
+      "evidenceStrength": 0.543279043760299
+    },
+    {
+      "frame": 8700,
+      "activityA": 1.4208255963433796,
+      "activityB": 0.16975609756097562,
+      "evidenceStrength": 0.625534749391202
+    },
+    {
+      "frame": 8730,
+      "activityA": 1.5691472646764746,
+      "activityB": 0.11609756097560978,
+      "evidenceStrength": 0.7265248518504324
+    },
+    {
+      "frame": 8760,
+      "activityA": 1.6695900585630623,
+      "activityB": 0.10439024390243902,
+      "evidenceStrength": 0.7825999073303116
+    },
+    {
+      "frame": 8790,
+      "activityA": 1.7679760034280818,
+      "activityB": 0.11024390243902438,
+      "evidenceStrength": 0.8288660504945287
+    },
+    {
+      "frame": 8820,
+      "activityA": 1.6751892586773318,
+      "activityB": 0.0721951219512195,
+      "evidenceStrength": 0.8014970683630561
+    },
+    {
+      "frame": 8850,
+      "activityA": 1.6541636909013002,
+      "activityB": 0.13756097560975608,
+      "evidenceStrength": 0.7583013576457721
+    },
+    {
+      "frame": 8880,
+      "activityA": 1.6870732752463935,
+      "activityB": 0.184390243902439,
+      "evidenceStrength": 0.7513415156719773
+    },
+    {
+      "frame": 8910,
+      "activityA": 1.701585487787459,
+      "activityB": 0.21073170731707316,
+      "evidenceStrength": 0.7454268902351929
+    },
+    {
+      "frame": 8940,
+      "activityA": 1.7565490644193684,
+      "activityB": 0.22536585365853654,
+      "evidenceStrength": 0.7655916053804159
+    },
+    {
+      "frame": 8970,
+      "activityA": 1.8047707470361376,
+      "activityB": 0.19512195121951217,
+      "evidenceStrength": 0.8048243979083127
+    },
+    {
+      "frame": 9000,
+      "activityA": 1.869904299385802,
+      "activityB": 0.18439024390243902,
+      "evidenceStrength": 0.8204831488212088
+    },
+    {
+      "frame": 9030,
+      "activityA": 2.041308384516497,
+      "activityB": 0.11902439024390245,
+      "evidenceStrength": 0.8898092075123903
+    },
+    {
+      "frame": 9060,
+      "activityA": 2.0097700328524497,
+      "activityB": 0.0721951219512195,
+      "evidenceStrength": 0.9306471371198067
+    },
+    {
+      "frame": 9090,
+      "activityA": 2.027938865876303,
+      "activityB": 0.045853658536585365,
+      "evidenceStrength": 0.9557779691104181
+    },
+    {
+      "frame": 9120,
+      "activityA": 1.9428081702613909,
+      "activityB": 0.011707317073170732,
+      "evidenceStrength": 0.9655504265941101
+    },
+    {
+      "frame": 9150,
+      "activityA": 1.8966433366661903,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.9453948390648025
+    },
+    {
+      "frame": 9180,
+      "activityA": 1.9513783745179258,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.9727623579906702
+    },
+    {
+      "frame": 9210,
+      "activityA": 1.9112698185973434,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.952708080030379
+    },
+    {
+      "frame": 9240,
+      "activityA": 1.8763033852306814,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.935224863347048
+    },
+    {
+      "frame": 9270,
+      "activityA": 1.8640765604913585,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.9291114509773866
+    },
+    {
+      "frame": 9300,
+      "activityA": 1.7714040851306958,
+      "activityB": 0.0,
+      "evidenceStrength": 0.8857020425653479
+    },
+    {
+      "frame": 9330,
+      "activityA": 1.6518783030995572,
+      "activityB": 0.015609756097560976,
+      "evidenceStrength": 0.8181342735009981
+    },
+    {
+      "frame": 9360,
+      "activityA": 1.5408084559348665,
+      "activityB": 0.03512195121951219,
+      "evidenceStrength": 0.7528432523576771
+    },
+    {
+      "frame": 9390,
+      "activityA": 1.323353806599057,
+      "activityB": 0.09560975609756096,
+      "evidenceStrength": 0.613872025250748
+    },
+    {
+      "frame": 9420,
+      "activityA": 1.396600485644908,
+      "activityB": 0.11024390243902438,
+      "evidenceStrength": 0.6431782916029418
+    },
+    {
+      "frame": 9450,
+      "activityA": 1.3935152121125551,
+      "activityB": 0.1824390243902439,
+      "evidenceStrength": 0.6055380938611556
+    },
+    {
+      "frame": 9480,
+      "activityA": 1.4612769604342237,
+      "activityB": 0.3268292682926829,
+      "evidenceStrength": 0.5672238460707704
+    },
+    {
+      "frame": 9510,
+      "activityA": 1.493843736609056,
+      "activityB": 0.5473170731707317,
+      "evidenceStrength": 0.46371979067168206
+    },
+    {
+      "frame": 9540,
+      "activityA": 1.4613912298243108,
+      "activityB": 0.8126829268292683,
+      "evidenceStrength": 0.28526259845002205
+    },
+    {
+      "frame": 9570,
+      "activityA": 1.4276817597486071,
+      "activityB": 1.0292682926829269,
+      "evidenceStrength": 0.16215773970308767
+    },
+    {
+      "frame": 9600,
+      "activityA": 1.2443936580488502,
+      "activityB": 1.2556097560975608,
+      "evidenceStrength": 0.004486433092548463
+    },
+    {
+      "frame": 9630,
+      "activityA": 1.0933295243536638,
+      "activityB": 1.2653658536585364,
+      "evidenceStrength": 0.07293706974991271
+    },
+    {
+      "frame": 9660,
+      "activityA": 0.9528924439365806,
+      "activityB": 1.3326829268292684,
+      "evidenceStrength": 0.16616843520037927
+    },
+    {
+      "frame": 9690,
+      "activityA": 0.8476503356663334,
+      "activityB": 1.3092682926829269,
+      "evidenceStrength": 0.21401732589693492
+    },
+    {
+      "frame": 9720,
+      "activityA": 0.7886873303813742,
+      "activityB": 1.1278048780487804,
+      "evidenceStrength": 0.1695587738337031
+    },
+    {
+      "frame": 9750,
+      "activityA": 0.7841165547778888,
+      "activityB": 0.9063414634146342,
+      "evidenceStrength": 0.06111245431837269
+    },
+    {
+      "frame": 9780,
+      "activityA": 0.7965719182973863,
+      "activityB": 0.6858536585365853,
+      "evidenceStrength": 0.05535912988040048
+    },
+    {
+      "frame": 9810,
+      "activityA": 0.8078845879160121,
+      "activityB": 0.6507317073170732,
+      "evidenceStrength": 0.07857644029946947
+    },
+    {
+      "frame": 9840,
+      "activityA": 0.8548493072418226,
+      "activityB": 0.5004878048780488,
+      "evidenceStrength": 0.17718075118188692
+    },
+    {
+      "frame": 9870,
+      "activityA": 0.9211255534923581,
+      "activityB": 0.28780487804878047,
+      "evidenceStrength": 0.3166603377217888
+    },
+    {
+      "frame": 9900,
+      "activityA": 0.9554063705184973,
+      "activityB": 0.19609756097560976,
+      "evidenceStrength": 0.37965440477144374
+    },
+    {
+      "frame": 9930,
+      "activityA": 0.9650049992858163,
+      "activityB": 0.15999999999999998,
+      "evidenceStrength": 0.4025024996429082
+    },
+    {
+      "frame": 9960,
+      "activityA": 0.9520925582059705,
+      "activityB": 0.1521951219512195,
+      "evidenceStrength": 0.3999487181273755
+    },
+    {
+      "frame": 9990,
+      "activityA": 0.8811312669618626,
+      "activityB": 0.11121951219512195,
+      "evidenceStrength": 0.38495587738337034
+    },
+    {
+      "frame": 10020,
+      "activityA": 0.8039994286530495,
+      "activityB": 0.061463414634146334,
+      "evidenceStrength": 0.3712680070094516
+    },
+    {
+      "frame": 10050,
+      "activityA": 0.6858448793029568,
+      "activityB": 0.06829268292682926,
+      "evidenceStrength": 0.3087760981880638
+    },
+    {
+      "frame": 10080,
+      "activityA": 0.5694043708041707,
+      "activityB": 0.08585365853658536,
+      "evidenceStrength": 0.2417753561337927
+    },
+    {
+      "frame": 10110,
+      "activityA": 0.4850735609198686,
+      "activityB": 0.11121951219512195,
+      "evidenceStrength": 0.18692702436237332
+    },
+    {
+      "frame": 10140,
+      "activityA": 0.43022425367804606,
+      "activityB": 0.2029268292682927,
+      "evidenceStrength": 0.11364871220487668
+    },
+    {
+      "frame": 10170,
+      "activityA": 0.4373089558634481,
+      "activityB": 0.30829268292682926,
+      "evidenceStrength": 0.06450813646830941
+    },
+    {
+      "frame": 10200,
+      "activityA": 0.44599342951006987,
+      "activityB": 0.5326829268292683,
+      "evidenceStrength": 0.043344748659599225
+    },
+    {
+      "frame": 10230,
+      "activityA": 0.46644765033566626,
+      "activityB": 0.646829268292683,
+      "evidenceStrength": 0.09019080897850834
+    },
+    {
+      "frame": 10260,
+      "activityA": 0.4807313240965576,
+      "activityB": 0.791219512195122,
+      "evidenceStrength": 0.1552440940492822
+    },
+    {
+      "frame": 10290,
+      "activityA": 0.4659905727753178,
+      "activityB": 0.9092682926829266,
+      "evidenceStrength": 0.22163885995380442
+    },
+    {
+      "frame": 10320,
+      "activityA": 0.44462219682902443,
+      "activityB": 0.930731707317073,
+      "evidenceStrength": 0.24305475524402428
+    },
+    {
+      "frame": 10350,
+      "activityA": 0.4205113555206399,
+      "activityB": 0.9151219512195123,
+      "evidenceStrength": 0.24730529784943622
+    },
+    {
+      "frame": 10380,
+      "activityA": 0.38943008141694035,
+      "activityB": 0.7980487804878049,
+      "evidenceStrength": 0.20430934953543228
+    },
+    {
+      "frame": 10410,
+      "activityA": 0.36131981145550635,
+      "activityB": 0.7853658536585365,
+      "evidenceStrength": 0.21202302110151508
+    },
+    {
+      "frame": 10440,
+      "activityA": 0.3614340808455934,
+      "activityB": 0.6487804878048781,
+      "evidenceStrength": 0.14367320347964233
+    },
+    {
+      "frame": 10470,
+      "activityA": 0.35869161548350237,
+      "activityB": 0.5853658536585366,
+      "evidenceStrength": 0.11333711908751709
+    },
+    {
+      "frame": 10500,
+      "activityA": 0.3581202685330667,
+      "activityB": 0.521951219512195,
+      "evidenceStrength": 0.08191547548956415
+    },
+    {
+      "frame": 10530,
+      "activityA": 0.36349092986716186,
+      "activityB": 0.5395121951219511,
+      "evidenceStrength": 0.08801063262739464
+    },
+    {
+      "frame": 10560,
+      "activityA": 0.37080417083273814,
+      "activityB": 0.5375609756097561,
+      "evidenceStrength": 0.083378402388509
+    },
+    {
+      "frame": 10590,
+      "activityA": 0.3650907013283817,
+      "activityB": 0.5521951219512194,
+      "evidenceStrength": 0.09355221031141889
+    },
+    {
+      "frame": 10620,
+      "activityA": 0.36600485644907876,
+      "activityB": 0.608780487804878,
+      "evidenceStrength": 0.12138781567789964
+    },
+    {
+      "frame": 10650,
+      "activityA": 0.35914869304385094,
+      "activityB": 0.5804878048780487,
+      "evidenceStrength": 0.1106695559170989
+    },
+    {
+      "frame": 10680,
+      "activityA": 0.37537494643622343,
+      "activityB": 0.5375609756097561,
+      "evidenceStrength": 0.08109301458676635
+    },
+    {
+      "frame": 10710,
+      "activityA": 0.36943293815169265,
+      "activityB": 0.44390243902439025,
+      "evidenceStrength": 0.0372347504363488
+    },
+    {
+      "frame": 10740,
+      "activityA": 0.3684045136409084,
+      "activityB": 0.36097560975609755,
+      "evidenceStrength": 0.003714451942405439
+    },
+    {
+      "frame": 10770,
+      "activityA": 0.3766319097271818,
+      "activityB": 0.28780487804878047,
+      "evidenceStrength": 0.04441351583920067
+    },
+    {
+      "frame": 10800,
+      "activityA": 0.3644050849878589,
+      "activityB": 0.2917073170731707,
+      "evidenceStrength": 0.03634888395734409
+    },
+    {
+      "frame": 10830,
+      "activityA": 0.36703328095986293,
+      "activityB": 0.4146341463414634,
+      "evidenceStrength": 0.023800432690800233
+    },
+    {
+      "frame": 10860,
+      "activityA": 0.3181259820025711,
+      "activityB": 0.615609756097561,
+      "evidenceStrength": 0.14874188704749494
+    },
+    {
+      "frame": 10890,
+      "activityA": 0.290015712041137,
+      "activityB": 0.8,
+      "evidenceStrength": 0.2549921439794315
+    },
+    {
+      "frame": 10920,
+      "activityA": 0.26784745036423363,
+      "activityB": 0.9785365853658538,
+      "evidenceStrength": 0.35534456750081006
+    },
+    {
+      "frame": 10950,
+      "activityA": 0.23505213540922726,
+      "activityB": 1.212682926829268,
+      "evidenceStrength": 0.4888153957100205
+    },
+    {
+      "frame": 10980,
+      "activityA": 0.2188258820168547,
+      "activityB": 1.5102439024390242,
+      "evidenceStrength": 0.6457090102110847
+    },
+    {
+      "frame": 11010,
+      "activityA": 0.20785602056849017,
+      "activityB": 1.7765853658536583,
+      "evidenceStrength": 0.7843646726425841
+    },
+    {
+      "frame": 11040,
+      "activityA": 0.21528353092415367,
+      "activityB": 2.2321951219512193,
+      "evidenceStrength": 0.824077296305541
+    },
+    {
+      "frame": 11070,
+      "activityA": 0.22671046993286673,
+      "activityB": 2.8917073170731706,
+      "evidenceStrength": 0.8545990400147575
+    },
+    {
+      "frame": 11100,
+      "activityA": 0.23356663333809455,
+      "activityB": 3.6956097560975607,
+      "evidenceStrength": 0.8811116579209407
+    },
+    {
+      "frame": 11130,
+      "activityA": 0.2469361519782888,
+      "activityB": 4.594146341463414,
+      "evidenceStrength": 0.8979830844391448
+    },
+    {
+      "frame": 11160,
+      "activityA": 0.24933580917011855,
+      "activityB": 5.382439024390243,
+      "evidenceStrength": 0.9114539140718839
+    },
+    {
+      "frame": 11190,
+      "activityA": 0.24590772746750464,
+      "activityB": 5.893658536585366,
+      "evidenceStrength": 0.9198941042766186
+    },
+    {
+      "frame": 11220,
+      "activityA": 0.2510498500214255,
+      "activityB": 6.266341463414634,
+      "evidenceStrength": 0.922960019447085
+    },
+    {
+      "frame": 11250,
+      "activityA": 0.2456791886873304,
+      "activityB": 6.444878048780488,
+      "evidenceStrength": 0.926559423985942
+    },
+    {
+      "frame": 11280,
+      "activityA": 0.24156549064419366,
+      "activityB": 6.29170731707317,
+      "evidenceStrength": 0.9260506953394487
+    },
+    {
+      "frame": 11310,
+      "activityA": 0.24407941722611054,
+      "activityB": 6.0702439024390245,
+      "evidenceStrength": 0.9226902377754533
+    },
+    {
+      "frame": 11340,
+      "activityA": 0.24225110698471647,
+      "activityB": 5.715121951219512,
+      "evidenceStrength": 0.9186718358518444
+    },
+    {
+      "frame": 11370,
+      "activityA": 0.2531066990429939,
+      "activityB": 5.997073170731707,
+      "evidenceStrength": 0.9190081871829018
+    },
+    {
+      "frame": 11400,
+      "activityA": 0.2451078417368947,
+      "activityB": 6.002926829268293,
+      "evidenceStrength": 0.9215408189476447
+    },
+    {
+      "frame": 11430,
+      "activityA": 0.2333380945579203,
+      "activityB": 6.392195121951218,
+      "evidenceStrength": 0.929563980155891
+    },
+    {
+      "frame": 11460,
+      "activityA": 0.21139837166119124,
+      "activityB": 6.599024390243902,
+      "evidenceStrength": 0.9379191633025563
+    },
+    {
+      "frame": 11490,
+      "activityA": 0.18637337523210967,
+      "activityB": 6.578536585365854,
+      "evidenceStrength": 0.9448999687157297
+    },
+    {
+      "frame": 11520,
+      "activityA": 0.17106127696043422,
+      "activityB": 6.588292682926829,
+      "evidenceStrength": 0.9493853175982259
+    },
+    {
+      "frame": 11550,
+      "activityA": 0.1456934723610913,
+      "activityB": 6.173658536585365,
+      "evidenceStrength": 0.9538897430765593
+    },
+    {
+      "frame": 11580,
+      "activityA": 0.1412369661476932,
+      "activityB": 5.934634146341463,
+      "evidenceStrength": 0.9535088998654444
+    },
+    {
+      "frame": 11610,
+      "activityA": 0.1526639051564062,
+      "activityB": 5.2819512195121945,
+      "evidenceStrength": 0.9438179515368291
+    },
+    {
+      "frame": 11640,
+      "activityA": 0.1650049992858163,
+      "activityB": 4.903414634146341,
+      "evidenceStrength": 0.9348889747812452
+    },
+    {
+      "frame": 11670,
+      "activityA": 0.18248821596914724,
+      "activityB": 4.545365853658535,
+      "evidenceStrength": 0.9228029404962076
+    },
+    {
+      "frame": 11700,
+      "activityA": 0.1917440365662048,
+      "activityB": 4.214634146341463,
+      "evidenceStrength": 0.9129697776237274
+    },
+    {
+      "frame": 11730,
+      "activityA": 0.22179688615912008,
+      "activityB": 3.872195121951219,
+      "evidenceStrength": 0.8916476213340265
+    },
+    {
+      "frame": 11760,
+      "activityA": 0.254135123553778,
+      "activityB": 3.442926829268292,
+      "evidenceStrength": 0.8625204950326625
+    },
+    {
+      "frame": 11790,
+      "activityA": 0.28087416083416655,
+      "activityB": 3.0360975609756093,
+      "evidenceStrength": 0.8306442234720538
+    },
+    {
+      "frame": 11820,
+      "activityA": 0.31035566347664617,
+      "activityB": 2.6946341463414636,
+      "evidenceStrength": 0.7934397897373026
+    },
+    {
+      "frame": 11850,
+      "activityA": 0.34703613769461505,
+      "activityB": 2.417560975609756,
+      "evidenceStrength": 0.748942704146991
+    },
+    {
+      "frame": 11880,
+      "activityA": 0.3941151264105128,
+      "activityB": 2.1629268292682933,
+      "evidenceStrength": 0.6917413689398078
+    },
+    {
+      "frame": 11910,
+      "activityA": 0.4432509641479789,
+      "activityB": 1.8585365853658535,
+      "evidenceStrength": 0.6148637051741814
+    },
+    {
+      "frame": 11940,
+      "activityA": 0.5103270961291243,
+      "activityB": 1.6731707317073174,
+      "evidenceStrength": 0.53256001483199
+    },
+    {
+      "frame": 11970,
+      "activityA": 0.5811741179831452,
+      "activityB": 1.5082926829268293,
+      "evidenceStrength": 0.4437105985794647
+    },
+    {
+      "frame": 12000,
+      "activityA": 0.650307098985859,
+      "activityB": 1.3053658536585364,
+      "evidenceStrength": 0.3275293773363387
+    },
+    {
+      "frame": 12030,
+      "activityA": 0.7269818597343236,
+      "activityB": 1.1190243902439023,
+      "evidenceStrength": 0.19602126525478936
+    },
+    {
+      "frame": 12060,
+      "activityA": 0.8183973718040279,
+      "activityB": 1.0712195121951218,
+      "evidenceStrength": 0.12641107019554693
+    },
+    {
+      "frame": 12090,
+      "activityA": 0.9096986144836451,
+      "activityB": 1.0517073170731706,
+      "evidenceStrength": 0.07100435129476274
+    },
+    {
+      "frame": 12120,
+      "activityA": 0.9410084273675188,
+      "activityB": 0.951219512195122,
+      "evidenceStrength": 0.0051055424138016225
+    },
+    {
+      "frame": 12150,
+      "activityA": 0.9488930152835309,
+      "activityB": 0.8780487804878048,
+      "evidenceStrength": 0.03542211739786305
+    },
+    {
+      "frame": 12180,
+      "activityA": 0.9527781745464934,
+      "activityB": 0.8224390243902439,
+      "evidenceStrength": 0.06516957507812476
+    },
+    {
+      "frame": 12210,
+      "activityA": 0.9060419940008568,
+      "activityB": 0.7658536585365855,
+      "evidenceStrength": 0.07009416773213567
+    },
+    {
+      "frame": 12240,
+      "activityA": 0.8266247678903013,
+      "activityB": 0.6234146341463416,
+      "evidenceStrength": 0.10160506687197984
+    },
+    {
+      "frame": 12270,
+      "activityA": 0.7488073132409655,
+      "activityB": 0.48487804878048785,
+      "evidenceStrength": 0.13196463223023883
+    },
+    {
+      "frame": 12300,
+      "activityA": 0.7012712469647192,
+      "activityB": 0.41853658536585364,
+      "evidenceStrength": 0.14136733079943278
+    },
+    {
+      "frame": 12330,
+      "activityA": 0.6563633766604771,
+      "activityB": 0.40682926829268296,
+      "evidenceStrength": 0.12476705418389705
+    },
+    {
+      "frame": 12360,
+      "activityA": 0.6471075560634195,
+      "activityB": 0.424390243902439,
+      "evidenceStrength": 0.11135865608049025
+    },
+    {
+      "frame": 12390,
+      "activityA": 0.6418511641194116,
+      "activityB": 0.43999999999999995,
+      "evidenceStrength": 0.10092558205970581
+    },
+    {
+      "frame": 12420,
+      "activityA": 0.6784173689472933,
+      "activityB": 0.4078048780487805,
+      "evidenceStrength": 0.1353062454492564
+    },
+    {
+      "frame": 12450,
+      "activityA": 0.6445936294815026,
+      "activityB": 0.37951219512195117,
+      "evidenceStrength": 0.1325407171797757
+    },
+    {
+      "frame": 12480,
+      "activityA": 0.676474789315812,
+      "activityB": 0.34536585365853656,
+      "evidenceStrength": 0.1655544678286377
+    },
+    {
+      "frame": 12510,
+      "activityA": 0.7416083416654763,
+      "activityB": 0.22341463414634144,
+      "evidenceStrength": 0.2590968537595674
+    },
+    {
+      "frame": 12540,
+      "activityA": 0.7686901871161261,
+      "activityB": 0.11414634146341464,
+      "evidenceStrength": 0.32727192282635575
+    },
+    {
+      "frame": 12570,
+      "activityA": 0.8194257963148122,
+      "activityB": 0.03609756097560976,
+      "evidenceStrength": 0.3916641176696012
+    },
+    {
+      "frame": 12600,
+      "activityA": 0.7572632481074132,
+      "activityB": 0.005853658536585366,
+      "evidenceStrength": 0.3757047947854139
+    },
+    {
+      "frame": 12630,
+      "activityA": 0.7322382516783317,
+      "activityB": 0.0,
+      "evidenceStrength": 0.36611912583916584
+    },
+    {
+      "frame": 12660,
+      "activityA": 0.7188687330381375,
+      "activityB": 0.0,
+      "evidenceStrength": 0.35943436651906874
+    },
+    {
+      "frame": 12690,
+      "activityA": 0.6075703470932724,
+      "activityB": 0.03804878048780488,
+      "evidenceStrength": 0.28476078330273374
+    },
+    {
+      "frame": 12720,
+      "activityA": 0.5526067704613626,
+      "activityB": 0.10048780487804879,
+      "evidenceStrength": 0.22605948279165694
+    },
+    {
+      "frame": 12750,
+      "activityA": 0.49752892443936586,
+      "activityB": 0.19121951219512193,
+      "evidenceStrength": 0.15315470612212195
+    },
+    {
+      "frame": 12780,
+      "activityA": 0.5402656763319525,
+      "activityB": 0.25073170731707317,
+      "evidenceStrength": 0.1447669845074397
+    },
+    {
+      "frame": 12810,
+      "activityA": 0.5639194400799886,
+      "activityB": 0.36097560975609755,
+      "evidenceStrength": 0.10147191516194554
+    },
+    {
+      "frame": 12840,
+      "activityA": 0.5063276674760748,
+      "activityB": 0.48975609756097566,
+      "evidenceStrength": 0.008285784957549586
+    },
+    {
+      "frame": 12870,
+      "activityA": 0.5031281245536351,
+      "activityB": 0.5746341463414634,
+      "evidenceStrength": 0.03575301089391414
+    },
+    {
+      "frame": 12900,
+      "activityA": 0.45982002571061276,
+      "activityB": 0.6965853658536585,
+      "evidenceStrength": 0.11838267007152287
+    },
+    {
+      "frame": 12930,
+      "activityA": 0.4424510784173689,
+      "activityB": 0.9102439024390244,
+      "evidenceStrength": 0.23389641201082775
+    },
+    {
+      "frame": 12960,
+      "activityA": 0.3862305384945008,
+      "activityB": 1.2009756097560975,
+      "evidenceStrength": 0.4073725356307983
+    },
+    {
+      "frame": 12990,
+      "activityA": 0.36920439937151833,
+      "activityB": 1.3756097560975609,
+      "evidenceStrength": 0.5032026783630212
+    },
+    {
+      "frame": 13020,
+      "activityA": 0.3386944722182545,
+      "activityB": 1.5970731707317074,
+      "evidenceStrength": 0.6291893492567264
+    },
+    {
+      "frame": 13050,
+      "activityA": 0.3438365947721754,
+      "activityB": 1.7658536585365852,
+      "evidenceStrength": 0.6740406851357305
+    },
+    {
+      "frame": 13080,
+      "activityA": 0.3457791744036566,
+      "activityB": 1.9853658536585364,
+      "evidenceStrength": 0.7033396290310674
+    },
+    {
+      "frame": 13110,
+      "activityA": 0.31595486359091557,
+      "activityB": 2.2156097560975607,
+      "evidenceStrength": 0.7503876763534516
+    },
+    {
+      "frame": 13140,
+      "activityA": 0.3079560062848165,
+      "activityB": 2.392195121951219,
+      "evidenceStrength": 0.7718972074826055
+    },
+    {
+      "frame": 13170,
+      "activityA": 0.3046421939722897,
+      "activityB": 2.570731707317073,
+      "evidenceStrength": 0.788102553316156
+    },
+    {
+      "frame": 13200,
+      "activityA": 0.3208684473646622,
+      "activityB": 2.7239024390243904,
+      "evidenceStrength": 0.7892331086066077
+    },
+    {
+      "frame": 13230,
+      "activityA": 0.3256677617483216,
+      "activityB": 2.8653658536585365,
+      "evidenceStrength": 0.79588572168219
+    },
+    {
+      "frame": 13260,
+      "activityA": 0.32269675760605626,
+      "activityB": 2.9248780487804877,
+      "evidenceStrength": 0.8012690842585338
+    },
+    {
+      "frame": 13290,
+      "activityA": 0.32521068418797316,
+      "activityB": 2.894634146341463,
+      "evidenceStrength": 0.7979960517945214
+    },
+    {
+      "frame": 13320,
+      "activityA": 0.32418225967718894,
+      "activityB": 3.040975609756097,
+      "evidenceStrength": 0.8073301329356156
+    },
+    {
+      "frame": 13350,
+      "activityA": 0.3065847736037709,
+      "activityB": 3.56780487804878,
+      "evidenceStrength": 0.8417377697294837
+    },
+    {
+      "frame": 13380,
+      "activityA": 0.2893300957006142,
+      "activityB": 4.266341463414633,
+      "evidenceStrength": 0.8729802656112441
+    },
+    {
+      "frame": 13410,
+      "activityA": 0.26087701756891873,
+      "activityB": 5.367804878048781,
+      "evidenceStrength": 0.9073044018451181
+    },
+    {
+      "frame": 13440,
+      "activityA": 0.24465076417654624,
+      "activityB": 6.677073170731707,
+      "evidenceStrength": 0.9293092973723781
+    },
+    {
+      "frame": 13470,
+      "activityA": 0.22145407798885877,
+      "activityB": 7.64,
+      "evidenceStrength": 0.9436607844320039
+    },
+    {
+      "frame": 13500,
+      "activityA": 0.19905727753178115,
+      "activityB": 8.129756097560975,
+      "evidenceStrength": 0.9522003270893162
+    },
+    {
+      "frame": 13530,
+      "activityA": 0.18500214255106415,
+      "activityB": 8.909268292682926,
+      "evidenceStrength": 0.9593145719893466
+    },
+    {
+      "frame": 13560,
+      "activityA": 0.1815740608484502,
+      "activityB": 8.862439024390243,
+      "evidenceStrength": 0.9598465727244889
+    },
+    {
+      "frame": 13590,
+      "activityA": 0.18648764462219683,
+      "activityB": 9.299512195121952,
+      "evidenceStrength": 0.9606814995208293
+    },
+    {
+      "frame": 13620,
+      "activityA": 0.17848878731609769,
+      "activityB": 8.674146341463413,
+      "evidenceStrength": 0.9596755576798055
+    },
+    {
+      "frame": 13650,
+      "activityA": 0.18774460791315528,
+      "activityB": 8.224390243902437,
+      "evidenceStrength": 0.9553633860558871
+    },
+    {
+      "frame": 13680,
+      "activityA": 0.19608627338951579,
+      "activityB": 8.373658536585365,
+      "evidenceStrength": 0.9542375466860392
+    },
+    {
+      "frame": 13710,
+      "activityA": 0.2022568204542208,
+      "activityB": 7.675121951219512,
+      "evidenceStrength": 0.9486486999504159
+    },
+    {
+      "frame": 13740,
+      "activityA": 0.19220111412655333,
+      "activityB": 7.359999999999999,
+      "evidenceStrength": 0.9491006366959595
+    },
+    {
+      "frame": 13770,
+      "activityA": 0.1931152692472504,
+      "activityB": 6.052682926829268,
+      "evidenceStrength": 0.9381615405478323
+    },
+    {
+      "frame": 13800,
+      "activityA": 0.20385659191544064,
+      "activityB": 5.488780487804879,
+      "evidenceStrength": 0.928378855331682
+    },
+    {
+      "frame": 13830,
+      "activityA": 0.21585487787458932,
+      "activityB": 4.931707317073171,
+      "evidenceStrength": 0.9161331637385763
+    },
+    {
+      "frame": 13860,
+      "activityA": 0.25573489501499785,
+      "activityB": 3.9580487804878044,
+      "evidenceStrength": 0.8786198273529156
+    },
+    {
+      "frame": 13890,
+      "activityA": 0.3118411655477789,
+      "activityB": 3.134634146341463,
+      "evidenceStrength": 0.8190376327536564
+    },
+    {
+      "frame": 13920,
+      "activityA": 0.4077131838308813,
+      "activityB": 2.4878048780487805,
+      "evidenceStrength": 0.7183832563861065
+    },
+    {
+      "frame": 13950,
+      "activityA": 0.5592343950864163,
+      "activityB": 1.966829268292683,
+      "evidenceStrength": 0.5572285820078406
+    },
+    {
+      "frame": 13980,
+      "activityA": 0.6221968290244251,
+      "activityB": 1.56,
+      "evidenceStrength": 0.42975187137213006
+    },
+    {
+      "frame": 14010,
+      "activityA": 0.706299100128553,
+      "activityB": 1.2292682926829268,
+      "evidenceStrength": 0.2614845962771869
+    },
+    {
+      "frame": 14040,
+      "activityA": 0.8460505642051134,
+      "activityB": 0.9824390243902439,
+      "evidenceStrength": 0.06819423009256526
+    },
+    {
+      "frame": 14070,
+      "activityA": 0.9374660762748178,
+      "activityB": 0.833170731707317,
+      "evidenceStrength": 0.05214767228375039
+    },
+    {
+      "frame": 14100,
+      "activityA": 1.0223682331095556,
+      "activityB": 0.6790243902439025,
+      "evidenceStrength": 0.17167192143282656
+    },
+    {
+      "frame": 14130,
+      "activityA": 0.9907156120554206,
+      "activityB": 0.6439024390243903,
+      "evidenceStrength": 0.17340658651551516
+    },
+    {
+      "frame": 14160,
+      "activityA": 1.047393229538637,
+      "activityB": 0.6039024390243901,
+      "evidenceStrength": 0.22174539525712345
+    },
+    {
+      "frame": 14190,
+      "activityA": 1.106699042993858,
+      "activityB": 0.5678048780487803,
+      "evidenceStrength": 0.2694470824725388
+    },
+    {
+      "frame": 14220,
+      "activityA": 1.0045422082559636,
+      "activityB": 0.5278048780487804,
+      "evidenceStrength": 0.23836866510359161
+    },
+    {
+      "frame": 14250,
+      "activityA": 0.9459220111412655,
+      "activityB": 0.44878048780487817,
+      "evidenceStrength": 0.24857076166819367
+    },
+    {
+      "frame": 14280,
+      "activityA": 0.9082131124125123,
+      "activityB": 0.4253658536585366,
+      "evidenceStrength": 0.24142362937698786
+    },
+    {
+      "frame": 14310,
+      "activityA": 0.8994143693758034,
+      "activityB": 0.31707317073170727,
+      "evidenceStrength": 0.2911705993220481
+    },
+    {
+      "frame": 14340,
+      "activityA": 0.9096986144836453,
+      "activityB": 0.18048780487804877,
+      "evidenceStrength": 0.36460540480279824
+    },
+    {
+      "frame": 14370,
+      "activityA": 0.881359805742037,
+      "activityB": 0.09658536585365853,
+      "evidenceStrength": 0.39238721994418924
+    },
+    {
+      "frame": 14400,
+      "activityA": 0.9404370804170832,
+      "activityB": 0.0448780487804878,
+      "evidenceStrength": 0.44777951581829767
+    },
+    {
+      "frame": 14430,
+      "activityA": 0.9882016854735038,
+      "activityB": 0.0448780487804878,
+      "evidenceStrength": 0.471661818346508
+    },
+    {
+      "frame": 14460,
+      "activityA": 0.9679760034280817,
+      "activityB": 0.04390243902439024,
+      "evidenceStrength": 0.4620367822018457
+    },
+    {
+      "frame": 14490,
+      "activityA": 0.9588344522211113,
+      "activityB": 0.07902439024390243,
+      "evidenceStrength": 0.43990503098860445
+    },
+    {
+      "frame": 14520,
+      "activityA": 0.9310669904299386,
+      "activityB": 0.1473170731707317,
+      "evidenceStrength": 0.3918749586296034
+    },
+    {
+      "frame": 14550,
+      "activityA": 0.9372375374946436,
+      "activityB": 0.1921951219512195,
+      "evidenceStrength": 0.37252120777171205
+    },
+    {
+      "frame": 14580,
+      "activityA": 0.9454649335809169,
+      "activityB": 0.255609756097561,
+      "evidenceStrength": 0.34492758874167795
+    },
+    {
+      "frame": 14610,
+      "activityA": 0.8830738465933439,
+      "activityB": 0.31804878048780494,
+      "evidenceStrength": 0.28251253305276947
+    },
+    {
+      "frame": 14640,
+      "activityA": 0.9197543208113127,
+      "activityB": 0.3404878048780488,
+      "evidenceStrength": 0.289633257966632
+    },
+    {
+      "frame": 14670,
+      "activityA": 0.9130124267961721,
+      "activityB": 0.3863414634146341,
+      "evidenceStrength": 0.26333548169076904
+    },
+    {
+      "frame": 14700,
+      "activityA": 0.9463790887016141,
+      "activityB": 0.408780487804878,
+      "evidenceStrength": 0.2687993004483681
+    },
+    {
+      "frame": 14730,
+      "activityA": 0.8873018140265678,
+      "activityB": 0.408780487804878,
+      "evidenceStrength": 0.23926066311084493
+    },
+    {
+      "frame": 14760,
+      "activityA": 0.8269675760605629,
+      "activityB": 0.35804878048780486,
+      "evidenceStrength": 0.23445939778637903
+    },
+    {
+      "frame": 14790,
+      "activityA": 0.8223968004570776,
+      "activityB": 0.2965853658536585,
+      "evidenceStrength": 0.26290571730170953
+    },
+    {
+      "frame": 14820,
+      "activityA": 0.7785173546636195,
+      "activityB": 0.27512195121951216,
+      "evidenceStrength": 0.25169770172205364
+    },
+    {
+      "frame": 14850,
+      "activityA": 0.8263962291101272,
+      "activityB": 0.19414634146341464,
+      "evidenceStrength": 0.3161249438233563
+    },
+    {
+      "frame": 14880,
+      "activityA": 0.7622911012712469,
+      "activityB": 0.11414634146341464,
+      "evidenceStrength": 0.32407237990391613
+    },
+    {
+      "frame": 14910,
+      "activityA": 0.7794315097843165,
+      "activityB": 0.06634146341463415,
+      "evidenceStrength": 0.35654502318484116
+    },
+    {
+      "frame": 14940,
+      "activityA": 0.8887873160977002,
+      "activityB": 0.05365853658536586,
+      "evidenceStrength": 0.41756438975616716
+    },
+    {
+      "frame": 14970,
+      "activityA": 0.9608913012426796,
+      "activityB": 0.033170731707317075,
+      "evidenceStrength": 0.46386028476768126
+    },
+    {
+      "frame": 15000,
+      "activityA": 1.1484073703756608,
+      "activityB": 0.017560975609756096,
+      "evidenceStrength": 0.5654231973829523
+    },
+    {
+      "frame": 15030,
+      "activityA": 1.2729610055706329,
+      "activityB": 0.017560975609756096,
+      "evidenceStrength": 0.6277000149804384
+    },
+    {
+      "frame": 15060,
+      "activityA": 1.3465504927867449,
+      "activityB": 0.006829268292682926,
+      "evidenceStrength": 0.669860612247031
+    },
+    {
+      "frame": 15090,
+      "activityA": 1.3920297100414227,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6960148550207114
+    },
+    {
+      "frame": 15120,
+      "activityA": 1.365976289101557,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6829881445507785
+    },
+    {
+      "frame": 15150,
+      "activityA": 1.4352235394943578,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7176117697471789
+    },
+    {
+      "frame": 15180,
+      "activityA": 1.3585487787458932,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6792743893729466
+    },
+    {
+      "frame": 15210,
+      "activityA": 1.2845022139694326,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6422511069847163
+    },
+    {
+      "frame": 15240,
+      "activityA": 1.428253106699043,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7141265533495215
+    },
+    {
+      "frame": 15270,
+      "activityA": 1.4875589201542636,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7437794600771318
+    },
+    {
+      "frame": 15300,
+      "activityA": 1.533380945579203,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7666904727896015
+    },
+    {
+      "frame": 15330,
+      "activityA": 1.5244679331524065,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7622339665762032
+    },
+    {
+      "frame": 15360,
+      "activityA": 1.5158977288958717,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7579488644479359
+    },
+    {
+      "frame": 15390,
+      "activityA": 1.5177260391372658,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7588630195686329
+    },
+    {
+      "frame": 15420,
+      "activityA": 1.3930581345522068,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6965290672761034
+    },
+    {
+      "frame": 15450,
+      "activityA": 1.342436794743608,
+      "activityB": 0.0,
+      "evidenceStrength": 0.671218397371804
+    },
+    {
+      "frame": 15480,
+      "activityA": 1.2413083845164978,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6206541922582489
+    },
+    {
+      "frame": 15510,
+      "activityA": 1.199600057134695,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5998000285673475
+    },
+    {
+      "frame": 15540,
+      "activityA": 1.177774603628053,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5888873018140265
+    },
+    {
+      "frame": 15570,
+      "activityA": 1.1988001714040852,
+      "activityB": 0.0,
+      "evidenceStrength": 0.5994000857020426
+    },
+    {
+      "frame": 15600,
+      "activityA": 1.2481645479217254,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6240822739608627
+    },
+    {
+      "frame": 15630,
+      "activityA": 1.33958005999143,
+      "activityB": 0.0,
+      "evidenceStrength": 0.669790029995715
+    },
+    {
+      "frame": 15660,
+      "activityA": 1.4156834737894586,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7078417368947293
+    },
+    {
+      "frame": 15690,
+      "activityA": 1.4249392943865162,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7124696471932581
+    },
+    {
+      "frame": 15720,
+      "activityA": 1.3791172689615767,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6895586344807884
+    },
+    {
+      "frame": 15750,
+      "activityA": 1.3858591629767176,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6929295814883588
+    },
+    {
+      "frame": 15780,
+      "activityA": 1.4077988858734465,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7038994429367232
+    },
+    {
+      "frame": 15810,
+      "activityA": 1.4731609770032852,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7365804885016426
+    },
+    {
+      "frame": 15840,
+      "activityA": 1.4793315240679903,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7396657620339951
+    },
+    {
+      "frame": 15870,
+      "activityA": 1.5316669047278957,
+      "activityB": 0.0,
+      "evidenceStrength": 0.7658334523639478
+    },
+    {
+      "frame": 15900,
+      "activityA": 1.661591201256963,
+      "activityB": 0.017560975609756096,
+      "evidenceStrength": 0.8220151128236034
+    },
+    {
+      "frame": 15930,
+      "activityA": 1.7438651621196972,
+      "activityB": 0.028292682926829262,
+      "evidenceStrength": 0.857786239596434
+    },
+    {
+      "frame": 15960,
+      "activityA": 1.6878731609770035,
+      "activityB": 0.050731707317073174,
+      "evidenceStrength": 0.8185707268299651
+    },
+    {
+      "frame": 15990,
+      "activityA": 1.630509927153264,
+      "activityB": 0.060487804878048786,
+      "evidenceStrength": 0.7850110611376075
+    },
+    {
+      "frame": 16020,
+      "activityA": 1.7196400514212253,
+      "activityB": 0.060487804878048786,
+      "evidenceStrength": 0.8295761232715883
+    },
+    {
+      "frame": 16050,
+      "activityA": 1.686501928295958,
+      "activityB": 0.060487804878048786,
+      "evidenceStrength": 0.8130070617089545
+    },
+    {
+      "frame": 16080,
+      "activityA": 1.5531495500642765,
+      "activityB": 0.042926829268292686,
+      "evidenceStrength": 0.7551113603979919
+    },
+    {
+      "frame": 16110,
+      "activityA": 1.4255106413369518,
+      "activityB": 0.03219512195121951,
+      "evidenceStrength": 0.6966577596928661
+    },
+    {
+      "frame": 16140,
+      "activityA": 1.337408941579774,
+      "activityB": 0.009756097560975608,
+      "evidenceStrength": 0.6638264220093992
+    },
+    {
+      "frame": 16170,
+      "activityA": 1.2753606627624625,
+      "activityB": 0.0,
+      "evidenceStrength": 0.6376803313812313
+    },
+    {
+      "frame": 16200,
+      "activityA": 1.1543493786601915,
+      "activityB": 0.019512195121951216,
+      "evidenceStrength": 0.5674185917691201
+    },
+    {
+      "frame": 16230,
+      "activityA": 1.1006427653192399,
+      "activityB": 0.058536585365853655,
+      "evidenceStrength": 0.5210530899766931
+    },
+    {
+      "frame": 16260,
+      "activityA": 1.0844165119268676,
+      "activityB": 0.12097560975609757,
+      "evidenceStrength": 0.4817204510853851
+    },
+    {
+      "frame": 16290,
+      "activityA": 0.9976860448507356,
+      "activityB": 0.18341463414634146,
+      "evidenceStrength": 0.4071357053521971
+    },
+    {
+      "frame": 16320,
+      "activityA": 0.976889015854878,
+      "activityB": 0.2839024390243902,
+      "evidenceStrength": 0.3464932884152439
+    },
+    {
+      "frame": 16350,
+      "activityA": 0.8526781888301671,
+      "activityB": 0.4195121951219512,
+      "evidenceStrength": 0.21658299685410798
+    },
+    {
+      "frame": 16380,
+      "activityA": 0.7344093700899871,
+      "activityB": 0.5707317073170731,
+      "evidenceStrength": 0.08183883138645698
+    },
+    {
+      "frame": 16410,
+      "activityA": 0.6365947721754034,
+      "activityB": 0.7082926829268293,
+      "evidenceStrength": 0.035848955375712976
+    },
+    {
+      "frame": 16440,
+      "activityA": 0.5483788030281388,
+      "activityB": 0.857560975609756,
+      "evidenceStrength": 0.1545910862908086
+    },
+    {
+      "frame": 16470,
+      "activityA": 0.47513212398228827,
+      "activityB": 1.0439024390243903,
+      "evidenceStrength": 0.284385157521051
+    },
+    {
+      "frame": 16500,
+      "activityA": 0.41239822882445365,
+      "activityB": 1.266341463414634,
+      "evidenceStrength": 0.42697161729509014
+    },
+    {
+      "frame": 16530,
+      "activityA": 0.3610912726753321,
+      "activityB": 1.3834146341463414,
+      "evidenceStrength": 0.5111616807355046
+    },
+    {
+      "frame": 16560,
+      "activityA": 0.3280674189401514,
+      "activityB": 1.490731707317073,
+      "evidenceStrength": 0.5813321441884608
+    },
+    {
+      "frame": 16590,
+      "activityA": 0.3068133123839452,
+      "activityB": 1.517073170731707,
+      "evidenceStrength": 0.605129929173881
+    },
+    {
+      "frame": 16620,
+      "activityA": 0.2870447078988716,
+      "activityB": 1.5414634146341466,
+      "evidenceStrength": 0.6272093533676375
+    },
+    {
+      "frame": 16650,
+      "activityA": 0.2846450507070419,
+      "activityB": 1.538536585365854,
+      "evidenceStrength": 0.626945767329406
+    },
+    {
+      "frame": 16680,
+      "activityA": 0.2801885444936438,
+      "activityB": 1.4507317073170731,
+      "evidenceStrength": 0.5852715814117146
+    },
+    {
+      "frame": 16710,
+      "activityA": 0.2917297528924439,
+      "activityB": 1.3765853658536584,
+      "evidenceStrength": 0.5424278064806073
+    },
+    {
+      "frame": 16740,
+      "activityA": 0.30109984287958863,
+      "activityB": 1.2478048780487803,
+      "evidenceStrength": 0.47335251758459584
+    },
+    {
+      "frame": 16770,
+      "activityA": 0.2976717611769747,
+      "activityB": 1.1600000000000001,
+      "evidenceStrength": 0.4311641194115127
+    },
+    {
+      "frame": 16800,
+      "activityA": 0.2992715326381945,
+      "activityB": 1.008780487804878,
+      "evidenceStrength": 0.3547544775833418
+    },
+    {
+      "frame": 16830,
+      "activityA": 0.30578488787316094,
+      "activityB": 0.8507317073170731,
+      "evidenceStrength": 0.2724734097219561
+    },
+    {
+      "frame": 16860,
+      "activityA": 0.3102413940865591,
+      "activityB": 0.6507317073170731,
+      "evidenceStrength": 0.170245156615257
+    },
+    {
+      "frame": 16890,
+      "activityA": 0.290015712041137,
+      "activityB": 0.5082926829268294,
+      "evidenceStrength": 0.10913848544284618
+    },
+    {
+      "frame": 16920,
+      "activityA": 0.26019140122839596,
+      "activityB": 0.3999999999999999,
+      "evidenceStrength": 0.06990429938580198
+    },
+    {
+      "frame": 16950,
+      "activityA": 0.2254535066419083,
+      "activityB": 0.40195121951219515,
+      "evidenceStrength": 0.08824885643514342
+    },
+    {
+      "frame": 16980,
+      "activityA": 0.1852306813312384,
+      "activityB": 0.45658536585365844,
+      "evidenceStrength": 0.13567734226121003
+    },
+    {
+      "frame": 17010,
+      "activityA": 0.13712326810455652,
+      "activityB": 0.4926829268292683,
+      "evidenceStrength": 0.17777982936235584
+    },
+    {
+      "frame": 17040,
+      "activityA": 0.09735752035423509,
+      "activityB": 0.5834146341463414,
+      "evidenceStrength": 0.24302855689605318
+    },
+    {
+      "frame": 17070,
+      "activityA": 0.07084702185402085,
+      "activityB": 0.6848780487804877,
+      "evidenceStrength": 0.30701551346323347
+    },
+    {
+      "frame": 17100,
+      "activityA": 0.06090558491644052,
+      "activityB": 0.8048780487804876,
+      "evidenceStrength": 0.37198623193202357
+    },
+    {
+      "frame": 17130,
+      "activityA": 0.08547350378517354,
+      "activityB": 0.8614634146341462,
+      "evidenceStrength": 0.38799495542448637
+    },
+    {
+      "frame": 17160,
+      "activityA": 0.1168975860591344,
+      "activityB": 0.8799999999999999,
+      "evidenceStrength": 0.38155120697043277
+    },
+    {
+      "frame": 17190,
+      "activityA": 0.16363376660477075,
+      "activityB": 0.921951219512195,
+      "evidenceStrength": 0.3791587264537122
+    },
+    {
+      "frame": 17220,
+      "activityA": 0.20865590629910014,
+      "activityB": 1.0097560975609756,
+      "evidenceStrength": 0.40055009563093774
+    },
+    {
+      "frame": 17250,
+      "activityA": 0.24807884587916013,
+      "activityB": 1.1209756097560974,
+      "evidenceStrength": 0.4364483819384687
+    },
+    {
+      "frame": 17280,
+      "activityA": 0.27401799742893873,
+      "activityB": 1.2741463414634144,
+      "evidenceStrength": 0.5000641720172379
+    },
+    {
+      "frame": 17310,
+      "activityA": 0.27058991572632485,
+      "activityB": 1.3765853658536582,
+      "evidenceStrength": 0.5529977250636666
+    },
+    {
+      "frame": 17340,
+      "activityA": 0.2605342093986573,
+      "activityB": 1.4829268292682927,
+      "evidenceStrength": 0.6111963099348177
+    },
+    {
+      "frame": 17370,
+      "activityA": 0.22339665762033994,
+      "activityB": 1.5443902439024388,
+      "evidenceStrength": 0.6604967931410495
+    },
+    {
+      "frame": 17400,
+      "activityA": 0.1827167547493215,
+      "activityB": 1.5365853658536588,
+      "evidenceStrength": 0.6769343055521686
+    },
+    {
+      "frame": 17430,
+      "activityA": 0.16626196257677475,
+      "activityB": 1.4946341463414634,
+      "evidenceStrength": 0.6641860918823443
+    },
+    {
+      "frame": 17460,
+      "activityA": 0.17334666476217686,
+      "activityB": 1.370731707317073,
+      "evidenceStrength": 0.5986925212774481
+    },
+    {
+      "frame": 17490,
+      "activityA": 0.18808741608341664,
+      "activityB": 1.2273170731707315,
+      "evidenceStrength": 0.5196148285436574
+    },
+    {
+      "frame": 17520,
+      "activityA": 0.20351378374517928,
+      "activityB": 1.1004878048780489,
+      "evidenceStrength": 0.4484870105664348
+    },
+    {
+      "frame": 17550,
+      "activityA": 0.24053706613340953,
+      "activityB": 1.0341463414634147,
+      "evidenceStrength": 0.39680463766500257
+    },
+    {
+      "frame": 17580,
+      "activityA": 0.28910155692043993,
+      "activityB": 0.9834146341463411,
+      "evidenceStrength": 0.3471565386129506
+    },
+    {
+      "frame": 17610,
+      "activityA": 0.3300099985716326,
+      "activityB": 0.8780487804878048,
+      "evidenceStrength": 0.2740193909580861
+    },
+    {
+      "frame": 17640,
+      "activityA": 0.34063705184973575,
+      "activityB": 0.7834146341463415,
+      "evidenceStrength": 0.22138879114830287
+    },
+    {
+      "frame": 17670,
+      "activityA": 0.365433509498643,
+      "activityB": 0.7365853658536584,
+      "evidenceStrength": 0.1855759281775077
+    },
+    {
+      "frame": 17700,
+      "activityA": 0.40954149407227536,
+      "activityB": 0.6995121951219512,
+      "evidenceStrength": 0.14498535052483788
+    },
+    {
+      "frame": 17730,
+      "activityA": 0.45296386230538493,
+      "activityB": 0.6439024390243903,
+      "evidenceStrength": 0.09546928835950266
+    },
+    {
+      "frame": 17760,
+      "activityA": 0.45124982145407805,
+      "activityB": 0.5873170731707317,
+      "evidenceStrength": 0.06803362585832681
+    },
+    {
+      "frame": 17790,
+      "activityA": 0.47456077703185257,
+      "activityB": 0.5404878048780487,
+      "evidenceStrength": 0.03296351392309807
+    },
+    {
+      "frame": 17820,
+      "activityA": 0.529295814883588,
+      "activityB": 0.48780487804878053,
+      "evidenceStrength": 0.02074546841740374
+    },
+    {
+      "frame": 17850,
+      "activityA": 0.5719182973860877,
+      "activityB": 0.4195121951219512,
+      "evidenceStrength": 0.07620305113206824
+    },
+    {
+      "frame": 17880,
+      "activityA": 0.598543065276389,
+      "activityB": 0.32682926829268294,
+      "evidenceStrength": 0.13585689849185303
+    },
+    {
+      "frame": 17910,
+      "activityA": 0.6643622339665761,
+      "activityB": 0.2370731707317073,
+      "evidenceStrength": 0.2136445316174344
+    },
+    {
+      "frame": 17940,
+      "activityA": 0.7853735180688471,
+      "activityB": 0.1463414634146341,
+      "evidenceStrength": 0.3195160273271065
+    },
+    {
+      "frame": 17970,
+      "activityA": 0.892101128410227,
+      "activityB": 0.09853658536585366,
+      "evidenceStrength": 0.3967822715221867
+    }
+  ]
+}

@@ -408,6 +408,62 @@
           }
         },
         {
+          "name": "Spencer",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "spencer-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "spencer-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "spencer-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "spencer-header.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "spencer-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "spencer-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "spencer-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": "No celebration sheet supplied yet"
+            },
+            "Standing celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": "No celebration sheet supplied yet"
+            },
+            "Support celebration": {
+              "file": null,
+              "status": "Missing",
+              "note": "No celebration sheet supplied yet"
+            }
+          }
+        },
+        {
           "name": "José",
           "gender": "Male",
           "animations": {
@@ -12725,6 +12781,55 @@
       "height": 544,
       "cell": 68,
       "columns": 13,
+      "rows": 8
+    },
+    "spencer-idle.png": {
+      "width": 544,
+      "height": 68,
+      "cell": 68,
+      "columns": 8,
+      "rows": 1
+    },
+    "spencer-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "spencer-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
       "rows": 8
     }
   }

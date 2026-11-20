@@ -23,6 +23,7 @@ export const bios: Record<string, [number, string]> = {
     Chris: [9, "Defender"],
     Sean: [1, "Goalkeeper"],
     Stubbs: [12, "Forward"],
+    Spencer: [17, "Forward"],
   };
 
 const roleGroups:Record<string,string>={
