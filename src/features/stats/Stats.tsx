@@ -249,10 +249,14 @@ export default function Stats({
         .sort((a, b) => b.goals - a.goals || a.label.localeCompare(b.label))
     : goalsByKickoff(data.matches).map(({ time, goals, points, played }) => ({ label: time, goals, played, ppg: points / played }));
   const adjusted = opponentMetric === "gdPerMatch";
-  const sortField = opponentMetric === "teamGoals" ? "goalsFor" : opponentMetric;
+  const sortField = opponentMetric === "teamGoals" ? "goalDisparity" : opponentMetric;
   const chartTeams = teams
     .filter(team => !adjusted || team.goalsFor > team.goalsAgainst)
-    .map(team => ({ ...team, gdPerMatch: (team.goalsFor - team.goalsAgainst) / team.played }))
+    .map(team => ({
+      ...team,
+      goalDisparity: Math.abs(team.goalsFor - team.goalsAgainst),
+      gdPerMatch: (team.goalsFor - team.goalsAgainst) / team.played,
+    }))
     .sort((a, b) => b[sortField] - a[sortField] || a.team.localeCompare(b.team));
   const metricName = adjusted ? "GD Per Match" : opponentMetric === "goalsAgainst" ? "Goals Allowed" : "TBFC Goals Scored";
   const horizontalBars = useMediaQuery(theme.breakpoints.down("sm"));

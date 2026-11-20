@@ -188,53 +188,53 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "mandy-idle.png",
+              "file": "mandy-new-idle.png",
               "status": "Individual",
               "note": ""
             },
             "Run": {
-              "file": "mandy-run.png",
+              "file": "mandy-new-run.png",
               "status": "Individual",
               "note": ""
             },
             "Kick": {
-              "file": "mandy-side-kicks.png",
+              "file": "mandy-new-kick.png",
               "status": "Individual",
               "note": ""
             },
             "Foul reaction (fall)": {
-              "file": "mandy-fall.png",
+              "file": "mandy-new-foul.png",
               "status": "Individual",
               "note": ""
             },
             "Standing celebration": {
-              "file": "mandy-goal.png",
+              "file": "mandy-new-goal-team.png",
               "status": "Individual",
               "note": ""
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
+              "file": "mandy-new-header.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
+              "file": "mandy-new-tackle.png",
+              "status": "Individual",
               "note": ""
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
+              "file": "mandy-new-reaction.png",
+              "status": "Individual",
               "note": ""
             },
             "Running celebration": {
               "file": null,
               "status": "Missing",
-              "note": ""
+              "note": "No separate goal run in this package"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "mandy-new-goal-team.png",
+              "status": "Individual",
               "note": ""
             }
           }
@@ -12669,6 +12669,62 @@
       "height": 480,
       "cell": 60,
       "columns": 17,
+      "rows": 8
+    },
+    "mandy-new-idle.png": {
+      "width": 544,
+      "height": 68,
+      "cell": 68,
+      "columns": 8,
+      "rows": 1
+    },
+    "mandy-new-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "mandy-new-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-new-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-new-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-new-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-new-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "mandy-new-goal-team.png": {
+      "width": 884,
+      "height": 544,
+      "cell": 68,
+      "columns": 13,
       "rows": 8
     }
   }

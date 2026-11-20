@@ -70,7 +70,10 @@ import {mainMenu,mountMenuBackdrop} from './mainMenu'
 import {spriteViewer} from './spriteViewer'
 import {goalCannons} from './goalCannons'
 import {kneelingPose} from './kneelingPose'
-import mandyGoalUrl from './art/mandy-goal.png?url'
+import mandyGoalUrl from './art/mandy-new-goal-team.png?url'
+import mandyHeader from './art/mandy-new-header.png?url'
+import mandyTackle from './art/mandy-new-tackle.png?url'
+import mandyReaction from './art/mandy-new-reaction.png?url'
 import pamGoalUrl from './art/pam-goal.png?url'
 import nadiaIdle from './art/nadia-new-idle.png?url'
 import nadiaRun from './art/nadia-new-run.png?url'
@@ -88,7 +91,7 @@ import nelsonTackle from './art/nelson-tackle.png?url'
 import nelsonReaction from './art/nelson-reaction.png?url'
 import stubbsFall from './art/stubbs-new-foul.png?url'
 import meghanFall from './art/meghan-new-foul.png?url'
-import mandyFall from './art/mandy-fall.png?url'
+import mandyFall from './art/mandy-new-foul.png?url'
 import seanFall from './art/sean-fall.png?url'
 import danielFall from './art/daniel-new-foul.png?url'
 import stevenFall from './art/steven-new-foul.png?url'
@@ -134,14 +137,14 @@ import janFoul from './art/jan-new-foul.png?url'
 import { audio } from './matchAudio'
 import cardSheet from './art/ref-yellow-card.png?url'
 import stubbsKick from './art/stubbs-new-kick.png?url'
-import mandyKick from './art/mandy-side-kicks.png?url'
+import mandyKick from './art/mandy-new-kick.png?url'
 import jeremyKick from './art/jeremy-new-kick.png?url'
 import seanKick from './art/sean-side-kicks.png?url'
 import blueKick from './art/stars-side-kicks.png?url'
 import tealKick from './art/teal-side-kicks.png?url'
 import tealIdle from './art/teal-idle.png?url'
-import mandyIdle from './art/mandy-idle.png?url'
-import mandyRun from './art/mandy-run.png?url'
+import mandyIdle from './art/mandy-new-idle.png?url'
+import mandyRun from './art/mandy-new-run.png?url'
 import jeremyIdle from './art/jeremy-new-idle.png?url'
 import jeremyRun from './art/jeremy-new-run.png?url'
 import seanIdle from './art/sean-idle.png?url'
@@ -494,7 +497,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:name==='Mandy'?mandyHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:name==='Mandy'?mandyTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:name==='Mandy'?mandyReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -793,10 +796,10 @@ async function start(){
  for(const map of [stevenGoalRun,stevenGoalGroup]){map.userData.cell=54;map.repeat.x=54/map.image.width}
  pamSkateGoal.repeat.y=1/8; pamSkateGoal.userData.directionalRun=true
  joseOverhead.repeat.y=1/8
- mandyGoal.repeat.y=1/8
- mandyGoal.userData.directionalCelebration=true
+ mandyGoal.repeat.set(68/mandyGoal.image.width,1/8)
+ mandyGoal.userData.cell=68;mandyGoal.userData.directionalCelebration=true
  const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderGoalStand,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalStand}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Mandy:mandyGoal,Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
  const onsiderMaleGoals=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
  const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
  function supportMap(actor:typeof sean){
@@ -2753,7 +2756,7 @@ async function start(){
   }
   if(groupStarted&&goalMap===mandyGoal){
    const groupAge=goalAge-celebrationRunSeconds
-   resultTime=photoStart+mandyGoal.image.width/48*.2+.35-groupAge
+   resultTime=photoStart+mandyGoal.image.width/68*.2+.35-groupAge
    const cue=['ONE…','TWO…','THREE…','CHEESE!'][Math.min(3,Math.floor(groupAge))]
    el('shotResult').textContent=cue
   }
@@ -3787,7 +3790,7 @@ async function start(){
      const rows=groupMap.image.height/cell
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Mandy'||actor.displayName==='Jules'||actor.displayName==='Mina')actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(groupMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
@@ -3804,7 +3807,7 @@ async function start(){
      const rows=goalMap.image.height/cell
      const celebrationScale=actor.maps[0].userData.celebrationScale as number|undefined
      if(celebrationScale)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48*celebrationScale)
-     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+     else if(cell===50||cell===54||actor.displayName==='Jan'||actor.displayName==='Jeremy'||actor.displayName==='Mandy'||actor.displayName==='Jules'||actor.displayName==='Mina'||goalMap===spiderGoalStand)actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
      else actor.sprite.scale.setScalar(cinematicPlayerSize)
      actor.sprite.center.set(.5,spriteGroundPadding(goalMap.image,frames,rows,rows===8?(actor.face+screenRotation()+8)%8:0,0,true)/cell)
      continue
