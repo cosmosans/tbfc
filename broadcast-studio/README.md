@@ -19,3 +19,9 @@ Tune `config/director.json`, then use `--cached` to reuse the activity measureme
 Outputs in `output/whiff-gameplay/` include the importable `.fcpxmld` bundle, decisions in integer 60fps frames, cached measurements, and diagnostics. Both audio angles are enabled on every segment. Resources, bookmarks, synchronization offsets and camera compound clips are preserved. Review the imported result before expanding scope.
 
 No ball detector or automatic goal detection has been validated. Adjacent players, referees, exposure changes, and quiet possession can confuse motion-only scoring. Low evidence retains the current angle.
+
+## Full first half
+
+`scripts/full_half.py` resolves the angle compound clips into their constituent camera files and samples across file boundaries using rational timeline times and the existing rate conformity. It preserves the approved opening edit and uses its activity normalization for the remainder. Analysis caches are tied to the source XML hash. Both audio sources stay enabled; video selection falls back to Cam A at the exact end of Cam B's recording. A short terminal sampling pad affects analysis frames only, never the edited source footage.
+
+Run with the same Python environment. Hardware decoding requires access to macOS VideoToolbox. Outputs are under `output/whiff-first-half/`. Full timeline coverage is retained; the script does not detect the halftime whistle or trim postgame footage.

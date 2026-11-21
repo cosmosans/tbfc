@@ -8,4 +8,9 @@ export const rivalWomen:Record<string,ReadonlySet<string>>={
  'Shooting Stars FC':new Set(['Sasha', 'Val', 'Iris', 'Cleo']),
  'Orange Slices':new Set(['Inez', 'Rory', 'Asha', 'Nell']),
  'Onsider Trading FC':new Set(['Margo', 'Penny', 'Sloane', 'Harper']),
+ 'Barely United':new Set(['Zuri', 'Maren', 'Wren', 'Steph']),
+ 'Atlético Espresso':new Set(['Lucía', 'Carmen', 'Sofía', 'Inés']),
+ 'Grass Assassins':new Set(['Briar', 'Fern', 'Ivy', 'Sage']),
+ 'Net Six & Chill':new Set(['Talia', 'Noelle', 'Zelda', 'Mabel']),
+ 'Crossbar Cowboys':new Set(['Sadie', 'Mae', 'Jolene', 'Cassidy']),
 }

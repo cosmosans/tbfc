@@ -14,7 +14,7 @@ import stubbsHead from "./art/headshots/stubbs.png?url";
 import spencerHead from "./art/headshots/spencer.png?url";
 import { hint, menuBumper } from "./screenUI";
 import { scoreRow } from "./leagueBoard";
-import { burners, clubs, type Fixture } from "./opponentSquads";
+import { burners, careerClubs, careerPool, type Fixture } from "./opponentSquads";
 import {
   bios,
   burnerEligibility,
@@ -44,6 +44,7 @@ import {
   simulateMatch,
   stage,
   table,
+  otherLeagueTable,
   tiers,
   type Career,
 } from "./careerSeason";
@@ -74,7 +75,7 @@ export type Ticket = {
   lineup: Selection;
   fixture: Fixture;
 };
-export const ratings = clubs.map((team) => team.stars);
+export const careerRatings = (c:Career) => careerClubs(c).map(team=>team.stars);
 const division = (s: string) =>
   s === "beginners" ? "Beginners" : s.toUpperCase();
 const btn = (action: string, label: string, primary = false) =>
@@ -132,7 +133,7 @@ function standings(c: Career) {
     table(c)
       .map(
         (r, i) =>
-          `<tr data-club="${r.club}" class="${r.club === 0 ? "tb" : ""}"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${clubs[r.club].crest}" alt="">${clubs[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`,
+          `<tr data-club="${r.club}" class="${r.club === 0 ? "tb" : ""}"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerClubs(c)[r.club].crest}" alt="">${careerClubs(c)[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`,
       )
       .join("") +
     "</tbody></table>"
@@ -148,7 +149,7 @@ function championshipBracket(c: Career) {
   ];
   const final = c.schedule[7]?.[0];
   const entrant = (club: number | undefined, score?: number, winner = false) =>
-    `<div class="cr-bracket-entrant ${winner ? "cr-bracket-winner" : ""}">${club === undefined ? '<span class="cr-bracket-empty">TBD</span>' : `<img src="${clubs[club].crest}" alt=""><span>${clubs[club].name}</span>`}${score === undefined ? "" : `<b>${score}</b>`}</div>`;
+    `<div class="cr-bracket-entrant ${winner ? "cr-bracket-winner" : ""}">${club === undefined ? '<span class="cr-bracket-empty">TBD</span>' : `<img src="${careerClubs(c)[club].crest}" alt=""><span>${careerClubs(c)[club].name}</span>`}${score === undefined ? "" : `<b>${score}</b>`}</div>`;
   const match = (
     game:
       | {
@@ -223,7 +224,7 @@ export function careerHub(
   });
   let chosen: Attribute | undefined;
   let setup = defaults();
-  const tabs = ["Central", "Calendar", "Squad", "My career"];
+  const tabs = ["Central", "League tables", "Calendar", "Squad", "My career"];
   return new Promise((resolve) => {
     function leave(ticket: Ticket | null) {
       clearTimeout(timer);
@@ -233,7 +234,7 @@ export function careerHub(
       resolve(ticket);
     }
     function save() {
-      bookRound(c!, ratings);
+      bookRound(c!, careerRatings(c!));
       saveSlot(slot, c!);
     }
     function error(e: unknown) {
@@ -323,7 +324,7 @@ export function careerHub(
               report.goals
                 .map(
                   (g) =>
-                    `<div>${g.minute}′ · ${g.player} · ${clubs[g.club].name}</div>`,
+                    `<div>${g.minute}′ · ${g.player} · ${careerClubs(c)[g.club].name}</div>`,
                 )
                 .join("") || "<p>No goals.</p>";
             if (report.performance) {
@@ -337,14 +338,14 @@ export function careerHub(
                 (place === 1
                   ? division(s.division) + " champions!"
                   : place === 5
-                    ? "Best of the Rest winners!"
+                    ? "Fifth place"
                     : "Season complete · Place " + place) +
                 "</h2>";
-              if (place === 1 && s.division !== "d4") {
+              if (place === 1 && s.division !== "d5") {
                 summary += `<p>You’ve conquered ${division(s.division)}. Do you want to promote Turf Burners FC?</p>`;
                 actions =
                   btn("promote", "Accept promotion", true) +
-                  btn("next", "Defend title");
+                  btn("next", "Decline · runner-up promotes");
               } else actions = btn("next", "Start next season", true);
             } else actions = btn("next", "Continue to next week", true);
           } else if (s.day === 5)
@@ -399,6 +400,15 @@ export function careerHub(
             : "";
           content += `<div class="cr-grid"><div>${panel(title, `<strong class="cr-day">${calendarDate(s)}</strong> · ${s.day < -1 ? "Off-week" : done ? "Full time" : s.day === 5 ? "Matchday" : "Next kickoff " + calendarDate(s, 5)} · ${s.week.conditions.time} · ${{ Sun: "Clear", Clouds: "Cloudy", Rain: "Rain" }[s.week.conditions.weather]}${fixtureRow(s, s.round, gameIndex, false)}${summary}<div class="cr-actions">${actions}</div>`)}${s.round >= 6 ? panel("Playoff Fixtures", scores(s, s.round)) : ""}${s.round >= 5 ? panel("Championship Bracket", championshipBracket(s)) : ""}${panel(s.round >= 6 ? "Final league table" : "League table", standings(s))}${s.round < 6 && done ? panel("Around the league", scores(s, s.round)) : ""}${panel("Team Chat", messages + earlier)}</div><aside>${panel("Matchday poll", poll)}</aside></div>`;
           content += btn("delete", "Delete career");
+        } else if (tab === "League tables") {
+          content += panel(division(s.division) + " · Turf Burners", standings(s));
+          for (const tier of tiers) {
+            if (tier === s.division) continue;
+            const league = s.otherLeagues?.[tier];
+            if (!league) continue;
+            const rows = otherLeagueTable(league);
+            content += panel(division(tier), rows.length ? `<table><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerPool[r.club].crest}" alt="">${careerPool[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`).join("")}</tbody></table>` : "Awaiting teams");
+          }
         } else if (tab === "Calendar") {
           content +=
             s.schedule
@@ -438,7 +448,7 @@ export function careerHub(
               s.history
                 .map(
                   (h) =>
-                    `<details><summary>${seasonName(h.season)} · ${division(h.division)} · ${h.place === 1 ? "🏆 Champions" : h.place === 5 ? "Best of the Rest winners" : "Place " + h.place}</summary><p>${h.points} league points</p>${h.reports.map((r, i) => `<p>Week ${i + 1} · TBFC ${r.score.join(" – ")} ${clubs[opponent({ ...s, round: i, schedule: h.schedule })].name}</p>`).join("")}</details>`,
+                    `<details><summary>${seasonName(h.season)} · ${division(h.division)} · ${h.place === 1 ? "🏆 Champions" : "Place " + h.place}</summary><p>${h.points} league points</p>${h.reports.map((r, i) => `<p>Week ${i + 1} · TBFC ${r.score.join(" – ")} ${careerClubs(h)[opponent({ ...s, round: i, schedule: h.schedule })].name}</p>`).join("")}</details>`,
                 )
                 .join("") || "Your first season is underway.",
             );
@@ -568,7 +578,7 @@ export function careerHub(
           crypto.getRandomValues(new Uint32Array(1))[0],
           roster,
           burnerEligibility,
-          clubs.length,
+          6,
           value("chaos") === "Chaos",
           value("sim") === "Allowed",
         );
@@ -615,7 +625,7 @@ export function careerHub(
         return;
       }
       if (a === "lineup" || a === "simline") {
-        const fixture = { home: burners, away: clubs[opponent(c)] },
+        const fixture = { home: burners, away: careerClubs(c)[opponent(c)] },
           sheet = c.week.sheet;
         const eligible = Object.fromEntries(
           [
@@ -664,13 +674,13 @@ export function careerHub(
               : gains.slice(0, 5).reduce((a, b) => a + b, 0) / 80;
         const report = simulateMatch(
           c,
-          ratings,
+          careerRatings(c),
           lineupChemistry(burners.name, lineup.shape, lineup.starters, c.bonds)
             .score,
           fixture.away.outfield,
           development,
         );
-        finishRound(c, report, ratings);
+        finishRound(c, report, careerRatings(c));
         save();
         draw();
         animateTable();

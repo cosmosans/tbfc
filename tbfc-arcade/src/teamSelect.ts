@@ -1,6 +1,6 @@
 import { audio } from "./matchAudio";
 import { hint, padBadge, reveal } from "./screenUI";
-import { alternateOpponent, onsiderTrading, clubAccent, clubs, type Fixture } from "./opponentSquads";
+import { alternateOpponent, onsiderTrading, barelyUnited, atleticoEspresso, grassAssassins, netSixAndChill, crossbarCowboys, clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
 
@@ -8,7 +8,7 @@ export function selectTeams(
   previous?: Fixture,
   standings?: ReadonlyMap<string, number>,
 ): Promise<Fixture | null> {
-  const selectable=[...clubs,alternateOpponent,onsiderTrading]
+  const selectable=[...clubs,alternateOpponent,onsiderTrading,barelyUnited,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys]
   const picks = [
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],

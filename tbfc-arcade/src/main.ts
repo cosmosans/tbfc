@@ -47,9 +47,10 @@ import stubbsReaction from './art/stubbs-new-reaction.png?url'
 import stubbsReactionFlash from './art/stubbs-new-reaction-flash.png?url'
 import {careerRating,type Attribute} from './careerDevelopment'
 import {playerRatings,ratingLabels} from './playerRatings'
+import {barelyRatings} from './barelyRatings'
 import {scoreRow,statRow} from './leagueBoard'
 import './fullTime.css'
-import {careerHub,headshots,ratings,type Ticket} from './careerHub'
+import {careerHub,headshots,careerRatings,type Ticket} from './careerHub'
 import {rivalHeadshot} from './rivalHeadshots'
 import {pauseMenu} from './pauseMenu'
 import {simulateRemainder,scoreboardAt,finishRound,opponent,type Report} from './careerSeason'
@@ -106,6 +107,9 @@ import joseFoulReaction from './art/jose-foul-reaction.png?url'
 import starsFall from './art/stars-fall.png?url'
 import rivalKeeperFall from './art/rival-keeper-fall.png?url'
 import {rivalSprites} from './rivalSprites'
+import {grassRatings} from './grassRatings'
+import {netRatings} from './netRatings'
+import {crossbarRatings} from './crossbarRatings'
 import {clubAccent,burners,clubs,type Club,type Fixture} from './opponentSquads'
 import {selectSides,playerColor,type Seat} from './sideSelect'
 import {selectTeams} from './teamSelect'
@@ -446,7 +450,9 @@ async function start(){
   return tex
  }))
 
-  const [jumpMap,tackleMap,reactionMap,suppliedReactionFlash]=await Promise.all([jumpUrl,tackleUrl,reactionUrl,reactionFlashUrl].map(url=>url?new T.TextureLoader().loadAsync(url):Promise.resolve(undefined)))
+  const [jumpMap,tackleMap,loadedReactionMap,suppliedReactionFlash]=await Promise.all([jumpUrl,tackleUrl,reactionUrl,reactionFlashUrl].map(url=>url?new T.TextureLoader().loadAsync(url):Promise.resolve(undefined)))
+  // Every player can show the tackle stun, even while their reaction art is pending.
+  const reactionMap=loadedReactionMap??maps[0]
   let reactionFlashMap=suppliedReactionFlash
   if(reactionMap&&!reactionFlashMap){
    const image=reactionMap.image as HTMLImageElement
@@ -515,7 +521,12 @@ async function start(){
   const fall=art?.foul??fallback[3]
   const sheets=art?[art.idle,art.run??fallback[1],art.kick??fallback[2],...(fall?[fall]:[])]:fallback
   const actor=await createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
+  // Match the visible pixel height of 48px-era players across roster packages.
+  actor.sprite.userData.matchScale=club.name==='Barely United'&&!rivalWomen[club.name]?.has(name)?1.11:club.name==='Net Six & Chill'&&!rivalWomen[club.name]?.has(name)?.96:1
   if(club.name==='Fleet Feet FC'&&!rivalWomen[club.name].has(name))actor.maps[0].userData.celebrationScale=.84
+  if(club.name==='Barely United')actor.maps[0].userData.celebrationScale=1
+  if(club.name==='Onsider Trading FC'&&rivalWomen[club.name].has(name))actor.maps[0].userData.celebrationScale=1
+  if(club.name==='Atlético Espresso'||club.name==='Net Six & Chill'||club.name==='Grass Assassins'||club.name==='Crossbar Cowboys')actor.maps[0].userData.celebrationScale=1
   if(art?.stand&&art.support){
    const [stand,support]=await Promise.all([art.stand,art.support].map(celebrationSheet))
    const run=art.goalRun?await celebrationSheet(art.goalRun):actor.maps[1].clone()
@@ -2287,8 +2298,8 @@ async function start(){
    if(choice==='simulate'&&ticket){
     const c=structuredClone(ticket.career)
     const report:Report={score:[homeScore,awayScore],shots:[...careerShots],goals:[...careerGoals],played:[...appearances],simulated:false}
-    simulateRemainder(c,report,(half-1)*1500+matchSeconds,players.filter(p=>!p.penalty).map(p=>p.displayName),opponents.filter(p=>!p.penalty).map(p=>p.displayName),ratings)
-    finishRound(c,report,ratings)
+    simulateRemainder(c,report,(half-1)*1500+matchSeconds,players.filter(p=>!p.penalty).map(p=>p.displayName),opponents.filter(p=>!p.penalty).map(p=>p.displayName),careerRatings(c))
+    finishRound(c,report,careerRatings(c))
     report.performance={name:c.player,goals:report.goals.filter(g=>g.club===0&&g.player===c.player).length,assists:facts.assists,passes:facts.personalPasses,xpBefore:ticket.career.xp,xpAfter:c.xp}
     try{saveSlot(ticket.slot,c)}catch(e){el('message').textContent='Save Failed · '+String(e);return}
     fullTimeScreen=true;audio.finishMatch();location.reload();return
@@ -2438,9 +2449,9 @@ async function start(){
   audio.restartMatch()
   playPenalties({scene,camera,renderer,ball,teams,keepers:[teams[0].at(-1)!,teams[1].at(-1)!],
    names:[homeLabel,matchOpponent.name],test:penaltyLab,finish,
-   level:['beginners','d6','d5','d4'].indexOf(settings.difficulty),
+   level:['beginners','d6','d5'].indexOf(settings.difficulty),
    rating:(actor,keeping)=>{
-    const base=playerRatings[bios[actor.displayName]?.[0]]?.[keeping?5:2]??(65+matchOpponent.stars*4)
+    const base=crossbarRatings[actor.displayName]?.[keeping?5:2]??netRatings[actor.displayName]?.[keeping?5:2]??grassRatings[actor.displayName]?.[keeping?5:2]??(matchOpponent.name==='Barely United'?barelyRatings[actor.displayName]?.[keeping?5:2]:undefined)??playerRatings[bios[actor.displayName]?.[0]]?.[keeping?5:2]??(65+matchOpponent.stars*4)
     return base*trainingFactor(actor.displayName,keeping?'Keeping':'Shooting')
    },
    fire:(seconds,side)=>eastCannons(seconds,goalColors[side]),
@@ -3193,7 +3204,7 @@ async function start(){
       const complete=structuredClone(ticket.career)
       const settle=(kicks?:Kick[])=>{
       music?.startBreak();audio.finishMatch()
-      finishRound(complete,{kicks,score:[homeScore,awayScore],goals:careerGoals,shots:careerShots,played:[...appearances],simulated:false},ratings)
+      finishRound(complete,{kicks,score:[homeScore,awayScore],goals:careerGoals,shots:careerShots,played:[...appearances],simulated:false},careerRatings(complete))
       const report=complete.reports[complete.round],name=complete.player
       const performanceReport=report.performance={name,goals:careerGoals.filter(g=>g.club===0&&g.player===name).length,assists:facts.assists,passes:facts.personalPasses,xpBefore:ticket.career.xp,xpAfter:complete.xp}
       const persist=()=>{
@@ -3768,6 +3779,8 @@ async function start(){
    ring.visible=false
   }
   for(const actor of pitchActors){
+    actor.sprite.scale.divideScalar(actor.sprite.userData.appliedMatchScale??1)
+    actor.sprite.userData.appliedMatchScale=1
     if(celebrating&&actor===celebrant&&runCelebration===spiderRun&&goalAge>=costumeRevealTime&&!groupStarted&&!actor.moving){
      spiderIdle.offset.x=((actor.face+screenRotation()+8)%8)/8
      actor.sprite.material.map=spiderIdle
@@ -3832,6 +3845,14 @@ async function start(){
     if(actor.reactionTime>0&&actor.reactionMap){
      const age=.5-actor.reactionTime
      const map=actor.reactionFlashMap&&Math.floor(age/.075)%2===0?actor.reactionFlashMap:actor.reactionMap
+     if(actor.reactionMap===actor.maps[0]){
+      map.repeat.set(1/8,1);map.offset.set(spriteFace/8,0)
+      actor.sprite.material.map=map
+      const cell=map.image.height
+      actor.sprite.scale.setScalar(cinematicPlayerSize*cell/48)
+      actor.sprite.center.set(.5,spriteGroundPadding(map.image,8,1,0,spriteFace)/cell)
+      continue
+     }
      const reactionFrames=map.image.width/(map.image.height/8)
      const frame=Math.min(reactionFrames-1,Math.floor(age/.5*reactionFrames))
      map.repeat.set(1/reactionFrames,1/8);map.offset.set(frame/reactionFrames,(7-spriteFace)/8)
@@ -3866,7 +3887,7 @@ async function start(){
      }
     }
     if(spriteFace!==0&&spriteFace!==4)actor.lastSideFace=spriteFace<4?2:6
-    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===480||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544||actor.maps[2]?.image.height===640
+    const directionalKick=actor.maps[2]?.image.height===384||actor.maps[2]?.image.height===480||actor.maps[2]?.image.height===512||actor.maps[2]?.image.height===544||actor.maps[2]?.image.height===576||actor.maps[2]?.image.height===640
     const kickRow=directionalKick?spriteFace:actor.lastSideFace===2?0:actor.westKickRow
     if(actor.age<0)aerialRecovery.delete(actor)
     const mode=actor.age>=0&&!aerialRecovery.has(actor)&&(actor.shooting||(actor.tackling&&actor.displayName!=='José'))&&actor.maps[2]?2:(running||actor.tackling)&&actor.maps[1]?1:0
@@ -3958,6 +3979,9 @@ async function start(){
   camera.updateMatrixWorld()
   const canvas=renderer.domElement
   for(const actor of pitchActors){
+   const matchScale=actor.sprite.userData.matchScale??1
+   actor.sprite.scale.multiplyScalar(matchScale)
+   actor.sprite.userData.appliedMatchScale=matchScale
    actor.world.copy(actor.sprite.position)
    actor.sprite.position.y+=jumpHeight(actor)
    if(actor!==sean&&actor!==awayGK)actor.sprite.material.rotation=0

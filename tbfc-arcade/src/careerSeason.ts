@@ -3,8 +3,9 @@ import {playerRatings} from './playerRatings.ts'
 import {shootout,simulatePenalties,type Kick} from './shootoutRules.ts'
 import type {Attribute} from './careerDevelopment'
 import {varyMessages} from './careerPhrases.ts'
+import {careerLeagueIndices,careerClubNames,careerClubStars,startingClubDivisions,seedCareerDivisions} from './careerLeague.ts'
 // Club indices use the arcade club list. Scores always follow the fixture's listed order.
-export const tiers = ['beginners','d6','d5','d4'] as const
+export const tiers = ['beginners','d6','d5'] as const
 type Tier = typeof tiers[number]
 export type Sheet = {shape:'1-3-3'|'1-3-1-2'|'1-2-1-3'|'1-2-3-1',starters:string[],bench:string[]}
 type Goal = {minute:number,club:number,player:string}
@@ -13,14 +14,18 @@ export type Report = {kicks?:Kick[],simulatedFrom?:number,performance?:PlayerPer
 export type Game = {requiresWinner?:boolean,kicks?:Kick[],kickoff?:number,timeline?:[number[],number[]],a:number,b:number,score?:[number,number],pens?:[number,number]}
 type Vote = {name:string,day:number,answer:'Yes'|'No'|'Maybe'|'Late',message:string}
 type Conditions={time:"Day"|"Night",weather:"Rain"|"Clouds"|"Sun"}
+type LeagueRow={club:number,p:number,w:number,d:number,l:number,gf:number,ga:number,pts:number}
+type OtherLeague={clubs:number[],schedule:Game[][]}
 export type Week = {conditions:Conditions,events:Vote[],sheet:Sheet}
 export type Career = {
  upgrades?:Partial<Record<Attribute,number>>
+ leagueFormat?:6,leagueClubs?:number[],clubDivisions?:Record<string,Tier>,otherLeagues?:Partial<Record<Tier,OtherLeague>>,
  version:1,id:string,revision:number,player:string,division:Tier,seed:number,season:number,round:number,day:number,
- schedule:Game[][],week:Week,reports:Report[],reaction:string,history:{season:number,division:Tier,place:number,points:number,reports:Report[],schedule:Game[][]}[],
+ schedule:Game[][],week:Week,reports:Report[],reaction:string,history:{season:number,division:Tier,place:number,points:number,reports:Report[],schedule:Game[][],leagueClubs?:number[],promotedClub?:number,relegatedClub?:number}[],
  bonds:Record<string,number>,chat:{name:string,text:string,date:string}[],speed:5|10|20,stats:Record<string,{apps:number,goals:number}>,xp:number,chaos:boolean,simulate:boolean
 }
 function roll(c:Career){c.seed=(Math.imul(c.seed,1664525)+1013904223)>>>0;return c.seed/4294967296}
+function moveDivision(division:Tier,step:number):Tier{return tiers[Math.max(0,Math.min(tiers.length-1,tiers.indexOf(division)+step))]}
 function shuffle<T>(c:Career,items:T[]){const copy=items.slice();for(let i=copy.length-1;i>0;i--){const j=Math.floor(roll(c)*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
 function fixtures(c:Career,clubs:number){
  const ring=[0,...shuffle(c,Array.from({length:clubs-1},(_,i)=>i+1))]
@@ -30,7 +35,62 @@ function fixtures(c:Career,clubs:number){
   for(let j=0;j<clubs/2;j++){const a=ring[j],b=ring[clubs-1-j];games.push(i%2?{a,b}:{a:b,b:a})}
   rounds.push(games);ring.splice(1,0,ring.pop()!)
  }
+ if(clubs===6)rounds.push(rounds[0].map(g=>({a:g.b,b:g.a})))
  return rounds.slice(0,6)
+}
+function otherLeagueSchedule(c:Career,clubs:number[]):Game[][]{
+ if(clubs.length<2)return []
+ const withBye=clubs.length%2?[...clubs,-1]:clubs.slice()
+ const ring=[withBye[0],...shuffle(c,withBye.slice(1))],rounds:Game[][]=[]
+ for(let i=0;i<withBye.length-1;i++){
+  const games:Game[]=[]
+  for(let j=0;j<withBye.length/2;j++){
+   const a=ring[j],b=ring[withBye.length-1-j]
+   if(a>=0&&b>=0)games.push(i%2?{a,b}:{a:b,b:a})
+  }
+  rounds.push(games);ring.splice(1,0,ring.pop()!)
+ }
+ const regularRounds=rounds.length
+ for(let i=regularRounds;i<6;i++)rounds.push(rounds[(i-regularRounds)%regularRounds].map(g=>({a:g.b,b:g.a})))
+ return rounds
+}
+function makeOtherLeagues(c:Career):Partial<Record<Tier,OtherLeague>>{
+ const active=new Set(c.leagueClubs??[]),other:Partial<Record<Tier,OtherLeague>>={}
+ for(const tier of tiers){
+  if(tier===c.division)continue
+  const clubs=careerClubNames.map((name,index)=>({name,index})).filter(({name,index})=>index>0&&!active.has(index)&&c.clubDivisions?.[name]===tier).map(({index})=>index)
+  other[tier]={clubs,schedule:otherLeagueSchedule(c,clubs)}
+ }
+ return other
+}
+export function otherLeagueTable(league:OtherLeague):LeagueRow[]{
+ const rows=new Map(league.clubs.map(club=>[club,{club,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]))
+ for(const round of league.schedule.slice(0,6))for(const g of round){
+  if(!g.score)continue
+  for(const [club,f,a] of [[g.a,...g.score],[g.b,g.score[1],g.score[0]]]){
+   const row=rows.get(club)!;row.p++;row.gf+=f;row.ga+=a
+   if(f>a){row.w++;row.pts+=3}else if(f===a){row.d++;row.pts++}else row.l++
+  }
+ }
+ return [...rows.values()].sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf||a.club-b.club)
+}
+function simulateOtherLeagues(c:Career){
+ for(const league of Object.values(c.otherLeagues??{})){
+  if(!league||league.clubs.length<2)continue
+  if(c.round===6&&league.clubs.length>=4){
+   const [a,b,d,e,f,h]=otherLeagueTable(league).map(row=>row.club)
+   league.schedule.push([{a,b:e,requiresWinner:true},{a:b,b:d,requiresWinner:true},...(h===undefined?[]:[{a:f,b:h,requiresWinner:true}])])
+  }
+  if(c.round===7&&league.schedule[6]){
+   const [topA,topB,low]=league.schedule[6].map(outcome)
+   league.schedule.push([{a:topA[0],b:topB[0],requiresWinner:true},{a:topA[1],b:topB[1],requiresWinner:true},...(low?[{a:low[0],b:low[1],requiresWinner:true}]:[])])
+  }
+  for(const game of league.schedule[c.round]??[]){
+   const gap=careerClubStars[game.a]-careerClubStars[game.b]
+   game.score=[simulatedGoals(c,gap),simulatedGoals(c,-gap)]
+   if(game.requiresWinner&&game.score[0]===game.score[1])game.pens=roll(c)<.5?[5,4]:[4,5]
+  }
+ }
 }
 // Sample once per fixture without consuming the attendance or result random stream.
 export function matchConditions(seed:number):Conditions{
@@ -58,7 +118,9 @@ function makeWeek(c:Career,roster:string[],women:Set<string>):Week {
 }
 export function createCareer(player:string,division:Tier,seed:number,roster:string[],women:Set<string>,clubs:number,chaos:boolean,simulate:boolean):Career{
  const c:Career={version:1,id:crypto.randomUUID(),revision:0,player,division,seed,season:1,round:0,day:0,schedule:[],week:null!,reports:[],reaction:'',history:[],bonds:{},chat:[],speed:10,stats:{},xp:0,chaos,simulate}
- c.schedule=fixtures(c,clubs);c.week=makeWeek(c,roster,women);return c
+ c.leagueFormat=6;c.clubDivisions=seedCareerDivisions(division,seed) as Record<string,Tier>
+ c.leagueClubs=careerLeagueIndices(division,c.clubDivisions)
+ c.schedule=fixtures(c,c.leagueClubs?.length??clubs);c.otherLeagues=makeOtherLeagues(c);c.week=makeWeek(c,roster,women);return c
 }
 export function opponent(c:Career){const g=c.schedule[c.round].find(g=>g.a===0||g.b===0)!;return g.a||g.b}
 export function table(c:Career,through=c.reports.length){
@@ -152,15 +214,17 @@ export function finishRound(c:Career,report:Report,ratings:number[]){
   if(ours){report.kicks=orient(g.kicks);report.pens=shootout(report.kicks).score}
  }
  if(c.round===5){
-  const [a,b,d,e,f,h,i,j]=table(c,6).map(row=>row.club)
-  c.schedule.push([{a,b:e},{a:b,b:d},{a:f,b:j},{a:h,b:i}].map(g=>({...g,requiresWinner:true})))
+  const order=table(c,6).map(row=>row.club)
+  if(order.length===6){const [a,b,d,e,f,h]=order;c.schedule.push([{a,b:e},{a:b,b:d},{a:f,b:h}].map(g=>({...g,requiresWinner:true})))}
+  else{const [a,b,d,e,f,h,i,j]=order;c.schedule.push([{a,b:e},{a:b,b:d},{a:f,b:j},{a:h,b:i}].map(g=>({...g,requiresWinner:true})))}
  }
  if(c.round===6){
   const pair=(a:number,b:number)=>({a,b,requiresWinner:true})
   const [topA,topB,lowA,lowB]=c.schedule[6].map(outcome)
-  c.schedule.push([pair(topA[0],topB[0]),pair(topA[1],topB[1]),pair(lowA[0],lowB[0]),pair(lowA[1],lowB[1])])
+  c.schedule.push(lowB?[pair(topA[0],topB[0]),pair(topA[1],topB[1]),pair(lowA[0],lowB[0]),pair(lowA[1],lowB[1])]:[pair(topA[0],topB[0]),pair(topA[1],topB[1]),pair(lowA[0],lowA[1])])
  }
  c.reports.push(report)
+ simulateOtherLeagues(c)
  for(const name of new Set(report.played)){const stats=c.stats[name]??={apps:0,goals:0};stats.apps++;stats.goals+=report.goals.filter(g=>g.club===0&&g.player===name).length}
  for(let i=0;i<c.week.sheet.starters.length;i++){
   for(const mate of c.week.sheet.starters.slice(i+1)){
@@ -180,10 +244,39 @@ export function nextWeek(c:Career,roster:string[],women:Set<string>,promote=fals
  c.chat.push({name:'Full time',text:c.reaction,date:calendarDate(c,5)})
  c.chat=c.chat.slice(-80)
  if(c.reports.length===c.schedule.length){
-  const standings=table(c),place=c.schedule[7].flatMap(outcome).indexOf(0)+1
-  c.history.push({season:c.season,division:c.division,place,points:standings.find(r=>r.club===0)!.pts,reports:c.reports,schedule:c.schedule})
-  if(promote&&place===1)c.division=tiers[Math.min(3,tiers.indexOf(c.division)+1)]
-  c.season++;c.schedule=fixtures(c,standings.length);c.reports=[];c.round=0
+  const standings=table(c),finalOrder=c.schedule[7].flatMap(outcome),place=finalOrder.indexOf(0)+1
+  const canPromote=c.division!==tiers.at(-1)
+  const canRelegate=c.division!==tiers[0]
+  const promotedSlot=canPromote?(finalOrder[0]===0&&!promote?finalOrder[1]:finalOrder[0]):undefined
+  const relegatedSlot=canRelegate?finalOrder.at(-1):undefined
+  c.history.push({season:c.season,division:c.division,place,points:standings.find(r=>r.club===0)!.pts,reports:c.reports,schedule:c.schedule,leagueClubs:c.leagueClubs?.slice(),promotedClub:promotedSlot,relegatedClub:relegatedSlot})
+  if(c.leagueFormat!==6){
+   const previous=c.clubDivisions??{}
+   c.clubDivisions={...startingClubDivisions} as Record<string,Tier>
+   for(const [name,tier] of Object.entries(previous))if(tier!=='d5'&&!(name==='Fleet Feet FC'&&tier==='d6'))c.clubDivisions[name]=tier
+   c.leagueFormat=6
+  }
+  c.clubDivisions??={...startingClubDivisions} as Record<string,Tier>
+  const entrants=c.leagueClubs??careerClubNames.slice(0,8).map((_,index)=>index)
+  const moves=new Map<number,number>()
+  if(promotedSlot!==undefined&&promotedSlot>0)moves.set(entrants[promotedSlot],1)
+  if(relegatedSlot!==undefined&&relegatedSlot>0)moves.set(entrants[relegatedSlot],-1)
+  for(const [tier,league] of Object.entries(c.otherLeagues??{}) as [Tier,OtherLeague][])if(league.clubs.length>=2){
+   const final=league.schedule[7]?.[0]
+   const winner=final?outcome(final)[0]:otherLeagueTable(league)[0]?.club
+   const bottom=league.schedule[7]?.[2]?outcome(league.schedule[7][2])[1]:league.clubs.length===4&&league.schedule[7]?.[1]?outcome(league.schedule[7][1])[1]:otherLeagueTable(league).at(-1)?.club
+   if(winner!==undefined&&tier!==tiers.at(-1))moves.set(winner,1)
+   if(bottom!==undefined&&tier!==tiers[0])moves.set(bottom,-1)
+  }
+  for(let index=1;index<careerClubNames.length;index++){
+   const name=careerClubNames[index],slot=entrants.indexOf(index)
+   const step=moves.get(index)??0
+   c.clubDivisions[name]=moveDivision(slot>=0&&step?c.division:c.clubDivisions[name]??'d5',step)
+  }
+  if(promotedSlot===0)c.division=moveDivision(c.division,1)
+  else if(relegatedSlot===0)c.division=moveDivision(c.division,-1)
+  c.leagueClubs=careerLeagueIndices(c.division,c.clubDivisions)
+  c.season++;c.schedule=fixtures(c,6);c.otherLeagues=makeOtherLeagues(c);c.reports=[];c.round=0
  }else c.round++
  c.day=c.round===0?-8:-1;c.week=makeWeek(c,roster,women)
 }
@@ -194,8 +287,8 @@ export function outcome(g:Game):number[]{
 }
 export function stage(round:number,index:number){
  if(round<6)return 'League · Week '+(round+1)
- if(round===6)return index<2?'Championship semifinal':'Best of the Rest semifinal'
- return ['Championship final','Third-place match','Best of the Rest final','Seventh-place match'][index]
+ if(round===6)return index<2?'Championship semifinal':index===2?'Consolation match':'Best of the Rest semifinal'
+ return ['Championship final','Third-place match','Fifth-place match','Seventh-place match'][index]
 }
 export function seasonName(season:number){
  return ['Spring','Summer','Fall','Winter'][(season-1)%4]+' '+(2027+Math.floor((season-1)/4))

@@ -12,6 +12,10 @@ const inks:Record<string,[string,string,string]>={
  'Peachy Puffs':['#87bb70','#102518','#ffccba'],
  'Shooting Stars FC':['#fa328b','#200a19','#ffacd6'],
  'Onsider Trading FC':['#0b7942','#fff4ca','#e2b52b'],
+ 'Atlético Espresso':['#7b1f2b','#fff1d5','#d6aa59'],
+ 'Grass Assassins':['#31e728','#fff8ef','#f34391'],
+ 'Net Six & Chill':['#ed1b32','#fff7e8','#b65dd4'],
+ 'Crossbar Cowboys':['#005962','#fff1d3','#d49b4a'],
 }
 
 export async function homeBoard(loader:T.TextureLoader,club:Club){
@@ -42,6 +46,7 @@ export async function homeBoard(loader:T.TextureLoader,club:Club){
   left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y)
  }
  const w=right-left+1,h=bottom-top+1,width=98*w/h
+ ctx.imageSmoothingEnabled=false
  ctx.drawImage(crop,left,top,w,h,20,15,width,98)
  const label=club.name.toUpperCase()
  ctx.font='95px Upheaval';ctx.letterSpacing='3.51px'

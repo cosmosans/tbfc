@@ -6,7 +6,7 @@
 .ts-match article[data-active=true]{outline:2px solid #ffb477;outline-offset:3px}
 .ts-side{color:var(--club);letter-spacing:.12em;font:700 14px var(--ui-font);text-transform:uppercase}
 .ts-crest{display:grid;grid-template-rows:auto minmax(0,1fr) auto;justify-items:center;align-items:center;gap:0;margin:4px auto}
-.ts-crest img{width:100%;height:clamp(85px,28vh,240px);object-fit:contain;filter:drop-shadow(0 5px 5px #0009)}
+.ts-crest img{width:100%;height:clamp(85px,28vh,240px);object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 5px 5px #0009)}
 .ts-crest button{background:transparent;border:0;color:#fff1df;font:32px var(--ui-font);padding:0;width:clamp(32px,4vw,48px);min-height:32px;line-height:1}
 .ts-crest button:focus{outline:none}.ts-next:focus-visible{outline:2px solid #ffb477;outline-offset:-2px}
 .ts-match h2{font-size:clamp(18px,3.2vw,38px);line-height:1;margin:12px 2px 6px;text-wrap:balance}

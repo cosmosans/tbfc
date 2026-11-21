@@ -1,6 +1,6 @@
-import { divisions, preferredDivision, profiles, type Division } from './difficulty'
+import { selectableDivisions, preferredDivision, profiles, type Division } from './difficulty'
 export const settingsOptions={
- difficulty:divisions,
+ difficulty:selectableDivisions,
  speed:[5,10,20],
  time:['Day','Evening','Night'],
  weather:['Rain','Clouds','Sun','Snow']
@@ -11,7 +11,7 @@ export const defaultSettings=():MatchSettings=>({difficulty:preferredDivision(),
 export function settingsFields(settings:MatchSettings){
  const labels={speed:'Match clock',time:'Time of day',weather:'Weather',difficulty:'Division difficulty'}
  return (Object.keys(labels) as (keyof MatchSettings)[]).map(key=> key==='difficulty' ?
-  `<fieldset class="lu-division"><legend>Division difficulty</legend><div>${divisions.map(v=>`<button data-setting="difficulty" value="${v}" aria-pressed="${settings.difficulty===v}">${v==='beginners'?'Beginners':v.toUpperCase()}</button>`).join('')}</div><p class="lu-division-detail">${profiles[settings.difficulty].label}</p></fieldset>` :
+  `<fieldset class="lu-division"><legend>Division difficulty</legend><div>${selectableDivisions.map(v=>`<button data-setting="difficulty" value="${v}" aria-pressed="${settings.difficulty===v}">${v==='beginners'?'Beginners':v.toUpperCase()}</button>`).join('')}</div><p class="lu-division-detail">${profiles[settings.difficulty].label}</p></fieldset>` :
   `<fieldset><legend>${labels[key]}</legend><div>${settingsOptions[key].map(v=>
    `<button data-setting="${key}" value="${v}" aria-pressed="${settings[key]===v}">${v}${key==='speed'?'×':''}</button>`).join('')}</div></fieldset>`
  ).join('')

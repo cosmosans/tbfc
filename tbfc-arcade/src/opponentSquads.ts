@@ -17,10 +17,16 @@ import puffsCrest from './art/ground/peachy-puffs.png?url'
 import starsCrest from './art/ground/shooting-stars.png?url'
 import orangeCrest from './art/ground/orange-slices-crest.png?url'
 import onsiderCrest from './art/ground/onsider-trading-fc.png?url'
+import barelyCrest from './art/ground/barely-united.png?url'
+import espressoCrest from './art/ground/atletico-espresso.png?url'
+import grassCrest from './art/ground/grass-assassins.png?url'
+import netCrest from './art/ground/net-six-and-chill.png?url'
+import crossbarCrest from './art/ground/crossbar-cowboys.png?url'
+import espressoKit from './art/kits/atletico-espresso.webp?url'
 
 type Opponent = {
   name: string
-  stars: 1 | 2 | 2.5 | 3 | 3.5 | 4 | 5
+  stars: 1 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5
   role: string
   kit: string
   kitArt: string
@@ -71,11 +77,41 @@ export const alternateOpponent: Opponent = {
   keeper:'Drew', outfield:['Finn','Zane','Blake','Omar','Inez','Rory'], bench:['Asha','Hugo','Nell','Eli']
 }
 
-// Extra Kick Off club. Career seasons currently use a fixed eight-club bracket.
+// Career divisions also draw from this club as their rosters fill out.
 export const onsiderTrading: Opponent = {
   name:'Onsider Trading FC', stars:3.5, role:'The higher division challengers', kit:'Forest green with gold trim', crest:onsiderCrest, kitArt:onsiderKit,
   record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
   keeper:'Ledger', outfield:['Brooks','Sterling','Margo','Graham','Penny','Miles'], bench:['Ellis','Sloane','Reid','Harper']
+}
+
+export const barelyUnited: Opponent = {
+  name:'Barely United', stars:4.5, role:'The promotion contender', kit:'Black with white trim', crest:barelyCrest, kitArt:interKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Vaughn', outfield:['Asher','Zuri','Maren','Beck','Tobin','Pax'], bench:['Wren','Steph','Hale','Micah']
+}
+
+export const atleticoEspresso: Opponent = {
+  name:'Atlético Espresso', stars:4.5, role:'The D5 title contender', kit:'Espresso burgundy with cream and gold trim', crest:espressoCrest, kitArt:espressoKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Matteo', outfield:['Marco','Giovanni','Lucía','Dante','Carmen','Enzo'], bench:['Sofía','Elio','Inés','Pietro']
+}
+
+export const grassAssassins: Opponent = {
+  name:'Grass Assassins', stars:4, role:'The D6 ambush', kit:'Black with neon green and hot pink trim', crest:grassCrest, kitArt:interKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Moss', outfield:['Kade','Briar','Thorne','Fern','Rook','Vex'], bench:['Ivy','Knox','Sage','Jett']
+}
+
+export const netSixAndChill: Opponent = {
+  name:'Net Six & Chill', stars:3.5, role:'The laid-back D6 contender', kit:'Black with red and purple trim', crest:netCrest, kitArt:interKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Baxter', outfield:['Gabe','Talia','Orion','Noelle','Beckett','Trey'], bench:['Zelda','Calvin','Mabel','Wesley']
+}
+
+export const crossbarCowboys: Opponent = {
+  name:'Crossbar Cowboys', stars:4.5, role:'The D5 frontier contender', kit:'Deep teal with cream and gold trim', crest:crossbarCrest, kitArt:interKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Colt', outfield:['Boone','Sadie','Wade','Mae','Dusty','Hank'], bench:['Jolene','Levi','Cassidy','Travis']
 }
 
 export const burners = {
@@ -83,6 +119,9 @@ export const burners = {
   outfield:['Meghan','Pam','Jan','Mandy','Jeremy','Chris'], bench:['Stubbs','José','Steven','Daniel']
 }
 export const clubs = [burners,...opponentLadder]
+// A season snapshots its entrants; persistent divisions determine the next season.
+export const careerPool = [...clubs,barelyUnited,alternateOpponent,onsiderTrading,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys]
+export function careerClubs(c:{leagueClubs?:number[]}){return c.leagueClubs?.map(index=>careerPool[index]??clubs[index])??clubs}
 export type Club = (typeof clubs)[number]
 export type Fixture = {home:Club, away:Club, homeOnRight?:boolean}
 
@@ -96,4 +135,4 @@ const accents = [
   "#9dce90",
   "#f1529d",
 ];
-export function clubAccent(club:Club){return club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}
+export function clubAccent(club:Club){return club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}
