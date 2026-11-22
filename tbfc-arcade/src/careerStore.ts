@@ -1,5 +1,5 @@
 import {varyMessages} from './careerPhrases.ts'
-import {scheduleKickoffs,matchConditions,type Career} from './careerSeason.ts'
+import {scheduleKickoffs,matchConditions,restoreOtherLeagues,type Career} from './careerSeason.ts'
 import {startingClubDivisions} from './careerLeague.ts'
 const prefix='tbfc.arcade.career.v1.'
 export function loadSlot(slot:number):Career|null{
@@ -20,6 +20,7 @@ export function loadSlot(slot:number):Career|null{
  }
  varyMessages(value.week.events,value.seed,true)
  scheduleKickoffs(value)
+ restoreOtherLeagues(value)
  return value
 }
 export function saveSlot(slot:number,c:Career){

@@ -22,7 +22,7 @@ export function pairRating(club:string,a:string,b:string,bonds:Record<string,num
  seed=Math.imul(seed^(seed>>>16),0x85ebca6b)
  const roll=((seed^(seed>>>13))>>>0)%101
  // Keep the new D6 side near the cohesion of its four-star peers, with stable pair variation.
- return club==='Crossbar Cowboys'?Math.max(0,Math.min(100,72+Math.round((roll-50)*.35))):club==='Net Six & Chill'?Math.max(0,Math.min(100,57+Math.round((roll-50)*.55))):club==='Grass Assassins'?Math.max(0,Math.min(100,60+Math.round((roll-50)*.6))):roll
+ return club==='Goal Diggers'?Math.max(0,Math.min(100,56+Math.round((roll-50)*.5))):club==='Crossbar Cowboys'?Math.max(0,Math.min(100,72+Math.round((roll-50)*.35))):club==='Net Six & Chill'?Math.max(0,Math.min(100,57+Math.round((roll-50)*.55))):club==='Grass Assassins'?Math.max(0,Math.min(100,60+Math.round((roll-50)*.6))):roll
 }
 
 export function lineupChemistry(club:string,shape:Shape,slots:(string|null)[],bonds:Record<string,number>={}){

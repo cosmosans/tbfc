@@ -110,6 +110,7 @@ import {rivalSprites} from './rivalSprites'
 import {grassRatings} from './grassRatings'
 import {netRatings} from './netRatings'
 import {crossbarRatings} from './crossbarRatings'
+import {goalDiggerRatings} from './goalDiggerRatings'
 import {clubAccent,burners,clubs,type Club,type Fixture} from './opponentSquads'
 import {selectSides,playerColor,type Seat} from './sideSelect'
 import {selectTeams} from './teamSelect'
@@ -166,6 +167,11 @@ import refereeRun from './art/ref-run.png?url'
 import { advanceOutBall } from './perimeter'
 import pamSideKicks from './art/pam-kick.png?url'
 import pamHeaderUrl from './art/pam-header.png?url'
+import pamTackleUrl from './art/pam-tackle.png?url'
+import pamReactionUrl from './art/pam-reaction.png?url'
+import pamReactionFlashUrl from './art/pam-reaction-flash.png?url'
+import pamFoulUrl from './art/pam-foul.png?url'
+import pamSupportUrl from './art/pam-support.png?url'
 import meghanKick from './art/meghan-new-kick.png?url'
 import meghanHeader from './art/meghan-new-header.png?url'
 import meghanTackle from './art/meghan-new-tackle.png?url'
@@ -209,7 +215,7 @@ void hudFont.load()
 const el=(id:string)=>document.getElementById(id)!
 async function start(){
  const kits:Record<string,[string,string,string]>={Meghan:[meghan_idle,meghan_run,meghanKick],Pam:[pam_idle,pam_run,pamSideKicks],Jan:[janIdle,janRun,janKick],Mandy:[mandyIdle,mandyRun,mandyKick],Jeremy:[jeremyIdle,jeremyRun,jeremyKick],Chris:[chrisNewIdle,chrisNewRun,chrisNewKick],Sean:[seanIdle,seanRun,seanKick],Stubbs:[stubbsIdle,stubbsRun,stubbsKick],Spencer:[spencerIdle,spencerRun,spencerKick],José:[joseIdle,joseRun,joseKick],Steven:[stevenIdle,stevenRun,stevenKick],Daniel:[danielIdle,danielRun,danielKick],Nelson:[nelsonIdle,nelsonRun,nelsonKick],Nadia:[nadiaIdle,nadiaRun,nadiaKick]}
- const fallSheets:Record<string,string|undefined>={Nadia:nadiaFall,Stubbs:stubbsFall,Spencer:spencerFoul,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall,Jeremy:jeremyFoul}
+ const fallSheets:Record<string,string|undefined>={Pam:pamFoulUrl,Nadia:nadiaFall,Stubbs:stubbsFall,Spencer:spencerFoul,Meghan:meghanFall,Chris:chrisNewFoul,Jan:janFoul,Mandy:mandyFall,Sean:seanFall,Daniel:danielFall,Steven:stevenFall,José:joseFoulReaction,Nelson:nelsonFall,Jeremy:jeremyFoul}
  const settings=defaultSettings()
  const difficulty=()=>profiles[settings.difficulty]
  const burnerPortraits=Object.fromEntries(Object.entries(kits).map(([name,kit])=>[name,kit[0]]))
@@ -510,7 +516,7 @@ async function start(){
  const labels:Record<string,string>={Meghan:'#6 Meghan',Pam:'#8 Pam',Stubbs:'#12 STUBBS'}
  const makeBurner=(name:string)=>{
   const fall=fallSheets[name]
-  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:name==='Mandy'?mandyHeader:name==='Spencer'?spencerHeader:undefined,name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:name==='Mandy'?mandyTackle:name==='Spencer'?spencerTackle:undefined,name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:name==='Mandy'?mandyReaction:name==='Spencer'?spencerReaction:undefined,name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
+  return createPlayer(labels[name]??name,name,fall?[...kits[name],fall]:kits[name],8,name==='Sean'?.14:.2,name==='Meghan'?3:1,name==='Pam'?pamHeaderUrl:name==='Stubbs'?stubbsHeader:name==='Nelson'?nelsonJump:name==='Chris'?chrisNewHeader:name==='Nadia'?nadiaHeader:name==='Meghan'?meghanHeader:name==='Jan'?janJump:name==='Daniel'?danielJump:name==='Steven'?stevenJump:name==='Jeremy'?jeremyHeader:name==='Mandy'?mandyHeader:name==='Spencer'?spencerHeader:undefined,name==='Pam'?pamTackleUrl:name==='Stubbs'?stubbsTackle:name==='José'?joseTackleUrl:name==='Nelson'?nelsonTackle:name==='Chris'?chrisNewTackle:name==='Nadia'?nadiaTackle:name==='Meghan'?meghanTackle:name==='Jan'?janTackle:name==='Daniel'?danielTackle:name==='Steven'?stevenTackle:name==='Jeremy'?jeremyTackle:name==='Mandy'?mandyTackle:name==='Spencer'?spencerTackle:undefined,name==='Pam'?pamReactionUrl:name==='Stubbs'?stubbsReaction:name==='José'?joseReactionUrl:name==='Nelson'?nelsonReaction:name==='Chris'?chrisNewReaction:name==='Nadia'?nadiaReaction:name==='Meghan'?meghanReaction:name==='Jan'?janReaction:name==='Daniel'?danielReaction:name==='Steven'?stevenReaction:name==='Jeremy'?jeremyReaction:name==='Mandy'?mandyReaction:name==='Spencer'?spencerReaction:undefined,name==='Pam'?pamReactionFlashUrl:name==='Stubbs'?stubbsReactionFlash:name==='José'?joseReactionFlashUrl:undefined)
  }
  const trainingSheets=[trainingIdle,trainingRun,trainingKick]
  const guestSheets=[blueIdle,blueRun,blueKick,starsFall]
@@ -522,11 +528,11 @@ async function start(){
   const sheets=art?[art.idle,art.run??fallback[1],art.kick??fallback[2],...(fall?[fall]:[])]:fallback
   const actor=await createPlayer(name,name,sheets,8,.2,1,art?.jump,art?.tackle,art?.reaction,art?.reactionFlash)
   // Match the visible pixel height of 48px-era players across roster packages.
-  actor.sprite.userData.matchScale=club.name==='Barely United'&&!rivalWomen[club.name]?.has(name)?1.11:club.name==='Net Six & Chill'&&!rivalWomen[club.name]?.has(name)?.96:1
+  actor.sprite.userData.matchScale=club.name==='Barely United'&&!rivalWomen[club.name]?.has(name)?1.11:1
   if(club.name==='Fleet Feet FC'&&!rivalWomen[club.name].has(name))actor.maps[0].userData.celebrationScale=.84
   if(club.name==='Barely United')actor.maps[0].userData.celebrationScale=1
   if(club.name==='Onsider Trading FC'&&rivalWomen[club.name].has(name))actor.maps[0].userData.celebrationScale=1
-  if(club.name==='Atlético Espresso'||club.name==='Net Six & Chill'||club.name==='Grass Assassins'||club.name==='Crossbar Cowboys')actor.maps[0].userData.celebrationScale=1
+  if(club.name==='Net Six & Chill'||club.name==='Atlético Espresso'||club.name==='Grass Assassins'||club.name==='Crossbar Cowboys'||club.name==='Goal Diggers'||club.name==='Cleatwood Mac'||club.name==='Sweeper Creepers FC')actor.maps[0].userData.celebrationScale=1
   if(art?.stand&&art.support){
    const [stand,support]=await Promise.all([art.stand,art.support].map(celebrationSheet))
    const run=art.goalRun?await celebrationSheet(art.goalRun):actor.maps[1].clone()
@@ -789,6 +795,7 @@ async function start(){
  const [pamGoal,mandyGoal,spiderIdle,spiderRun,meghanGoal,nelsonGoal,nelsonGoalRun,nelsonGoalSupport,janGoal,janGoalRun,meghanSkate,stubbsSlide,stevenGoalRun,nadiaGoalGroup,nadiaGoalRun,danielGoalGroup,danielGoalRun,jeremyGoalGroup,stevenGoalGroup,pamSkateGoal,joseOverhead]=await Promise.all([
   pamGoalUrl,mandyGoalUrl,spiderIdleUrl,spiderRunUrl,meghanGoalUrl,nelsonGoalUrl,nelsonGoalRunUrl,nelsonGoalSupportUrl,janGoalUrl,janGoalRunUrl,meghanSkateUrl,stubbsSlideUrl,stevenGoalRunUrl,nadiaNewGoalStandUrl,nadiaNewGoalRunUrl,danielGoalGroupUrl,danielGoalRunUrl,jeremyGoalGroupUrl,stevenGoalGroupUrl,pamSkateGoalUrl,joseOverheadUrl
  ].map(celebrationSheet))
+ const pamSupport=await celebrationSheet(pamSupportUrl)
  const [stubbsGoalStand,stubbsGoalSupport]=await Promise.all([stubbsGoalStandUrl,stubbsGoalSupportUrl].map(celebrationSheet))
  const [chrisGoalRun,chrisGoalStand]=await Promise.all([chrisNewGoalRun,chrisNewGoalStand].map(celebrationSheet))
  for(const map of [chrisGoalRun,chrisGoalStand]){map.repeat.y=1/8;map.userData.directionalCelebration=true}
@@ -817,7 +824,7 @@ async function start(){
  mandyGoal.repeat.set(68/mandyGoal.image.width,1/8)
  mandyGoal.userData.cell=68;mandyGoal.userData.directionalCelebration=true
  const celebrations:Partial<Record<string,T.Texture>>={Pam:pamGoal,Mandy:mandyGoal,José:spiderGoalStand,Meghan:meghanGoal,Nelson:nelsonGoal,Jan:janGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalStand}
- const groupCelebrations:Partial<Record<string,T.Texture>>={Mandy:mandyGoal,Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
+ const groupCelebrations:Partial<Record<string,T.Texture>>={Pam:pamSupport,Mandy:mandyGoal,Jan:janGoal,Nelson:nelsonGoalSupport,Meghan:meghanGoal,Nadia:nadiaGoalGroup,Daniel:danielGoalGroup,Chris:chrisGoalStand,Jeremy:jeremyGoalGroup,Steven:stevenGoalGroup,Stubbs:stubbsGoalSupport}
  const onsiderMaleGoals=new WeakMap<T.Texture,{run:T.Texture,stand:T.Texture,support:T.Texture}>()
  const supportMaps=new WeakMap<typeof sean,{source:T.Texture,map:T.Texture}>()
  function supportMap(actor:typeof sean){
@@ -2451,7 +2458,7 @@ async function start(){
    names:[homeLabel,matchOpponent.name],test:penaltyLab,finish,
    level:['beginners','d6','d5'].indexOf(settings.difficulty),
    rating:(actor,keeping)=>{
-    const base=crossbarRatings[actor.displayName]?.[keeping?5:2]??netRatings[actor.displayName]?.[keeping?5:2]??grassRatings[actor.displayName]?.[keeping?5:2]??(matchOpponent.name==='Barely United'?barelyRatings[actor.displayName]?.[keeping?5:2]:undefined)??playerRatings[bios[actor.displayName]?.[0]]?.[keeping?5:2]??(65+matchOpponent.stars*4)
+    const base=goalDiggerRatings[actor.displayName]?.[keeping?5:2]??crossbarRatings[actor.displayName]?.[keeping?5:2]??netRatings[actor.displayName]?.[keeping?5:2]??grassRatings[actor.displayName]?.[keeping?5:2]??(matchOpponent.name==='Barely United'?barelyRatings[actor.displayName]?.[keeping?5:2]:undefined)??playerRatings[bios[actor.displayName]?.[0]]?.[keeping?5:2]??(65+matchOpponent.stars*4)
     return base*trainingFactor(actor.displayName,keeping?'Keeping':'Shooting')
    },
    fire:(seconds,side)=>eastCannons(seconds,goalColors[side]),
@@ -3914,10 +3921,6 @@ async function start(){
      actor.sprite.center.set(.5,spriteGroundPadding(actor.tackleMap.image,9,8,spriteFace,frame)/cell)
     }
     if(actor.displayName==='José'&&!actor.tackling){actor.sprite.scale.setScalar(cinematicPlayerSize);actor.sprite.center.set(.5,2/48)}
-    if(actor.displayName==='Pam'){
-     actor.sprite.scale.setScalar(cinematicPlayerSize*(mode===2?68/48:1))
-     actor.sprite.center.set(.5,mode===2?spriteGroundPadding(actor.maps[2].image,9,8,spriteFace,col)/68:2/48)
-    }
     if(aerial&&actor===players[aerial.index]&&actor.displayName==='Pam'){
      const frame=Math.min(8,Math.floor(aerial.age/headerAnimationSeconds*9))
      pamHeader.repeat.set(1/9,1/8)

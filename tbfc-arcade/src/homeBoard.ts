@@ -16,6 +16,9 @@ const inks:Record<string,[string,string,string]>={
  'Grass Assassins':['#31e728','#fff8ef','#f34391'],
  'Net Six & Chill':['#ed1b32','#fff7e8','#b65dd4'],
  'Crossbar Cowboys':['#005962','#fff1d3','#d49b4a'],
+ 'Sweeper Creepers FC':['#A939EC','#9FF6D7','#190C24'],
+ 'Cleatwood Mac':['#902648','#ffe5ad','#2a1628'],
+ 'Goal Diggers':['#F4A208','#fff1d0','#754016'],
 }
 
 export async function homeBoard(loader:T.TextureLoader,club:Club){

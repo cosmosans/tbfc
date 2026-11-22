@@ -45,9 +45,9 @@
 
 #career .cr-headshot{object-fit:contain;object-position:center;image-rendering:pixelated}
 
-#career tr[data-club] td:first-child{font-size:2em;font-weight:700;line-height:1}
-#career tr[data-club] td.team{font-weight:700}
-@media(max-width:640px){#career tr[data-club] td:first-child{font-size:24px}}
+#career tr.cr-standings-row td:first-child{font-size:2em;font-weight:700;line-height:1}
+#career tr.cr-standings-row td.team{font-weight:700}
+@media(max-width:640px){#career tr.cr-standings-row td:first-child{font-size:24px}}
 
 #career .cr-hero{width:clamp(120px,18vw,192px);aspect-ratio:1;margin:8px auto;background-size:800% 100%;image-rendering:pixelated}
 #career .cr-setup h3{font-size:30px}

@@ -13,4 +13,7 @@ export const rivalWomen:Record<string,ReadonlySet<string>>={
  'Grass Assassins':new Set(['Briar', 'Fern', 'Ivy', 'Sage']),
  'Net Six & Chill':new Set(['Talia', 'Noelle', 'Zelda', 'Mabel']),
  'Crossbar Cowboys':new Set(['Sadie', 'Mae', 'Jolene', 'Cassidy']),
+ 'Sweeper Creepers FC':new Set(['Lenore','Sybil','Elvira','Agatha']),
+ 'Cleatwood Mac':new Set(['Rhiannon','Stevie','Christine','Goldie']),
+ 'Goal Diggers':new Set(['Gemma', 'Piper', 'Tori', 'Willa']),
 }

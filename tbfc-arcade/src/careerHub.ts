@@ -14,7 +14,12 @@ import stubbsHead from "./art/headshots/stubbs.png?url";
 import spencerHead from "./art/headshots/spencer.png?url";
 import { hint, menuBumper } from "./screenUI";
 import { scoreRow } from "./leagueBoard";
-import { burners, careerClubs, careerPool, type Fixture } from "./opponentSquads";
+import {
+  burners,
+  careerClubs,
+  careerPool,
+  type Fixture,
+} from "./opponentSquads";
 import {
   bios,
   burnerEligibility,
@@ -75,7 +80,8 @@ export type Ticket = {
   lineup: Selection;
   fixture: Fixture;
 };
-export const careerRatings = (c:Career) => careerClubs(c).map(team=>team.stars);
+export const careerRatings = (c: Career) =>
+  careerClubs(c).map((team) => team.stars);
 const division = (s: string) =>
   s === "beginners" ? "Beginners" : s.toUpperCase();
 const btn = (action: string, label: string, primary = false) =>
@@ -133,7 +139,7 @@ function standings(c: Career) {
     table(c)
       .map(
         (r, i) =>
-          `<tr data-club="${r.club}" class="${r.club === 0 ? "tb" : ""}"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerClubs(c)[r.club].crest}" alt="">${careerClubs(c)[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`,
+          `<tr data-club="${r.club}" class="cr-standings-row ${r.club === 0 ? "tb" : ""}"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerClubs(c)[r.club].crest}" alt="">${careerClubs(c)[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`,
       )
       .join("") +
     "</tbody></table>"
@@ -224,7 +230,7 @@ export function careerHub(
   });
   let chosen: Attribute | undefined;
   let setup = defaults();
-  const tabs = ["Central", "League tables", "Calendar", "Squad", "My career"];
+  const tabs = ["Central", "League table", "Calendar", "Squad", "My career"];
   return new Promise((resolve) => {
     function leave(ticket: Ticket | null) {
       clearTimeout(timer);
@@ -250,10 +256,10 @@ export function careerHub(
       const state = c;
       let content = "";
       if (screen === "slots") {
-        content =
-          panel(
-            "Career saves",
-            '<div class="cr-saves">' + [0, 1, 2]
+        content = panel(
+          "Career saves",
+          '<div class="cr-saves">' +
+            [0, 1, 2]
               .map((i) => {
                 try {
                   const s = loadSlot(i);
@@ -267,8 +273,9 @@ export function careerHub(
                   return "<p>Slot " + (i + 1) + " · Unable to read save</p>";
                 }
               })
-              .join("") + "</div>",
-          );
+              .join("") +
+            "</div>",
+        );
       } else if (screen === "setup") {
         const choices = (
           key: keyof typeof setup,
@@ -312,7 +319,7 @@ export function careerHub(
           gameIndex = s.schedule[s.round].findIndex((g) => !g.a || !g.b);
         const visible = s.week.events.filter((e) => e.day <= s.day);
         const report = s.reports[s.round];
-        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper('previous','Previous career section','data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${menuBumper('next','Next career section','data-action="next-tab"')}</nav>`;
+        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper("previous", "Previous career section", 'data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${menuBumper("next", "Next career section", 'data-action="next-tab"')}</nav>`;
         if (tab === "Central") {
           content += weekStrip(s);
           const title = stage(s.round, gameIndex);
@@ -398,16 +405,23 @@ export function careerHub(
                 .join("") +
               "</details>"
             : "";
-          content += `<div class="cr-grid"><div>${panel(title, `<strong class="cr-day">${calendarDate(s)}</strong> · ${s.day < -1 ? "Off-week" : done ? "Full time" : s.day === 5 ? "Matchday" : "Next kickoff " + calendarDate(s, 5)} · ${s.week.conditions.time} · ${{ Sun: "Clear", Clouds: "Cloudy", Rain: "Rain" }[s.week.conditions.weather]}${fixtureRow(s, s.round, gameIndex, false)}${summary}<div class="cr-actions">${actions}</div>`)}${s.round >= 6 ? panel("Playoff Fixtures", scores(s, s.round)) : ""}${s.round >= 5 ? panel("Championship Bracket", championshipBracket(s)) : ""}${panel(s.round >= 6 ? "Final league table" : "League table", standings(s))}${s.round < 6 && done ? panel("Around the league", scores(s, s.round)) : ""}${panel("Team Chat", messages + earlier)}</div><aside>${panel("Matchday poll", poll)}</aside></div>`;
+          content += `<div class="cr-grid"><div>${panel(title, `<strong class="cr-day">${calendarDate(s)}</strong> · ${s.day < -1 ? "Off-week" : done ? "Full time" : s.day === 5 ? "Matchday" : "Next kickoff " + calendarDate(s, 5)} · ${s.week.conditions.time} · ${{ Sun: "Clear", Clouds: "Cloudy", Rain: "Rain" }[s.week.conditions.weather]}${fixtureRow(s, s.round, gameIndex, false)}${summary}<div class="cr-actions">${actions}</div>`)}${s.round >= 6 ? panel("Playoff Fixtures", scores(s, s.round)) : ""}${s.round >= 5 ? panel("Championship Bracket", championshipBracket(s)) : ""}${panel(s.round >= 6 ? "Final league table" : "League table", standings(s))}${s.round < 6 && done ? panel("Around the league", scores(s, s.round)) : ""}
+          ${panel("Team Chat", messages + earlier)}</div><aside>${panel("Matchday poll", poll)}</aside></div>`;
           content += btn("delete", "Delete career");
-        } else if (tab === "League tables") {
-          content += panel(division(s.division) + " · Turf Burners", standings(s));
-          for (const tier of tiers) {
-            if (tier === s.division) continue;
+        } else if (tab === "League table") {
+          for (const tier of [...tiers].reverse()) {
+            if (tier === s.division) {
+              content += panel(division(tier), standings(s));
+              continue;
+            }
             const league = s.otherLeagues?.[tier];
-            if (!league) continue;
-            const rows = otherLeagueTable(league);
-            content += panel(division(tier), rows.length ? `<table><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r, i) => `<tr><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerPool[r.club].crest}" alt="">${careerPool[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`).join("")}</tbody></table>` : "Awaiting teams");
+            const rows = league ? otherLeagueTable(league) : [];
+            content += panel(
+              division(tier),
+              rows.length
+                ? `<table><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r, i) => `<tr class="cr-standings-row"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerPool[r.club].crest}" alt="">${careerPool[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`).join("")}</tbody></table>`
+                : "Awaiting teams",
+            );
           }
         } else if (tab === "Calendar") {
           content +=
@@ -460,7 +474,11 @@ export function careerHub(
           : ""
       }</div>${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
-        focus ? `[data-action="${focus}"]` : screen === "hub" ? '[aria-current="page"]' : "button,select",
+        focus
+          ? `[data-action="${focus}"]`
+          : screen === "hub"
+            ? '[aria-current="page"]'
+            : "button,select",
       );
       target?.focus({ preventScroll: true });
     }
@@ -501,8 +519,14 @@ export function careerHub(
       }
     }
     async function action(a: string) {
-      if (a === "previous-tab" || a === "next-tab") { changeTab(a === "previous-tab" ? -1 : 1); return; }
-      if (a === "menu-back") { back(); return; }
+      if (a === "previous-tab" || a === "next-tab") {
+        changeTab(a === "previous-tab" ? -1 : 1);
+        return;
+      }
+      if (a === "menu-back") {
+        back();
+        return;
+      }
       if (a === "back") {
         leave(null);
         return;
@@ -521,7 +545,9 @@ export function careerHub(
         dialog.innerHTML = `<h2>Delete career?</h2><p>${c.player} · ${seasonName(c.season)} · ${division(c.division)} · Slot ${slot + 1}</p><p>This permanently deletes this career and its season history.</p><div class="menu-legend">${btn("cancel-delete", hint("Esc", "B") + " Cancel")}${btn("confirm-delete", hint("Enter", "A") + " Delete")}</div>`;
         shell.append(dialog);
         dialog.showModal();
-        dialog.querySelector<HTMLButtonElement>('[data-action="confirm-delete"]')!.focus();
+        dialog
+          .querySelector<HTMLButtonElement>('[data-action="confirm-delete"]')!
+          .focus();
         dialog.onclose = () => {
           dialog.remove();
           shell.querySelector<HTMLElement>('[data-action="delete"]')?.focus();
@@ -741,7 +767,11 @@ export function careerHub(
       else void action(screen === "slots" ? "back" : "slots").catch(error);
     }
     function changeTab(step: number) {
-      if (screen === "hub" && !root.hidden && !shell.querySelector("dialog[open]"))
+      if (
+        screen === "hub" &&
+        !root.hidden &&
+        !shell.querySelector("dialog[open]")
+      )
         void action(
           "tab" + ((tabs.indexOf(tab) + step + tabs.length) % tabs.length),
         ).catch(error);
@@ -817,8 +847,10 @@ export function careerHub(
           repeatAt = now + (dir === d ? 150 : 380);
         }
         if (pressed[0] && !previous[0]) {
-          const confirm = shell.querySelector<HTMLButtonElement>('dialog[open] [data-action="confirm-delete"]');
-          (confirm ?? document.activeElement as HTMLElement)?.click();
+          const confirm = shell.querySelector<HTMLButtonElement>(
+            'dialog[open] [data-action="confirm-delete"]',
+          );
+          (confirm ?? (document.activeElement as HTMLElement))?.click();
         }
         if (pressed[1] && !previous[1]) back();
         if (pressed[2] && !previous[2]) changeTab(-1);

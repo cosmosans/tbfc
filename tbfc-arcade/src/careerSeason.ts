@@ -55,13 +55,25 @@ function otherLeagueSchedule(c:Career,clubs:number[]):Game[][]{
  return rounds
 }
 function makeOtherLeagues(c:Career):Partial<Record<Tier,OtherLeague>>{
- const active=new Set(c.leagueClubs??[]),other:Partial<Record<Tier,OtherLeague>>={}
+ const active=new Set(c.leagueClubs??careerClubNames.slice(0,8).map((_,index)=>index)),other:Partial<Record<Tier,OtherLeague>>={}
  for(const tier of tiers){
   if(tier===c.division)continue
   const clubs=careerClubNames.map((name,index)=>({name,index})).filter(({name,index})=>index>0&&!active.has(index)&&c.clubDivisions?.[name]===tier).map(({index})=>index)
   other[tier]={clubs,schedule:otherLeagueSchedule(c,clubs)}
  }
  return other
+}
+export function restoreOtherLeagues(c:Career){
+ if(c.otherLeagues)return
+ // Older careers had one league only. Reconstruct the others without changing
+ // the saved career's random sequence or any of its played results.
+ const simulation={...c,seed:(c.seed^0x9e3779b9)>>>0} as Career
+ simulation.otherLeagues=makeOtherLeagues(simulation)
+ for(let round=0;round<Math.min(c.reports.length,6);round++){
+  simulation.round=round
+  simulateOtherLeagues(simulation)
+ }
+ c.otherLeagues=simulation.otherLeagues
 }
 export function otherLeagueTable(league:OtherLeague):LeagueRow[]{
  const rows=new Map(league.clubs.map(club=>[club,{club,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}]))

@@ -22,6 +22,9 @@ import espressoCrest from './art/ground/atletico-espresso.png?url'
 import grassCrest from './art/ground/grass-assassins.png?url'
 import netCrest from './art/ground/net-six-and-chill.png?url'
 import crossbarCrest from './art/ground/crossbar-cowboys.png?url'
+import creepersCrest from './art/ground/sweeper-creepers.png?url'
+import cleatwoodCrest from './art/ground/cleatwood-mac.png?url'
+import diggersCrest from './art/ground/goal-diggers.png?url'
 import espressoKit from './art/kits/atletico-espresso.webp?url'
 
 type Opponent = {
@@ -114,13 +117,31 @@ export const crossbarCowboys: Opponent = {
   keeper:'Colt', outfield:['Boone','Sadie','Wade','Mae','Dusty','Hank'], bench:['Jolene','Levi','Cassidy','Travis']
 }
 
+export const goalDiggers: Opponent = {
+  name:'Goal Diggers', stars:2.5, role:'The Beginners prospectors', kit:'Amber gold with dark brown trim', crest:diggersCrest, kitArt:orangeKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Dax', outfield:['Rhett','Gemma','Milo','Piper','Otis','Beau'], bench:['Tori','Calder','Willa','Jory']
+}
+
+export const cleatwoodMac: Opponent = {
+  name:'Cleatwood Mac', stars:3, role:'The D6 headliners', kit:'Burgundy with cream and gold trim', crest:cleatwoodCrest, kitArt:espressoKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Flint', outfield:['Lindsey','Rhiannon','Mick','Stevie','Rafe','Kit'], bench:['Christine','Des','Goldie','Lyle']
+}
+
+export const sweeperCreepers: Opponent = {
+  name:'Sweeper Creepers FC', stars:5, role:'The graveyard shift', kit:'Violet with spectral mint trim', crest:creepersCrest, kitArt:wondersKit,
+  record:{wins:0, draws:0, losses:0, goalsFor:0, goalsAgainst:0},
+  keeper:'Graves', outfield:['Bram','Lenore','Salem','Sybil','Edgar','Corbin'], bench:['Elvira','Victor','Agatha','Vincent']
+}
+
 export const burners = {
   name:'Turf Burners FC', crest:burnersCrest, stars:3, keeper:'Sean',
   outfield:['Meghan','Pam','Jan','Mandy','Jeremy','Chris'], bench:['Stubbs','José','Steven','Daniel']
 }
 export const clubs = [burners,...opponentLadder]
 // A season snapshots its entrants; persistent divisions determine the next season.
-export const careerPool = [...clubs,barelyUnited,alternateOpponent,onsiderTrading,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys]
+export const careerPool = [...clubs,barelyUnited,alternateOpponent,onsiderTrading,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
 export function careerClubs(c:{leagueClubs?:number[]}){return c.leagueClubs?.map(index=>careerPool[index]??clubs[index])??clubs}
 export type Club = (typeof clubs)[number]
 export type Fixture = {home:Club, away:Club, homeOnRight?:boolean}
@@ -135,4 +156,4 @@ const accents = [
   "#9dce90",
   "#f1529d",
 ];
-export function clubAccent(club:Club){return club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}
+export function clubAccent(club:Club){return club.name===sweeperCreepers.name?'#A939EC':club.name===cleatwoodMac.name?'#902648':club.name===goalDiggers.name?'#F4A208':club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}
