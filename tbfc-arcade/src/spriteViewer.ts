@@ -7,7 +7,7 @@ const art=import.meta.glob<string>('./art/*.png',{eager:true,query:'?url',import
 const directions=['South','South East','East','North East','North','North West','West','South West']
 const rates=[0,8,12,14,16,16,12,8,8,8]
 
-const secondarySheets=import.meta.glob<string>('./art/{away-preview,sweeper-secondary,wonders-secondary,dancers-secondary,grass-secondary}/*.png',{eager:true,query:'?url',import:'default'})
+const secondarySheets=import.meta.glob<string>('./art/{away-preview,sweeper-secondary,wonders-secondary,dancers-secondary,grass-secondary,espresso-secondary,onsider-secondary,net-secondary,diggers-secondary}/*.png',{eager:true,query:'?url',import:'default'})
 
 // Visible pixel height of each front idle pose, excluding transparent sheet padding.
 const standingHeights: Record<string,number> = {"Meghan": 46, "Pam": 46, "Jan": 46, "Mandy": 46, "Jeremy": 41, "Chris": 46, "Stubbs": 42, "Spencer": 47, "José": 45, "Steven": 43, "Daniel": 44, "Nelson": 44, "Nadia": 47}
@@ -31,7 +31,7 @@ export function spriteViewer():Promise<void>{
  const speed=$<HTMLSelectElement>('.sv-speed'),align=$<HTMLInputElement>('.sv-align input')
  const teams=catalog.teams
  const kitSelect=$<HTMLSelectElement>('.sv-kit')
- const kitFolders:Record<string,string>={'Turf Burners FC':'away-preview','Sweeper Creepers FC':'sweeper-secondary','One Kick Wonders':'wonders-secondary','Goal Dancers FC':'dancers-secondary','Grass Assassins':'grass-secondary'}
+ const kitFolders:Record<string,string>={'Turf Burners FC':'away-preview','Sweeper Creepers FC':'sweeper-secondary','One Kick Wonders':'wonders-secondary','Goal Dancers FC':'dancers-secondary','Grass Assassins':'grass-secondary','Atlético Espresso':'espresso-secondary','Onsider Trading FC':'onsider-secondary','Net Six & Chill':'net-secondary','Goal Diggers':'diggers-secondary'}
  const slots=[...catalog.slots]
  const bicycle='Bicycle kick'
  let team=0,player=0,slot=0,direction=0,frame=0,playing=true,age=0,last=performance.now(),raf=0

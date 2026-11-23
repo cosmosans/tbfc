@@ -267,6 +267,26 @@ const grassSecondarySheets = import.meta.glob<string>("./art/grass-secondary/*.p
 const grassSecondaryByUrl = new Map(Object.entries(grassPrimarySheets).map(([path,url]) =>
   [url, grassSecondarySheets[path.replace("./art/", "./art/grass-secondary/")]] as const
 ));
+const espressoPrimarySheets = import.meta.glob<string>("./art/espresso-*.png", { eager:true, query:"?url", import:"default" });
+const espressoSecondarySheets = import.meta.glob<string>("./art/espresso-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const espressoSecondaryByUrl = new Map(Object.entries(espressoPrimarySheets).map(([path,url]) =>
+  [url, espressoSecondarySheets[path.replace("./art/", "./art/espresso-secondary/")]] as const
+));
+const onsiderPrimarySheets = import.meta.glob<string>("./art/onsider-*.png", { eager:true, query:"?url", import:"default" });
+const onsiderSecondarySheets = import.meta.glob<string>("./art/onsider-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const onsiderSecondaryByUrl = new Map(Object.entries(onsiderPrimarySheets).map(([path,url]) =>
+  [url, onsiderSecondarySheets[path.replace("./art/", "./art/onsider-secondary/")]] as const
+));
+const netPrimarySheets = import.meta.glob<string>("./art/net-*.png", { eager:true, query:"?url", import:"default" });
+const netSecondarySheets = import.meta.glob<string>("./art/net-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const netSecondaryByUrl = new Map(Object.entries(netPrimarySheets).map(([path,url]) =>
+  [url, netSecondarySheets[path.replace("./art/", "./art/net-secondary/")]] as const
+));
+const diggersPrimarySheets = import.meta.glob<string>("./art/diggers-*.png", { eager:true, query:"?url", import:"default" });
+const diggersSecondarySheets = import.meta.glob<string>("./art/diggers-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const diggersSecondaryByUrl = new Map(Object.entries(diggersPrimarySheets).map(([path,url]) =>
+  [url, diggersSecondarySheets[path.replace("./art/", "./art/diggers-secondary/")]] as const
+));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
@@ -339,6 +359,14 @@ async function start() {
       return dancerSecondaryByUrl.get(url) ?? url;
     if (fixture?.grassKit === "secondary" && grassSecondaryByUrl.has(url))
       return grassSecondaryByUrl.get(url) ?? url;
+    if (fixture?.espressoKit === "secondary" && espressoSecondaryByUrl.has(url))
+      return espressoSecondaryByUrl.get(url) ?? url;
+    if (fixture?.onsiderKit === "secondary" && onsiderSecondaryByUrl.has(url))
+      return onsiderSecondaryByUrl.get(url) ?? url;
+    if (fixture?.netKit === "secondary" && netSecondaryByUrl.has(url))
+      return netSecondaryByUrl.get(url) ?? url;
+    if (fixture?.diggersKit === "secondary" && diggersSecondaryByUrl.has(url))
+      return diggersSecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
     return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;

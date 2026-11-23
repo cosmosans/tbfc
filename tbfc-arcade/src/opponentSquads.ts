@@ -144,7 +144,7 @@ export const clubs = [burners,...opponentLadder]
 export const careerPool = [...clubs,barelyUnited,alternateOpponent,onsiderTrading,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
 export function careerClubs(c:{leagueClubs?:number[]}){return c.leagueClubs?.map(index=>careerPool[index]??clubs[index])??clubs}
 export type Club = (typeof clubs)[number]
-export type Fixture = {home:Club, away:Club, homeOnRight?:boolean, burnersKit?:'black'|'white', creepersKit?:'primary'|'secondary', wondersKit?:'primary'|'secondary', dancersKit?:'primary'|'secondary', grassKit?:'primary'|'secondary'}
+export type Fixture = {home:Club, away:Club, homeOnRight?:boolean, burnersKit?:'black'|'white', creepersKit?:'primary'|'secondary', wondersKit?:'primary'|'secondary', dancersKit?:'primary'|'secondary', grassKit?:'primary'|'secondary', espressoKit?:'primary'|'secondary', onsiderKit?:'primary'|'secondary', netKit?:'primary'|'secondary', diggersKit?:'primary'|'secondary'}
 
 const accents = [
   "#f47738",

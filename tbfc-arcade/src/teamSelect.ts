@@ -20,12 +20,20 @@ export function selectTeams(
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
   ];
+  const diggers = "Goal Diggers";
+  const net = "Net Six & Chill";
+  const onsider = "Onsider Trading FC";
+  const espresso = "Atlético Espresso";
   const grass = "Grass Assassins";
   const dancers = "Goal Dancers FC";
   const wonders = "One Kick Wonders";
   const secondaryKits = new Set<string>();
   if (previous?.burnersKit === "white") secondaryKits.add(burners.name);
   if (previous?.creepersKit === "secondary") secondaryKits.add(sweeperCreepers.name);
+  if (previous?.diggersKit === "secondary") secondaryKits.add(diggers);
+  if (previous?.netKit === "secondary") secondaryKits.add(net);
+  if (previous?.onsiderKit === "secondary") secondaryKits.add(onsider);
+  if (previous?.espressoKit === "secondary") secondaryKits.add(espresso);
   if (previous?.grassKit === "secondary") secondaryKits.add(grass);
   if (previous?.dancersKit === "secondary") secondaryKits.add(dancers);
   if (previous?.wondersKit === "secondary") secondaryKits.add(wonders);
@@ -46,7 +54,7 @@ export function selectTeams(
     const club = picks[i],
       card = cards[i],
       role = i === 0 ? "Home" : "Away";
-    const canSwap = club === burners || club === sweeperCreepers || club.name === wonders || club.name === dancers || club.name === grass;
+    const canSwap = club === burners || club === sweeperCreepers || club.name === wonders || club.name === dancers || club.name === grass || club.name === espresso || club.name === onsider || club.name === net || club.name === diggers;
     const secondary = secondaryKits.has(club.name);
     const label = secondary ? "Secondary" : "Primary";
     const rank = standings?.get(club.name);
@@ -60,7 +68,7 @@ export function selectTeams(
   }
   function swapKit(i: number) {
     const club = picks[i];
-    if (club !== burners && club !== sweeperCreepers && club.name !== wonders && club.name !== dancers && club.name !== grass) return;
+    if (club !== burners && club !== sweeperCreepers && club.name !== wonders && club.name !== dancers && club.name !== grass && club.name !== espresso && club.name !== onsider && club.name !== net && club.name !== diggers) return;
     if (secondaryKits.has(club.name)) secondaryKits.delete(club.name);
     else secondaryKits.add(club.name);
     audio.menu("nav");
@@ -111,6 +119,10 @@ export function selectTeams(
           : {
               home: picks[0],
               away: picks[1],
+              diggersKit: picks.some(club => club.name === diggers) && secondaryKits.has(diggers) ? "secondary" : "primary",
+              netKit: picks.some(club => club.name === net) && secondaryKits.has(net) ? "secondary" : "primary",
+              onsiderKit: picks.some(club => club.name === onsider) && secondaryKits.has(onsider) ? "secondary" : "primary",
+              espressoKit: picks.some(club => club.name === espresso) && secondaryKits.has(espresso) ? "secondary" : "primary",
               grassKit: picks.some(club => club.name === grass) && secondaryKits.has(grass) ? "secondary" : "primary",
               dancersKit: picks.some(club => club.name === dancers) && secondaryKits.has(dancers) ? "secondary" : "primary",
               wondersKit: picks.some(club => club.name === wonders) && secondaryKits.has(wonders) ? "secondary" : "primary",
