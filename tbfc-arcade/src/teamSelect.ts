@@ -1,8 +1,14 @@
 import { audio } from "./matchAudio";
 import { hint, padBadge, reveal } from "./screenUI";
-import { alternateOpponent, onsiderTrading, barelyUnited, atleticoEspresso, grassAssassins, netSixAndChill, crossbarCowboys, goalDiggers, cleatwoodMac, sweeperCreepers, clubAccent, clubs, type Fixture } from "./opponentSquads";
+import { burners, alternateOpponent, onsiderTrading, barelyUnited, atleticoEspresso, grassAssassins, netSixAndChill, crossbarCowboys, goalDiggers, cleatwoodMac, sweeperCreepers, clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
+
+const kitIcons = import.meta.glob<string>("./art/kit-icons/*.png", { eager:true, query:"?url", import:"default" });
+function kitIcon(name: string, secondary: boolean) {
+  const slug = name.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  return kitIcons[`./art/kit-icons/${slug}${secondary ? (name === burners.name ? "-white" : "-secondary") : ""}.png`];
+}
 
 export function selectTeams(
   previous?: Fixture,
@@ -14,12 +20,21 @@ export function selectTeams(
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
   ];
+  const grass = "Grass Assassins";
+  const dancers = "Goal Dancers FC";
+  const wonders = "One Kick Wonders";
+  const secondaryKits = new Set<string>();
+  if (previous?.burnersKit === "white") secondaryKits.add(burners.name);
+  if (previous?.creepersKit === "secondary") secondaryKits.add(sweeperCreepers.name);
+  if (previous?.grassKit === "secondary") secondaryKits.add(grass);
+  if (previous?.dancersKit === "secondary") secondaryKits.add(dancers);
+  if (previous?.wondersKit === "secondary") secondaryKits.add(wonders);
   const root = document.createElement("section");
   root.id = "team-select";
   root.setAttribute("aria-label", "Select teams");
   const style = document.createElement("style");
   style.textContent = css;
-  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Home/Away · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Select Stadium</button></div></div>`;
+  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Kit · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Select Stadium</button></div></div>`;
   root.prepend(style);
   document.body.append(root);
   const main = document.querySelector("main")!;
@@ -31,21 +46,26 @@ export function selectTeams(
     const club = picks[i],
       card = cards[i],
       role = i === 0 ? "Home" : "Away";
+    const canSwap = club === burners || club === sweeperCreepers || club.name === wonders || club.name === dancers || club.name === grass;
+    const secondary = secondaryKits.has(club.name);
+    const label = secondary ? "Secondary" : "Primary";
     const rank = standings?.get(club.name);
     card.style.setProperty("--club", clubAccent(club));
-    card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(Math.floor(club.stars))}</span>${club.stars % 1 ? '<i class="ts-half">☆</i>' : ""}${"☆".repeat(5 - Math.ceil(club.stars))}</div>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
+    card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(Math.floor(club.stars))}</span>${club.stars % 1 ? '<i class="ts-half">☆</i>' : ""}${"☆".repeat(5 - Math.ceil(club.stars))}</div><button type="button" class="ts-kit" data-kit aria-label="${club.name}, ${label} kit${canSwap ? ", swap kit" : ", locked"}" ${canSwap ? "" : "disabled"}><img src="${kitIcon(club.name, secondary)}" alt=""><span>${label}</span></button>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
   }
   function focusSide(i: number) {
     side = i;
     cards.forEach((c, j) => (c.dataset.active = String(j === side)));
     cards[i].querySelector("button")!.focus({ preventScroll: true });
   }
-  function swapSides() {
-    picks.reverse();
+  function swapKit(i: number) {
+    const club = picks[i];
+    if (club !== burners && club !== sweeperCreepers && club.name !== wonders && club.name !== dancers && club.name !== grass) return;
+    if (secondaryKits.has(club.name)) secondaryKits.delete(club.name);
+    else secondaryKits.add(club.name);
     audio.menu("nav");
-    paint(0);
-    paint(1);
-    focusSide(side);
+    paint(i);
+    focusSide(i);
   }
   function cycle(i: number, step: number) {
     let index = selectable.indexOf(picks[i]);
@@ -61,7 +81,8 @@ export function selectTeams(
     paint(i);
     card.onclick = (e) => {
       const btn = (e.target as HTMLElement).closest("button");
-      if (btn) cycle(i, Number(btn.dataset.step));
+      if (btn?.hasAttribute("data-kit")) swapKit(i);
+      else if (btn) cycle(i, Number(btn.dataset.step));
       else if (i !== side) {
         audio.menu("nav");
         focusSide(i);
@@ -90,6 +111,11 @@ export function selectTeams(
           : {
               home: picks[0],
               away: picks[1],
+              grassKit: picks.some(club => club.name === grass) && secondaryKits.has(grass) ? "secondary" : "primary",
+              dancersKit: picks.some(club => club.name === dancers) && secondaryKits.has(dancers) ? "secondary" : "primary",
+              wondersKit: picks.some(club => club.name === wonders) && secondaryKits.has(wonders) ? "secondary" : "primary",
+              creepersKit: picks.includes(sweeperCreepers) && secondaryKits.has(sweeperCreepers.name) ? "secondary" : "primary",
+              burnersKit: picks.includes(burners) && secondaryKits.has(burners.name) ? "white" : "black",
             },
       );
     }
@@ -109,7 +135,7 @@ export function selectTeams(
     function key(e: KeyboardEvent) {
       if (e.code === "KeyY") {
         e.preventDefault();
-        if (!e.repeat) swapSides();
+        if (!e.repeat) swapKit(side);
         return;
       }
       const dir = (
@@ -154,7 +180,7 @@ export function selectTeams(
       }
       last = dir;
       const swap = !!pad?.buttons[3]?.pressed;
-      if (swap && !swapHeld) swapSides();
+      if (swap && !swapHeld) swapKit(side);
       swapHeld = swap;
       const back = !!pad?.buttons[1]?.pressed;
       if (back && !backHeld) {

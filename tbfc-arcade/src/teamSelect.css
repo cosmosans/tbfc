@@ -121,3 +121,7 @@
 
 /* Keep the complete menu in proportion with the current viewport. */
 #team-select .ts-wrap{zoom:var(--menu-scale,1)}
+
+#team-select .ts-kit{display:grid;justify-items:center;gap:3px;margin:7px auto 0;padding:3px 12px;background:#100e0be6;color:#fff1df;border:1px solid #624b3b;font:14px Upheaval,monospace;cursor:pointer}
+#team-select .ts-kit:disabled{cursor:default;border-color:transparent}
+#team-select .ts-kit img{height:clamp(28px,7vh,40px);width:auto;image-rendering:pixelated}

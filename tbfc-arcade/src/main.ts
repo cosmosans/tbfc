@@ -27,6 +27,7 @@ import joseReactionFlashUrl from "./art/jose-reaction-flash.png?url";
 import joseHeaderUrl from "./art/jose-header.png?url";
 import nadiaNewGoalStandUrl from "./art/nadia-new-goal-stand.png?url";
 import nadiaNewGoalRunUrl from "./art/nadia-new-goal-run.png?url";
+import danielSupportUrl from "./art/daniel-new-goal-support.png?url";
 import danielGoalGroupUrl from "./art/daniel-new-goal-stand.png?url";
 import danielGoalRunUrl from "./art/daniel-new-goal-run.png?url";
 import chrisNewIdle from "./art/chris-new-idle.png?url";
@@ -79,7 +80,13 @@ import {
 import { hint, reveal } from "./screenUI";
 import { spriteGroundPadding } from "./spriteGround";
 import { createChipBins } from "./chipBins";
-import { practiceMenu } from "./practiceMenu";
+import { practiceMenu } from "./tutorial/practiceMenu";
+import { TutorialDirector } from "./tutorial/director";
+import type { TutorialLaunch } from "./tutorial/progress";
+import { TutorialCoaching, tutorialAllowsChallenges, isTutorialParticipant as chapterParticipant } from "./tutorial/ai";
+import tutorialScene from "./tutorial/scene.json";
+import { dressPark } from "./tutorial/park";
+import { firstTouchSoundtrack } from "./tutorial/soundtrack";
 import { freeDrill, aerialDrill, warmupPanel, shotPoints } from "./warmup";
 import { startMenuMusic, type MenuMusic } from "./menuMusic";
 import { mainMenu, mountMenuBackdrop } from "./mainMenu";
@@ -146,7 +153,7 @@ import danielKick from "./art/daniel-new-kick.png?url";
 import danielJump from "./art/daniel-new-jump.png?url";
 import danielTackle from "./art/daniel-new-tackle.png?url";
 import danielReaction from "./art/daniel-new-reaction.png?url";
-import { defaultSettings } from "./matchSettings";
+import { defaultSettings, halfMinutesForSpeed } from "./matchSettings";
 import stevenIdle from "./art/steven-new-idle.png?url";
 import stevenRun from "./art/steven-new-run.png?url";
 import stevenKick from "./art/steven-new-kick.png?url";
@@ -234,6 +241,32 @@ import blueIdle from "./art/stars-idle.png?url";
 import blueRun from "./art/stars-run.png?url";
 import meghan_idle from "./art/meghan-new-idle.png?url";
 import meghan_run from "./art/meghan-new-run.png?url";
+const burnerHomeSheets = import.meta.glob<string>("./art/{chris,daniel,jan,jeremy,jose,mandy,meghan,nadia,nelson,pam,spencer,steven,stubbs}-*.png", { eager:true, query:"?url", import:"default" });
+const burnerWhiteSheets = import.meta.glob<string>("./art/away-preview/*.png", { eager:true, query:"?url", import:"default" });
+// Match Vite's resolved URLs so the same lookup works with hashed production assets.
+const whiteKitByHomeUrl = new Map(Object.entries(burnerHomeSheets).map(([path,url]) =>
+  [url, burnerWhiteSheets[path.replace("./art/", "./art/away-preview/")]] as const
+));
+const creeperPrimarySheets = import.meta.glob<string>("./art/sc-*.png", { eager:true, query:"?url", import:"default" });
+const creeperSecondarySheets = import.meta.glob<string>("./art/sweeper-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const creeperSecondaryByUrl = new Map(Object.entries(creeperPrimarySheets).map(([path,url]) =>
+  [url, creeperSecondarySheets[path.replace("./art/", "./art/sweeper-secondary/")]] as const
+));
+const wonderPrimarySheets = import.meta.glob<string>("./art/okw-*.png", { eager:true, query:"?url", import:"default" });
+const wonderSecondarySheets = import.meta.glob<string>("./art/wonders-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const wonderSecondaryByUrl = new Map(Object.entries(wonderPrimarySheets).map(([path,url]) =>
+  [url, wonderSecondarySheets[path.replace("./art/", "./art/wonders-secondary/")]] as const
+));
+const dancerPrimarySheets = import.meta.glob<string>("./art/gd-*.png", { eager:true, query:"?url", import:"default" });
+const dancerSecondarySheets = import.meta.glob<string>("./art/dancers-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const dancerSecondaryByUrl = new Map(Object.entries(dancerPrimarySheets).map(([path,url]) =>
+  [url, dancerSecondarySheets[path.replace("./art/", "./art/dancers-secondary/")]] as const
+));
+const grassPrimarySheets = import.meta.glob<string>("./art/grass-*.png", { eager:true, query:"?url", import:"default" });
+const grassSecondarySheets = import.meta.glob<string>("./art/grass-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const grassSecondaryByUrl = new Map(Object.entries(grassPrimarySheets).map(([path,url]) =>
+  [url, grassSecondarySheets[path.replace("./art/", "./art/grass-secondary/")]] as const
+));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
@@ -299,6 +332,17 @@ async function start() {
   const burnerPortraits = Object.fromEntries(
     Object.entries(kits).map(([name, kit]) => [name, kit[0]]),
   );
+  function kitSheet(url: string) {
+    if (fixture?.wondersKit === "secondary" && wonderSecondaryByUrl.has(url))
+      return wonderSecondaryByUrl.get(url) ?? url;
+    if (fixture?.dancersKit === "secondary" && dancerSecondaryByUrl.has(url))
+      return dancerSecondaryByUrl.get(url) ?? url;
+    if (fixture?.grassKit === "secondary" && grassSecondaryByUrl.has(url))
+      return grassSecondaryByUrl.get(url) ?? url;
+    if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
+      return creeperSecondaryByUrl.get(url) ?? url;
+    return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
+  }
   let fixture: Fixture | undefined,
     lineup: Selection | null = null,
     portraits = burnerPortraits;
@@ -317,6 +361,15 @@ async function start() {
   let eastside = false;
   let stadiumTest = false;
   let standalonePractice = false;
+  let tutorialLaunch: TutorialLaunch | undefined;
+  let tutorial: TutorialDirector | undefined;
+  let tutorialMusic: ReturnType<typeof firstTouchSoundtrack> | undefined;
+  const tutorialCoaching = new TutorialCoaching();
+  let tutorialTime = 0;
+  let tutorialDefenders: string[] = [...tutorialScene.defendingTeam];
+  function isTutorialParticipant(chapter: number, name: string, away: boolean) {
+    return chapterParticipant(chapter, name, away, tutorialDefenders);
+  }
   let seats: Seat[] | null = null;
   let simulation = false;
   let penaltyLab = false;
@@ -360,11 +413,11 @@ async function start() {
       simulation = false;
       if (destination === "spriteViewer") {
         await spriteViewer();
-        destination = await mainMenu(music);
+        destination = await mainMenu(music, false, undefined, "debug");
         continue;
       }
       if (destination === "career") {
-        ticket = await careerHub(burnerPortraits, settings, resume);
+        ticket = await careerHub(burnerPortraits, fallSheets, settings, resume);
         resume = undefined;
         history.replaceState(
           { ...history.state, arcadeCareer: ticket?.slot },
@@ -462,16 +515,26 @@ async function start() {
           destination = await mainMenu(music);
           continue;
         }
+        tutorialLaunch = "tutorial" in choice ? choice.tutorial as TutorialLaunch | undefined : undefined;
+        if (tutorialLaunch) {
+          // Candler Park is the existing eastside level, including its collision and street-life systems.
+          eastside = true;
+          settings.time = "Evening";
+        }
         selectedDrill = choice.drill;
         practiceNames = choice.names;
         standalonePractice = true;
-        fixture = { home: burners, away: clubs[clubs.length - 1] };
+        fixture = { home: burners, away: tutorialLaunch ? burners : clubs[clubs.length - 1] };
         lineup = {
           shape: "1-3-3",
           starters: [...burners.outfield, burners.keeper],
           bench: [...burners.bench],
-          warmup: true,
+          warmup: !tutorialLaunch,
         };
+        if (tutorialLaunch) {
+          lineup.starters = [...tutorialScene.home, tutorialScene.homeKeeper];
+          lineup.bench = [];
+        }
         break;
       }
       const selected = await selectTeams(fixture);
@@ -493,12 +556,11 @@ async function start() {
       const club = fixture.home;
       portraits =
         club === burners
-          ? burnerPortraits
+          ? Object.fromEntries(Object.entries(burnerPortraits).map(([name,url]) => [name, kitSheet(url)]))
           : Object.fromEntries(
               [...club.outfield, ...club.bench, club.keeper].map((n) => [
                 n,
-                rivalSprites(club, n)?.idle ??
-                  (n === club.keeper ? tealIdle : trainingIdle),
+                kitSheet(rivalSprites(club, n)?.idle ?? (n === club.keeper ? tealIdle : trainingIdle)),
               ]),
             );
       kickOffSettings.time =
@@ -638,10 +700,11 @@ async function start() {
       scene,
       renderer,
       settings,
-      standalonePractice || celebrationLab ? null : home,
+      tutorialLaunch ? home : standalonePractice || celebrationLab ? null : home,
       venue,
       matchOpponent,
     );
+  const updateTutorialPark = tutorialLaunch ? dressPark(scene) : undefined;
   if (stadiumTest && (venue === "school" || venue === "westend"))
     setSchoolNight!(true);
   // Top Deck and Southside carry their weathered markings on the ground material.
@@ -756,7 +819,7 @@ async function start() {
   ) {
     const maps = await Promise.all(
       urls.map(async (url) => {
-        const tex = await new T.TextureLoader().loadAsync(url);
+        const tex = await new T.TextureLoader().loadAsync(kitSheet(url));
         tex.magFilter = tex.minFilter = T.NearestFilter;
         tex.generateMipmaps = false;
         tex.colorSpace = T.SRGBColorSpace;
@@ -770,7 +833,7 @@ async function start() {
       await Promise.all(
         [jumpUrl, tackleUrl, reactionUrl, reactionFlashUrl].map((url) =>
           url
-            ? new T.TextureLoader().loadAsync(url)
+            ? new T.TextureLoader().loadAsync(kitSheet(url))
             : Promise.resolve(undefined),
         ),
       );
@@ -1185,7 +1248,9 @@ async function start() {
   const lanes = celebrationLab || freePractice ? [] : [-10, 0, 10, -7, 0, 7];
   const opponents = await Promise.all(
     (crossingDrill ? [] : lanes).map((_, i) =>
-      matchOpponent === burners
+      tutorialLaunch
+        ? makeBurner(tutorialScene.away[i])
+        : matchOpponent === burners
         ? makeBurner(matchOpponent.outfield[i])
         : makeRival(matchOpponent, matchOpponent.outfield[i], guestSheets),
     ),
@@ -1322,7 +1387,7 @@ async function start() {
       return texture;
     }),
   );
-  const awayGK = await makeKeeper(matchOpponent.keeper);
+  const awayGK = await makeKeeper(tutorialLaunch ? tutorialScene.awayKeeper : matchOpponent.keeper);
   const pitchActors = [...outfield, referee, sean, awayGK];
   const exhaustionMarkers = [...outfield, sean, awayGK].map((actor) => {
     const icon = document.createElement("span");
@@ -1388,7 +1453,7 @@ async function start() {
     });
   let shot: ReturnType<typeof planShot> | null = null;
   const burnHud = el("burnHud");
-  const burnEnabled = !celebrationLab && !broadcast && !standalonePractice;
+  const burnEnabled = !celebrationLab && !broadcast && (!standalonePractice || !!tutorialLaunch);
   burnHud.hidden = !burnEnabled;
   const meters = [home, matchOpponent].map((club, i) => {
     const node = document.createElement("div");
@@ -1455,7 +1520,9 @@ async function start() {
     const m = meters[side];
     if (!burnEnabled || crossingDrill || m.value === 100 || !delta) return;
     m.value = T.MathUtils.clamp(m.value + delta, 0, 100);
+    if (side === 0 && delta > 0) tutorial?.record("burnCharge");
     if (m.value === 100) {
+      if (side === 0) tutorial?.record("burnReady");
       m.seconds = burnWindowSeconds;
       audio.play("burnReady", 0.5);
     }
@@ -1491,6 +1558,7 @@ async function start() {
       side,
     );
     if (m.chain.size >= 4) {
+      if (side === 0) tutorial?.record("chemistry");
       m.chain.clear();
       m.chain.add(to);
     }
@@ -1651,7 +1719,7 @@ async function start() {
     coloredSmoke,
   );
   async function celebrationSheet(url: string) {
-    const map = await new T.TextureLoader().loadAsync(url);
+    const map = await new T.TextureLoader().loadAsync(kitSheet(url));
     map.minFilter = map.magFilter = T.NearestFilter;
     map.generateMipmaps = false;
     map.colorSpace = T.SRGBColorSpace;
@@ -1756,9 +1824,12 @@ async function start() {
   meghanGoal.repeat.set(54 / meghanGoal.image.width, 1 / 8);
   meghanGoal.userData.directionalCelebration = true;
   meghanGoal.userData.cell = 54;
-  for (const map of [danielGoalGroup, danielGoalRun]) {
-    map.userData.cell = 54;
-    map.repeat.x = 54 / map.image.width;
+  const danielSupport = await celebrationSheet(danielSupportUrl);
+  for (const map of [danielGoalGroup, danielGoalRun, danielSupport]) {
+    const cell = map.image.height / 8;
+    map.userData.cell = cell;
+    map.userData.directionalCelebration = true;
+    map.repeat.set(cell / map.image.width, 1 / 8);
   }
   for (const map of [janGoal, janGoalRun]) {
     map.repeat.set(64 / map.image.width, 1 / 8);
@@ -1796,7 +1867,7 @@ async function start() {
     Nelson: nelsonGoalSupport,
     Meghan: meghanGoal,
     Nadia: nadiaGoalGroup,
-    Daniel: danielGoalGroup,
+    Daniel: danielSupport,
     Chris: chrisGoalStand,
     Jeremy: jeremyGoalGroup,
     Steven: stevenGoalGroup,
@@ -2073,6 +2144,8 @@ async function start() {
   let windupReceiver = -1;
   let passPower = 0.4;
   let passWasFirstTime = false;
+  let tutorialReturnKicker = -1;
+  let tutorialTackler: typeof sean | null = null;
   let passKind: PassKind = "pass",
     crossLift = 0;
   const receiverLaunch = new T.Vector3(),
@@ -2199,6 +2272,7 @@ async function start() {
     for (const actor of outfield) {
       if (
         !actor.sprite.visible ||
+        (tutorial?.chapter === 5 && players.includes(actor) && actor !== players[active]) ||
         actor.penalty ||
         actor.age >= 0 ||
         (inFlight && actor === players[lastSender])
@@ -2241,6 +2315,7 @@ async function start() {
     return true;
   }
   function press(action: Action, source: string) {
+    if (tutorial?.capturesInput) return;
     if (blastShooter) return;
     if (!broadcast) audio.unlock();
     if (crossingDrill && (bins.flying || repReset >= 0 || training.count === 5))
@@ -2287,6 +2362,8 @@ async function start() {
               );
         defender.age = 0;
         defender.tackling = true;
+        tutorialTackler = defender;
+        tutorial?.record("tackle");
         defender.shooting = false;
       }
       return;
@@ -2318,6 +2395,7 @@ async function start() {
     showPower(0);
   }
   function release(source: string) {
+    if (tutorial?.capturesInput) { cancelCharge(); return; }
     if (source === rushSource) {
       cancelRush();
       return;
@@ -2707,6 +2785,7 @@ async function start() {
     el("message").replaceChildren(tag);
   }
   function reset(blue = false, afterGoal = false) {
+    tutorialReturnKicker = -1;
     goalCard.hidden = !afterGoal;
     lastDelivery = null;
     homePasser = "";
@@ -2872,7 +2951,7 @@ async function start() {
     );
     let shortest = Infinity;
     for (const [i, mate] of players.entries()) {
-      if (mate.penalty || i === shooter) continue;
+      if (mate.penalty || i === shooter || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, false))) continue;
       const distance = mate.sprite.position.distanceToSquared(nearPost);
       if (distance < shortest) {
         shortest = distance;
@@ -2882,7 +2961,7 @@ async function start() {
     let farPostFilled = false,
       trailers = 0;
     for (const [i, mate] of players.entries()) {
-      if (mate.penalty || i === shooter) continue;
+      if (mate.penalty || i === shooter || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, false))) continue;
       if (i === reboundRunner) mate.goal.copy(nearPost);
       else if (!farPostFilled) {
         mate.goal.set(attackSign * (fieldX - 4.2), 0, -nearSide * 2.1);
@@ -3530,10 +3609,50 @@ async function start() {
     p.shooting = true;
     p.age = 0;
   }
+  function returnTutorialLob(sender: typeof sean, target: number) {
+    // Use the same live flight, interception, aerial-claim and loose-ball path as X crosses.
+    // No possession handoff or ball reset: aim at the receiver's current position.
+    cancelCharge();
+    blueCarrier = -1;
+    bluePass = null;
+    windupReceiver = -1;
+    held = false;
+    inFlight = true;
+    rollingPass = clearanceLoose = struckLoose = false;
+    perfectPass = false;
+    homePasser = "";
+    lastSender = players.indexOf(sender);
+    tutorialReturnKicker = opponents.indexOf(sender);
+    active = ballPlayer = target;
+    passKind = "cross";
+    passWasFirstTime = false;
+    passPower = 0.45;
+    passTime = 0;
+    passStart.copy(ball.position);
+    receiverLaunch.copy(players[target].sprite.position);
+    passTarget.copy(receiverLaunch);
+    passTarget.y = restingHeight;
+    passDuration = Math.max(0.55, passStart.distanceTo(passTarget) / 8 / 1.45 * 1.35);
+    crossLift = 1.35 + 0.45 * passPower;
+    arc = kickArc(1.45, passDuration);
+    vx = vz = reboundVY = 0;
+    sender.face = facing(passTarget.x - passStart.x, passTarget.z - passStart.z);
+    sender.shooting = true;
+    sender.age = 0.12;
+    audio.kick(passPower);
+  }
   function receivePass(collector: number, aerialFinish: boolean) {
+    if (tutorial && !isTutorialParticipant(tutorial.chapter, players[collector].displayName, false)) {
+      const target = lastSender >= 0 && lastSender !== collector && !players[lastSender].penalty && isTutorialParticipant(tutorial.chapter, players[lastSender].displayName, false)
+        ? lastSender : players.findIndex((actor, i) => i !== collector && !actor.penalty && isTutorialParticipant(tutorial.chapter, actor.displayName, false));
+      if (target >= 0) { returnTutorialLob(players[collector], target); return; }
+    }
+    tutorialReturnKicker = -1;
     const receiver = players[collector].displayName;
     if (homePasser && homePasser !== receiver && (inFlight || rollingPass)) {
       facts.passes[0]++;
+      tutorial?.record("receive");
+      tutorial?.record(passKind === "through" ? "throughReceived" : passKind === "cross" ? "crossReceived" : "passCompleted");
       if (ticket && homePasser === ticket.career.player) facts.personalPasses++;
       lastDelivery = { sender: homePasser, receiver };
     }
@@ -3555,6 +3674,7 @@ async function start() {
       (aerialFinish || ball.position.y > 0.6)
     ) {
       aerial = { index: collector, style: "HEADER", age: 0 };
+      tutorial?.record("header");
       aerialRecovery.add(players[collector]);
     }
     if (inFlight && intended) creditPass(collector, passWasFirstTime);
@@ -3601,6 +3721,7 @@ async function start() {
         : null;
       if (style) {
         aerial = { index: collector, style, age: 0 };
+        if (style === "HEADER") tutorial?.record("header");
         aerialRecovery.add(players[collector]);
         el("shotResult").textContent = style;
         noticeTime = 0.65;
@@ -3650,6 +3771,8 @@ async function start() {
       shooter.shooting = true;
       return;
     }
+    tutorial?.record("shot");
+    if (blast) tutorial?.record("special");
     if (blast) {
       shotMultiplier = blastMultiplier;
       impactTime = 0.08;
@@ -3667,6 +3790,7 @@ async function start() {
     shotStart.copy(ball.position);
     const power = shotMultiplier - 1;
     const curve = pendingCurve?.actor === shooter ? pendingCurve.strike : null;
+    if (curve) tutorial?.record("curve");
     pendingCurve = null;
     flightCurve = null;
     curveRate = 0;
@@ -3811,10 +3935,17 @@ async function start() {
     );
   }
   function switchPlayer() {
+    if (tutorial?.capturesInput) return;
     if (!canSwitch()) return;
-    const nearest = nearestEligible(players, ball.position);
+    const nearest = tutorial?.chapter === 5
+      ? players.reduce((best, actor, i) => {
+          if (actor.penalty || !tutorialDefenders.includes(actor.displayName)) return best;
+          return best < 0 || actor.sprite.position.distanceToSquared(ball.position) < players[best].sprite.position.distanceToSquared(ball.position) ? i : best;
+        }, -1)
+      : nearestEligible(players, ball.position);
     if (nearest < 0) return;
     players[active].goal.copy(players[active].sprite.position);
+    if (active !== nearest) tutorial?.record("switch");
     active = nearest;
   }
   function tackleReaction(actor: typeof sean | undefined) {
@@ -3901,11 +4032,14 @@ async function start() {
       chased && (carrier.sprintCharge > 0.001 || carrier.staminaCapacity > 30)
     );
   }
+  function keepAwayLooseBall() {
+    return tutorial?.chapter === 5 && !held && !inFlight && !shot && !bluePass && blueCarrier < 0 && !outBall && !keeperRestart && keeperGather <= 0 && resultTime <= 0;
+  }
   function moveBlue(dt: number) {
     const ballPos = ball.position;
     // Favor the current presser until another defender is clearly better placed.
     const cost = (i: number) =>
-      opponents[i].penalty
+      (opponents[i].penalty || (tutorial && !isTutorialParticipant(tutorial.chapter, opponents[i].displayName, true)))
         ? Infinity
         : Math.hypot(
             opponents[i].sprite.position.x - ballPos.x,
@@ -3984,6 +4118,14 @@ async function start() {
           ),
         );
       }
+      const coaching = tutorial && tutorialCoaching.target(tutorial.chapter, o.displayName, i, ballPos, tutorial.speaking, true, tutorialTime, tutorialDefenders, keepAwayLooseBall());
+      if (coaching && blueCarrier !== i && bluePass?.receiver !== i) o.goal.set(coaching.x, 0, coaching.z);
+      if (tutorial && blueCarrier === i && !isTutorialParticipant(tutorial.chapter, o.displayName, true)) o.goal.copy(pos);
+      if (tutorial?.chapter === 5 && blueCarrier === i && isTutorialParticipant(5, o.displayName, true)) {
+        // Shield and move laterally within the kickaround instead of running at goal.
+        o.goal.set(T.MathUtils.clamp(pos.x - attackSign * 2, -10, 10), 0, T.MathUtils.clamp(pos.z + dribbleSide * 3, -8, 8));
+        if (Math.abs(pos.z) > 7.5) dribbleSide = -Math.sign(pos.z);
+      }
       o.goal.x = T.MathUtils.clamp(
         o.goal.x,
         mill ? -runX : -20.4,
@@ -4000,7 +4142,7 @@ async function start() {
       if (o.moving) {
         o.face = facing(o.velocity.x, o.velocity.z, o.face);
         o.sprintTime =
-          i === blueCarrier && hasEscapeLane(o, distance)
+          tutorial?.chapter !== 5 && i === blueCarrier && hasEscapeLane(o, distance)
             ? spendSprint(o, dt)
             : 0;
         const pace = i === blueCarrier ? 2.9 : i === nearest ? 3.65 : 2.8;
@@ -4013,6 +4155,7 @@ async function start() {
         o.face = facing(ballPos.x - pos.x, ballPos.z - pos.z, o.face);
       }
     }
+    if (tutorial && (tutorial.speaking || !tutorialAllowsChallenges(tutorial.chapter) || !isTutorialParticipant(tutorial.chapter, opponents[nearest].displayName, true))) return;
     const carrier = held
       ? players[ballPlayer]
       : homeLateTime > 0.18
@@ -4381,8 +4524,14 @@ async function start() {
     const carrier = opponents[blueCarrier],
       from = carrier.sprite.position;
     blueDecisionTime = difficulty().reactionDelayMs / 1000;
+    if (tutorial && (!tutorialAllowsChallenges(tutorial.chapter) || !isTutorialParticipant(tutorial.chapter, carrier.displayName, true))) {
+      const target = !players[active].penalty && isTutorialParticipant(tutorial.chapter, players[active].displayName, false)
+        ? active : players.findIndex(actor => !actor.penalty && isTutorialParticipant(tutorial.chapter, actor.displayName, false));
+      if (target >= 0) returnTutorialLob(carrier, target);
+      return;
+    }
     const inFinalThird = attackSign * from.x <= -fieldX / 3;
-    if (!human && inFinalThird && tryBlueShot()) return;
+    if (!human && tutorial?.chapter !== 5 && inFinalThird && tryBlueShot()) return;
     if (!human && carrier.sprintTime > 0) return;
     if (
       !human &&
@@ -4414,7 +4563,7 @@ async function start() {
     let receiver = -1,
       best = -Infinity;
     for (const [i, mate] of opponents.entries()) {
-      if (mate.penalty) continue;
+      if (mate.penalty || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, true))) continue;
       if (i === blueCarrier) continue;
       const to = mate.sprite.position,
         dx = to.x - from.x,
@@ -4498,7 +4647,12 @@ async function start() {
     if (lastBlue) changeBurn(-15, 1);
     meters[1].chain.clear();
     meters[1].pair = "";
-    if (reason === "TACKLE WON") facts.tackles[0]++;
+    if (reason === "TACKLE WON") {
+      facts.tackles[0]++;
+      tutorial?.record("tackleWon");
+      if (tutorialTackler === players[index]) tutorial?.record("playerTackleWon");
+    }
+    tutorialTackler = null;
     if (["WON BACK", "TACKLE WON", "INTERCEPTED"].includes(reason))
       changeBurn(6);
     if (reason === "TACKLE WON" || reason === "SPRINT STRIP")
@@ -4543,13 +4697,14 @@ async function start() {
     radius = 0.6,
     maxHeight = 0.84,
   ) {
+    if (tutorial && defenders === opponents && !tutorialAllowsChallenges(tutorial.chapter)) return -1;
     const dx = end.x - start.x,
       dz = end.z - start.z,
       length = dx * dx + dz * dz;
     let earliest = Infinity,
       winner = -1;
     for (const [i, o] of defenders.entries()) {
-      if (o.penalty || i === exclude || o.tackling) continue;
+      if (o.penalty || i === exclude || o.tackling || (tutorial?.chapter === 5 && defenders === players && i !== active)) continue;
       const pos = o.sprite.position;
       const t = length
         ? T.MathUtils.clamp(
@@ -4806,6 +4961,39 @@ async function start() {
       from = sender.sprite.position;
     const [aimX, aimZ] = readAim(broadcast ? undefined : menuPad());
     const aimed = Math.hypot(aimX, aimZ) > 0.22;
+    if (tutorial?.chapter === 5 && kind === "pass") {
+      // An explicit player pass starts keep-away. Keep control on the defending
+      // side and let the existing loose-ball collision code decide who receives.
+      const partners = opponents.filter(actor => !actor.penalty && isTutorialParticipant(5, actor.displayName, true));
+      const receiver = partners.sort((a, b) => {
+        const score = (actor: typeof sean) => {
+          const dx = actor.sprite.position.x - from.x, dz = actor.sprite.position.z - from.z;
+          const distance = Math.max(.01, Math.hypot(dx, dz));
+          return (aimed ? (dx * aimX + dz * aimZ) / distance * 10 : 0) - distance * .2;
+        };
+        return score(b) - score(a);
+      })[0];
+      if (receiver) {
+        const dx = receiver.sprite.position.x - ball.position.x;
+        const dz = receiver.sprite.position.z - ball.position.z;
+        const distance = Math.hypot(dx, dz);
+        const power = T.MathUtils.clamp((Math.sqrt(12 * distance) - 7) / 11, 0, 1);
+        releaseLooseStrike(dx, dz, power);
+        reboundVY = 0;
+        blueCarrier = -1;
+        bluePass = null;
+        lastBlue = false;
+        rollingPass = false;
+        lastSender = active;
+        homePasser = "";
+        sender.face = facing(dx, dz);
+        sender.shooting = true;
+        sender.age = .12;
+        audio.kick(power);
+        tutorial.record("passAttempt");
+        return;
+      }
+    }
     if (
       mill &&
       !aiHome &&
@@ -4948,6 +5136,8 @@ async function start() {
     else launchPass(target);
   }
   function launchPass(target: number) {
+    tutorialReturnKicker = -1;
+    tutorial?.record(passKind === "through" ? "throughAttempt" : passKind === "cross" ? "crossAttempt" : "passAttempt");
     if (crossingDrill && training.drill === 1)
       finishRep(0, "Shoot from the setup");
     audio.kick(passPower);
@@ -4975,6 +5165,7 @@ async function start() {
     location.reload();
   }
   async function matchMenu() {
+    if (tutorial) { tutorial.options(); return; }
     if (simulation && phase === "fulltime") {
       exitSimulation();
       return;
@@ -5179,6 +5370,7 @@ async function start() {
 
   function cycleView(step: number) {
     if (celebrating || replay.cut >= 0) return;
+    tutorial?.record("camera");
     viewIndex = (viewIndex + step + views.length) % views.length;
     view = views[viewIndex];
     for (const guest of sidelineGuests)
@@ -5340,11 +5532,13 @@ async function start() {
     training.render(players[practiceTarget].displayName);
   }
   function endWarmup() {
+    tutorialMusic?.finish();
     if (standalonePractice) {
       history.replaceState(
         {
           ...history.state,
           practiceMenu: !stadiumTest && !curveLab,
+          tutorialDrills: tutorialLaunch?.mode === "skill",
           arcadeMenu: true,
         },
         "",
@@ -5581,6 +5775,38 @@ async function start() {
         : [0, 1, 2, 3, aerialDrill][Math.floor(Math.random() * 5)],
     );
     setupRep();
+  }
+  if (tutorialLaunch) {
+    tutorialMusic = firstTouchSoundtrack(() => music?.musicEnabled ?? false);
+    renderer.domElement.setAttribute("aria-label", "Candler Park · First Touch playable pitch");
+    matchView.classList.add("tutorial-session");
+    meters[1].node.setAttribute("aria-label", "Park teammates Burn");
+    phase = "play";
+    active = ballPlayer = 0;
+    players[0].sprite.position.set(0, 0, 0);
+    held = true;
+    carry();
+    el("message").textContent = "";
+    referee.sprite.visible = false;
+    // Initial scene construction is allowed to place actors; chapter changes only change intentions.
+    players.forEach((actor, i) => {
+      if (i > 2) actor.sprite.position.set(-10 + i * 3, 0, 11);
+    });
+    opponents.forEach((actor, i) => actor.sprite.position.set(-10 + i * 3, 0, 11));
+    tutorial = new TutorialDirector(tutorialLaunch, headshots, {
+      pause: on => { cancelCharge(); keys.clear(); axisX = axisZ = 0; pause(on); },
+      reset: () => { reset(); phase = "play"; el("message").textContent = ""; },
+      exit: endWarmup,
+      chapter: index => {
+        scoreboard.style.visibility = index === 11 ? "visible" : "hidden";
+        tutorialTackler = null;
+        if (index === 5) {
+          const controlled = players[active].displayName;
+          tutorialDefenders = [controlled, controlled === "Jeremy" ? "José" : "Jeremy"];
+        }
+      },
+      ready: () => !charge && !inFlight && !shot && !aerial && !bluePass && !outBall && !keeperRestart && !celebrating && replay.cut < 0 && !players[active].moving && !blastShooter,
+    });
   }
   if (simulation) matchView.dataset.simulation = "";
   let revealFirstFrame = !broadcast;
@@ -6846,11 +7072,20 @@ async function start() {
       }
     }
     if (!paused) {
+      if (tutorial) tutorialTime += dt;
+      updateTutorialPark?.(dt, tutorial?.chapter ?? 0);
       updateWeather(dt);
       for (const actor of outfield)
         actor.reactionTime = Math.max(0, actor.reactionTime - dt);
     }
     const connectedPad = broadcast ? undefined : menuPad();
+    const tutorialInput = tutorial?.input(connectedPad) ?? false;
+    if (tutorialInput) cancelCharge();
+    if (tutorial) {
+      const moving = players[active].moving;
+      const lull = !charge && !inFlight && !shot && !bluePass && !aerial && !outBall && !keeperRestart && !celebrating && replay.cut < 0 && !moving && !blastShooter;
+      tutorial.update(paused ? 0 : Math.min(elapsed, 0.1), lull, !paused && phase === "play" && !celebrating);
+    }
     soloPad =
       seats?.length === 1 && seats[0].device < 0 ? connectedPad : undefined;
     syncSeats();
@@ -6894,7 +7129,7 @@ async function start() {
     if ((curveLab || crossingDrill) && retry && !lastRetry)
       chooseDrill(training.drill);
     lastRetry = retry;
-    if (menu && !lastPause) {
+    if (!tutorial && menu && !lastPause) {
       lastPause = true;
       void matchMenu();
       if (squadOpen) {
@@ -6919,10 +7154,11 @@ async function start() {
       const down = celebrationLab
         ? i === 1 && !!inputPad?.buttons[1]?.pressed
         : !!pad?.buttons[i]?.pressed;
-      if (down && !padHeld[i]) press(action, "pad" + i);
-      if (!down && padHeld[i]) release("pad" + i);
+      if (!tutorialInput && down && !padHeld[i]) press(action, "pad" + i);
+      if (!tutorialInput && !down && padHeld[i]) release("pad" + i);
       padHeld[i] = down;
     }
+    tutorialMusic?.update(paused && !tutorial?.isComplete);
     audio.state(paused || document.hidden, celebrating || replay.cut >= 0);
     if (replay.cut >= 0) {
       landingRing.visible = false;
@@ -7105,7 +7341,7 @@ async function start() {
         if (held || inFlight || keeperGather > 0) facts.control[0] += dt;
         else if (blueCarrier >= 0 || bluePass) facts.control[1] += dt;
       }
-      matchSeconds = Math.min(1500, matchSeconds + elapsed * settings.speed);
+      if (!tutorial) matchSeconds = Math.min(1500, matchSeconds + elapsed * 1500 / (60 * halfMinutesForSpeed[settings.speed]));
       if (matchSeconds >= 1500) {
         audio.play("whistle", 0.75, half === 1 ? 1 : 0.88);
         phase = half === 1 ? "halftime" : "fulltime";
@@ -7348,6 +7584,11 @@ async function start() {
         pos.x = T.MathUtils.clamp(pos.x + dx * distance, -runX, runX);
         pos.z = T.MathUtils.clamp(pos.z + dz * distance, runNorth, runSouth);
         p.travel += 4 * strideTime;
+        if (!tutorial?.speaking) {
+          tutorial?.record("move");
+          if (held) tutorial?.record("dribble");
+          if (burst > 0) tutorial?.record("sprint");
+        }
       }
       if (!celebrationLab && !freePractice) {
         organizeAttack(dt);
@@ -7378,6 +7619,8 @@ async function start() {
           partner.velocity.set(0, 0, 0);
           continue;
         }
+        const coaching = tutorial && tutorialCoaching.target(tutorial.chapter, partner.displayName, i, ball.position, tutorial.speaking, false, tutorialTime, tutorialDefenders, keepAwayLooseBall());
+        if (coaching && !(inFlight && i === ballPlayer) && i !== reboundRunner) partner.goal.set(T.MathUtils.clamp(coaching.x, -runX, runX), 0, T.MathUtils.clamp(coaching.z, runNorth, runSouth));
         const distance = other.distanceTo(partner.goal);
         partner.moving = distance > (partner.moving ? 0.08 : 0.28);
         partner.velocity.set(0, 0, 0);
@@ -7386,7 +7629,7 @@ async function start() {
             .subVectors(partner.goal, other)
             .multiplyScalar(
               Math.min(
-                (i === reboundRunner ||
+                (tutorial?.chapter === 5 ? 4 : i === reboundRunner ||
                 (nearCover >= 0 && (other.x - partner.goal.x) * attackSign > 2)
                   ? 6
                   : 4.6) * trainingFactor(partner.displayName, "Pace"),
@@ -7506,6 +7749,12 @@ async function start() {
             tryBlueShot(false, windup.human, true);
         }
         if (actor.tackling) {
+          if ((tutorial && opponents.includes(actor) && !tutorialAllowsChallenges(tutorial.chapter)) ||
+              (tutorial?.chapter === 5 && players.includes(actor) && actor !== players[active])) {
+            actor.tackling = false; actor.age = -1;
+            if (tutorialTackler === actor) tutorialTackler = null;
+            continue;
+          }
           const foot = actor.sprite.position,
             [dx, dz] = dirs[actor.face];
           const step = 3.5 * (Math.min(0.12, actor.age) - Math.min(0.12, prev));
@@ -7564,6 +7813,7 @@ async function start() {
           if (actor.age >= (actor.tackleMap ? 0.56 : 0.42)) {
             actor.age = -1;
             actor.tackling = false;
+            if (tutorialTackler === actor) tutorialTackler = null;
           }
           continue;
         }
@@ -7759,7 +8009,7 @@ async function start() {
         }
         const interceptor = perfectPass
           ? -1
-          : interceptPass(previousPassPosition, ball.position);
+          : interceptPass(previousPassPosition, ball.position, opponents, tutorialReturnKicker);
         const wantsFinish =
           passKind === "cross" &&
           (charge?.action === "shot" || queued?.action === "shot");
@@ -7991,6 +8241,8 @@ async function start() {
             {
               const side = shotDirection === attackSign ? 0 : 1;
               careerShots[side]++;
+              if (side === 0 && (shot.result === "Goal" || shot.result === "Save")) tutorial?.record("onTarget");
+              if (side === 0 && shot.result === "Save") tutorial?.record("saved");
               if (shot.result === "Goal" || shot.result === "Save")
                 onTarget[side]++;
               if (shot.result === "Post" || shot.result === "Crossbar")
@@ -8072,8 +8324,20 @@ async function start() {
                       : 1,
                 player: scorer?.displayName ?? "Team goal",
               });
-              if (shotDirection === attackSign) homeScore++;
+              if (shotDirection === attackSign) { homeScore++; tutorial?.record("goal"); }
               else awayScore++;
+              if (tutorial && tutorial.chapter < 11) {
+                // Lessons keep their cast and camera. Use the ordinary boundary/keeper
+                // restart instead of the celebration -> replay -> full-team kickoff path.
+                goalEvent = null;
+                updateScore();
+                ballOut(
+                  (shot.targetX - shotStart.x) / shot.duration * 0.15,
+                  0,
+                  (shot.targetZ - shotStart.z) / shot.duration * 0.15,
+                );
+                el("shotResult").textContent = "GOAL";
+              } else {
               audio.goalFire();
               scoringColor = goalColors[shotDirection === attackSign ? 0 : 1];
               fireEnd = shotDirection;
@@ -8096,6 +8360,7 @@ async function start() {
               vz = (shot.targetZ - shotStart.z) / shot.duration;
               showGoalCard();
               startGoalScene();
+              }
             } else {
               if (shot.result === "Save") audio.kick(0.13);
               else audio.play(shot.result === "Post" ? "post" : "bar", 0.48);
@@ -8152,6 +8417,7 @@ async function start() {
           foot.z + dz * 0.38,
         );
         if (
+          tutorial?.chapter !== 5 &&
           turnoverGrace <= 0 &&
           o.sprintTime > 0 &&
           p.age < 0 &&
@@ -8161,7 +8427,7 @@ async function start() {
           winBack(active, "SPRINT STRIP");
         } else {
           const tackler =
-            o.sprintTime > 0 && turnoverGrace <= 0
+            tutorial?.chapter !== 5 && o.sprintTime > 0 && turnoverGrace <= 0
               ? players.findIndex(
                   (mate, i) =>
                     !mate.penalty &&
@@ -8239,6 +8505,7 @@ async function start() {
           for (const [i, mate] of players.entries()) {
             if (
               mate.penalty ||
+              (tutorial?.chapter === 5 && !isTutorialParticipant(5, mate.displayName, false)) ||
               mate.age >= 0 ||
               (celebrationLab && i !== labIndex)
             )
@@ -8254,13 +8521,13 @@ async function start() {
             }
           }
           let blueCollector = -1;
-          if (clearanceLoose) {
+          if (clearanceLoose || keepAwayLooseBall()) {
             opponents.forEach((o, i) => {
               const distance = Math.hypot(
                 ball.position.x - o.sprite.position.x,
                 ball.position.z - o.sprite.position.z,
               );
-              if (!o.penalty && o.age < 0 && distance < closest) {
+              if (!o.penalty && o.age < 0 && distance < closest && (tutorial?.chapter !== 5 || isTutorialParticipant(5, o.displayName, true))) {
                 blueCollector = i;
                 closest = distance;
               }
@@ -8291,7 +8558,8 @@ async function start() {
             if (
               charge?.action === "shot" ||
               queued?.action === "shot" ||
-              (rollingPass && collector !== lastSender)
+              (rollingPass && collector !== lastSender) ||
+              (tutorial && !isTutorialParticipant(tutorial.chapter, players[collector].displayName, false))
             )
               receivePass(collector, false);
             else {
@@ -8300,7 +8568,7 @@ async function start() {
               held = true;
               carry();
             }
-            lastSender = -1;
+            if (!inFlight) lastSender = -1;
           }
         }
       }

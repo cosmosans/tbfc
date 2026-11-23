@@ -5,12 +5,7 @@
 .practice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .practice-menu button{color:inherit;background:#302820;border:2px solid #69543b;padding:6px;cursor:pointer}
 .practice-menu button:focus-visible,.practice-menu button:hover{outline:2px solid #ffc281;outline-offset:1px}
-.practice-grid strong{display:block;font:18px Upheaval,monospace;margin-top:5px}
-.skill-scene{position:relative;display:block;height:65px;overflow:hidden;background:repeating-linear-gradient(95deg,#526e36 0 22px,#496633 22px 44px);border-bottom:2px solid #bac89c}
-.practice-grid i,.skill-scene em{position:absolute;width:48px;height:48px;background-repeat:no-repeat;image-rendering:pixelated;z-index:1}
-.skill-scene em{width:18px;height:18px;background-size:3200% 400%;background-position:0 0;left:46%}
-.mini-goal,.mini-bin{position:absolute;bottom:10px;right:3%;height:30px;width:32%;border:3px solid ivory;background:repeating-linear-gradient(90deg,transparent 0 4px,#eee8 4px 5px),repeating-linear-gradient(0deg,transparent 0 4px,#eee8 4px 5px)}
-.mini-bin{height:16px;width:14%;background:#9c612a;border-color:#ffd366}
+.practice-grid i{position:absolute;width:48px;height:48px;background-repeat:no-repeat;image-rendering:pixelated;z-index:1}
 .practice-grid.roster{grid-template-columns:repeat(auto-fit,minmax(98px,1fr))}
 .roster button{display:grid;justify-items:center}.roster i{position:static}.roster [aria-pressed=true]{background:#85502b;border-color:#ffc281}
 .practice-menu button:disabled{opacity:.48}.practice-actions{display:flex;justify-content:space-between;margin-top:12px}

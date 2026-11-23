@@ -1,0 +1,59 @@
+<!-- Menu structure is deliberately separate from navigation and save handling. -->
+<template id="practice">
+  <div class="practice-shell ft-practice-shell">
+    <h1 data-title>Practice</h1>
+    <p data-description>An afternoon at Candler Park. A first touch. Your team.</p>
+    <nav class="ft-practice-choices" aria-label="Practice choices"></nav>
+    <div class="picker-hints menu-legend" data-menu-hints>
+      <span><span data-glyph="Enter|A"></span> Select</span>
+      <button class="ft-plain-control" data-menu-back tabindex="-1"><span data-glyph="Esc|B"></span> Back</button>
+    </div>
+  </div>
+</template>
+<template id="practice-free">
+  <button data-free><strong>FREE PRACTICE</strong><span>Choose your players and take the field</span></button>
+</template>
+<template id="practice-chapter">
+  <div class="ft-chapter-preview" aria-hidden="true" data-preview></div>
+  <p class="ft-chapter-description" data-chapter-description></p>
+  <div class="ft-chapter-controls">
+    <button class="ft-plain-control" data-story><span data-glyph="Enter|A"></span> Start Story Here</button>
+    <button class="ft-plain-control" data-back tabindex="-1"><span data-glyph="Esc|B"></span> Back</button>
+  </div>
+</template>
+<template id="chapter-choice">
+  <button class="ft-chapter-card" data-chapter>
+    <span class="ft-chapter-scene" aria-hidden="true" data-scene></span>
+    <span class="ft-chapter-caption"><small data-number></small><strong data-chapter-title></strong></span>
+  </button>
+</template>
+
+<template id="free-practice-roster">
+  <div class="practice-shell">
+    <h1>Free Practice</h1>
+    <p>Choose up to seven Turf Burners</p>
+    <div class="practice-grid roster" aria-label="Choose players"></div>
+    <div class="picker-hints menu-legend">
+      <span><span data-glyph="Space|A"></span> Select / Deselect</span>
+      <button data-back><span data-glyph="Esc|B"></span> Back</button>
+      <button data-play><span data-glyph="Enter|Menu"></span> Take the Field</button>
+    </div>
+  </div>
+</template>
+<template id="free-practice-player">
+  <button aria-pressed="false"><i aria-hidden="true"></i><span data-player-name></span></button>
+</template>
+
+<!-- Pitch thumbnail compositions: sprite poses, ball placement, and passing paths. -->
+<template id="chapter-scene-0"><span class="ft-pitch welcome"><i class="ft-actor chris idle" style="left:28%;bottom:20px"></i><i class="ft-actor jeremy kick" style="left:62%;bottom:20px"></i><b class="ft-ball" style="left:51%;bottom:20px"></b></span></template>
+<template id="chapter-scene-1"><span class="ft-pitch touch"><i class="ft-actor jose run" style="left:43%;bottom:20px"></i><b class="ft-ball" style="left:60%;bottom:23px"></b></span></template>
+<template id="chapter-scene-2"><span class="ft-pitch pass"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 30 78 L 77 63" /></svg><i class="ft-actor jeremy kick" style="left:20%;bottom:17px"></i><i class="ft-actor chris idle" style="left:73%;bottom:29px"></i><b class="ft-ball" style="left:54%;bottom:27px"></b></span></template>
+<template id="chapter-scene-3"><span class="ft-pitch sprint"><i class="ft-actor steven run" style="left:50%;bottom:20px"></i><b class="ft-speed"></b><b class="ft-ball" style="left:69%;bottom:23px"></b></span></template>
+<template id="chapter-scene-4"><span class="ft-pitch through"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 25 85 L 80 25" /></svg><i class="ft-actor nadia kick" style="left:20%;bottom:10px"></i><i class="ft-actor steven run" style="left:71%;bottom:38px"></i><b class="ft-ball" style="left:54%;bottom:44px"></b></span></template>
+<template id="chapter-scene-5"><span class="ft-pitch tackle"><i class="ft-actor jeremy kick" style="left:60%;bottom:21px"></i><i class="ft-actor meghan tackle" style="left:34%;bottom:19px"></i><b class="ft-ball" style="left:52%;bottom:22px"></b></span></template>
+<template id="chapter-scene-6"><span class="ft-pitch cross"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 22 80 Q 45 -15 80 58" /></svg><i class="ft-actor nadia kick" style="left:19%;bottom:15px"></i><i class="ft-actor pam header" style="left:74%;bottom:27px"></i><b class="ft-ball" style="left:52%;bottom:78px"></b></span></template>
+<template id="chapter-scene-7"><span class="ft-pitch header"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 50 26 L 88 44" /></svg><b class="ft-goal"></b><i class="ft-actor pam header" style="left:46%;bottom:25px"></i><b class="ft-ball" style="left:57%;bottom:83px"></b></span></template>
+<template id="chapter-scene-8"><span class="ft-pitch shot"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 32 80 L 86 43" /></svg><b class="ft-goal"></b><i class="ft-actor jose kick" style="left:27%;bottom:17px"></i><b class="ft-ball" style="left:63%;bottom:39px"></b></span></template>
+<template id="chapter-scene-9"><span class="ft-pitch curve"><svg class="ft-flight" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M 27 80 Q 44 -12 88 40" /></svg><b class="ft-goal"></b><i class="ft-actor jose kick" style="left:23%;bottom:14px"></i><b class="ft-ball" style="left:55%;bottom:69px"></b></span></template>
+<template id="chapter-scene-10"><span class="ft-pitch burn"><i class="ft-actor daniel run" style="left:37%;bottom:20px"></i><i class="ft-actor steven run" style="left:67%;bottom:25px"></i><b class="ft-ball" style="left:53%;bottom:23px"></b></span></template>
+<template id="chapter-scene-11"><span class="ft-pitch game"><b class="ft-goal"></b><i class="ft-actor jose kick" style="left:19%;bottom:13px"></i><i class="ft-actor meghan tackle" style="left:48%;bottom:20px"></i><i class="ft-actor chris idle" style="left:69%;bottom:38px"></i><b class="ft-ball" style="left:36%;bottom:24px"></b></span></template>

@@ -23,13 +23,13 @@ const tracks = [
 ];
 
 const cursorKey = "tbfc.arcade.nextMusicTrack";
-let nextIndex = 0;
 
 type Bookmark = { track: string; time: number };
 export function createMusicCue(
-  { fadeInMs = 0, fadeOutMs = 450 } = {},
+  { fadeInMs = 0, fadeOutMs = 450, playlist = tracks, storageKey = cursorKey } = {},
   bookmark?: Bookmark,
 ) {
+  let nextIndex = 0;
   const player = new Audio();
   player.preload = "none";
   const volume = 0.36;
@@ -48,14 +48,14 @@ export function createMusicCue(
     )
       return;
     failedTracks.add(failedIndex);
-    if (failedTracks.size === tracks.length) {
-      console.warn("No menu music tracks could be played.");
+    if (failedTracks.size === playlist.length) {
+      console.warn("No menu music playlist could be played.");
       return;
     }
-    index = (failedIndex + 1) % tracks.length;
-    while (failedTracks.has(index)) index = (index + 1) % tracks.length;
+    index = (failedIndex + 1) % playlist.length;
+    while (failedTracks.has(index)) index = (index + 1) % playlist.length;
     consumed = false;
-    player.src = tracks[index];
+    player.src = playlist[index];
     play();
   }
   function fade(to: number, ms: number, done?: () => void) {
@@ -74,14 +74,14 @@ export function createMusicCue(
     if (!active || document.hidden) return;
     if (index === null) {
       try {
-        const saved = localStorage.getItem(cursorKey);
+        const saved = localStorage.getItem(storageKey);
         if (saved !== null && /^\d+$/.test(saved))
-          nextIndex = Number(saved) % tracks.length;
+          nextIndex = Number(saved) % playlist.length;
       } catch {}
-      const savedTrack = bookmark ? tracks.indexOf(bookmark.track) : -1;
+      const savedTrack = bookmark ? playlist.indexOf(bookmark.track) : -1;
       index = savedTrack >= 0 ? savedTrack : nextIndex;
       consumed = false;
-      player.src = tracks[index];
+      player.src = playlist[index];
       if (bookmark && savedTrack >= 0 && Number.isFinite(bookmark.time))
         player.currentTime = bookmark.time;
       bookmark = undefined;
@@ -92,7 +92,7 @@ export function createMusicCue(
       void player.play().catch((error) => {
         if (error?.name === "NotAllowedError") {
           if (!blockedWarning)
-            console.warn("Menu music will retry after the next interaction.");
+            console.warn("Music will retry after the next interaction.");
           blockedWarning = true;
         } else if (error?.name !== "AbortError")
           skipFailedTrack(attemptedIndex);
@@ -105,9 +105,9 @@ export function createMusicCue(
     failedTracks.clear();
     blockedWarning = false;
     consumed = true;
-    nextIndex = (index + 1) % tracks.length;
+    nextIndex = (index + 1) % playlist.length;
     try {
-      localStorage.setItem(cursorKey, String(nextIndex));
+      localStorage.setItem(storageKey, String(nextIndex));
     } catch {}
     fade(volume, fadeInMs);
   };
@@ -118,7 +118,7 @@ export function createMusicCue(
   return {
     bookmark(): Bookmark | undefined {
       return index !== null && consumed
-        ? { track: tracks[index], time: player.currentTime }
+        ? { track: playlist[index], time: player.currentTime }
         : bookmark;
     },
     resume() {

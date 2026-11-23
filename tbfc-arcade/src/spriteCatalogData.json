@@ -602,7 +602,7 @@
             "Standing celebration": {
               "file": "daniel-new-goal-stand.png",
               "status": "Individual",
-              "note": "Group clapping celebration"
+              "note": ""
             },
             "Jump / header / air move": {
               "file": "daniel-new-jump.png",
@@ -622,12 +622,12 @@
             "Running celebration": {
               "file": "daniel-new-goal-run.png",
               "status": "Individual",
-              "note": "Uses the new run animation; no separate running celebration supplied"
+              "note": ""
             },
             "Support celebration": {
               "file": "daniel-new-goal-support.png",
               "status": "Individual",
-              "note": "Uses the same group clapping celebration"
+              "note": ""
             }
           }
         },
@@ -16198,73 +16198,73 @@
       "rows": 8
     },
     "daniel-new-idle.png": {
-      "width": 432,
-      "height": 54,
-      "cell": 54,
+      "width": 544,
+      "height": 68,
+      "cell": 68,
       "columns": 8,
       "rows": 1
     },
     "daniel-new-run.png": {
-      "width": 432,
-      "height": 432,
-      "cell": 54,
+      "width": 544,
+      "height": 544,
+      "cell": 68,
       "columns": 8,
       "rows": 8
     },
     "daniel-new-kick.png": {
-      "width": 576,
-      "height": 512,
-      "cell": 64,
+      "width": 612,
+      "height": 544,
+      "cell": 68,
       "columns": 9,
       "rows": 8
     },
     "daniel-new-jump.png": {
-      "width": 486,
-      "height": 432,
-      "cell": 54,
+      "width": 612,
+      "height": 544,
+      "cell": 68,
       "columns": 9,
       "rows": 8
     },
     "daniel-new-tackle.png": {
-      "width": 486,
-      "height": 432,
-      "cell": 54,
+      "width": 612,
+      "height": 544,
+      "cell": 68,
       "columns": 9,
       "rows": 8
     },
     "daniel-new-reaction.png": {
-      "width": 486,
-      "height": 432,
-      "cell": 54,
+      "width": 612,
+      "height": 544,
+      "cell": 68,
       "columns": 9,
       "rows": 8
     },
     "daniel-new-foul.png": {
-      "width": 486,
-      "height": 432,
-      "cell": 54,
+      "width": 612,
+      "height": 544,
+      "cell": 68,
       "columns": 9,
       "rows": 8
     },
     "daniel-new-goal-run.png": {
-      "width": 432,
-      "height": 432,
-      "cell": 54,
-      "columns": 8,
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
       "rows": 8
     },
     "daniel-new-goal-stand.png": {
-      "width": 702,
-      "height": 432,
-      "cell": 54,
-      "columns": 13,
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
       "rows": 8
     },
     "daniel-new-goal-support.png": {
-      "width": 702,
-      "height": 432,
-      "cell": 54,
-      "columns": 13,
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
       "rows": 8
     },
     "steven-new-idle.png": {

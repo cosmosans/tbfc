@@ -1,0 +1,12 @@
+{
+  "defendingPartners": ["Meghan", "Daniel"],
+  "defendingTeam": ["José", "Jeremy"],
+  "home": ["José", "Jeremy", "Chris", "Steven", "Nadia", "Pam"],
+  "away": ["Meghan", "Daniel", "Jan", "Mandy", "Stubbs", "Nelson"],
+  "homeKeeper": "Spencer",
+  "awayKeeper": "Sean",
+  "arrivals": {"Steven": 3, "Nadia": 4, "Meghan": 6, "Pam": 6, "Sean": 7, "Daniel": 10},
+  "benches": [{"x": -9, "z": 13.4}, {"x": 8, "z": 13.4}],
+  "bags": [{"x": -11, "z": 13, "color": "#cc6b30"}, {"x": -8, "z": 13.2, "color": "#274b38"}, {"x": 7, "z": 13, "color": "#6a4b37"}],
+  "cones": [{"x": -14, "z": 12.5}, {"x": 13, "z": 12.5}]
+}

@@ -1,0 +1,755 @@
+[
+  {
+    "id": 0,
+    "title": "Welcome to Candler Park",
+    "description": "José, Jeremy, and Chris are already at Candler Park, and there’s room for one more. Step onto the pitch, stretch your legs, and find a camera view that feels like home.",
+    "prompt": "Move with {move}. Explore the pitch. Change camera with {camera}.",
+    "events": ["move", "camera"],
+    "cast": ["José", "Jeremy", "Chris"],
+    "intro": [
+      {
+        "speaker": "José",
+        "text": "Hey! Look who finally showed up!"
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "We were just about to start knocking it around."
+      },
+      {
+        "speaker": "José",
+        "text": "Come on in. Grab the ball. Let's warm up."
+      },
+      {
+        "speaker": "Chris",
+        "text": "I meant to tell you, you can click {camera} to change the camera if you want."
+      },
+      {
+        "speaker": "Chris",
+        "text": "Try a couple different views. Whatever feels right."
+      }
+    ],
+    "hint": [],
+    "success": [],
+    "transition": [
+      {
+        "speaker": "José",
+        "text": "All right, let's get some touches in."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris"],
+      "intention": "gather"
+    },
+    "instructions": [
+      "Move with {move}.",
+      "Explore the pitch.",
+      "Change camera with {camera}."
+    ]
+  },
+  {
+    "id": 1,
+    "title": "First Touch",
+    "description": "José wants you to get comfortable with the ball before anyone starts showing off. With Jeremy and Chris nearby, take a few touches, change direction, and settle into the afternoon’s rhythm.",
+    "prompt": "Move with {move}; change direction to keep the ball close. Receive a teammate’s pass in space.",
+    "events": ["dribble", "receive"],
+    "cast": ["José", "Jeremy", "Chris"],
+    "intro": [
+      {
+        "speaker": "José",
+        "text": "First things first. Just get comfortable with the ball."
+      },
+      {
+        "speaker": "José",
+        "text": "Move around a little. Change direction. Feel how it follows you."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Jeremy",
+        "text": "Don't worry about going fast yet. Get your feet sorted first."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "José",
+        "text": "There you go! Looking good!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "José",
+        "text": "All right. Let's bring Jeremy into this."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris"],
+      "intention": "closeControl"
+    }
+  },
+  {
+    "id": 2,
+    "title": "Knock It Around",
+    "description": "Jeremy’s ready to knock the ball around, and José would appreciate not being left out. Trade passes with the group, find the open space, and try sending the ball straight back with a first-touch pass.",
+    "prompt": "Aim with {move}. Hold {pass} for distance, release to pass.",
+    "afterPrompt": [
+      {
+        "speaker": "Jeremy",
+        "text": "You can also queue up a first-touch pass by holding {pass} while the ball is traveling to you."
+      }
+    ],
+    "events": ["passCompleted"],
+    "cast": ["José", "Jeremy", "Chris"],
+    "intro": [
+      {
+        "speaker": "Jeremy",
+        "text": "Let's work on passing."
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Send one over here. Then you can play it right back."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Jeremy",
+        "text": "Look for open space. You don't always have to pass straight ahead."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Jeremy",
+        "text": "Nice! Simple as that."
+      },
+      {
+        "speaker": "José",
+        "text": "Hey, don't leave me out!"
+      },
+      {
+        "speaker": "José",
+        "text": "That's it! Keep it moving!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Jeremy",
+        "text": "All right, I think we're ready to pick up the pace."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris"],
+      "intention": "passingTriangle"
+    }
+  },
+  {
+    "id": 3,
+    "title": "Pick Up the Pace",
+    "description": "Steven has arrived, and apparently the warm-up isn’t moving fast enough for him. Stretch your legs with a few sprints while Jeremy reminds you to leave something in the tank.",
+    "prompt": "Hold {sprint} while moving. Ease off to recover stamina.",
+    "events": ["sprint"],
+    "cast": ["José", "Jeremy", "Chris", "Steven"],
+    "intro": [
+      {
+        "speaker": "Steven",
+        "text": "Are we actually playing soccer or just standing around?"
+      },
+      {
+        "speaker": "José",
+        "text": "Well, somebody's in a hurry."
+      },
+      {
+        "speaker": "Steven",
+        "text": "Come on! Let's stretch those legs!"
+      },
+      {
+        "speaker": "Steven",
+        "text": "Give it some speed! Try sprinting with the ball."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Jeremy",
+        "text": "Watch your stamina. You can't go full throttle forever."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Steven",
+        "text": "THERE we go! That's more like it!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Steven",
+        "text": "Now let's see if you can get a ball out in front of me."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris", "Steven"],
+      "intention": "sprintRun"
+    }
+  },
+  {
+    "id": 4,
+    "title": "Thread the Needle",
+    "description": "Nadia has a suggestion: pass to where your teammate is going, not where they’re standing. Steven’s happy to do the running—give him a through-ball worth chasing.",
+    "prompt": "Aim into space and release {through} to lead a teammate’s run.",
+    "events": ["throughReceived"],
+    "cast": ["José", "Jeremy", "Chris", "Steven", "Nadia"],
+    "intro": [
+      {
+        "speaker": "Nadia",
+        "text": "Let's try some through-balls."
+      },
+      {
+        "speaker": "Nadia",
+        "text": "Instead of passing to where someone is, try passing into the space they're running toward."
+      },
+      {
+        "speaker": "Steven",
+        "text": "Watch my run. I'll go behind José."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Steven",
+        "text": "Almost! Try leading me a little more."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Nadia",
+        "text": "Beautiful! That's the one!"
+      },
+      {
+        "speaker": "Steven",
+        "text": "Again! I can get on the end of those all day."
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Nadia",
+        "text": "Of course, sometimes you're going to lose the ball..."
+      },
+      {
+        "speaker": "José",
+        "text": "Let's let the others put us under a little pressure."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris", "Steven", "Nadia"],
+      "intention": "attackingRun"
+    }
+  },
+  {
+    "id": 5,
+    "title": "Win It Back",
+    "description": "Meghan and Daniel fancy a little two-on-two keep-away. Your partner will help apply pressure, but winning the ball back is your job—close the gap and pick your moment to tackle.",
+    "prompt": "Pass with {pass} to Meghan or Daniel to start keep-away. Then use {switch} to switch and {shot} to tackle. Win it back, then pass to them to go again.",
+    "events": ["playerTackleWon"],
+    "cast": ["José", "Jeremy", "Chris", "Steven", "Nadia", "Meghan", "Daniel"],
+    "intro": [
+      {
+        "speaker": "Meghan",
+        "text": "Daniel and I will play keep-away. Two against two. If you’ve got the ball, pass it our way and try to get it back!"
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Let's work on defending."
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Close down the space, stay in front, and time your tackle."
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Your teammate will put us under pressure, but you need to make the tackle. Switch if you need a better angle."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "José",
+        "text": "Ooooh! Not quite!"
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Don't dive in too early. Wait for your moment."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Jeremy",
+        "text": "That's how you win it back."
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Jeremy",
+        "text": "All right. Let's get the ball off the ground for a change."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": ["José", "Jeremy", "Chris", "Steven", "Nadia", "Meghan", "Daniel"],
+      "intention": "lightPressure"
+    }
+  },
+  {
+    "id": 6,
+    "title": "Take to the Skies",
+    "description": "Meghan reckons the best route past a defender might be over their head. Pam’s already calling for the ball, so send a lofted pass her way and give her time to get underneath it.",
+    "prompt": "Hold and release {cross} for a lofted pass. Aim across the pitch with {move}.",
+    "events": ["crossReceived"],
+    "cast": ["José", "Jeremy", "Chris", "Steven", "Nadia", "Meghan", "Pam"],
+    "intro": [
+      {
+        "speaker": "Meghan",
+        "text": "Let's try putting a little air under the ball."
+      },
+      {
+        "speaker": "Meghan",
+        "text": "Sometimes the best way around a defender is straight over them."
+      },
+      {
+        "speaker": "Pam",
+        "text": "Send me one! I'll make a run."
+      },
+      {
+        "speaker": "Meghan",
+        "text": "Watch the flight of the ball. Give your teammate time to get underneath it."
+      }
+    ],
+    "hint": [],
+    "success": [
+      {
+        "speaker": "Pam",
+        "text": "Nice ball!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Meghan",
+        "text": "Now let's see what happens when one of those comes in toward goal."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam"
+      ],
+      "intention": "wideRun"
+    }
+  },
+  {
+    "id": 7,
+    "title": "Heads Up",
+    "description": "Pam wants to work on headers (of course), and Meghan’s ready to help with the timing. Send in a cross, meet the ball in the air, and give Sean something to worry about in goal.",
+    "prompt": "Send a cross with {cross}, then charge {shot} as the receiver meets it high. Timing and ball height determine the aerial strike.",
+    "events": ["header"],
+    "cast": [
+      "José",
+      "Jeremy",
+      "Chris",
+      "Steven",
+      "Nadia",
+      "Meghan",
+      "Pam",
+      "Sean"
+    ],
+    "intro": [
+      {
+        "speaker": "Meghan",
+        "text": "Let's work on headers next!"
+      },
+      {
+        "speaker": "Meghan",
+        "text": "When the ball comes in high, timing matters."
+      },
+      {
+        "speaker": "Pam",
+        "text": "Send a cross my way, then meet it high. You’ll take control when it comes over."
+      },
+      {
+        "speaker": "Sean",
+        "text": "Just try not to put it straight at me."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Meghan",
+        "text": "Close! Watch where the ball's dropping."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Meghan",
+        "text": "YES! That's how you attack a cross!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Sean",
+        "text": "All right, enough of the fancy stuff. Let's see some shots."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam",
+        "Sean"
+      ],
+      "intention": "cross"
+    }
+  },
+  {
+    "id": 8,
+    "title": "Have a Crack",
+    "description": "Sean’s inviting you to take a shot, and Steven’s been waiting all afternoon to hear that. Pick your spot, find the right amount of power, and see whether Sean’s confidence survives a few attempts.",
+    "prompt": "Hold {shot}, aim with {move}, release to shoot. More power is not always more accurate.",
+    "events": ["shot"],
+    "cast": [
+      "José",
+      "Jeremy",
+      "Chris",
+      "Steven",
+      "Nadia",
+      "Meghan",
+      "Pam",
+      "Sean"
+    ],
+    "intro": [
+      {
+        "speaker": "Sean",
+        "text": "All right. Take a shot."
+      },
+      {
+        "speaker": "Steven",
+        "text": "Finally! My favorite part!"
+      },
+      {
+        "speaker": "Sean",
+        "text": "More power isn't always better. Pick your spot."
+      }
+    ],
+    "hint": [
+      {
+        "speaker": "Steven",
+        "text": "Well... the goal's a little more to the left."
+      },
+      {
+        "speaker": "Sean",
+        "text": "Not bad. Not getting past me, though."
+      }
+    ],
+    "success": [
+      {
+        "speaker": "Steven",
+        "text": "That’s the idea! Keep picking your spot."
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Steven",
+        "text": "Okay, but what if I told you we could make those shots bend?"
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam",
+        "Sean"
+      ],
+      "intention": "shoot"
+    }
+  },
+  {
+    "id": 9,
+    "title": "Bend It",
+    "description": "Steven’s decided ordinary shots aren’t quite enough—time to put some bend on the ball. Learn to curl one toward the corner while Sean wonders why anyone thought teaching this was a good idea.",
+    "prompt": "While charging {shot}, sweep {move} in a quarter or half circle, then release to impart spin.",
+    "events": ["curve"],
+    "cast": [
+      "José",
+      "Jeremy",
+      "Chris",
+      "Steven",
+      "Nadia",
+      "Meghan",
+      "Pam",
+      "Sean"
+    ],
+    "intro": [
+      {
+        "speaker": "Steven",
+        "text": "Want to try something fun?"
+      },
+      {
+        "speaker": "Steven",
+        "text": "You can put some curve on your shots."
+      },
+      {
+        "speaker": "Steven",
+        "text": "Try bending one around the defender and into the corner."
+      },
+      {
+        "speaker": "Sean",
+        "text": "Oh, great. Now you're teaching everybody that?"
+      }
+    ],
+    "hint": [],
+    "success": [
+      {
+        "speaker": "Steven",
+        "text": "That's the idea! Give it some spin!"
+      },
+      {
+        "speaker": "Sean",
+        "text": "Seriously? Come on!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "Steven",
+        "text": "All right. Now we're getting somewhere."
+      },
+      {
+        "speaker": "José",
+        "text": "Speaking of getting somewhere, let's heat things up."
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam",
+        "Sean"
+      ],
+      "intention": "curve"
+    }
+  },
+  {
+    "id": 10,
+    "title": "We’re Heating Up",
+    "description": "José can feel the team starting to click, and Daniel wants to keep those passes flowing. Bring your teammates into the move, build up Burn, and finish the combination with something special.",
+    "prompt": "Connect passes between different teammates to build Burn. At full charge Burn activates automatically; shoot during its window for a special.",
+    "events": ["special"],
+    "cast": [
+      "José",
+      "Jeremy",
+      "Chris",
+      "Steven",
+      "Nadia",
+      "Meghan",
+      "Pam",
+      "Sean",
+      "Daniel"
+    ],
+    "intro": [
+      {
+        "speaker": "José",
+        "text": "You feel how we're starting to click?"
+      },
+      {
+        "speaker": "José",
+        "text": "The more we connect our passes, the more dangerous we get."
+      },
+      {
+        "speaker": "Daniel",
+        "text": "Keep the ball moving. Find your teammates."
+      }
+    ],
+    "hint": [],
+    "success": [
+      {
+        "speaker": "Nadia",
+        "text": "That's it! Keep it going!"
+      },
+      {
+        "speaker": "Pam",
+        "text": "Ohhh, we're heating up!"
+      },
+      {
+        "speaker": "Steven",
+        "text": "LET'S GO! Light it up!"
+      },
+      {
+        "speaker": "José",
+        "text": "All right. Give that ball everything you've got!"
+      },
+      {
+        "speaker": "Jeremy",
+        "text": "Well. That's one way to do it."
+      },
+      {
+        "speaker": "Steven",
+        "text": "HAHA! DID YOU SEE THAT?!"
+      }
+    ],
+    "transition": [
+      {
+        "speaker": "José",
+        "text": "All right, we've got enough people now."
+      },
+      {
+        "speaker": "Chris",
+        "text": "So... are we actually going to play a game?"
+      }
+    ],
+    "ambient": [],
+    "ending": [],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam",
+        "Sean",
+        "Daniel"
+      ],
+      "intention": "combination"
+    }
+  },
+  {
+    "id": 11,
+    "title": "One Last Game",
+    "description": "Chris calls time on the warm-up: there are enough Burners here for a proper scrimmage. Put it all together in a three-minute kickaround for bragging rights—Steven’s already planning his celebration.",
+    "prompt": "Use everything you’ve learned. Play a three-minute kickaround, or finish when ready.",
+    "events": ["scrimmage"],
+    "cast": [
+      "José",
+      "Jeremy",
+      "Chris",
+      "Steven",
+      "Nadia",
+      "Meghan",
+      "Pam",
+      "Sean",
+      "Daniel"
+    ],
+    "intro": [
+      {
+        "speaker": "Chris",
+        "text": "All right, enough warming up."
+      },
+      {
+        "speaker": "Chris",
+        "text": "Let's split into teams and play a little scrimmage."
+      },
+      {
+        "speaker": "José",
+        "text": "Three minutes. Winning team gets bragging rights!"
+      },
+      {
+        "speaker": "Steven",
+        "text": "Perfect. I'm already planning my celebration."
+      }
+    ],
+    "hint": [],
+    "success": [],
+    "transition": [],
+    "ambient": [
+      {
+        "speaker": "Jeremy",
+        "text": "Nice ball!",
+        "event": "passCompleted"
+      },
+      {
+        "speaker": "Meghan",
+        "text": "Great tackle!",
+        "event": "tackleWon"
+      },
+      {
+        "speaker": "Nadia",
+        "text": "Love that run!",
+        "event": "throughReceived"
+      },
+      {
+        "speaker": "Sean",
+        "text": "NOT TODAY!",
+        "event": "saved"
+      },
+      {
+        "speaker": "José",
+        "text": "THAT'S WHAT I'M TALKING ABOUT!",
+        "event": "special"
+      },
+      {
+        "speaker": "Steven",
+        "text": "COME ONNNN!",
+        "event": "goal"
+      }
+    ],
+    "ending": [
+      {
+        "speaker": "Jeremy",
+        "text": "Not a bad little kickaround."
+      },
+      {
+        "speaker": "Meghan",
+        "text": "Yeah, we should do this more often."
+      },
+      {
+        "speaker": "José",
+        "text": "Hey, you did good out there!"
+      },
+      {
+        "speaker": "Chris",
+        "text": "Same time next week?"
+      }
+    ],
+    "setup": {
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Pam",
+        "Sean",
+        "Daniel"
+      ],
+      "intention": "scrimmage"
+    }
+  }
+]

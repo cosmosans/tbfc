@@ -70,7 +70,7 @@ import {
   type Career,
 } from "./careerSeason";
 import { deleteSlot, loadSlot, saveSlot } from "./careerStore";
-import type { MatchSettings } from "./matchSettings";
+import { halfDurationLabel, type MatchSettings } from "./matchSettings";
 import css from "./career.css?inline";
 
 const ceremonySheets: Record<string, [string, number, number]> = {
@@ -80,7 +80,7 @@ const ceremonySheets: Record<string, [string, number, number]> = {
   Chris: [chris_new_goal_stand, 9, 8],
   Sean: [sean_celebration_jog, 11, 8],
   Steven: [steven_new_goal_support, 13, 8],
-  Daniel: [daniel_new_goal_support, 13, 8],
+  Daniel: [daniel_new_goal_support, 17, 8],
   Nadia: [nadia_new_goal_support, 15, 8],
   Jan: [jan_new_goal_support, 15, 8],
   Jeremy: [jeremy_new_goal_group, 17, 8],
@@ -231,6 +231,7 @@ function championshipBracket(c: Career) {
 }
 export function careerHub(
   portraits: Record<string, string>,
+  fallSheets: Record<string, string | undefined>,
   settings: MatchSettings,
   resume?: number,
 ): Promise<Ticket | null> {
@@ -339,7 +340,7 @@ export function careerHub(
           label: string,
           options: readonly string[],
         ) =>
-          `<fieldset><legend>${label}</legend><div class="cr-options">${options.map((v, i) => `<button data-action="pick-${key}-${i}" data-field="${key}" value="${v}" aria-pressed="${setup[key] === v}">${key === "division" ? division(v) : key === "speed" ? v + "×" : v}</button>`).join("")}</div></fieldset>`;
+          `<fieldset><legend>${label}</legend><div class="cr-options">${options.map((v, i) => `<button data-action="pick-${key}-${i}" data-field="${key}" value="${v}" aria-pressed="${setup[key] === v}">${key === "division" ? division(v) : key === "speed" ? halfDurationLabel(Number(v) as MatchSettings["speed"]) : v}</button>`).join("")}</div></fieldset>`;
         const [number, position] = bios[setup.player];
         const stats = playerRatings[number]!;
         const bars = ratingLabels
@@ -358,7 +359,7 @@ export function careerHub(
           choices("division", "Starting Division", tiers) +
           choices("chaos", "Team Availability", ["Authentic", "Chaos"]) +
           choices("sim", "Match Simulation", ["Allowed", "Disabled"]) +
-          choices("speed", "Match Clock", ["5", "10", "20"]);
+          choices("speed", "Real time per half", ["20", "10", "5"]);
         content =
           '<div class="cr-setup">' +
           panel(
@@ -629,23 +630,42 @@ export function careerHub(
     function showSeasonWrap(s: Career) {
       const place = s.schedule[7].flatMap(outcome).indexOf(0) + 1;
       const winner = place === 1;
-      const higher = tiers[tiers.indexOf(s.division) + 1];
+      const tier = tiers.indexOf(s.division);
+      const higher = tiers[tier + 1];
+      const relegatedTo = place === s.schedule[7].length * 2 ? tiers[tier - 1] : undefined;
       const dialog = document.createElement("dialog");
       dialog.className = "cr-recap cr-season-wrap";
       dialog.setAttribute("aria-labelledby", "cr-season-result");
       const finish = ["1st","2nd","3rd","4th","5th","6th"][place - 1];
       const points = table(s).find(row => row.club === 0)!.pts;
-      dialog.innerHTML = `<article><small>${seasonName(s.season)} · Season wrap-up</small><h1 id="cr-season-result">${division(s.division)} ${winner ? "champions!" : "league finish"}</h1>
-        ${winner ? trophyCircle(s.player, roster) : ""}
-        <h2>${s.player} · Turf Burners FC</h2>
+      const fall = relegatedTo && fallSheets[s.player];
+      const relegationScene = fall ? `<div class="cr-relegation-pitch" role="img" aria-label="${s.player} lying on the pitch"><div class="cr-relegation-turf"></div><span><img src="${fall}" alt=""></span></div>` : "";
+      dialog.innerHTML = `<article><small>${seasonName(s.season)}</small><h1 id="cr-season-result">${relegatedTo ? "Relegated from " + division(s.division) : division(s.division) + (winner ? " champions!" : " league finish")}</h1>
+        ${winner ? trophyCircle(s.player, roster) : relegationScene}
         <dl><div><dt>Final position</dt><dd>${finish}</dd></div><div><dt>League points</dt><dd>${points}</dd></div></dl>
-        ${winner && higher ? `<p>You’ve earned promotion to ${division(higher)}. If you stay in ${division(s.division)}, the runner-up goes up.</p>` : ""}
-        <div class="cr-actions">${winner && higher ? btn("promote", "Move up to " + division(higher), true) + btn("next", "Stay in " + division(s.division)) : btn("next","Start next season",true)}</div></article>`;
+        ${winner && higher ? `<p>You’ve earned promotion to ${division(higher)}. If you stay in ${division(s.division)}, the runner-up will be promoted.</p>` : relegatedTo ? `<p>You’ll play in ${division(relegatedTo)} next season.</p>` : ""}
+        <div class="cr-actions">${winner && higher ? btn("next", "Stay in " + division(s.division)) + btn("promote", "Move up to " + division(higher), true) : btn("next","Start next season",true)}</div></article>`;
       shell.append(dialog);
       dialog.onclose = () => { dialog.remove(); shell.querySelector<HTMLElement>('[data-action="season-wrap"]')?.focus(); };
       dialog.showModal();
       dialog.querySelector("button")!.focus();
       if (winner) audio.goalFire();
+      const sprite = dialog.querySelector<HTMLImageElement>(".cr-relegation-pitch img");
+      if (sprite) {
+        const playFall = () => {
+          const frames = Math.round(sprite.naturalWidth / (sprite.naturalHeight / 8));
+          if (!frames) return;
+          const last = `translateX(-${100 * (frames - 1) / frames}%)`;
+          sprite.style.transform = last;
+          sprite.style.visibility = "visible";
+          if (!matchMedia("(prefers-reduced-motion: reduce)").matches)
+            sprite.animate([{transform: "translateX(0)"}, {transform: last}], {
+              duration: frames * 125, easing: `steps(${frames}, jump-none)`,
+            });
+        };
+        if (sprite.complete) playFall();
+        else sprite.addEventListener("load", playFall, {once: true});
+      }
     }
     function advance() {
       if (!c || c.day >= 5) return;
