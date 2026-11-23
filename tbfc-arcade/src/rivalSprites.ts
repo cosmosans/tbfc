@@ -16,7 +16,7 @@ const artAliases:Record<string,Record<string,string>>={
  peach:{silas:'dario'}
 }
 export function rivalSprites(club:Club,name:string){
- if(name===club.keeper&&club.name!=='Onsider Trading FC'&&club.name!=='Fleet Feet FC'&&club.name!=='Barely United'&&club.name!=='Atlético Espresso'&&club.name!=='Net Six & Chill'&&club.name!=='Grass Assassins'&&club.name!=='Crossbar Cowboys'&&club.name!=='Goal Diggers'&&club.name!=='Cleatwood Mac')return {idle:keeperIdle,run:keeperRun,kick:keeperKick}
+ if(name===club.keeper&&club.name!=='Onsider Trading FC'&&club.name!=='Fleet Feet FC'&&club.name!=='Barely United'&&club.name!=='Atlético Espresso'&&club.name!=='Net Six & Chill'&&club.name!=='Grass Assassins'&&club.name!=='Crossbar Cowboys'&&club.name!=='Goal Diggers'&&club.name!=='Cleatwood Mac'&&club.name!=='Sweeper Creepers FC')return {idle:keeperIdle,run:keeperRun,kick:keeperKick}
  const kit=clubs[club.name],key=name.toLowerCase()
  const shared=(kit!=='peach'&&kit!=='gd'&&!(kit==='inter'&&interGirlsWithIndividualArt.has(name))&&!!rivalWomen[club.name]?.has(name))&&!!assets['./art/'+kit+'-base-idle.png']
  const fleetPrefix=kit==='ff'?fleetWomen[name]:undefined
@@ -24,5 +24,6 @@ export function rivalSprites(club:Club,name:string){
  const prefix='./art/'+(fleetPrefix??wondersMale??(kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)))
  const idle=assets[prefix+'-idle.png']
  if(!idle)return undefined
- return {idle,goalRun:clubGoalRuns[prefix+'-goal-run.png'],stand:clubGoals[prefix+'-goal-stand.png'],support:clubGoals[prefix+'-goal-support.png'],run:assets[prefix+'-run.png'],kick:assets[prefix+'-kick.png']??assets['./art/ff-ellis-kick.png'],jump:assets[prefix+'-jump.png'],tackle:assets[prefix+'-tackle.png'],reaction:assets[prefix+'-reaction.png'],reactionFlash:assets[prefix+'-reaction-flash.png'],foul:assets[prefix+'-foul.png']}
+ const scorerPrefix=kit==='grass'?'./art/grass-ninja':kit==='sc'?'./art/sc-ghost':prefix
+ return {idle,goalRun:clubGoalRuns[scorerPrefix+'-goal-run.png'],stand:clubGoals[scorerPrefix+'-goal-stand.png'],support:clubGoals[prefix+'-goal-support.png'],run:assets[prefix+'-run.png'],kick:assets[prefix+'-kick.png']??assets['./art/ff-ellis-kick.png'],jump:assets[prefix+'-jump.png'],tackle:assets[prefix+'-tackle.png'],reaction:assets[prefix+'-reaction.png'],reactionFlash:assets[prefix+'-reaction-flash.png'],foul:assets[prefix+'-foul.png']}
 }

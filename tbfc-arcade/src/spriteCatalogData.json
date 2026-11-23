@@ -8303,7 +8303,7 @@
             "Standing celebration": {
               "file": "net-baxter-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-baxter-goal-support.png",
@@ -8359,7 +8359,7 @@
             "Standing celebration": {
               "file": "net-gabe-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-gabe-goal-support.png",
@@ -8471,7 +8471,7 @@
             "Standing celebration": {
               "file": "net-orion-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-orion-goal-support.png",
@@ -8583,7 +8583,7 @@
             "Standing celebration": {
               "file": "net-beckett-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-beckett-goal-support.png",
@@ -8639,7 +8639,7 @@
             "Standing celebration": {
               "file": "net-trey-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-trey-goal-support.png",
@@ -8751,7 +8751,7 @@
             "Standing celebration": {
               "file": "net-calvin-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-calvin-goal-support.png",
@@ -8863,7 +8863,7 @@
             "Standing celebration": {
               "file": "net-wesley-goal-stand.png",
               "status": "Individual",
-              "note": "New Net Six male base with coordinated hair and skin palette"
+              "note": "Popcorn finisher"
             },
             "Support celebration": {
               "file": "net-wesley-goal-support.png",
@@ -8919,12 +8919,12 @@
             "Running celebration": {
               "file": "crossbar-colt-goal-run.png",
               "status": "Individual",
-              "note": "Original male base palette; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-colt-goal-stand.png",
               "status": "Individual",
-              "note": "Original male base palette"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-colt-goal-support.png",
@@ -8975,12 +8975,12 @@
             "Running celebration": {
               "file": "crossbar-boone-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-boone-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-boone-goal-support.png",
@@ -9087,12 +9087,12 @@
             "Running celebration": {
               "file": "crossbar-wade-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-wade-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-wade-goal-support.png",
@@ -9199,12 +9199,12 @@
             "Running celebration": {
               "file": "crossbar-dusty-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-dusty-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-dusty-goal-support.png",
@@ -9255,12 +9255,12 @@
             "Running celebration": {
               "file": "crossbar-hank-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-hank-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-hank-goal-support.png",
@@ -9367,12 +9367,12 @@
             "Running celebration": {
               "file": "crossbar-levi-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-levi-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-levi-goal-support.png",
@@ -9479,12 +9479,12 @@
             "Running celebration": {
               "file": "crossbar-travis-goal-run.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows; running source used until dedicated celebration arrives"
+              "note": "Cowboy costume"
             },
             "Standing celebration": {
               "file": "crossbar-travis-goal-stand.png",
               "status": "Individual",
-              "note": "Distinct hair and skin palette with matching highlights and shadows"
+              "note": "Cowboy costume"
             },
             "Support celebration": {
               "file": "crossbar-travis-goal-support.png",
@@ -10780,14 +10780,14 @@
               "note": ""
             },
             "Running celebration": {
-              "file": "sc-lenore-goal-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Standing celebration": {
-              "file": "sc-lenore-goal-stand.png",
-              "status": "Individual",
-              "note": "Group celebration"
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Support celebration": {
               "file": "sc-lenore-goal-support.png",
@@ -10836,14 +10836,14 @@
               "note": ""
             },
             "Running celebration": {
-              "file": "sc-sybil-goal-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Standing celebration": {
-              "file": "sc-sybil-goal-stand.png",
-              "status": "Individual",
-              "note": "Group celebration"
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Support celebration": {
               "file": "sc-sybil-goal-support.png",
@@ -10892,14 +10892,14 @@
               "note": ""
             },
             "Running celebration": {
-              "file": "sc-elvira-goal-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Standing celebration": {
-              "file": "sc-elvira-goal-stand.png",
-              "status": "Individual",
-              "note": "Group celebration"
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Support celebration": {
               "file": "sc-elvira-goal-support.png",
@@ -10948,17 +10948,409 @@
               "note": ""
             },
             "Running celebration": {
-              "file": "sc-agatha-goal-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Standing celebration": {
-              "file": "sc-agatha-goal-stand.png",
-              "status": "Individual",
-              "note": "Group celebration"
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
             },
             "Support celebration": {
               "file": "sc-agatha-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Bram",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-bram-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-bram-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-bram-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-bram-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-bram-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-bram-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-bram-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-bram-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Salem",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-salem-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-salem-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-salem-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-salem-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-salem-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-salem-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-salem-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-salem-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Edgar",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-edgar-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-edgar-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-edgar-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-edgar-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-edgar-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-edgar-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-edgar-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-edgar-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Corbin",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-corbin-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-corbin-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-corbin-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-corbin-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-corbin-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-corbin-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-corbin-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-corbin-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Victor",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-victor-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-victor-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-victor-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-victor-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-victor-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-victor-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-victor-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-victor-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Vincent",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-vincent-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-vincent-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-vincent-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-vincent-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-vincent-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-vincent-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-vincent-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-vincent-goal-support.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        },
+        {
+          "name": "Graves",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "sc-graves-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "sc-graves-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "sc-graves-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "sc-graves-jump.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "sc-graves-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "sc-graves-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "sc-graves-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "sc-ghost-goal-run.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Standing celebration": {
+              "file": "sc-ghost-goal-stand.png",
+              "status": "Shared",
+              "note": "Scorer ghost costume"
+            },
+            "Support celebration": {
+              "file": "sc-graves-goal-support.png",
               "status": "Individual",
               "note": ""
             }
@@ -19285,10 +19677,10 @@
       "rows": 8
     },
     "net-baxter-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-baxter-goal-support.png": {
@@ -19355,10 +19747,10 @@
       "rows": 8
     },
     "net-gabe-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-gabe-goal-support.png": {
@@ -19425,10 +19817,10 @@
       "rows": 8
     },
     "net-orion-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-orion-goal-support.png": {
@@ -19495,10 +19887,10 @@
       "rows": 8
     },
     "net-beckett-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-beckett-goal-support.png": {
@@ -19565,10 +19957,10 @@
       "rows": 8
     },
     "net-trey-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-trey-goal-support.png": {
@@ -19635,10 +20027,10 @@
       "rows": 8
     },
     "net-calvin-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-calvin-goal-support.png": {
@@ -19705,10 +20097,10 @@
       "rows": 8
     },
     "net-wesley-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "net-wesley-goal-support.png": {
@@ -20265,10 +20657,10 @@
       "rows": 8
     },
     "crossbar-colt-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-colt-goal-support.png": {
@@ -20342,10 +20734,10 @@
       "rows": 8
     },
     "crossbar-boone-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-boone-goal-support.png": {
@@ -20419,10 +20811,10 @@
       "rows": 8
     },
     "crossbar-wade-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-wade-goal-support.png": {
@@ -20496,10 +20888,10 @@
       "rows": 8
     },
     "crossbar-dusty-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-dusty-goal-support.png": {
@@ -20573,10 +20965,10 @@
       "rows": 8
     },
     "crossbar-hank-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-hank-goal-support.png": {
@@ -20650,10 +21042,10 @@
       "rows": 8
     },
     "crossbar-levi-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-levi-goal-support.png": {
@@ -20727,10 +21119,10 @@
       "rows": 8
     },
     "crossbar-travis-goal-stand.png": {
-      "width": 612,
+      "width": 1156,
       "height": 544,
       "cell": 68,
-      "columns": 9,
+      "columns": 17,
       "rows": 8
     },
     "crossbar-travis-goal-support.png": {
@@ -23651,6 +24043,510 @@
       "cell": 68,
       "columns": 13,
       "rows": 8
+    },
+    "sc-bram-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-salem-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-edgar-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-corbin-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-victor-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-vincent-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-graves-idle.png": {
+      "width": 416,
+      "height": 52,
+      "cell": 52,
+      "columns": 8,
+      "rows": 1
+    },
+    "sc-bram-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-salem-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-edgar-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-corbin-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-victor-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-vincent-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-graves-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sc-bram-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-salem-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-edgar-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-corbin-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-victor-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-vincent-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-graves-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-bram-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-salem-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-edgar-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-corbin-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-victor-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-vincent-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-graves-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-bram-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-salem-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-edgar-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-corbin-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-victor-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-vincent-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-graves-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-bram-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-salem-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-edgar-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-corbin-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-victor-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-vincent-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-graves-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-bram-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-salem-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-edgar-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-corbin-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-victor-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-vincent-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-graves-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sc-bram-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-salem-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-edgar-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-corbin-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-victor-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-vincent-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-graves-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-bram-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-salem-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-edgar-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-corbin-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-victor-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-vincent-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-graves-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-bram-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-salem-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-edgar-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-corbin-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-victor-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-vincent-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-graves-goal-support.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sc-ghost-goal-run.png": {
+      "width": 448,
+      "height": 448,
+      "columns": 8,
+      "rows": 8,
+      "cell": 56
+    },
+    "sc-ghost-goal-stand.png": {
+      "width": 952,
+      "height": 448,
+      "columns": 17,
+      "rows": 8,
+      "cell": 56
     }
   }
 }

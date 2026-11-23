@@ -12,7 +12,7 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0):Promise<Seat
  const root=document.createElement('section')
  root.id='team-select'
  root.className='side-select'
- root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Back</button><span>← → Choose Side · Center to Spectate · Enter / Start to Continue</span><button class="ts-next">${padBadge("Menu")} Continue</button></div></div>`
+ root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Back</button><span>← → Choose Side · Enter / Start to Continue</span><button class="ts-next">${padBadge("Menu")} Continue</button></div></div>`
  const grid=root.querySelector('.ts-match')!
  const sides=new Map<number,number>([[-1,keyboardSide]])
  let suggestedPad:number|null=null
@@ -24,7 +24,7 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0):Promise<Seat
   if(side){
    const club=side===-1?fixture.home:fixture.away
    card.innerHTML='<img class="side-crest" src="'+club.crest+'" alt=""><h2>'+club.name+'</h2><p class="side-cpu">CPU</p>'
-  }else card.innerHTML='<h2>Spectate</h2>'
+  }else card.setAttribute('aria-label','Spectate')
   card.onclick=()=>{choose(-1,side);paint()}
   grid.append(card)
   return card

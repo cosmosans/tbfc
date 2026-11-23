@@ -1,3 +1,18 @@
+import meghan_new_goal_support from "./art/meghan-new-goal-support.png?url";
+import nelson_goal_support from "./art/nelson-goal-support.png?url";
+import mandy_new_goal_team from "./art/mandy-new-goal-team.png?url";
+import chris_new_goal_stand from "./art/chris-new-goal-stand.png?url";
+import sean_celebration_jog from "./art/sean-celebration-jog.png?url";
+import steven_new_goal_support from "./art/steven-new-goal-support.png?url";
+import daniel_new_goal_support from "./art/daniel-new-goal-support.png?url";
+import nadia_new_goal_support from "./art/nadia-new-goal-support.png?url";
+import jan_new_goal_support from "./art/jan-new-goal-support.png?url";
+import jeremy_new_goal_group from "./art/jeremy-new-goal-group.png?url";
+import spider_jose_new_stand from "./art/spider-jose-new-stand.png?url";
+import pam_support from "./art/pam-support.png?url";
+import stubbs_new_goal_support from "./art/stubbs-new-goal-support.png?url";
+import spencer_idle from "./art/spencer-idle.png?url";
+import { audio } from "./matchAudio";
 import meghanHead from "./art/headshots/meghan.png?url";
 import nelsonHead from "./art/headshots/nelson.png?url";
 import mandyHead from "./art/headshots/mandy.png?url";
@@ -36,6 +51,7 @@ import {
 import { playerRatings, ratingLabels } from "./playerRatings";
 import { menuPad, menuDirection } from "./menuPad";
 import {
+  archivedMessages,
   kickoffTime,
   bookRound,
   createCareer,
@@ -57,6 +73,34 @@ import { deleteSlot, loadSlot, saveSlot } from "./careerStore";
 import type { MatchSettings } from "./matchSettings";
 import css from "./career.css?inline";
 
+const ceremonySheets: Record<string, [string, number, number]> = {
+  Meghan: [meghan_new_goal_support, 9, 8],
+  Nelson: [nelson_goal_support, 15, 8],
+  Mandy: [mandy_new_goal_team, 13, 8],
+  Chris: [chris_new_goal_stand, 9, 8],
+  Sean: [sean_celebration_jog, 11, 8],
+  Steven: [steven_new_goal_support, 13, 8],
+  Daniel: [daniel_new_goal_support, 13, 8],
+  Nadia: [nadia_new_goal_support, 15, 8],
+  Jan: [jan_new_goal_support, 15, 8],
+  Jeremy: [jeremy_new_goal_group, 17, 8],
+  José: [spider_jose_new_stand, 17, 8],
+  Pam: [pam_support, 9, 1],
+  Stubbs: [stubbs_new_goal_support, 15, 8],
+  Spencer: [spencer_idle, 1, 1],
+};
+function trophyCircle(player: string, roster: string[]) {
+  const mates = roster.filter(name => name !== player);
+  return '<div class="cr-ceremony" role="img" aria-label="Turf Burners celebrating around '+player+'">' +
+    [...mates, player].map((name, i) => {
+      const center = name === player;
+      const angle = 2 * Math.PI * i / mates.length;
+      const [url, frames, rows] = ceremonySheets[name];
+      const x = center ? 50 : 50 + 40 * Math.sin(angle);
+      const y = center ? 48 : 47 + 34 * Math.cos(angle);
+      return `<span class="cr-party-player ${center ? "captain" : ""}" style="left:${x}%;top:${y}%;z-index:${Math.round(y)};--delay:-${i * .13}s"><i style="background-image:url('${url}');background-size:${name === "Spencer" ? 800 : frames * 100}% ${rows * 100}%;--frames:${Math.max(2, frames)};--end:${frames > 1 ? 100 : 0}%;--duration:${frames / 9}s"></i></span>`;
+    }).join("") + '</div>';
+}
 export const headshots: Partial<Record<string, string>> = {
   Meghan: meghanHead,
   Nelson: nelsonHead,
@@ -86,8 +130,8 @@ const division = (s: string) =>
   s === "beginners" ? "Beginners" : s.toUpperCase();
 const btn = (action: string, label: string, primary = false) =>
   `<button data-action="${action}" class="${primary ? "primary" : ""}">${label}</button>`;
-const panel = (title: string, body: string) =>
-  `<section class="cr-panel"><h2>${title}</h2>${body}</section>`;
+const panel = (title: string, body: string, extraClass = "") =>
+  `<section class="cr-panel${extraClass ? " " + extraClass : ""}"><h2>${title}</h2>${body}</section>`;
 function scores(c: Career, week: number) {
   return c.schedule[week].map((_, i) => fixtureRow(c, week, i)).join("");
 }
@@ -135,7 +179,7 @@ function weekStrip(c: Career) {
 }
 function standings(c: Career) {
   return (
-    '<table><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>' +
+    '<table class="cr-standings"><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>' +
     table(c)
       .map(
         (r, i) =>
@@ -205,17 +249,28 @@ export function careerHub(
   let slot = resume ?? 0,
     c: Career | null = null,
     screen: "slots" | "setup" | "hub" = "slots",
-    tab = "Central",
+    tab = "My Career",
     timer = 0,
     frame = 0;
   const face = (n: string) =>
     headshots[n]
       ? `<img class="cr-face cr-headshot" src="${headshots[n]}" alt="">`
       : `<span class="cr-face" style="background-image:url('${portraits[n]}')"></span>`;
-  function chatRow(name: string, text: string, date: string) {
-    return `<div class="msg">${portraits[name] ? face(name) : ""}<div><small>${name} · ${date}</small><p>${text}</p></div></div>`;
+  function chatRow(name: string, text: string, date: string, answer?: string) {
+    const tag =
+      answer === "No"
+        ? '<span class="cr-rsvp no">✕ NO</span>'
+        : answer === "Yes" || answer === "Late"
+          ? '<span class="cr-rsvp">✓ YES</span>'
+          : "";
+    return `<div class="msg">${portraits[name] ? face(name) : ""}<div><small>${name} · ${date}</small><p>${text}${tag}</p></div></div>`;
   }
-  function reactionRow(line: string, date: string) {
+  function reactionRow(line: string, date: string): string {
+    if (line.includes("\n"))
+      return line
+        .split("\n")
+        .map((message) => reactionRow(message, date))
+        .join("");
     const separator = line.indexOf(" · ");
     return separator < 0
       ? chatRow("Full Time", line, date)
@@ -228,9 +283,10 @@ export function careerHub(
     sim: "Allowed",
     speed: "10",
   });
+  let viewingUnread = 0;
   let chosen: Attribute | undefined;
   let setup = defaults();
-  const tabs = ["Central", "League table", "Calendar", "Squad", "My career"];
+  const tabs = ["My Career", "Team Chat", "League table", "Calendar", "Squad"];
   return new Promise((resolve) => {
     function leave(ticket: Ticket | null) {
       clearTimeout(timer);
@@ -255,6 +311,7 @@ export function careerHub(
     function draw(focus = "") {
       const state = c;
       let content = "";
+      let navigation = "";
       if (screen === "slots") {
         content = panel(
           "Career saves",
@@ -319,8 +376,21 @@ export function careerHub(
           gameIndex = s.schedule[s.round].findIndex((g) => !g.a || !g.b);
         const visible = s.week.events.filter((e) => e.day <= s.day);
         const report = s.reports[s.round];
-        content = `<nav class="cr-sections" aria-label="Career sections">${menuBumper("previous", "Previous career section", 'data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "My career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${menuBumper("next", "Next career section", 'data-action="next-tab"')}</nav>`;
-        if (tab === "Central") {
+        const archived = archivedMessages(s);
+        const total =
+          archived +
+          visible.filter((e) => e.message).length +
+          (done ? s.reaction.split("\n").filter(Boolean).length : 0);
+        const incoming = Math.max(0, total - (s.chatReadCount ?? archived));
+        if (tab === "Team Chat" && s.chatReadCount !== total) {
+          viewingUnread += incoming;
+          s.chatReadCount = total;
+          saveSlot(slot, s);
+        }
+        if (tab !== "Team Chat") viewingUnread = 0;
+        const unread = tab === "Team Chat" ? viewingUnread : incoming;
+        navigation = `<nav class="cr-sections" aria-label="Career sections">${menuBumper("previous", "Previous career section", 'data-action="previous-tab"')}${tabs.map((t, i) => `<button data-action="tab${i}" aria-current="${t === tab ? "page" : "false"}">${t}${t === "Team Chat" && unread ? ` <span class="cr-unread" aria-label="${unread} unread messages">${unread}</span>` : ""}${t === "My Career" && availableUpgrades(s) ? " (+" + availableUpgrades(s) + ")" : ""}</button>`).join("")}${menuBumper("next", "Next career section", 'data-action="next-tab"')}</nav>`;
+        if (tab === "My Career") {
           content += weekStrip(s);
           const title = stage(s.round, gameIndex);
           let actions = "",
@@ -334,10 +404,6 @@ export function careerHub(
                     `<div>${g.minute}′ · ${g.player} · ${careerClubs(c)[g.club].name}</div>`,
                 )
                 .join("") || "<p>No goals.</p>";
-            if (report.performance) {
-              const p = report.performance;
-              summary += `<div class="msg">${face(p.name)}<div><b>${p.name}</b><p>Goals ${p.goals} · Assists ${p.assists} · Completed passes ${p.passes} · +${p.xpAfter - p.xpBefore} XP</p></div></div>`;
-            }
             if (s.round === 7) {
               const place = s.schedule[7].flatMap(outcome).indexOf(0) + 1;
               summary +=
@@ -348,12 +414,7 @@ export function careerHub(
                     ? "Fifth place"
                     : "Season complete · Place " + place) +
                 "</h2>";
-              if (place === 1 && s.division !== "d5") {
-                summary += `<p>You’ve conquered ${division(s.division)}. Do you want to promote Turf Burners FC?</p>`;
-                actions =
-                  btn("promote", "Accept promotion", true) +
-                  btn("next", "Decline · runner-up promotes");
-              } else actions = btn("next", "Start next season", true);
+              actions = btn("season-wrap", "Season wrap-up", true);
             } else actions = btn("next", "Continue to next week", true);
           } else if (s.day === 5)
             actions =
@@ -366,48 +427,105 @@ export function careerHub(
                 timer ? "stop" : "fast",
                 timer ? "Pause calendar" : "Advance to matchday",
               );
-          const poll = roster
-            .map((n) => {
-              const v = visible.filter((e) => e.name === n).at(-1);
-              const answer = v?.answer ?? "No response";
-              return `<div class="poll" data-vote="${answer}">${face(n)}<b>${n}</b><span>${answer === "Yes" || answer === "Late" ? "✓ " : ""}${answer}</span></div>`;
+          const buckets: Record<"Yes" | "No", string[]> = { Yes: [], No: [] };
+          for (const name of roster) {
+            const answer = visible
+              .filter((event) => event.name === name)
+              .at(-1)?.answer;
+            if (answer === "Yes" || answer === "No" || answer === "Late") {
+              buckets[answer === "No" ? "No" : "Yes"].push(
+                `<span role="img" aria-label="${name}" title="${name}">${face(name)}</span>`,
+              );
+            }
+          }
+          const poll = Object.entries(buckets)
+            .map(
+              ([answer, heads]) =>
+                `<div class="cr-vote-group"><b>${answer}</b><div>${heads.join("")}</div></div>`,
+            )
+            .join("");
+          const base = playerRatings[bios[s.player][0]]!,
+            credits = availableUpgrades(s);
+          const choices = ratingLabels
+            .map((stat, i) => {
+              const value = careerRating(s, s.player, stat, base[i]),
+                canSpend = credits > 0 && value < 100;
+              return `<button data-action="train-${i}" ${canSpend ? "" : "disabled"} aria-pressed="${stat === chosen}"><span>${stat}</span><b>${value}${canSpend ? " → " + Math.min(100, value + 2) : ""}</b><span class="cr-track" aria-hidden="true"><i style="transform:scaleX(${value / 100})"></i></span></button>`;
             })
             .join("");
-          const archive = s.chat.slice();
-          const previous = archive.at(-1);
-          const carried =
-            !done &&
-            previous?.name === "Full time" &&
-            previous.text === s.reaction
-              ? archive.pop()
-              : undefined;
+          const training = panel(
+            "Player development",
+            `<div class="cr-dev-profile"><span class="cr-dev-sprite" aria-hidden="true" style="background-image:url('${portraits[s.player]}')"></span><div><h3>${s.player}</h3><div class="cr-rating"><strong>Level ${1 + Math.floor(s.xp / 100)}</strong><b>${s.xp} XP</b><div class="cr-track"><i style="transform:scaleX(${(s.xp % 100) / 100})"></i></div></div><small>${100 - (s.xp % 100)} XP to next level</small></div></div>${credits ? "<p>" + credits + " upgrade" + (credits === 1 ? "" : "s") + " available</p>" : ""}<div class="cr-training">${choices}</div>${chosen ? btn("upgrade", "Improve " + chosen, true) : ""}`,
+            credits ? "cr-upgrade-ready" : "",
+          );
+          const dashboard = `<div class="cr-grid cr-dashboard"><div>${panel(title, `<strong class="cr-day">${calendarDate(s)}</strong> · ${s.day < -1 ? "Off-week" : done ? "Full Time" : s.day === 5 ? "Matchday" : "Next kickoff " + calendarDate(s, 5)} · ${s.week.conditions.time} · ${{ Sun: "Clear", Clouds: "Cloudy", Rain: "Rain" }[s.week.conditions.weather]}${fixtureRow(s, s.round, gameIndex, false)}${summary}<div class="cr-actions">${actions}</div>`)}${s.round >= 6 && !done ? panel("Playoff Fixtures", scores(s, s.round)) : ""}${s.round >= 5 ? panel("Championship Bracket", championshipBracket(s)) : ""}${panel(s.round >= 6 ? "Final league table" : "League table", standings(s))}
+          </div><aside>${training}${done ? panel("Around the league", scores(s, s.round)) : panel("Matchday Poll", poll)}</aside></div>`;
+          content +=
+            dashboard +
+            panel(
+              "Season history",
+              s.history
+                .map(
+                  (h) =>
+                    `<details><summary>${seasonName(h.season)} · ${division(h.division)} · ${h.place === 1 ? "🏆 Champions" : "Place " + h.place}</summary><p>${h.points} league points</p>${h.reports.map((r, i) => `<p>Week ${i + 1} · TBFC ${r.score.join(" – ")} ${careerClubs(h)[opponent({ ...s, round: i, schedule: h.schedule })].name}</p>`).join("")}</details>`,
+                )
+                .join("") || "Your first season is underway.",
+            );
+          content += btn("delete", "Delete career");
+        } else if (tab === "Team Chat") {
+          function divider(date: string, season?: number, round?: number) {
+            for (const entry of [s, ...s.history.slice().reverse()]) {
+              if (season !== undefined && season !== entry.season) continue;
+              const week =
+                round ??
+                entry.schedule.findIndex(
+                  (_, i) =>
+                    calendarDate(
+                      { ...s, season: entry.season, round: i },
+                      5,
+                    ) === date,
+                );
+              const game = entry.schedule[week]?.find(
+                (g) => g.a === 0 || g.b === 0,
+              );
+              if (game?.score)
+                return scoreRow(
+                  game.a,
+                  game.b,
+                  game.score,
+                  game.pens
+                    ? "FINAL · " + game.pens.join("–") + " PENS"
+                    : "FINAL",
+                  "",
+                  "vs",
+                  careerClubs(entry),
+                );
+            }
+            return "";
+          }
+          const history = s.chat
+            .map((e) =>
+              e.name === "Full Time"
+                ? divider(e.date, e.season, e.round) +
+                  reactionRow(e.text, e.date)
+                : chatRow(e.name, e.text, e.date, e.answer),
+            )
+            .join("");
           const attendance = visible
             .filter((e) => e.message)
-            .slice()
-            .reverse()
-            .map((e) => chatRow(e.name, e.message, calendarDate(s, e.day)))
+            .sort((a, b) => a.day - b.day)
+            .map((e) =>
+              chatRow(e.name, e.message, calendarDate(s, e.day), e.answer),
+            )
             .join("");
-          const messages =
-            (done && s.reaction
-              ? reactionRow(s.reaction, calendarDate(s, 5))
-              : "") +
-            attendance +
-            (carried ? reactionRow(carried.text, carried.date) : "");
-          const earlier = archive.length
-            ? "<details><summary>Earlier Messages</summary>" +
-              archive
-                .reverse()
-                .map((e) =>
-                  e.name === "Full time"
-                    ? reactionRow(e.text, e.date)
-                    : chatRow(e.name, e.text, e.date),
-                )
-                .join("") +
-              "</details>"
+          const fullTime = done
+            ? divider("", s.season, s.round) +
+              (s.reaction ? reactionRow(s.reaction, calendarDate(s, 5)) : "")
             : "";
-          content += `<div class="cr-grid"><div>${panel(title, `<strong class="cr-day">${calendarDate(s)}</strong> · ${s.day < -1 ? "Off-week" : done ? "Full time" : s.day === 5 ? "Matchday" : "Next kickoff " + calendarDate(s, 5)} · ${s.week.conditions.time} · ${{ Sun: "Clear", Clouds: "Cloudy", Rain: "Rain" }[s.week.conditions.weather]}${fixtureRow(s, s.round, gameIndex, false)}${summary}<div class="cr-actions">${actions}</div>`)}${s.round >= 6 ? panel("Playoff Fixtures", scores(s, s.round)) : ""}${s.round >= 5 ? panel("Championship Bracket", championshipBracket(s)) : ""}${panel(s.round >= 6 ? "Final league table" : "League table", standings(s))}${s.round < 6 && done ? panel("Around the league", scores(s, s.round)) : ""}
-          ${panel("Team Chat", messages + earlier)}</div><aside>${panel("Matchday poll", poll)}</aside></div>`;
-          content += btn("delete", "Delete career");
+          content += panel(
+            "Team Chat",
+            `<div class="cr-chat-log">${history + attendance + fullTime || "No messages yet."}</div>`,
+          );
         } else if (tab === "League table") {
           for (const tier of [...tiers].reverse()) {
             if (tier === s.division) {
@@ -419,14 +537,22 @@ export function careerHub(
             content += panel(
               division(tier),
               rows.length
-                ? `<table><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r, i) => `<tr class="cr-standings-row"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerPool[r.club].crest}" alt="">${careerPool[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`).join("")}</tbody></table>`
+                ? `<table class="cr-standings"><thead><tr><th>#</th><th class="team">Club</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GD</th><th>Pts</th></tr></thead><tbody>${rows.map((r, i) => `<tr class="cr-standings-row"><td>${i + 1}</td><td class="team"><img class="cr-crest" src="${careerPool[r.club].crest}" alt="">${careerPool[r.club].name}</td><td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf - r.ga}</td><td>${r.pts}</td></tr>`).join("")}</tbody></table>`
                 : "Awaiting teams",
             );
           }
         } else if (tab === "Calendar") {
           content +=
             s.schedule
-              .map((_, i) => panel("Week " + (i + 1), scores(s, i)))
+              .map((games, i) =>
+                panel(
+                  "Week " + (i + 1),
+                  scores(s, i),
+                  games.length && games.every((game) => game.score)
+                    ? "cr-week-complete"
+                    : "",
+                ),
+              )
               .join("") +
             (s.schedule.length < 8
               ? "<p>Weeks 7 and 8 · Playoff opponents are decided by league position and semifinal results.</p>"
@@ -436,43 +562,10 @@ export function careerHub(
             "Squad",
             `<table class="cr-squad-table"><thead><tr><th scope="col">Player</th><th scope="col">Position</th><th scope="col">Appearances</th><th scope="col">Goals</th></tr></thead><tbody>${roster.map((n) => `<tr><td class="cr-squad-player">${face(n)}<b>${n}</b></td><td class="cr-squad-position">${bios[n]?.[1] ?? ""}</td><td class="cr-squad-count">${s.stats[n]?.apps ?? 0}</td><td class="cr-squad-count">${s.stats[n]?.goals ?? 0}</td></tr>`).join("")}</tbody></table>`,
           );
-        } else {
-          const stats = s.stats[s.player];
-          const base = playerRatings[bios[s.player][0]]!,
-            credits = availableUpgrades(s);
-          const choices = ratingLabels
-            .map((stat, i) => {
-              const value = careerRating(s, s.player, stat, base[i]),
-                canSpend = credits > 0 && value < 100;
-              return `<button data-action="train-${i}" ${canSpend ? "" : "disabled"} aria-pressed="${stat === chosen}">${stat}<b>${value}${canSpend ? " → " + Math.min(100, value + 2) : ""}</b></button>`;
-            })
-            .join("");
-          const training = panel(
-            "Player development",
-            `<div class="cr-profile">${face(s.player)}<b>${s.player}</b></div><p>${credits ? credits + " upgrade" + (credits === 1 ? "" : "s") + " available" : "Next upgrade in " + (100 - (s.xp % 100)) + " XP"}</p><div class="cr-training">${choices}</div>${chosen ? btn("upgrade", "Improve " + chosen, true) : ""}`,
-          );
-          content +=
-            panel(
-              s.player,
-              `<p>Player-manager · Level ${1 + Math.floor(s.xp / 100)} · ${s.xp} XP</p><p>${stats?.apps ?? 0} appearances · ${stats?.goals ?? 0} goals</p>`,
-            ) +
-            training +
-            panel(
-              "Season history",
-              s.history
-                .map(
-                  (h) =>
-                    `<details><summary>${seasonName(h.season)} · ${division(h.division)} · ${h.place === 1 ? "🏆 Champions" : "Place " + h.place}</summary><p>${h.points} league points</p>${h.reports.map((r, i) => `<p>Week ${i + 1} · TBFC ${r.score.join(" – ")} ${careerClubs(h)[opponent({ ...s, round: i, schedule: h.schedule })].name}</p>`).join("")}</details>`,
-                )
-                .join("") || "Your first season is underway.",
-            );
         }
       }
-      shell.innerHTML = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>TURF BURNERS FC · CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div>${
-        screen === "hub" && state
-          ? `<div class="cr-header-player">${state.player}<span aria-hidden="true" style="background-image:url('${portraits[state.player]}')"></span></div>`
-          : ""
-      }</div>${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
+      const heading = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>TURF BURNERS FC · CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
+      shell.innerHTML = `${navigation ? `<header class="cr-hub-header">${heading}${navigation}</header>` : heading}${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
         focus
           ? `[data-action="${focus}"]`
@@ -481,6 +574,78 @@ export function careerHub(
             : "button,select",
       );
       target?.focus({ preventScroll: true });
+      if (screen === "hub" && state) showRecap(state);
+    }
+    function showRecap(s: Career) {
+      const report = s.reports[s.round];
+      if (!report?.recapPending) return;
+      const dialog = document.createElement("dialog");
+      dialog.className = "cr-recap";
+      dialog.setAttribute("aria-labelledby", "cr-recap-title");
+      const personal = report.performance;
+      const goals = report.goals.filter(
+        (g) => !g.club && g.player === s.player,
+      ).length;
+      const stats = [
+        ["Goals", goals],
+        ["Assists", personal?.assists ?? "—"],
+        ["Completed passes", personal?.passes ?? "—"],
+      ];
+      const game = s.schedule[s.round].find((g) => g.a === 0 || g.b === 0)!;
+      const teams = careerClubs(s);
+      const credits = availableUpgrades(s);
+      const mode =
+        report.simulatedFrom !== undefined
+          ? "Simulated from " + Math.floor(report.simulatedFrom) + "′"
+          : report.simulated
+            ? "Simulated match"
+            : "Played match";
+      dialog.innerHTML = `<article><small>Full Time · ${mode}</small><h1 id="cr-recap-title">Match performance</h1>
+        ${scoreRow(game.a, game.b, game.score!, game.pens ? "FINAL · " + game.pens.join("–") + " PENS" : "FINAL", "", "vs", teams)}
+        <div class="cr-recap-player"><span class="cr-dev-sprite" style="background-image:url('${portraits[s.player]}')"></span><div><small>${report.played.includes(s.player) ? bios[s.player][1] : "Did not play"}</small><h2>${s.player}</h2></div></div>
+        <dl>${stats.map(([label, value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join("")}</dl>
+        ${report.simulated ? "<small>Assists and passes aren’t tracked in a full simulation.</small>" : report.simulatedFrom !== undefined ? "<small>Assists and passes cover the played portion.</small>" : ""}
+        <div class="cr-recap-xp"><b>+${report.xpEarned} XP</b><span>Level ${1 + Math.floor(s.xp / 100)} · ${s.xp} total XP</span><progress max="100" value="${s.xp % 100}" aria-label="Level progress"></progress>
+        <strong>${credits ? credits + (credits === 1 ? " upgrade available" : " upgrades available") : 100 - (s.xp % 100) + " XP to next level"}</strong></div>
+        ${btn("dismiss-recap", s.round === 7 ? "Season wrap-up" : "Continue to My Career", true)}</article>`;
+      shell.append(dialog);
+      dialog.onclose = () => {
+        report.recapPending = false;
+        try {
+          saveSlot(slot, s);
+        } catch (e) {
+          error(e);
+          return;
+        }
+        dialog.remove();
+        if (s.round === 7) { showSeasonWrap(s); return; }
+        shell
+          .querySelector<HTMLElement>('[aria-current="page"]')
+          ?.focus({ preventScroll: true });
+      };
+      dialog.showModal();
+      dialog.querySelector("button")!.focus();
+    }
+    function showSeasonWrap(s: Career) {
+      const place = s.schedule[7].flatMap(outcome).indexOf(0) + 1;
+      const winner = place === 1;
+      const higher = tiers[tiers.indexOf(s.division) + 1];
+      const dialog = document.createElement("dialog");
+      dialog.className = "cr-recap cr-season-wrap";
+      dialog.setAttribute("aria-labelledby", "cr-season-result");
+      const finish = ["1st","2nd","3rd","4th","5th","6th"][place - 1];
+      const points = table(s).find(row => row.club === 0)!.pts;
+      dialog.innerHTML = `<article><small>${seasonName(s.season)} · Season wrap-up</small><h1 id="cr-season-result">${division(s.division)} ${winner ? "champions!" : "league finish"}</h1>
+        ${winner ? trophyCircle(s.player, roster) : ""}
+        <h2>${s.player} · Turf Burners FC</h2>
+        <dl><div><dt>Final position</dt><dd>${finish}</dd></div><div><dt>League points</dt><dd>${points}</dd></div></dl>
+        ${winner && higher ? `<p>You’ve earned promotion to ${division(higher)}. If you stay in ${division(s.division)}, the runner-up goes up.</p>` : ""}
+        <div class="cr-actions">${winner && higher ? btn("promote", "Move up to " + division(higher), true) + btn("next", "Stay in " + division(s.division)) : btn("next","Start next season",true)}</div></article>`;
+      shell.append(dialog);
+      dialog.onclose = () => { dialog.remove(); shell.querySelector<HTMLElement>('[data-action="season-wrap"]')?.focus(); };
+      dialog.showModal();
+      dialog.querySelector("button")!.focus();
+      if (winner) audio.goalFire();
     }
     function advance() {
       if (!c || c.day >= 5) return;
@@ -519,6 +684,11 @@ export function careerHub(
       }
     }
     async function action(a: string) {
+      if (a === "season-wrap" && c) { showSeasonWrap(c); return; }
+      if (a === "dismiss-recap") {
+        shell.querySelector<HTMLDialogElement>(".cr-recap")?.close();
+        return;
+      }
       if (a === "previous-tab" || a === "next-tab") {
         changeTab(a === "previous-tab" ? -1 : 1);
         return;
@@ -579,7 +749,7 @@ export function careerHub(
         slot = Number(a.slice(4));
         c = loadSlot(slot);
         screen = c ? "hub" : "setup";
-        tab = "Central";
+        tab = "My Career";
         draw();
         return;
       }
@@ -623,15 +793,35 @@ export function careerHub(
       if (a === "upgrade" && chosen) {
         const i = ratingLabels.indexOf(chosen),
           base = playerRatings[bios[c.player][0]]![i];
-        if (spendUpgrade(c, chosen, base)) save();
+        const before = careerRating(c, c.player, chosen, base);
+        if (!spendUpgrade(c, chosen, base)) return;
+        save();
+        audio.goalFire();
         chosen = undefined;
-        draw("tab3");
+        draw("tab0");
+        const stat = shell.querySelector<HTMLElement>(
+          `[data-action="train-${i}"]`,
+        );
+        if (stat && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          stat.classList.add("cr-stat-flare");
+          const bar = stat.querySelector<HTMLElement>(".cr-track i")!;
+          bar.animate(
+            [
+              { transform: `scaleX(${before / 100})` },
+              { transform: bar.style.transform },
+            ],
+            { duration: 700, easing: "ease-out" },
+          );
+        }
         return;
       }
       if (a.startsWith("tab")) {
         chosen = undefined;
+        const leavingChat = tab === "Team Chat";
         tab = tabs[Number(a.slice(3))];
         draw(a);
+        if (tab === "Team Chat") root.scrollTop = root.scrollHeight;
+        else if (leavingChat) root.scrollTop = 0;
         return;
       }
       if (a === "advance") {

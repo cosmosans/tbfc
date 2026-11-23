@@ -24,7 +24,7 @@
 header{top:max(6px,env(safe-area-inset-top));justify-content:flex-end;align-items:flex-start}
 header{display:grid;justify-content:stretch;gap:6px}
 header>div{justify-self:end}
-.bug-stack{container-type:inline-size;width:min(600px,100%);justify-self:center;min-width:0}
+.bug-stack{container-type:inline-size;width:min(660px,100%);justify-self:center;min-width:0}
 .bug-penalties{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 5px}
 .bug-penalties>div{display:grid;justify-items:start;gap:2px}
 #awayPenalties{justify-items:end}
@@ -56,6 +56,10 @@ header>div{justify-self:end}
 #shotStats{top:102px}
 @media(max-width:545px){#scoreboard{width:min(345px,100%);grid-template-columns:1fr 32px 80px 32px 1fr}.bug-long{display:none}.bug-short{display:inline}.bug-team{padding-inline:6px;gap:4px}.bug-team img{width:22px;height:22px}}
 [data-debug]{display:none!important}#scoreboard{pointer-events:auto;cursor:pointer}.bug-team .bug-long,.bug-away-name{font-size:clamp(13px,2.65cqw,16px)}.bug-team img{flex:none}
+@container (min-width:541px) and (max-width:635px){
+ .bug-team .bug-long,.bug-team .bug-away-name{white-space:normal;text-wrap:balance;line-height:1}
+ .bug-team .bug-long{text-align:right}
+}
 @container(max-width:540px){.bug-away-name{white-space:normal;text-wrap:balance;font-size:12px;line-height:1}.bug-long{display:none}.bug-short{display:inline}.bug-team{padding-inline:5px;gap:4px}}
 @container(max-width:320px){.bug-team img{display:none}#scoreboard{grid-template-columns:1fr 28px 70px 28px 1fr}}@media(max-width:470px) and (pointer:coarse){
  #stick{left:5px}

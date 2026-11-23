@@ -1,6 +1,6 @@
 import {clubs} from './opponentSquads'
-export function scoreRow(a:number,b:number,score:number[]|null,status:string,stage='',headline='vs'){
- const club=(i:number)=>`<span class="lb-side"><img src="${clubs[i].crest}" alt=""><b>${clubs[i].name}</b></span>`
+export function scoreRow(a:number,b:number,score:number[]|null,status:string,stage='',headline='vs',teams=clubs){
+ const club=(i:number)=>`<span class="lb-side"><img src="${teams[i].crest}" alt=""><b>${teams[i].name}</b></span>`
  return `<div class="lb-row">${club(a)}<div class="lb-score"><strong>${score?score.join(' – '):headline}</strong><small>${status}</small></div>${club(b)}</div>${stage?'<small>'+stage+'</small>':''}`
 }
 export function statRow(label:string,values:(number|string)[]){

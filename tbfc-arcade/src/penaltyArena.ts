@@ -3,9 +3,6 @@ import rivalFront from './art/rival-keeper-front.png?url'
 import rivalRear from './art/rival-keeper-rear.png?url'
 import rivalReady from './art/rival-keeper-ready.png?url'
 import * as T from 'three'
-import frontDiveSheet from './art/keeper-dive-front.png?url'
-import seanDiveSheet from './art/sean-keeper-dive.png?url'
-import seanReadySheet from './art/sean-keeper-ready.png?url'
 import {audio} from './matchAudio'
 import {menuPad} from './menuPad'
 import {shootout,type Kick,type Outcome,type Side} from './shootoutRules'
@@ -46,14 +43,11 @@ export function playPenalties(a:Arena){
   texture.generateMipmaps=false;texture.colorSpace=T.SRGBColorSpace
   return texture
  }
- const kits=[{ready:seanReadySheet,front:frontDiveSheet,rear:seanDiveSheet},{ready:rivalReady,front:rivalFront,rear:rivalRear}].map(kit=>{
-  const ready=keeperTexture(kit.ready);ready.repeat.set(1/9,1)
-  return {ready,front:keeperTexture(kit.front),rear:keeperTexture(kit.rear)}
- })
- function keeperKit(actor:Actor){return kits[actor.displayName==='Sean'?0:1]}
+ const keeperKit={ready:keeperTexture(rivalReady),front:keeperTexture(rivalFront),rear:keeperTexture(rivalRear)}
+ keeperKit.ready.repeat.set(1/9,1)
  function showDive(actor:Actor,elapsed:number,direction:number,front:boolean){
   if(!direction||elapsed<0)return
-  const sheet=keeperKit(actor)[front?'front':'rear']
+  const sheet=keeperKit[front?'front':'rear']
   if(!sheet.image)return
   const index=Math.min(16,Math.floor(elapsed/.78*17))
   // Both source sheets depict a dive toward positive pitch Z.
@@ -294,7 +288,7 @@ export function playPenalties(a:Arena){
    button('Play again',()=>restart(false));button('Switch sides',()=>restart(true))
    button('Back to menu',()=>{history.replaceState({...history.state,arcadeMenu:true},'');location.reload()})
   }else button('Continue',()=>{
-   for(const kit of kits)for(const sheet of Object.values(kit))sheet.dispose();events.abort();rows.remove();panel.remove();root.classList.remove('pk-active');a.scene.remove(spot,reticle)
+   for(const sheet of Object.values(keeperKit))sheet.dispose();events.abort();rows.remove();panel.remove();root.classList.remove('pk-active');a.scene.remove(spot,reticle)
    for(const mesh of [spot,reticle]){mesh.geometry.dispose();mesh.material.dispose()}
    a.finish(kicks)
   })
@@ -438,12 +432,12 @@ export function playPenalties(a:Arena){
   keeperPose(keeper,pose,shooting?0:4,time)
   keeper.sprite.center.x=.5
   if(!shooting&&pose==='ready'&&phase==='ready'){
-   const seanReady=keeperKit(keeper).ready
+   const readySheet=keeperKit.ready
    readyTime+=dt
    const frameTime=readyTime%3
-   if(readyTime>=3&&frameTime<1.8&&seanReady.image){
-    seanReady.offset.x=Math.floor(frameTime/.2)/9
-    keeper.sprite.material.map=seanReady
+   if(readyTime>=3&&frameTime<1.8&&readySheet.image){
+    readySheet.offset.x=Math.floor(frameTime/.2)/9
+    keeper.sprite.material.map=readySheet
     keeper.sprite.scale.x=keeper.sprite.scale.y*56/48
    }else keeper.sprite.scale.x=keeper.sprite.scale.y
   }else{readyTime=0;keeper.sprite.scale.x=keeper.sprite.scale.y}

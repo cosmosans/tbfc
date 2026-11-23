@@ -9,6 +9,7 @@ export function selectTeams(
   standings?: ReadonlyMap<string, number>,
 ): Promise<Fixture | null> {
   const selectable=[...clubs,alternateOpponent,onsiderTrading,barelyUnited,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
+    .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
   const picks = [
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
