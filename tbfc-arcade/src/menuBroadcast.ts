@@ -55,7 +55,7 @@ export function broadcastDirector(){
 
 const shirts:Record<string,number>={
  'Fleet Feet FC':0x79b9de,'One Kick Wonders':0x653496,'Goal Dancers FC':0xd52e25,
- 'Inter Your Mom':0x414048,'Whiff City FC':0x529ddb,'Peachy Puffs':0x8cbd8a
+ 'Inter Your Mom':0x414048,'Whiff City FC':0x529ddb,'Trash Pandas FC':0x0f3b34
 }
 export function broadcastShirt(texture:T.Texture,team:string){
  const color=shirts[team]

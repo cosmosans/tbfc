@@ -9,7 +9,7 @@ const inks:Record<string,[string,string,string]>={
  'Goal Dancers FC':['#df4430','#190604','#ffca66'],
  'Inter Your Mom':['#716653','#fff6df','#c69d52'],
  'Whiff City FC':['#4586ca','#071326','#a8dcff'],
- 'Peachy Puffs':['#87bb70','#102518','#ffccba'],
+ 'Trash Pandas FC':['#8ed14c','#0f3b34','#f6e8c3'],
  'Shooting Stars FC':['#fa328b','#200a19','#ffacd6'],
  'Onsider Trading FC':['#0b7942','#fff4ca','#e2b52b'],
  'Atlético Espresso':['#7b1f2b','#fff1d5','#d6aa59'],

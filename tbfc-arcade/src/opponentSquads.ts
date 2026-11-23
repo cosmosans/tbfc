@@ -5,7 +5,7 @@ import whiffKit from './art/kits/whiff-city-fc.webp?url'
 import dancersKit from './art/kits/goal-dancers-fc.webp?url'
 import wondersKit from './art/kits/one-kick-wonders.webp?url'
 import starsKit from './art/kits/shooting-stars-fc.webp?url'
-import puffsKit from './art/kits/peachy-puffs.webp?url'
+import pandasKit from './art/kit-icons/trash-pandas-fc.png?url'
 import fleetKit from './art/kits/fleet-feet-fc.webp?url'
 import interKit from './art/kits/inter-your-mom.webp?url'
 import fleetCrest from './art/ground/fleet-feet-fc.png?url'
@@ -13,7 +13,7 @@ import wondersCrest from './art/ground/one-kick-wonders.png?url'
 import dancersCrest from './art/ground/goal-dancers-fc.png?url'
 import interCrest from './art/ground/inter-your-mom.png?url'
 import whiffCrest from './art/ground/whiff-city-fc.png?url'
-import puffsCrest from './art/ground/peachy-puffs.png?url'
+import pandasCrest from './art/ground/trash-pandas-fc.png?url'
 import starsCrest from './art/ground/shooting-stars.png?url'
 import orangeCrest from './art/ground/orange-slices-crest.png?url'
 import onsiderCrest from './art/ground/onsider-trading-fc.png?url'
@@ -64,7 +64,7 @@ export const opponentLadder = [
     record:{wins:1, draws:0, losses:3, goalsFor:5, goalsAgainst:9},
     keeper:'Ash', outfield:['Wyatt','Cruz','Lex','Una','Cal','Liv'], bench:['Dara','Taj','Benji','Lark']
   }, {
-    name:'Peachy Puffs', stars:5, role:'The deceptively cute menace', kit:'Pastel green with peach and pink accents', crest:puffsCrest, kitArt:puffsKit,
+    name:'Trash Pandas FC', stars:5, role:'The deceptively cute menace', kit:'Deep purple with gold trim', crest:pandasCrest, kitArt:pandasKit,
     record:{wins:0, draws:1, losses:3, goalsFor:3, goalsAgainst:10},
     keeper:'Jude', outfield:['Silas','Emery','Lola','Dario','Tariq','Bea'], bench:['Mara','Felix','Nina','Max']
   }, {
@@ -144,7 +144,7 @@ export const clubs = [burners,...opponentLadder]
 export const careerPool = [...clubs,barelyUnited,alternateOpponent,onsiderTrading,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
 export function careerClubs(c:{leagueClubs?:number[]}){return c.leagueClubs?.map(index=>careerPool[index]??clubs[index])??clubs}
 export type Club = (typeof clubs)[number]
-export type Fixture = {home:Club, away:Club, homeOnRight?:boolean, burnersKit?:'black'|'white', creepersKit?:'primary'|'secondary', wondersKit?:'primary'|'secondary', dancersKit?:'primary'|'secondary', grassKit?:'primary'|'secondary', espressoKit?:'primary'|'secondary', onsiderKit?:'primary'|'secondary', netKit?:'primary'|'secondary', diggersKit?:'primary'|'secondary', barelyKit?:'primary'|'secondary'}
+export type Fixture = {home:Club, away:Club, homeOnRight?:boolean, burnersKit?:'black'|'white', creepersKit?:'primary'|'secondary', wondersKit?:'primary'|'secondary', dancersKit?:'primary'|'secondary', grassKit?:'primary'|'secondary', espressoKit?:'primary'|'secondary', onsiderKit?:'primary'|'secondary', netKit?:'primary'|'secondary', diggersKit?:'primary'|'secondary', barelyKit?:'primary'|'secondary', macKit?:'primary'|'secondary', pandasKit?:'primary'|'secondary', starsKit?:'primary'|'secondary'}
 
 const accents = [
   "#f47738",
@@ -153,7 +153,7 @@ const accents = [
   "#e74939",
   "#e0b859",
   "#599de0",
-  "#9dce90",
+  "#8ed14c",
   "#f1529d",
 ];
 export function clubAccent(club:Club){return club.name===sweeperCreepers.name?'#A939EC':club.name===cleatwoodMac.name?'#902648':club.name===goalDiggers.name?'#F4A208':club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}

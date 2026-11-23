@@ -70,8 +70,10 @@ export function selectLineup(
   career?: Selection,
   bonds?:Record<string,number>,
   progress?:Career,
+  managedClub = fixture.home,
+  turn?: { number: number; devices: number[]; first: boolean; draft?: Selection },
 ): Promise<Selection | null> {
-  const { home, away } = fixture;
+  const home = managedClub;
   const key =
     home === burners
       ? "tbfc.match.lineup.v1"
@@ -96,7 +98,7 @@ export function selectLineup(
   slots.push(names.find((n) => !slots.includes(n)) ?? null, null, null, null);
   try {
     const saved =
-      match?.current ?? career ?? JSON.parse(localStorage.getItem(key) ?? "null");
+      match?.current ?? career ?? turn?.draft ?? JSON.parse(localStorage.getItem(key) ?? "null");
     if (
       saved &&
       Object.hasOwn(formations, saved.shape) &&
@@ -161,7 +163,7 @@ export function selectLineup(
       };
       if (!back && !match && availableWomen(slots) < 2) return;
       if (!match) audio.menu(back ? "nav" : "success");
-      if (!match && !career)
+      if (!back && !match && !career)
         try {
           localStorage.setItem(key, JSON.stringify(result));
         } catch {}
@@ -237,12 +239,12 @@ export function selectLineup(
         return;
       }
       if (availableWomen(slots) < 2) return;
-      if (career) { finish(); return; }
+      if (career || turn?.first) { finish(); return; }
       const previous = document.activeElement as HTMLElement | null;
       dialog = document.createElement("dialog");
       dialog.className = "lu-confirm lu-settings";
       dialog.setAttribute("aria-labelledby", "lu-question");
-      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[home, away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
+      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[fixture.home, fixture.away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -279,7 +281,7 @@ export function selectLineup(
       }).join('')}</svg>` : ''
       const role = (i: number) =>
         i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
-      root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>'+(progress?'':'<button id="lu-quit">Quit Match</button>') : '<button id="lu-teams">‹ Teams</button>'}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : career ? "Confirm lineup" : "Match settings"} ▸</button></div>
+      root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${turn ? `P${turn.number} · ` : ""}${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>'+(progress?'':'<button id="lu-quit">Quit Match</button>') : `<button id="lu-teams">‹ ${turn && !turn.first ? "Previous lineup" : "Teams"}</button>`}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : turn?.first ? "Next lineup" : career ? "Confirm lineup" : "Match settings"} ▸</button></div>
     <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}>${menuBumper('previous','Previous formation','id="lu-prev"')}${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}${menuBumper('next','Next formation','id="lu-next"')}</div>
     <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span><small class="lu-fit">${chemistryText(chemistry)}</small></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}<b class="lu-position">${p.role}</b>${avatar(slots[i]!)}${nameplate(slots[i]!)}</button>`).join("")}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
@@ -633,17 +635,20 @@ export function selectLineup(
         else finish(true);
       }
     }
+    const lineupPad = () => turn
+      ? Array.from(navigator.getGamepads?.() ?? []).find(p => p && turn.devices.includes(p.index) && (p.buttons.some(b => b.pressed) || p.axes.some(v => Math.abs(v) > .3)))
+      : menuPad();
     let frame = 0,
       lastMove = 0,
       held = "",
-      a = !!menuPad()?.buttons[0]?.pressed,
-      b = !!menuPad()?.buttons[1]?.pressed;
+      a = !!lineupPad()?.buttons[0]?.pressed,
+      b = !!lineupPad()?.buttons[1]?.pressed;
     let lb = false,
       rb = false,
-      startHeld = !!menuPad()?.buttons[9]?.pressed;
+      startHeld = !!lineupPad()?.buttons[9]?.pressed;
     function poll(t: number) {
       paintFire(still.matches ? 0 : Math.floor(t / 130) % 32);
-      const pad = menuPad();
+      const pad = lineupPad();
       if (pad) {
         const start = !!pad.buttons[9]?.pressed,
           opening = start && !startHeld && !dialog;

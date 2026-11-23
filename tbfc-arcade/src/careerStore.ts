@@ -5,7 +5,7 @@ const prefix='tbfc.arcade.career.v1.'
 export function loadSlot(slot:number):Career|null{
  const raw=localStorage.getItem(prefix+slot)
  if(!raw)return null
- const value=JSON.parse(raw) as Career
+ const value=JSON.parse(raw.replaceAll('Peachy Puffs','Trash Pandas FC')) as Career
  if(value.version!==1||!Array.isArray(value.schedule)||!value.week||!value.id)throw Error('Unreadable career save')
  value.clubDivisions={...startingClubDivisions,...value.clubDivisions} as Career['clubDivisions']
  // D4 was removed. Keep the season playable and preserve its results in D5.

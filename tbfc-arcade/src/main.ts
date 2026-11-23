@@ -292,16 +292,23 @@ const barelySecondarySheets = import.meta.glob<string>("./art/barely-secondary/*
 const barelySecondaryByUrl = new Map(Object.entries(barelyPrimarySheets).map(([path,url]) =>
   [url, barelySecondarySheets[path.replace("./art/", "./art/barely-secondary/")]] as const
 ));
+const macPrimarySheets = import.meta.glob<string>("./art/cm-*.png", { eager:true, query:"?url", import:"default" });
+const macSecondarySheets = import.meta.glob<string>("./art/mac-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const macSecondaryByUrl = new Map(Object.entries(macPrimarySheets).map(([path,url]) =>
+  [url, macSecondarySheets[path.replace("./art/", "./art/mac-secondary/")]] as const
+));
+const pandasPrimarySheets = import.meta.glob<string>("./art/tp-*.png", { eager:true, query:"?url", import:"default" });
+const pandasSecondarySheets = import.meta.glob<string>("./art/pandas-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const pandasSecondaryByUrl = new Map(Object.entries(pandasPrimarySheets).map(([path,url]) =>
+  [url, pandasSecondarySheets[path.replace("./art/", "./art/pandas-secondary/")]] as const
+));
+const starsPrimarySheets = import.meta.glob<string>("./art/ss-{male,female}-*.png", { eager:true, query:"?url", import:"default" });
+const starsSecondarySheets = import.meta.glob<string>("./art/stars-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const starsSecondaryByUrl = new Map(Object.entries(starsPrimarySheets).map(([path,url]) =>
+  [url, starsSecondarySheets[path.replace("./art/", "./art/stars-secondary/")]] as const
+));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
-  { eager: true, query: "?url", import: "default" },
-);
-const peachMaleGoalUrls = import.meta.glob<string>(
-  "./art/peach-*-goal-{run,stand,support}.png",
-  { eager: true, query: "?url", import: "default" },
-);
-const starsMaleGoalUrls = import.meta.glob<string>(
-  "./art/ss-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
 );
 const onsiderMaleGoalUrls = import.meta.glob<string>(
@@ -374,11 +381,19 @@ async function start() {
       return diggersSecondaryByUrl.get(url) ?? url;
     if (fixture?.barelyKit === "secondary" && barelySecondaryByUrl.has(url))
       return barelySecondaryByUrl.get(url) ?? url;
+    if (fixture?.macKit === "secondary" && macSecondaryByUrl.has(url))
+      return macSecondaryByUrl.get(url) ?? url;
+    if (fixture?.pandasKit === "secondary" && pandasSecondaryByUrl.has(url))
+      return pandasSecondaryByUrl.get(url) ?? url;
+    if (fixture?.starsKit === "secondary" && starsSecondaryByUrl.has(url))
+      return starsSecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
     return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
   }
   let fixture: Fixture | undefined,
+    managingAway = false,
+    awayLineup: Selection | null = null,
     lineup: Selection | null = null,
     portraits = burnerPortraits;
   audio.state(true, false);
@@ -444,6 +459,8 @@ async function start() {
           ? "practice"
           : await mainMenu(music, !returning, removeBackdrop.ready);
     do {
+      managingAway = false;
+      awayLineup = null;
       seats = null;
       simulation = false;
       if (destination === "spriteViewer") {
@@ -588,26 +605,38 @@ async function start() {
       if (!seats || !selectedVenue) continue;
       kickOffVenue = selectedVenue;
       simulation = seats.length === 0;
-      const club = fixture.home;
-      portraits =
-        club === burners
-          ? Object.fromEntries(Object.entries(burnerPortraits).map(([name,url]) => [name, kitSheet(url)]))
-          : Object.fromEntries(
-              [...club.outfield, ...club.bench, club.keeper].map((n) => [
-                n,
-                kitSheet(rivalSprites(club, n)?.idle ?? (n === club.keeper ? tealIdle : trainingIdle)),
-              ]),
-            );
+      const orderedSeats = [...seats].sort((a,b) => a.number - b.number);
+      const sides = [...new Set(orderedSeats.map(seat => seat.side))];
+      if (!sides.length) sides.push(-1);
+      managingAway = sides[0] === 1;
+      const drafts = new Map<number, Selection>();
       kickOffSettings.time =
-        kickOffVenue === "school" || kickOffVenue === "westend"
-          ? "Night"
-          : "Evening";
-      lineup = await selectLineup(
-        portraits,
-        fixture,
-        undefined,
-        kickOffSettings,
-      );
+        kickOffVenue === "school" || kickOffVenue === "westend" ? "Night" : "Evening";
+      for (let step = 0; step < sides.length;) {
+        const side = sides[step];
+        const club = side === 1 ? fixture.away : fixture.home;
+        const art = club === burners
+          ? Object.fromEntries(Object.entries(burnerPortraits).map(([name,url]) => [name, kitSheet(url)]))
+          : Object.fromEntries([...club.outfield, ...club.bench, club.keeper].map(name =>
+              [name, kitSheet(rivalSprites(club, name)?.idle ?? (name === club.keeper ? tealIdle : trainingIdle))]));
+        if (step === 0) portraits = art;
+        const controllers = orderedSeats.filter(seat => seat.side === side);
+        const turn = sides.length === 2 ? { number: controllers[0].number,
+          devices: controllers.map(seat => seat.device), first: step === 0, draft: drafts.get(side) } : undefined;
+        const selected = await selectLineup(art, fixture, undefined, kickOffSettings,
+          undefined, undefined, undefined, club, turn);
+        if (!selected) {
+          if (step > 0) { step--; continue; }
+          lineup = null;
+          break;
+        }
+        drafts.set(side, selected);
+        if (++step === sides.length) {
+          awayLineup = drafts.get(1) ?? null;
+          lineup = { ...(drafts.get(-1) ?? { shape: "1-3-3", starters: [...fixture.home.outfield, fixture.home.keeper],
+            bench: [...fixture.home.bench] }), warmup: selected.warmup };
+        }
+      }
       if (lineup) Object.assign(settings, kickOffSettings);
     } while (!lineup);
     removeBackdrop();
@@ -1037,9 +1066,9 @@ async function start() {
     Pam: "#8 Pam",
     Stubbs: "#12 STUBBS",
   };
-  const makeBurner = (name: string) => {
+  const makeBurner = async (name: string) => {
     const fall = fallSheets[name];
-    return createPlayer(
+    const actor = await createPlayer(
       labels[name] ?? name,
       name,
       fall ? [...kits[name], fall] : kits[name],
@@ -1133,6 +1162,8 @@ async function start() {
             ? joseReactionFlashUrl
             : undefined,
     );
+    if (name === "Daniel") actor.maps[0].userData.celebrationScale = 1;
+    return actor;
   };
   const trainingSheets = [trainingIdle, trainingRun, trainingKick];
   const guestSheets = [blueIdle, blueRun, blueKick, starsFall];
@@ -1181,6 +1212,8 @@ async function start() {
     if (
       club.name === "Net Six & Chill" ||
       club.name === "Atlético Espresso" ||
+      club.name === "Shooting Stars FC" ||
+      club.name === "Trash Pandas FC" ||
       club.name === "Grass Assassins" ||
       club.name === "Crossbar Cowboys" ||
       club.name === "Goal Diggers" ||
@@ -1279,14 +1312,16 @@ async function start() {
       ? Object.keys(kits).filter((n) => n !== home.keeper)
       : lineup.starters.slice(0, 6);
   const players = await Promise.all(fieldPlayers.map(makeHomePlayer));
-  const lanes = celebrationLab || freePractice ? [] : [-10, 0, 10, -7, 0, 7];
+  const awayShape = awayLineup && positions(awayLineup.shape);
+  const awayStarters = awayLineup?.starters ?? [...matchOpponent.outfield, matchOpponent.keeper];
+  const makeAwayPlayer = (name: string) => matchOpponent === burners
+    ? makeBurner(name) : makeRival(matchOpponent, name, guestSheets);
+  const lanes = celebrationLab || freePractice ? [] : awayShape?.map(p => -p.lane) ?? [-10, 0, 10, -7, 0, 7];
   const opponents = await Promise.all(
     (crossingDrill ? [] : lanes).map((_, i) =>
       tutorialLaunch
         ? makeBurner(tutorialScene.away[i])
-        : matchOpponent === burners
-        ? makeBurner(matchOpponent.outfield[i])
-        : makeRival(matchOpponent, matchOpponent.outfield[i], guestSheets),
+        : makeAwayPlayer(awayStarters[i]),
     ),
   );
   const outfield = [...players, ...opponents];
@@ -1304,9 +1339,12 @@ async function start() {
   if (sean !== naturalKeeper) scene.remove(naturalKeeper.sprite);
   sean.name = naturalKeeper.name;
   const homeSlots = [...players, sean];
-  const reserves = await Promise.all(lineup.bench.map(makeHomePlayer));
+  const managedLineup = managingAway && awayLineup ? awayLineup : lineup;
+  const managedClub = managingAway ? matchOpponent : home;
+  const managedPlayer = managingAway ? makeAwayPlayer : makeHomePlayer;
+  const reserves = await Promise.all(managedLineup.bench.map(managedPlayer));
   reserves.forEach((m) => scene.remove(m.sprite));
-  const matchBench = lineup.bench.slice();
+  const matchBench = managedLineup.bench.slice();
   // Keep the pitch slot, ball action and replay sprite stable; identity and fitness travel together.
   const identity = (m: typeof sean) => ({
     name: m.name,
@@ -1325,8 +1363,12 @@ async function start() {
     lateChallenges: m.lateChallenges,
     penalty: m.penalty,
   });
+  const awayGK = await makeKeeper(tutorialLaunch ? tutorialScene.awayKeeper : awayStarters[6]);
+  const managedSlots = managingAway ? [...opponents, awayGK] : homeSlots;
+  const fieldKeeper = managingAway ? await makeAwayPlayer(awayStarters[6]) : naturalKeeper;
+  if (managingAway) scene.remove(fieldKeeper.sprite);
   const squad = new Map(
-    [...players, naturalKeeper, ...reserves].map((m) => [
+    [...managedSlots.slice(0,-1), fieldKeeper, ...reserves].map((m) => [
       m.displayName,
       identity(m),
     ]),
@@ -1386,7 +1428,7 @@ async function start() {
   function applyTeam(starters: string[], bench: string[]) {
     if (ticket) for (const name of starters) appearances.add(name);
     // Preserve each player's field artwork when they move into or out of goal.
-    for (const actor of homeSlots) {
+    for (const actor of managedSlots) {
       const saved = squad.get(actor.displayName)!;
       saved.sprintCharge = actor.sprintCharge;
       saved.staminaCapacity = actor.staminaCapacity;
@@ -1394,10 +1436,10 @@ async function start() {
       saved.penalty = actor.penalty;
     }
     for (const [i, name] of starters.entries()) {
-      const slot = homeSlots[i];
+      const slot = managedSlots[i];
       if (slot.displayName === name) continue;
       const incoming = squad.get(name)!;
-      if (slot === sean && !celebrationLab) {
+      if (i === 6 && !celebrationLab) {
         slot.name = incoming.name;
         slot.displayName = incoming.displayName;
         slot.sprintCharge = incoming.sprintCharge;
@@ -1421,7 +1463,7 @@ async function start() {
       return texture;
     }),
   );
-  const awayGK = await makeKeeper(tutorialLaunch ? tutorialScene.awayKeeper : matchOpponent.keeper);
+
   const pitchActors = [...outfield, referee, sean, awayGK];
   const exhaustionMarkers = [...outfield, sean, awayGK].map((actor) => {
     const icon = document.createElement("span");
@@ -1455,7 +1497,7 @@ async function start() {
   keeper.position.x = keeperHomeX;
   const homeKeeper = sean.sprite;
   homeKeeper.position.x = -keeperHomeX;
-  keeper.name = matchOpponent.keeper;
+  keeper.name = awayGK.displayName;
   homeKeeper.name = sean.displayName;
   const keepers = [keeper, homeKeeper];
   keeper.visible = !crossingDrill;
@@ -1932,12 +1974,6 @@ async function start() {
   const interMaleGoals: Partial<
     Record<string, { run: T.Texture; stand: T.Texture; support: T.Texture }>
   > = {};
-  const peachMaleGoals: Partial<
-    Record<string, { run: T.Texture; stand: T.Texture; support: T.Texture }>
-  > = {};
-  const starsMaleGoals: Partial<
-    Record<string, { run: T.Texture; stand: T.Texture; support: T.Texture }>
-  > = {};
   if (
     home.name === "Inter Your Mom" ||
     matchOpponent.name === "Inter Your Mom"
@@ -1964,28 +2000,6 @@ async function start() {
           groupCelebrations[name] = support;
         },
       ),
-    );
-  }
-  if (home.name === "Peachy Puffs" || matchOpponent.name === "Peachy Puffs") {
-    await Promise.all(
-      ["Silas", "Emery", "Dario", "Tariq", "Felix", "Max"].map(async (name) => {
-        const variant = name === "Silas" ? "dario" : name.toLowerCase();
-        const files = ["run", "stand", "support"].map(
-          (action) =>
-            peachMaleGoalUrls[`./art/peach-${variant}-goal-${action}.png`],
-        );
-        if (files.some((file) => !file)) return;
-        const [run, stand, support] = await Promise.all(
-          files.map(celebrationSheet),
-        );
-        for (const map of [run, stand, support]) {
-          map.userData.cell = 48;
-          map.userData.directionalCelebration = true;
-          map.repeat.set(48 / map.image.width, 1 / 8);
-        }
-        peachMaleGoals[name] = { run, stand, support };
-        groupCelebrations[name] = support;
-      }),
     );
   }
   if (
@@ -2911,8 +2925,8 @@ async function start() {
     turnoverGrace = 0.65;
     noticeTime = 0;
     const blueShape = lanes.map((z, i) => [
-      i >= 3 ? 12 : i === 1 ? (blue ? 0 : 4) : 6,
-      z,
+      awayShape ? (blue && i === 1 ? 0 : -awayShape[i].depth) : i >= 3 ? 12 : i === 1 ? (blue ? 0 : 4) : 6,
+      blue && awayShape && i === 1 ? 0 : z,
     ]);
     opponents.forEach((o, i) => {
       o.sprite.position.set(blueShape[i][0] * attackSign, 0, blueShape[i][1]);
@@ -4470,8 +4484,8 @@ async function start() {
     if (
       !blast &&
       !windupComplete &&
-      matchOpponent.name === "Peachy Puffs" &&
-      !rivalWomen["Peachy Puffs"].has(carrier.displayName)
+      matchOpponent.name === "Trash Pandas FC" &&
+      !rivalWomen["Trash Pandas FC"].has(carrier.displayName)
     ) {
       carrier.face = facing(dx, target - ball.position.z);
       carrier.age = 0;
@@ -5301,16 +5315,16 @@ async function start() {
         return;
       }
       const current = {
-        shape: lineup.shape,
-        starters: homeSlots.map((m) => m.displayName),
+        shape: managedLineup.shape,
+        starters: managedSlots.map((m) => m.displayName),
         bench: matchBench,
       };
       const unavailable = new Set(
-        homeSlots.filter((m) => m.penalty > 0).map((m) => m.displayName),
+        managedSlots.filter((m) => m.penalty > 0).map((m) => m.displayName),
       );
       const matchdayPlayers = [
         ...matchBench.map((name) => squad.get(name)!),
-        ...homeSlots,
+        ...managedSlots,
       ];
       const stamina = new Map(
         matchdayPlayers.map((p) => [
@@ -5331,6 +5345,7 @@ async function start() {
         undefined,
         ticket?.career.bonds,
         ticket?.career,
+        managedClub,
       );
       if (!result) {
         pause(false);
@@ -5762,7 +5777,7 @@ async function start() {
   } else if (lineup.warmup) {
     crossingDrill = true;
     const attackNames =
-      home === burners
+      managedClub === burners
         ? [
             "Meghan",
             "Pam",
@@ -5774,15 +5789,15 @@ async function start() {
             "Jeremy",
             "Nadia",
           ]
-        : home.outfield.slice(0, 3);
-    const available = [...matchPlayers, ...reserves];
+        : managedLineup.starters.slice(0, 3);
+    const available = [...managedSlots.slice(0,6), ...reserves];
     const trio = available
       .filter((a) => attackNames.includes(a.displayName))
       .slice(0, 3);
     for (const name of attackNames) {
       if (trio.length === 3) break;
       if (trio.some((a) => a.displayName === name)) continue;
-      const actor = await makeHomePlayer(name);
+      const actor = await managedPlayer(name);
       scene.remove(actor.sprite);
       squad.set(name, identity(actor));
       trio.push(actor);
@@ -5873,7 +5888,7 @@ async function start() {
     matchView.removeAttribute("data-paused");
     el("pause").textContent = "Pause";
     el("pause").removeAttribute("disabled");
-    applyTeam(lineup.starters, lineup.bench);
+    applyTeam(managedLineup.starters, managedLineup.bench);
     for (const data of squad.values()) {
       data.penalty = data.lateChallenges = 0;
       data.sprintCharge = data.staminaCapacity = 100;
@@ -6219,14 +6234,6 @@ async function start() {
       scoringClub.name === "Inter Your Mom" && scorer
         ? interMaleGoals[scorer.displayName]
         : undefined;
-    const peachGoal =
-      scoringClub.name === "Peachy Puffs" && scorer
-        ? peachMaleGoals[scorer.displayName]
-        : undefined;
-    const starsGoal =
-      scoringClub.name === "Shooting Stars FC" && scorer
-        ? starsMaleGoals[scorer.displayName]
-        : undefined;
     const fleetGoal = scorer
       ? fleetCelebrations.get(scorer.maps[0])
       : undefined;
@@ -6237,8 +6244,6 @@ async function start() {
       fleetGoal?.stand ??
       onsiderGoal?.stand ??
       interGoal?.stand ??
-      peachGoal?.stand ??
-      starsGoal?.stand ??
       (scorer && scoringClub === burners
         ? celebrations[scorer.displayName]
         : undefined);
@@ -6246,8 +6251,6 @@ async function start() {
       fleetGoal?.run ??
       onsiderGoal?.run ??
       interGoal?.run ??
-      peachGoal?.run ??
-      starsGoal?.run ??
       (scoringClub === burners
         ? scorer?.displayName === "Stubbs"
           ? stubbsSlide
@@ -6275,7 +6278,7 @@ async function start() {
       runCelebration === meghanSkate ||
       runCelebration === spiderRun ||
       runCelebration === pamSkateGoal ||
-      ((scoringClub.name === "Sweeper Creepers FC" ||
+      ((scoringClub.name === "Trash Pandas FC" || scoringClub.name === "Sweeper Creepers FC" ||
         scoringClub.name === "Grass Assassins") && !!fleetGoal?.run);
     celebrationRunSeconds =
       runCelebration === stubbsSlide

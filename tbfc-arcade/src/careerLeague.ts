@@ -1,5 +1,5 @@
 // Append new clubs to keep indices in existing career saves stable.
-export const careerClubNames=['Turf Burners FC','Fleet Feet FC','One Kick Wonders','Goal Dancers FC','Inter Your Mom','Whiff City FC','Peachy Puffs','Shooting Stars FC','Barely United','Orange Slices','Onsider Trading FC','Atlético Espresso','Grass Assassins','Net Six & Chill','Crossbar Cowboys','Goal Diggers','Cleatwood Mac','Sweeper Creepers FC'] as const
+export const careerClubNames=['Turf Burners FC','Fleet Feet FC','One Kick Wonders','Goal Dancers FC','Inter Your Mom','Whiff City FC','Trash Pandas FC','Shooting Stars FC','Barely United','Orange Slices','Onsider Trading FC','Atlético Espresso','Grass Assassins','Net Six & Chill','Crossbar Cowboys','Goal Diggers','Cleatwood Mac','Sweeper Creepers FC'] as const
 export const careerClubStars=[3,2.5,2,3,3,4,5,5,4.5,2,3.5,4.5,4,3.5,4.5,2.5,3,5] as const
 export const startingClubDivisions:Record<string,string>=Object.fromEntries(careerClubNames.slice(1).map((name,offset)=>{
  const stars=careerClubStars[offset+1]

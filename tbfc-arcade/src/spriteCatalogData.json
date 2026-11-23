@@ -3907,61 +3907,61 @@
       ]
     },
     {
-      "name": "Peachy Puffs",
+      "name": "Trash Pandas FC",
       "players": [
         {
           "name": "Silas",
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-dario-idle.png",
+              "file": "tp-male-idle.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-dario-run.png",
+              "file": "tp-male-run.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-dario-kick.png",
+              "file": "tp-male-kick.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-dario-jump.png",
+              "file": "tp-male-jump.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-dario-tackle.png",
+              "file": "tp-male-tackle.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-dario-reaction.png",
+              "file": "tp-male-reaction.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-dario-foul.png",
+              "file": "tp-male-foul.png",
               "status": "Shared",
-              "note": "Uses dario artwork"
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-dario-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant; Silas uses Dario art"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-dario-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant; Silas uses Dario art"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-dario-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant; Silas uses Dario art"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -3970,54 +3970,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-emery-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-emery-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-emery-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-emery-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-emery-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-emery-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-emery-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-emery-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-emery-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-emery-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -4026,54 +4026,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-lola-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Run": {
-              "file": "peach-lola-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Kick": {
-              "file": "peach-lola-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Jump / header / air move": {
-              "file": "peach-lola-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle": {
-              "file": "peach-lola-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-lola-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-lola-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-female-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             }
           }
         },
@@ -4082,54 +4082,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-dario-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-dario-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-dario-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-dario-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-dario-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-dario-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-dario-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-dario-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-dario-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-dario-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -4138,54 +4138,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-tariq-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-tariq-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-tariq-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-tariq-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-tariq-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-tariq-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-tariq-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-tariq-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-tariq-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-tariq-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -4194,54 +4194,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-bea-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Run": {
-              "file": "peach-bea-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Kick": {
-              "file": "peach-bea-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Jump / header / air move": {
-              "file": "peach-bea-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle": {
-              "file": "peach-bea-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-bea-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-bea-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-female-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             }
           }
         },
@@ -4250,54 +4250,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-mara-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Run": {
-              "file": "peach-mara-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Kick": {
-              "file": "peach-mara-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Jump / header / air move": {
-              "file": "peach-mara-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle": {
-              "file": "peach-mara-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-mara-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-mara-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-female-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             }
           }
         },
@@ -4306,54 +4306,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-felix-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-felix-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-felix-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-felix-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-felix-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-felix-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-felix-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-felix-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-felix-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-felix-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -4362,54 +4362,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-nina-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Run": {
-              "file": "peach-nina-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Kick": {
-              "file": "peach-nina-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Jump / header / air move": {
-              "file": "peach-nina-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle": {
-              "file": "peach-nina-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-nina-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-nina-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-female-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-female-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas female art"
             }
           }
         },
@@ -4418,54 +4418,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "peach-max-idle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-idle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "peach-max-run.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "peach-max-kick.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-kick.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": "peach-max-jump.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": "peach-max-tackle.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "peach-max-reaction.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "peach-max-foul.png",
-              "status": "Individual",
-              "note": ""
+              "file": "tp-male-foul.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": "peach-max-goal-run.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": "peach-max-goal-stand.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": "peach-max-goal-support.png",
-              "status": "Individual",
-              "note": "Male palette variant"
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         },
@@ -4474,54 +4474,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "rival-keeper-idle.png",
+              "file": "tp-male-idle.png",
               "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "note": "Trash Pandas male art"
             },
             "Run": {
-              "file": "rival-keeper-run.png",
+              "file": "tp-male-run.png",
               "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "note": "Trash Pandas male art"
             },
             "Kick": {
-              "file": "rival-keeper-kick.png",
+              "file": "tp-male-kick.png",
               "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "note": "Trash Pandas male art"
             },
             "Foul reaction (fall)": {
-              "file": "rival-keeper-fall.png",
+              "file": "tp-male-foul.png",
               "status": "Shared",
-              "note": "Shared goalkeeper art"
+              "note": "Trash Pandas male art"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-male-jump.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-male-tackle.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-male-reaction.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             },
             "Running celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-run.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-raccoon-goal-stand.png",
+              "status": "Shared",
+              "note": "Trash Pandas raccoon art"
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "tp-male-goal-support.png",
+              "status": "Shared",
+              "note": "Trash Pandas male art"
             }
           }
         }
@@ -4535,54 +4535,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-malik-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-malik-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-malik-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-malik-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-malik-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-malik-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-malik-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-malik-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-malik-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-malik-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -4591,54 +4591,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-riley-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-riley-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-riley-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-riley-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-riley-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-riley-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-riley-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-riley-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-riley-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-riley-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -4647,54 +4647,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-sasha-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Run": {
-              "file": "ss-sasha-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Kick": {
-              "file": "ss-sasha-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-sasha-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Jump / header / air move": {
-              "file": "ss-sasha-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle": {
-              "file": "ss-sasha-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-sasha-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Running celebration": {
-              "file": "ss-sasha-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Standing celebration": {
-              "file": "ss-sasha-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Support celebration": {
-              "file": "ss-sasha-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant; group finisher reused for support"
+              "file": "ss-female-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             }
           }
         },
@@ -4703,54 +4703,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-andre-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-andre-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-andre-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-andre-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-andre-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-andre-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-andre-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-andre-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-andre-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-andre-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -4759,54 +4759,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-val-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Run": {
-              "file": "ss-val-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Kick": {
-              "file": "ss-val-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-val-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Jump / header / air move": {
-              "file": "ss-val-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle": {
-              "file": "ss-val-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-val-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Running celebration": {
-              "file": "ss-val-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Standing celebration": {
-              "file": "ss-val-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Support celebration": {
-              "file": "ss-val-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant; group finisher reused for support"
+              "file": "ss-female-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             }
           }
         },
@@ -4815,54 +4815,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-leo-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-leo-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-leo-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-leo-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-leo-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-leo-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-leo-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-leo-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-leo-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-leo-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -4871,54 +4871,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-kai-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-kai-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-kai-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-kai-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-kai-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-kai-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-kai-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-kai-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-kai-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-kai-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -4927,54 +4927,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-iris-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Run": {
-              "file": "ss-iris-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Kick": {
-              "file": "ss-iris-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-iris-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Jump / header / air move": {
-              "file": "ss-iris-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle": {
-              "file": "ss-iris-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-iris-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Running celebration": {
-              "file": "ss-iris-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Standing celebration": {
-              "file": "ss-iris-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Support celebration": {
-              "file": "ss-iris-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant; group finisher reused for support"
+              "file": "ss-female-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             }
           }
         },
@@ -4983,54 +4983,54 @@
           "gender": "Male",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-rowan-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Run": {
-              "file": "ss-rowan-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Kick": {
-              "file": "ss-rowan-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-rowan-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Jump / header / air move": {
-              "file": "ss-rowan-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle": {
-              "file": "ss-rowan-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-rowan-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Running celebration": {
-              "file": "ss-rowan-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Standing celebration": {
-              "file": "ss-rowan-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             },
             "Support celebration": {
-              "file": "ss-rowan-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars male palette variant"
+              "file": "ss-male-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars male art"
             }
           }
         },
@@ -5039,54 +5039,54 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "ss-cleo-idle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-idle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Run": {
-              "file": "ss-cleo-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Kick": {
-              "file": "ss-cleo-kick.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-kick.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Foul reaction (fall)": {
-              "file": "ss-cleo-foul.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-foul.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Jump / header / air move": {
-              "file": "ss-cleo-jump.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-jump.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle": {
-              "file": "ss-cleo-tackle.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-tackle.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Tackle reaction (stumble)": {
-              "file": "ss-cleo-reaction.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-reaction.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Running celebration": {
-              "file": "ss-cleo-goal-run.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-run.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Standing celebration": {
-              "file": "ss-cleo-goal-stand.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant"
+              "file": "ss-female-goal-stand.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             },
             "Support celebration": {
-              "file": "ss-cleo-goal-support.png",
-              "status": "Individual",
-              "note": "Shooting Stars female palette variant; group finisher reused for support"
+              "file": "ss-female-goal-support.png",
+              "status": "Shared",
+              "note": "Shooting Stars female art"
             }
           }
         },
@@ -24547,6 +24547,272 @@
       "columns": 17,
       "rows": 8,
       "cell": 56
+    },
+    "tp-male-idle.png": {
+      "width": 448,
+      "height": 56,
+      "cell": 56,
+      "columns": 8,
+      "rows": 1
+    },
+    "tp-male-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "tp-male-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-male-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-male-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-male-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-male-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-male-goal-support.png": {
+      "width": 1156,
+      "height": 544,
+      "columns": 17,
+      "rows": 8,
+      "cell": 68
+    },
+    "tp-female-idle.png": {
+      "width": 448,
+      "height": 56,
+      "cell": 56,
+      "columns": 8,
+      "rows": 1
+    },
+    "tp-female-run.png": {
+      "width": 576,
+      "height": 576,
+      "cell": 72,
+      "columns": 8,
+      "rows": 8
+    },
+    "tp-female-kick.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-female-jump.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-female-tackle.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-female-reaction.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-female-foul.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "tp-female-goal-support.png": {
+      "width": 1224,
+      "height": 576,
+      "cell": 72,
+      "columns": 17,
+      "rows": 8
+    },
+    "tp-raccoon-goal-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "tp-raccoon-goal-stand.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "ss-male-idle.png": {
+      "width": 448,
+      "height": 56,
+      "cell": 56,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-male-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-male-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-male-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-male-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-male-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-male-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-male-goal-run.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "ss-male-goal-stand.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "ss-male-goal-support.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "ss-female-idle.png": {
+      "width": 448,
+      "height": 56,
+      "cell": 56,
+      "columns": 8,
+      "rows": 1
+    },
+    "ss-female-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "ss-female-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-jump.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-goal-run.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "ss-female-goal-stand.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "ss-female-goal-support.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
     }
   }
 }
