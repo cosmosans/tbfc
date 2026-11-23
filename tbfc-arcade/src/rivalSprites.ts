@@ -7,8 +7,8 @@ import type {Club} from './opponentSquads'
 const assets=import.meta.glob<string>('./art/{ff,okw,ss,gd,inter,whiff,peach,orange,onsider,barely,espresso,grass,net,crossbar,diggers,cm,sc,tp}-*-{idle,run,kick,jump,tackle,reaction,reaction-flash,foul}.png',{eager:true,query:'?url',import:'default'})
 const clubs:Record<string,string>={'Fleet Feet FC':'ff','Shooting Stars FC':'ss','One Kick Wonders':'okw','Goal Dancers FC':'gd','Inter Your Mom':'inter','Whiff City FC':'whiff','Trash Pandas FC':'tp','Orange Slices':'orange','Onsider Trading FC':'onsider','Barely United':'barely','Atlético Espresso':'espresso','Grass Assassins':'grass','Net Six & Chill':'net','Crossbar Cowboys':'crossbar','Goal Diggers':'diggers','Cleatwood Mac':'cm','Sweeper Creepers FC':'sc'}
 const fleetWomen:Record<string,string>={Lena:'ff-lena-bun',Remy:'ff-remy',Jules:'ff-jules',Mina:'ff-mina'}
-const clubGoals=import.meta.glob<string>('./art/{ff,ss,gd,okw,barely,onsider,espresso,grass,net,crossbar,diggers,cm,sc,tp}-*-goal-{stand,support}.png',{eager:true,query:'?url',import:'default'})
-const clubGoalRuns=import.meta.glob<string>('./art/{ff,ss,gd,okw,barely,onsider,espresso,grass,net,crossbar,diggers,cm,sc,tp}-*-goal-run.png',{eager:true,query:'?url',import:'default'})
+const clubGoals=import.meta.glob<string>('./art/{ff,ss,whiff,gd,okw,barely,onsider,espresso,grass,net,crossbar,diggers,cm,sc,tp}-*-goal-{stand,support}.png',{eager:true,query:'?url',import:'default'})
+const clubGoalRuns=import.meta.glob<string>('./art/{ff,ss,whiff,gd,okw,barely,onsider,espresso,grass,net,crossbar,diggers,cm,sc,tp}-*-goal-run.png',{eager:true,query:'?url',import:'default'})
 const interGirlsWithIndividualArt=new Set(['Freya','Ada','Holly','Nora'])
 
 // Keep the existing kit sheets and assign each fictional character their roster artwork.
@@ -21,7 +21,7 @@ export function rivalSprites(club:Club,name:string){
  const shared=(kit!=='peach'&&kit!=='gd'&&!(kit==='inter'&&interGirlsWithIndividualArt.has(name))&&!!rivalWomen[club.name]?.has(name))&&!!assets['./art/'+kit+'-base-idle.png']
  const fleetPrefix=kit==='ff'?fleetWomen[name]:undefined
  const wondersMale=kit==='okw'&&!rivalWomen[club.name]?.has(name)?`okw-male-${key}`:undefined
- const prefix='./art/'+((kit==='tp'||kit==='ss')?kit+'-'+(rivalWomen[club.name].has(name)?'female':'male'):fleetPrefix??wondersMale??(kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)))
+ const prefix='./art/'+(kit==='whiff'?kit+'-'+key:(kit==='tp'||kit==='ss')?kit+'-roster-'+key:fleetPrefix??wondersMale??(kit+'-'+(shared?'base':artAliases[kit]?.[key]??key)))
  const idle=assets[prefix+'-idle.png']
  if(!idle)return undefined
  const scorerPrefix=kit==='tp'?'./art/tp-raccoon':kit==='grass'?'./art/grass-ninja':kit==='sc'?'./art/sc-ghost':prefix

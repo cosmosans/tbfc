@@ -302,10 +302,15 @@ const pandasSecondarySheets = import.meta.glob<string>("./art/pandas-secondary/*
 const pandasSecondaryByUrl = new Map(Object.entries(pandasPrimarySheets).map(([path,url]) =>
   [url, pandasSecondarySheets[path.replace("./art/", "./art/pandas-secondary/")]] as const
 ));
-const starsPrimarySheets = import.meta.glob<string>("./art/ss-{male,female}-*.png", { eager:true, query:"?url", import:"default" });
+const starsPrimarySheets = import.meta.glob<string>("./art/ss-roster-*.png", { eager:true, query:"?url", import:"default" });
 const starsSecondarySheets = import.meta.glob<string>("./art/stars-secondary/*.png", { eager:true, query:"?url", import:"default" });
 const starsSecondaryByUrl = new Map(Object.entries(starsPrimarySheets).map(([path,url]) =>
   [url, starsSecondarySheets[path.replace("./art/", "./art/stars-secondary/")]] as const
+));
+const whiffPrimarySheets = import.meta.glob<string>("./art/whiff-*.png", { eager:true, query:"?url", import:"default" });
+const whiffSecondarySheets = import.meta.glob<string>("./art/whiff-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const whiffSecondaryByUrl = new Map(Object.entries(whiffPrimarySheets).map(([path,url]) =>
+  [url, whiffSecondarySheets[path.replace("./art/", "./art/whiff-secondary/")]] as const
 ));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
@@ -387,6 +392,8 @@ async function start() {
       return pandasSecondaryByUrl.get(url) ?? url;
     if (fixture?.starsKit === "secondary" && starsSecondaryByUrl.has(url))
       return starsSecondaryByUrl.get(url) ?? url;
+    if (fixture?.whiffKit === "secondary" && whiffSecondaryByUrl.has(url))
+      return whiffSecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
     return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
@@ -1212,6 +1219,7 @@ async function start() {
     if (
       club.name === "Net Six & Chill" ||
       club.name === "Atlético Espresso" ||
+      club.name === "Whiff City FC" ||
       club.name === "Shooting Stars FC" ||
       club.name === "Trash Pandas FC" ||
       club.name === "Grass Assassins" ||
@@ -2000,44 +2008,6 @@ async function start() {
           groupCelebrations[name] = support;
         },
       ),
-    );
-  }
-  if (
-    home.name === "Shooting Stars FC" ||
-    matchOpponent.name === "Shooting Stars FC"
-  ) {
-    await Promise.all(
-      [
-        "Malik",
-        "Riley",
-        "Andre",
-        "Leo",
-        "Kai",
-        "Rowan",
-        "Sasha",
-        "Val",
-        "Iris",
-        "Cleo",
-      ].map(async (name) => {
-        const files = ["run", "stand", "support"].map(
-          (action) =>
-            starsMaleGoalUrls[
-              `./art/ss-${name.toLowerCase()}-goal-${action}.png`
-            ],
-        );
-        if (files.some((file) => !file)) return;
-        const [run, stand, support] = await Promise.all(
-          files.map(celebrationSheet),
-        );
-        const cell = ["Sasha", "Val", "Iris", "Cleo"].includes(name) ? 50 : 48;
-        for (const map of [run, stand, support]) {
-          map.userData.cell = cell;
-          map.userData.directionalCelebration = true;
-          map.repeat.set(cell / map.image.width, 1 / 8);
-        }
-        starsMaleGoals[name] = { run, stand, support };
-        groupCelebrations[name] = support;
-      }),
     );
   }
   if (

@@ -108,6 +108,10 @@ export function selectLineup(
       saved.bench.length <= 4
     ) {
       const team = [...saved.starters, ...saved.bench];
+      if (home.name === "Whiff City FC") {
+        const renamed: Record<string, string> = { Wyatt: "Parmesan", Cruz: "Swiss", Lex: "Cheddar", Una: "Gouda", Liv: "Brie" };
+        team.forEach((name, i) => { if (Object.hasOwn(renamed, name)) team[i] = renamed[name]; });
+      }
       if (
         team.every((n) => names.includes(n)) &&
         new Set(team).size === team.length
