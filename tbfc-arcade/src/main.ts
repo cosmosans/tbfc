@@ -287,6 +287,11 @@ const diggersSecondarySheets = import.meta.glob<string>("./art/diggers-secondary
 const diggersSecondaryByUrl = new Map(Object.entries(diggersPrimarySheets).map(([path,url]) =>
   [url, diggersSecondarySheets[path.replace("./art/", "./art/diggers-secondary/")]] as const
 ));
+const barelyPrimarySheets = import.meta.glob<string>("./art/barely-*.png", { eager:true, query:"?url", import:"default" });
+const barelySecondarySheets = import.meta.glob<string>("./art/barely-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const barelySecondaryByUrl = new Map(Object.entries(barelyPrimarySheets).map(([path,url]) =>
+  [url, barelySecondarySheets[path.replace("./art/", "./art/barely-secondary/")]] as const
+));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
@@ -367,6 +372,8 @@ async function start() {
       return netSecondaryByUrl.get(url) ?? url;
     if (fixture?.diggersKit === "secondary" && diggersSecondaryByUrl.has(url))
       return diggersSecondaryByUrl.get(url) ?? url;
+    if (fixture?.barelyKit === "secondary" && barelySecondaryByUrl.has(url))
+      return barelySecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
     return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
@@ -916,6 +923,8 @@ async function start() {
     const sprite = new T.Sprite(shirt);
     sprite.center.set(0.5, 2 / 48);
     sprite.scale.setScalar(2.5);
+    // Stubbs averages 40 visible pixels running, versus 43 for the typical outfielder.
+    if (urls[0] === stubbsIdle) sprite.userData.matchScale = 1.05;
     scene.add(sprite);
     const runFrames = maps[1]
       ? maps[1].image.width / (maps[1].image.height / runRows)
@@ -968,6 +977,8 @@ async function start() {
     breakSeconds = 0,
     lastBlue = false;
   const scoreboard = el("scoreboard");
+  scoreboard.style.setProperty("--home-club", clubAccent(home));
+  scoreboard.style.setProperty("--away-club", clubAccent(matchOpponent));
   (el("awayCrest") as HTMLImageElement).src = matchOpponent.crest;
   (el("bugCrest") as HTMLImageElement).src = home.crest;
   scoreboard.querySelector(".bug-long")!.textContent = home.name;
@@ -1161,11 +1172,6 @@ async function start() {
       art?.reaction,
       art?.reactionFlash,
     );
-    // Match the visible pixel height of 48px-era players across roster packages.
-    actor.sprite.userData.matchScale =
-      club.name === "Barely United" && !rivalWomen[club.name]?.has(name)
-        ? 1.11
-        : 1;
     if (club.name === "Fleet Feet FC" && !rivalWomen[club.name].has(name))
       actor.maps[0].userData.celebrationScale = 0.84;
     if (club.name === "Barely United")
