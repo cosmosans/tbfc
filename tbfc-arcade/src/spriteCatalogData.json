@@ -5604,39 +5604,39 @@
           "gender": "Female",
           "animations": {
             "Idle (rotations)": {
-              "file": "stars-idle.png",
-              "status": "Placeholder",
-              "note": "Generic match sprite"
+              "file": "orange-rory-idle.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Run": {
-              "file": "stars-run.png",
-              "status": "Placeholder",
-              "note": "Generic match sprite"
+              "file": "orange-rory-run.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Kick": {
-              "file": "stars-side-kicks.png",
-              "status": "Placeholder",
-              "note": "Generic match sprite"
+              "file": "orange-rory-kick.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Foul reaction (fall)": {
-              "file": "stars-fall.png",
-              "status": "Placeholder",
-              "note": "Generic foul reaction"
+              "file": "orange-rory-foul.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Jump / header / air move": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "orange-rory-jump.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Tackle": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "orange-rory-tackle.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Tackle reaction (stumble)": {
-              "file": null,
-              "status": "Missing",
-              "note": ""
+              "file": "orange-rory-reaction.png",
+              "status": "Shared",
+              "note": "Orange Slices shared art"
             },
             "Running celebration": {
               "file": null,

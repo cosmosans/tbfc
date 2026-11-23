@@ -13,6 +13,7 @@ const interGirlsWithIndividualArt=new Set(['Freya','Ada','Holly','Nora'])
 
 // Keep the existing kit sheets and assign each fictional character their roster artwork.
 const artAliases:Record<string,Record<string,string>>={
+ orange:{nell:'rory'},
  peach:{silas:'dario'}
 }
 export function rivalSprites(club:Club,name:string){

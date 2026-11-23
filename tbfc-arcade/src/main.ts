@@ -312,6 +312,26 @@ const whiffSecondarySheets = import.meta.glob<string>("./art/whiff-secondary/*.p
 const whiffSecondaryByUrl = new Map(Object.entries(whiffPrimarySheets).map(([path,url]) =>
   [url, whiffSecondarySheets[path.replace("./art/", "./art/whiff-secondary/")]] as const
 ));
+const orangePrimarySheets = import.meta.glob<string>("./art/orange-*.png", { eager:true, query:"?url", import:"default" });
+const orangeSecondarySheets = import.meta.glob<string>("./art/orange-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const orangeSecondaryByUrl = new Map(Object.entries(orangePrimarySheets).map(([path,url]) =>
+  [url, orangeSecondarySheets[path.replace("./art/", "./art/orange-secondary/")]] as const
+));
+const interPrimarySheets = import.meta.glob<string>("./art/inter-*.png", { eager:true, query:"?url", import:"default" });
+const interSecondarySheets = import.meta.glob<string>("./art/inter-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const interSecondaryByUrl = new Map(Object.entries(interPrimarySheets).map(([path,url]) =>
+  [url, interSecondarySheets[path.replace("./art/", "./art/inter-secondary/")]] as const
+));
+const crossbarPrimarySheets = import.meta.glob<string>("./art/crossbar-*.png", { eager:true, query:"?url", import:"default" });
+const crossbarSecondarySheets = import.meta.glob<string>("./art/crossbar-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const crossbarSecondaryByUrl = new Map(Object.entries(crossbarPrimarySheets).map(([path,url]) =>
+  [url, crossbarSecondarySheets[path.replace("./art/", "./art/crossbar-secondary/")]] as const
+));
+const fleetPrimarySheets = import.meta.glob<string>("./art/ff-*.png", { eager:true, query:"?url", import:"default" });
+const fleetSecondarySheets = import.meta.glob<string>("./art/fleet-secondary/*.png", { eager:true, query:"?url", import:"default" });
+const fleetSecondaryByUrl = new Map(Object.entries(fleetPrimarySheets).map(([path,url]) =>
+  [url, fleetSecondarySheets[path.replace("./art/", "./art/fleet-secondary/")]] as const
+));
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
@@ -394,6 +414,14 @@ async function start() {
       return starsSecondaryByUrl.get(url) ?? url;
     if (fixture?.whiffKit === "secondary" && whiffSecondaryByUrl.has(url))
       return whiffSecondaryByUrl.get(url) ?? url;
+    if (fixture?.orangeKit === "secondary" && orangeSecondaryByUrl.has(url))
+      return orangeSecondaryByUrl.get(url) ?? url;
+    if (fixture?.interKit === "secondary" && interSecondaryByUrl.has(url))
+      return interSecondaryByUrl.get(url) ?? url;
+    if (fixture?.crossbarKit === "secondary" && crossbarSecondaryByUrl.has(url))
+      return crossbarSecondaryByUrl.get(url) ?? url;
+    if (fixture?.fleetKit === "secondary" && fleetSecondaryByUrl.has(url))
+      return fleetSecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
     return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
