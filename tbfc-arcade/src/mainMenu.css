@@ -48,5 +48,7 @@ body:has(>.menu-broadcast) :is(#main-menu,#team-select,#lineup){background:linea
 #main-menu[data-screen=loading]{background:#000}
 #main-menu[data-screen=loading] .menu-shell{display:grid;place-items:center;min-height:0}
 .menu-loading{display:grid;justify-items:center;gap:12px;color:#ffad72;font:clamp(28px,5dvh,44px)/1 Upheaval,monospace;white-space:nowrap}
-.menu-loading img{display:block;width:clamp(136px,20dvh,204px);height:auto;image-rendering:pixelated}
+.menu-loading-runner{--run-size:clamp(136px,20dvh,204px);width:var(--run-size);height:var(--run-size);background-repeat:no-repeat;background-size:calc(var(--run-size) * var(--run-columns)) calc(var(--run-size) * var(--run-rows));background-position:0 calc(-1 * var(--run-size));image-rendering:pixelated;animation:loading-run var(--run-duration) steps(var(--run-columns)) infinite}
+@keyframes loading-run{to{background-position-x:calc(-1 * var(--run-size) * var(--run-columns))}}
+@media(prefers-reduced-motion:reduce){.menu-loading-runner{animation:none}}
 .menu-loading strong{font:inherit}

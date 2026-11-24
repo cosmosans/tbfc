@@ -300,7 +300,15 @@
     "ambient": [],
     "ending": [],
     "setup": {
-      "arrivalNames": ["José", "Jeremy", "Chris", "Steven", "Nadia", "Meghan", "Daniel"],
+      "arrivalNames": [
+        "José",
+        "Jeremy",
+        "Chris",
+        "Steven",
+        "Nadia",
+        "Meghan",
+        "Daniel"
+      ],
       "intention": "lightPressure"
     }
   },
@@ -566,7 +574,7 @@
   },
   {
     "id": 10,
-    "title": "We’re Heating Up",
+    "title": "Heating Up",
     "description": "José can feel the team starting to click, and Daniel wants to keep those passes flowing. Bring your teammates into the move, build up Burn, and finish the combination with something special.",
     "prompt": "Connect passes between different teammates to build Burn. At full charge Burn activates automatically; shoot during its window for a special.",
     "events": ["special"],

@@ -44,6 +44,7 @@
 #career h1 {
   font-size: clamp(30px, 5vw, 52px);
   line-height: 1;
+  margin-top: -10px;
 }
 #career h2 {
   font-size: 25px;
@@ -726,12 +727,13 @@ button {
   flex-direction: column;
 }
 #career .cr-saves {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 210px));
+  display: flex;
   gap: clamp(6px, 2vw, 18px);
   justify-content: center;
 }
 #career .cr-saves button {
+  flex: 1;
+  max-height: 250px;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
@@ -741,7 +743,7 @@ button {
   padding: 6px;
 }
 #career .cr-saves .cr-face {
-  width: 52%;
+  width: 125px;
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
@@ -1087,22 +1089,128 @@ button {
   accent-color: #ff9b58;
 }
 
-#career .cr-season-wrap dl{grid-template-columns:1fr 1fr}
-#career .cr-season-wrap dl div{flex-direction:column}
-#career .cr-season-wrap dt{text-transform:uppercase;letter-spacing:.06em;font-size:.85em}
-#career .cr-season-wrap .cr-actions{justify-content:center}
-#career .cr-ceremony{position:relative;aspect-ratio:2.5;overflow:hidden;isolation:isolate;background:repeating-linear-gradient(90deg,#214237 0 12.5%,#264a3b 12.5% 25%);border-block:2px solid #476448}
-#career .cr-ceremony::before{content:"";position:absolute;inset:14% 11%;border:1px solid #c5daac66;border-radius:50%}
-#career .cr-party-player{position:absolute;width:13%;aspect-ratio:1;transform:translate(-50%,-50%)}
-#career .cr-party-player.captain{width:18%}
-#career .cr-party-player i{display:block;width:100%;height:100%;background-repeat:no-repeat;image-rendering:pixelated;animation:cr-ceremony-frames var(--duration) steps(var(--frames),jump-none) infinite,cr-cheer-hop .75s ease-in-out infinite alternate;animation-delay:var(--delay)}
-@keyframes cr-ceremony-frames{to{background-position-x:var(--end)}}
-@keyframes cr-cheer-hop{to{transform:translateY(-5%)}}
-@media(prefers-reduced-motion:reduce){#career .cr-party-player i{animation:none}}
+#career .cr-season-wrap dl {
+  grid-template-columns: 1fr 1fr;
+}
+#career .cr-season-wrap dl div {
+  flex-direction: column;
+}
+#career .cr-season-wrap dt {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.85em;
+}
+#career .cr-season-wrap .cr-actions {
+  justify-content: center;
+}
+#career .cr-ceremony {
+  position: relative;
+  aspect-ratio: 2.5;
+  overflow: hidden;
+  isolation: isolate;
+  background: repeating-linear-gradient(
+    90deg,
+    #214237 0 12.5%,
+    #264a3b 12.5% 25%
+  );
+  border-block: 2px solid #476448;
+}
+#career .cr-ceremony::before {
+  content: "";
+  position: absolute;
+  inset: 14% 11%;
+  border: 1px solid #c5daac66;
+  border-radius: 50%;
+}
+#career .cr-party-player {
+  position: absolute;
+  width: 13%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+}
+#career .cr-party-player.captain {
+  width: 18%;
+}
+#career .cr-party-player i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  animation:
+    cr-ceremony-frames var(--duration) steps(var(--frames), jump-none) infinite,
+    cr-cheer-hop 0.75s ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+@keyframes cr-ceremony-frames {
+  to {
+    background-position-x: var(--end);
+  }
+}
+@keyframes cr-cheer-hop {
+  to {
+    transform: translateY(-5%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #career .cr-party-player i {
+    animation: none;
+  }
+}
 
-#career .cr-relegation-pitch{position:relative;isolation:isolate;overflow:hidden;aspect-ratio:3.3;background:linear-gradient(#162c25,#33493a);perspective:360px;border-block:2px solid #476448}
-#career .cr-relegation-turf{position:absolute;inset:-55% -18% -14%;transform-origin:center bottom;transform:rotateX(57deg);background:repeating-linear-gradient(0deg,#294d3b 0 16%,#315640 16% 32%)}
-#career .cr-relegation-turf::before{content:"";position:absolute;inset:14% 7% 7%;border:2px solid #c7d6ba80;background:linear-gradient(90deg,transparent calc(50% - 1px),#c7d6ba80 50%,transparent calc(50% + 1px))}
-#career .cr-relegation-turf::after{content:"";position:absolute;width:20%;aspect-ratio:1;border:2px solid #c7d6ba80;border-radius:50%;left:50%;top:53%;transform:translate(-50%,-50%)}
-#career .cr-relegation-pitch span{position:absolute;top:53%;left:50%;width:22%;aspect-ratio:1;overflow:hidden;transform:translate(-50%,-50%)}
-#career .cr-relegation-pitch img{display:block;visibility:hidden;width:auto;height:800%;max-width:none;image-rendering:pixelated}
+#career .cr-relegation-pitch {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  aspect-ratio: 3.3;
+  background: linear-gradient(#162c25, #33493a);
+  perspective: 360px;
+  border-block: 2px solid #476448;
+}
+#career .cr-relegation-turf {
+  position: absolute;
+  inset: -55% -18% -14%;
+  transform-origin: center bottom;
+  transform: rotateX(57deg);
+  background: repeating-linear-gradient(0deg, #294d3b 0 16%, #315640 16% 32%);
+}
+#career .cr-relegation-turf::before {
+  content: "";
+  position: absolute;
+  inset: 14% 7% 7%;
+  border: 2px solid #c7d6ba80;
+  background: linear-gradient(
+    90deg,
+    transparent calc(50% - 1px),
+    #c7d6ba80 50%,
+    transparent calc(50% + 1px)
+  );
+}
+#career .cr-relegation-turf::after {
+  content: "";
+  position: absolute;
+  width: 20%;
+  aspect-ratio: 1;
+  border: 2px solid #c7d6ba80;
+  border-radius: 50%;
+  left: 50%;
+  top: 53%;
+  transform: translate(-50%, -50%);
+}
+#career .cr-relegation-pitch span {
+  position: absolute;
+  top: 53%;
+  left: 50%;
+  width: 22%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+}
+#career .cr-relegation-pitch img {
+  display: block;
+  visibility: hidden;
+  width: auto;
+  height: 800%;
+  max-width: none;
+  image-rendering: pixelated;
+}

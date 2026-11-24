@@ -3,9 +3,10 @@ import crest from '../art/ground/crest.png?url'
 import { menuPad } from '../menuPad'
 import { TutorialInput } from './input'
 import { hint } from '../screenUI'
-import { TutorialProgressTracker, readProgress, type TutorialLaunch } from './progress'
+import { TutorialProgressTracker, readProgress, isChapterUnlocked, type TutorialLaunch } from './progress'
 import './tutorial.css'
-import { template, element, bind } from './templates'
+import '../menuLegend.css'
+import { template, element, bind, chapterCard } from './templates'
 
 type Line = { speaker: string; text: string }
 type Hooks = { pause: (on: boolean) => void; reset: () => void; exit: () => void; chapter: (index: number) => void; ready: () => boolean }
@@ -26,6 +27,7 @@ export class TutorialDirector {
  private revealed = false
  private revealAt = 0
  private menuOpen = false
+ private menuPage: 'main' | 'chapters' = 'main'
  private ending = false
  private finished = false
  private pendingSuccess = false
@@ -109,9 +111,13 @@ export class TutorialDirector {
  }
  options() {
   if (this.finished) return
-  this.menuOpen = !this.menuOpen; this.hooks.pause(this.menuOpen); this.draw()
+  this.menuPage = 'main'; this.menuOpen = !this.menuOpen; this.hooks.pause(this.menuOpen); this.draw()
  }
- private resume() { this.menuOpen = false; this.hooks.pause(false); this.draw() }
+ private menuBack() {
+  if (this.menuPage === 'chapters') { this.menuPage = 'main'; this.draw(); this.root.querySelector<HTMLButtonElement>('[data-open-chapters]')?.focus() }
+  else this.resume()
+ }
+ private resume() { this.menuPage = 'main'; this.menuOpen = false; this.hooks.pause(false); this.draw() }
  private draw() {
   this.root.replaceChildren()
   if (this.finished) {
@@ -148,28 +154,28 @@ export class TutorialDirector {
    bind(panel, '[data-dismiss]', () => this.dismiss()); this.root.append(panel)
   }
   if (this.menuOpen) {
-   const panel = template('options')
-   bind(panel, '[data-resume]', () => this.resume())
-   bind(panel, '[data-advance]', () => { this.lines = []; this.afterDialogue = undefined; this.resume(); this.next() })
-   bind(panel, '[data-hint]', () => { this.resume(); this.say(chapter.hint.length ? chapter.hint : [{ speaker: 'Jeremy', text: chapter.prompt }], true) })
-   bind(panel, '[data-reset]', () => { this.hooks.reset(); this.resume() })
-   const list = element(panel, '[data-chapters]')
-   bind(panel, '[data-toggle-chapters]', () => { list.hidden = !list.hidden })
-   for (const c of chapters) {
-    const choice = template('chapter-choice'), button = element<HTMLButtonElement>(choice, '[data-chapter]')
-    button.textContent = `${String(c.id).padStart(2, '0')} · ${c.title}`
-    button.onclick = () => { this.resume(); this.enter(c.id) }; list.append(choice)
+   const panel = template(this.menuPage === 'chapters' ? 'options-chapters' : 'options')
+   if (this.menuPage === 'chapters') {
+    const list = element(panel, '[data-chapters]')
+    for (const c of chapters) list.append(chapterCard(c, isChapterUnlocked(this.tracker.progress, c.id), () => {
+     this.resume(); this.enter(c.id)
+    }))
+   } else {
+    bind(panel, '[data-hint]', () => { this.resume(); this.say(chapter.hint.length ? chapter.hint : [{ speaker: 'Jeremy', text: chapter.prompt }], true) })
+    bind(panel, '[data-open-chapters]', () => { this.menuPage = 'chapters'; this.draw() })
+    bind(panel, '[data-exit]', () => this.hooks.exit())
    }
-   bind(panel, '[data-exit]', () => this.hooks.exit())
-   this.root.append(panel); this.root.querySelector<HTMLButtonElement>('.ft-options button')?.focus()
+   this.root.append(panel); this.root.querySelector<HTMLButtonElement>('.ft-options button:enabled')?.focus()
   }
+
   this.status = `${this.tracker.demonstrated(chapter.events)}:${this.tracker.storageAvailable}`
  }
  private key = (event: KeyboardEvent) => {
   const code = event.code
-  if (code === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); if (!event.repeat) this.options(); return }
+  if (code === 'Escape') { event.preventDefault(); event.stopImmediatePropagation(); if (!event.repeat) { if (this.menuOpen) this.menuBack(); else this.options() } return }
   if (this.menuOpen) {
-   if (['ArrowUp','ArrowDown'].includes(code)) { event.preventDefault(); this.navigate(code === 'ArrowDown' ? 1 : -1) }
+   const direction = ({ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'} as Record<string, 'up' | 'down' | 'left' | 'right'>)[code]
+   if (direction) { event.preventDefault(); this.navigate(direction) }
    if (code === 'Enter') { event.preventDefault(); if (!event.repeat) (document.activeElement as HTMLButtonElement)?.click() }
    event.stopImmediatePropagation(); return
   }
@@ -178,11 +184,20 @@ export class TutorialDirector {
    if (!event.repeat) { if (['KeyK','KeyB'].includes(code)) this.dismiss(); else if (['KeyJ','KeyE','Enter','Space'].includes(code)) this.advance() }
   } else if (code === 'KeyN') { event.preventDefault(); event.stopImmediatePropagation(); if (!event.repeat) this.next() }
  }
- private navigate(step: number) {
-  const choices = [...this.root.querySelectorAll<HTMLButtonElement>('.ft-options button')].filter(b => b.getClientRects().length)
-  if (!choices.length) return
-  const index = choices.indexOf(document.activeElement as HTMLButtonElement)
-  choices[(index + step + choices.length) % choices.length]?.focus()
+ private navigate(direction: 'up' | 'down' | 'left' | 'right') {
+  const choices = [...this.root.querySelectorAll<HTMLButtonElement>('.ft-options button:enabled')].filter(b => b.getClientRects().length)
+  const current = document.activeElement as HTMLButtonElement
+  if (!choices.includes(current)) { choices[0]?.focus(); return }
+  const rect = current.getBoundingClientRect()
+  const dx = direction === 'right' ? 1 : direction === 'left' ? -1 : 0
+  const dy = direction === 'down' ? 1 : direction === 'up' ? -1 : 0
+  let best = Infinity, target = current
+  for (const button of choices) {
+   const r = button.getBoundingClientRect(), x = r.x + r.width / 2 - rect.x - rect.width / 2, y = r.y + r.height / 2 - rect.y - rect.height / 2
+   const forward = x * dx + y * dy, cost = forward + 3 * Math.abs(x * dy - y * dx)
+   if (forward > 2 && cost < best) { best = cost; target = button }
+  }
+  target.focus()
  }
  /** Called before gameplay input. Return true for the whole frame that consumes A/B. */
  input(pad: Gamepad | undefined) {
@@ -190,11 +205,11 @@ export class TutorialDirector {
   for (const command of this.inputRouter.read(pad, this.menuOpen, this.capturesInput)) {
    if (command === 'options') this.options()
    else if (command === 'select') (document.activeElement as HTMLButtonElement)?.click()
-   else if (command === 'resume') this.resume()
+   else if (command === 'resume') this.menuBack()
    else if (command === 'advance') this.advance()
    else if (command === 'dismiss') this.dismiss()
    else if (command === 'next') this.next()
-   else this.navigate(command === 'down' ? 1 : -1)
+   else this.navigate(command)
   }
   return captured || this.capturesInput
  }

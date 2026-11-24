@@ -18,3 +18,15 @@ export function element<T extends HTMLElement = HTMLElement>(root: ParentNode, s
  return found
 }
 export function bind(root: ParentNode, selector: string, action: () => void) { element<HTMLButtonElement>(root, selector).onclick = action }
+
+/** Shared chapter thumbnail and lock state for both menus. */
+export function chapterCard(chapter: {id: number; title: string}, unlocked: boolean, select: () => void) {
+ const choice = template('chapter-choice'), button = element<HTMLButtonElement>(choice, '[data-chapter]')
+ element(choice, '[data-number]').textContent = `CHAPTER ${String(chapter.id).padStart(2, '0')}`
+ element(choice, '[data-chapter-title]').textContent = chapter.title
+ element(choice, '[data-scene]').append(template(`chapter-scene-${chapter.id}`))
+ button.disabled = !unlocked
+ if (!unlocked) button.title = 'Reach this chapter in First Touch to unlock it'
+ button.onclick = () => { if (!button.disabled) select() }
+ return choice
+}

@@ -1,6 +1,6 @@
 import { freePracticeRoster } from '../practiceMenu'
 import { menuPad, menuDirection } from '../menuPad'
-import { template, element, bind } from './templates'
+import { template, element, bind, chapterCard } from './templates'
 import './tutorial.css'
 import { readProgress, isChapterUnlocked, type TutorialLaunch } from './progress'
 import chapters from './script.json'
@@ -31,17 +31,11 @@ export async function practiceMenu(portraits: Record<string, string>): Promise<P
    nav.classList.toggle('ft-chapter-grid', page === 'home')
    nav.classList.toggle('ft-chapter-detail', page === 'chapter')
    if (page === 'home') {
+    chapters.forEach(c => {
+     nav.append(chapterCard(c, isChapterUnlocked(progress, c.id), () => { chapter = c.id; page = 'chapter'; draw() }))
+    })
     const freeChoice = template('practice-free')
     bind(freeChoice, '[data-free]', free); nav.append(freeChoice)
-    chapters.forEach(c => {
-     const choice = template('chapter-choice'), button = element<HTMLButtonElement>(choice, '[data-chapter]')
-     element(choice, '[data-number]').textContent = `CHAPTER ${String(c.id).padStart(2,'0')}`
-     element(choice, '[data-chapter-title]').textContent = c.title
-     element(choice, '[data-scene]').append(template(`chapter-scene-${c.id}`))
-     button.disabled = !isChapterUnlocked(progress, c.id)
-     if (button.disabled) button.title = 'Reach this chapter in First Touch to unlock it'
-     button.onclick = () => { if (button.disabled) return; chapter = c.id; page = 'chapter'; draw() }; nav.append(choice)
-    })
    } else {
     const choices = template('practice-chapter')
     element(choices, '[data-preview]').append(template(`chapter-scene-${chapter}`))

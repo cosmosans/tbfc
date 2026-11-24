@@ -22,16 +22,32 @@
   </section>
 </template>
 <template id="options">
-  <section class="ft-options" aria-label="Tutorial options">
+  <div class="ft-pause-page">
+  <section class="ft-options" aria-label="Tutorial Options">
     <h2>FIRST TOUCH · PAUSED</h2>
-    <button data-resume>Return to the field</button>
-    <button data-advance>Next chapter / finish</button>
-    <button data-hint>Coaching hint</button>
-    <button data-reset>Reset Ball</button>
-    <button data-toggle-chapters>Show / hide chapters</button>
-    <nav data-chapters aria-label="Chapters" hidden></nav>
-    <button data-exit>Return to Practice</button>
-  </section>
+    <nav class="ft-pause-actions" aria-label="Pause Menu">
+      <button data-hint>Coaching Hint</button>
+      <button data-open-chapters>Chapters</button>
+      <button data-exit>Return to Practice</button>
+    </nav>
+    </section>
+    <div class="picker-hints menu-legend">
+      <span><span data-glyph="Enter|A"></span> Select</span>
+      <span><span data-glyph="Esc|B"></span> Resume</span>
+    </div>
+  </div>
+</template>
+<template id="options-chapters">
+  <div class="ft-pause-page ft-pause-page-chapters">
+  <section class="ft-options ft-options-chapters" aria-label="First Touch Chapters">
+    <h2>CHAPTERS</h2>
+    <nav class="ft-chapter-grid" data-chapters aria-label="Chapters"></nav>
+    </section>
+    <div class="picker-hints menu-legend">
+      <span><span data-glyph="Enter|A"></span> Start Chapter</span>
+      <span><span data-glyph="Esc|B"></span> Back</span>
+    </div>
+  </div>
 </template>
 <template id="completion">
   <section class="ft-completion" role="dialog" aria-modal="true" aria-labelledby="ft-completion-title">

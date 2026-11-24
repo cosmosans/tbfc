@@ -91,3 +91,21 @@ main.tutorial-session[data-paused]>.first-touch{visibility:visible!important}
 .ft-chapter-controls .ft-plain-control>span{display:inline-flex;margin:0;font-size:inherit}
 
 .ft-chapter-detail .ft-chapter-description{width:min(100%,560px);margin:0;font-size:16px;line-height:1.65;text-align:center;color:#e6dcc9;text-wrap:pretty}
+
+/* Compact pause pages; their legend stays at the bottom while chapter cards scroll. */
+.ft-options{inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,calc(100% - 32px));height:auto;max-height:calc(100% - 32px);box-sizing:border-box;padding:20px;gap:16px;overflow:hidden}
+.ft-options h2{margin:0;font-size:clamp(24px,3vw,36px);flex-shrink:0}
+.ft-pause-actions{display:grid;gap:6px;overflow:auto}
+.ft-options .ft-chapter-grid{display:grid;overflow:auto;min-height:0;padding:4px}
+.ft-options [data-chapters] button{width:auto;margin:0}
+.ft-options .ft-chapter-caption strong{display:block;font-family:Upheaval,monospace;color:#ffb47a}
+
+/* Use the shared menu legend below, rather than inside, the modal border. */
+.ft-pause-page{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,calc(100% - 32px));max-height:calc(100% - 32px);display:flex;flex-direction:column;pointer-events:auto}
+.ft-pause-page-chapters{width:min(1040px,calc(100% - 32px))}
+.ft-pause-page .ft-options{position:relative;inset:auto;transform:none;width:100%;max-height:none;min-height:0;flex:0 1 auto}
+.ft-pause-page>.menu-legend{flex-shrink:0;margin-top:0}
+.ft-options .ft-chapter-grid .ft-chapter-card{display:flex}
+.ft-options .ft-chapter-grid{grid-auto-rows:max-content;align-content:start}
+.ft-options .ft-chapter-caption{flex-shrink:0}
+.first-touch:has(.ft-pause-page)>.ft-dialogue,.first-touch:has(.ft-pause-page)>.ft-lesson{visibility:hidden}

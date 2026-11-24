@@ -2,7 +2,7 @@ import { audio } from "./matchAudio";
 import { reveal } from "./screenUI";
 import type { MenuMusic } from "./menuMusic";
 import crest from "./art/ground/crest.png?url";
-import pamLoading from "./art/pam-loading.gif?url";
+import { loadingScreen } from "./loading";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import css from "./mainMenu.css?inline";
 
@@ -87,7 +87,7 @@ export function mainMenu(
     const title =
       '<div class="menu-title"><img src="' +
       crest +
-      '" alt=""><div><span style="letter-spacing: 3.5px">TURF BURNERS</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
+      '" alt=""><div><span style="letter-spacing: 4.1px">TURF BURNERS</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
     function audioButton(
       action: "music" | "sound",
       label: string,
@@ -112,11 +112,7 @@ export function mainMenu(
         audio.menu(next === "menu" ? "nav" : "success");
       screen = next;
       root.dataset.screen = next;
-      if (next === "loading")
-        shell.innerHTML =
-          '<div class="menu-loading" role="status" aria-label="Loading"><img src="' +
-          pamLoading +
-          '" alt=""><strong>LOADING <span class="menu-loading-dots" aria-hidden="true">. . .</span></strong></div>';
+      if (next === "loading") shell.replaceChildren(loadingScreen());
       if (next === "intro")
         shell.innerHTML =
           title +

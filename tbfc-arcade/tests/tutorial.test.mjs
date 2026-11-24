@@ -182,3 +182,12 @@ test('replaying earlier chapters preserves furthest reached chapter after reload
  assert.equal(isChapterUnlocked(saved, 7), true)
  assert.equal(isChapterUnlocked(saved, 8), false)
 })
+
+test('pause chapter grid accepts horizontal controller navigation once per press', () => {
+ const input = new TutorialInput()
+ assert.deepEqual(input.read(pad(15), true, false), ['right'])
+ assert.deepEqual(input.read(pad(15), true, false), [])
+ input.read(pad(), true, false)
+ assert.deepEqual(input.read(pad(14), true, false), ['left'])
+ assert.deepEqual(input.read(pad(1), true, false), ['resume'])
+})

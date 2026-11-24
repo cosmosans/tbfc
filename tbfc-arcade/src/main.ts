@@ -904,6 +904,14 @@ async function start() {
   const aerialRecovery = new WeakSet<object>();
   let shotDirection = 1;
   let netTravel = false;
+  // Retain source URLs so tutorial opponents can use the matching secondary art
+  // even when an animation temporarily selects a shared celebration texture.
+  const playerSheetSources = new Map<T.Texture, string>();
+  async function loadPlayerSheet(url: string) {
+    const map = await new T.TextureLoader().loadAsync(kitSheet(url));
+    playerSheetSources.set(map, url);
+    return map;
+  }
   async function createPlayer(
     name: string,
     displayName: string,
@@ -918,7 +926,7 @@ async function start() {
   ) {
     const maps = await Promise.all(
       urls.map(async (url) => {
-        const tex = await new T.TextureLoader().loadAsync(kitSheet(url));
+        const tex = await loadPlayerSheet(url);
         tex.magFilter = tex.minFilter = T.NearestFilter;
         tex.generateMipmaps = false;
         tex.colorSpace = T.SRGBColorSpace;
@@ -932,7 +940,7 @@ async function start() {
       await Promise.all(
         [jumpUrl, tackleUrl, reactionUrl, reactionFlashUrl].map((url) =>
           url
-            ? new T.TextureLoader().loadAsync(kitSheet(url))
+            ? loadPlayerSheet(url)
             : Promise.resolve(undefined),
         ),
       );
@@ -1831,7 +1839,7 @@ async function start() {
     coloredSmoke,
   );
   async function celebrationSheet(url: string) {
-    const map = await new T.TextureLoader().loadAsync(kitSheet(url));
+    const map = await loadPlayerSheet(url);
     map.minFilter = map.magFilter = T.NearestFilter;
     map.generateMipmaps = false;
     map.colorSpace = T.SRGBColorSpace;
@@ -5454,7 +5462,8 @@ async function start() {
   if (standalonePractice) {
     const exit =
       training.panel.querySelector<HTMLButtonElement>("[data-start]")!;
-    exit.firstChild!.textContent = stadiumTest ? "Exit Test " : "Drills ";
+    if (freePractice && !stadiumTest) exit.remove();
+    else exit.firstChild!.textContent = stadiumTest ? "Exit Test " : "Drills ";
   }
   training.panel.hidden = true;
   function finishRep(points: number, reason: string) {
@@ -5824,6 +5833,50 @@ async function start() {
     setupRep();
   }
   if (tutorialLaunch) {
+    // The opposing roster stays white for the entire afternoon. Swap only the
+    // rendered map: gameplay and replay retain their original animation identities.
+    const awayNames = new Set(tutorialScene.away.map(name => name.toLowerCase()));
+    const awayUrls = new Set(Object.entries(burnerHomeSheets)
+      .filter(([path]) => awayNames.has(path.split('/').pop()!.split('-')[0]))
+      .map(([, url]) => url));
+    const whiteImages = new Map<string, Promise<T.Texture>>();
+    const whiteMaps = new Map<T.Texture, T.Texture>();
+    const whiteSources = new Map<T.Source, T.Source>();
+    await Promise.all([...playerSheetSources].map(async ([source, url]) => {
+      const whiteUrl = awayUrls.has(url) && whiteKitByHomeUrl.get(url);
+      if (!whiteUrl) return;
+      if (!whiteImages.has(whiteUrl)) whiteImages.set(whiteUrl, new T.TextureLoader().loadAsync(whiteUrl));
+      const white = await whiteImages.get(whiteUrl)!;
+      const variant = source.clone();
+      variant.source = white.source;
+      variant.needsUpdate = true;
+      whiteMaps.set(source, variant);
+      whiteSources.set(source.source, white.source);
+    }));
+    for (const actor of opponents) {
+      let original: T.Texture | null = null;
+      actor.sprite.onBeforeRender = () => {
+        original = actor.sprite.material.map;
+        if (!original) return;
+        let white = whiteMaps.get(original);
+        // Support celebrations clone their texture per actor after kickoff.
+        if (!white && whiteSources.has(original.source)) {
+          white = original.clone();
+          white.source = whiteSources.get(original.source)!;
+          white.needsUpdate = true;
+          whiteMaps.set(original, white);
+        }
+        if (!white) return;
+        white.offset.copy(original.offset);
+        white.repeat.copy(original.repeat);
+        white.center.copy(original.center);
+        white.rotation = original.rotation;
+        white.matrix.copy(original.matrix);
+        white.matrixAutoUpdate = original.matrixAutoUpdate;
+        actor.sprite.material.map = white;
+      };
+      actor.sprite.onAfterRender = () => { actor.sprite.material.map = original; };
+    }
     tutorialMusic = firstTouchSoundtrack(() => music?.musicEnabled ?? false);
     renderer.domElement.setAttribute("aria-label", "Candler Park · First Touch playable pitch");
     matchView.classList.add("tutorial-session");

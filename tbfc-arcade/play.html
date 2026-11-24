@@ -1,139 +1,1377 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>TBFC Arcade · Match</title><style>
-:root{--ui-font:Oxanium,system-ui,sans-serif}*{box-sizing:border-box}body{margin:0;background:#142a24;color:#fff6da;font:15px var(--ui-font)}body{background:#000;display:grid;place-items:center;height:100dvh}main{position:relative;width:min(100vw,177.777778dvh);aspect-ratio:16/9;overflow:hidden}canvas{width:100%;height:100%;display:block;image-rendering:pixelated}header,footer{position:absolute;left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));display:flex;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}header{top:12px}header strong,footer span{background:#102b25eb;padding:8px 12px;border-radius:4px}header small{color:#ffaf49}button{background:#153b30;color:#fff6da;border:1px solid #b4c3a4;border-radius:6px;padding:10px 14px;font:inherit;cursor:pointer;pointer-events:auto}footer{bottom:10px;font-size:13px}#stick,#kick,#pass,#cross,#through{display:none;position:absolute;bottom:max(15px,env(safe-area-inset-bottom));touch-action:none;user-select:none;border-radius:50%}#stick{left:18px;width:98px;height:98px;border:2px solid #fff7;background:#102f2766}#knob{position:absolute;left:31px;top:31px;width:32px;height:32px;border-radius:50%;background:#ffeacbba}#pass,#kick,#cross,#through{width:68px;height:68px;padding:0;font-size:12px;font-weight:700;line-height:1;color:#fff8ed;border:1px solid var(--action-border);background:var(--action-color);box-shadow:0 3px 8px #0003,inset 0 1px 0 #ffffff18}
-#pass{--action-color:#396449;--action-border:#91b59b;right:22px}
-#kick{--action-color:#914943;--action-border:#d29b92;right:102px}
-#cross{--action-color:#3e6085;--action-border:#95b1ce}
-#through{--action-color:#a58b43;--action-border:#d8c58a;color:#211e16}
-#pass:active,#kick:active,#cross:active,#through:active{filter:brightness(1.18);transform:scale(.96)}
-#pass:focus-visible,#kick:focus-visible,#cross:focus-visible,#through:focus-visible{outline:2px solid #fff8ed;outline-offset:3px}#message{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#173a2d;padding:18px}#shotResult{position:absolute;left:50%;bottom:max(12%,env(safe-area-inset-bottom));transform:translateX(-50%);width:max-content;max-width:90%;padding:3px 10px 5px;text-align:center;pointer-events:none;font:clamp(16px,2.6vw,32px)/1.1 Upheaval,monospace;color:#fff7ce;background:#101914e0;border-bottom:2px solid #cc6530}
-#passCall{position:absolute;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap;font:clamp(18px,2.4vw,30px)/1 Upheaval,monospace;color:#ffe477;text-shadow:-2px 0 #17241e,2px 0 #17241e,0 -2px #17241e,0 3px #17241e;animation:pass-call-flash .45s steps(1,end) infinite}
-@keyframes pass-call-flash{50%{opacity:.3}}
-#shotFeedback[data-grade="PERFECT PASS"]{color:#ffe477}
-#shotResult:empty{display:none}
-@media(pointer:coarse),(hover:none){#shotResult{max-width:clamp(110px,calc(100% - 365px),78%)}}
-#message:empty{display:none}@media(pointer:coarse),(hover:none){#stick,#kick,#pass,#cross,#through{display:block}footer{display:none}}
-#nameplate{position:absolute;transform:translate(-50%,-100%);pointer-events:none;min-width:156px;margin-top:-14px;text-align:center;color:#fff;font:normal 16pt/34px Upheaval,monospace;text-transform:uppercase;white-space:nowrap}
-#nameTrack{position:relative;background:#000}
-#staminaCapacity,#staminaFill{position:absolute;inset:0;transform-origin:left}
-#staminaCapacity{background:#9c3916}#staminaFill{background:#ca5126}
-#controlled{position:relative;display:block;padding:0 18px}
-#cross,#through{bottom:calc(max(15px,env(safe-area-inset-bottom)) + 80px)}#cross{right:102px}#through{right:22px}
-#meter{position:absolute;top:calc(100% + 2px);width:100%;height:12px;background:#060606}
-#powerFill{height:100%;background:#48aa2d;transform-origin:left;transform:scaleX(0)}
-#padStatus{font-size:12px;color:#fff6da;background:#153b30;padding:5px 8px;border-radius:4px}@media(max-width:680px){#padStatus{font-size:10px;padding:3px}}#shotStats{position:absolute;top:54px;left:12px;max-width:96vw;background:#122d24ee;color:#fff5da;padding:6px 10px;border-radius:4px;font:12px var(--ui-font)}#shotStats summary{cursor:pointer;font-weight:bold}#shotStats table{margin-top:6px;border-spacing:6px 3px;text-align:right}#shotStats th:first-child{text-align:left}#scoreboard{font:19px Upheaval,monospace;white-space:nowrap}@media(max-width:800px){#padStatus{display:none}#scoreboard{font-size:15px}}#shotFeedback{position:absolute;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap;font:clamp(22px,3vw,36px)/1 Upheaval,monospace;color:#fff7de;text-shadow:-2px 0 #19241d,2px 0 #19241d,0 -2px #19241d,0 3px #19241d}#shotFeedback[data-grade="GREAT SHOT"]{color:#ffe276}#shotFeedback[data-grade="TOO MUCH"]{color:#ffaa83}#goalBanner{position:absolute;inset:30% 0 auto;text-align:center;font:clamp(66px,12vw,164px)/1 Upheaval,monospace;color:#ffebaa;text-shadow:4px 5px #462419,0 8px #ba451e;pointer-events:none}#replayPanel{position:absolute;bottom:12%;left:50%;transform:translateX(-50%);white-space:nowrap;padding:5px 9px;background:#142a24ed;color:white}#replayLabel{font:20px Upheaval,monospace;margin-right:8px}#shotFeedback[data-grade$="CARD"]::before{content:"";display:inline-block;width:.52em;height:.76em;margin-right:.24em;background:#ffdb30;border:2px solid #392e10;vertical-align:baseline;transform:rotate(-8deg)}#shotFeedback[data-grade="RED CARD"]::before{background:#ef4038}
-header{top:max(6px,env(safe-area-inset-top));justify-content:flex-end;align-items:flex-start}
-header{display:grid;justify-content:stretch;gap:6px}
-header>div{justify-self:end}
-.bug-stack{container-type:inline-size;width:min(660px,100%);justify-self:center;min-width:0}
-.bug-penalties{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 5px}
-.bug-penalties>div{display:grid;justify-items:start;gap:2px}
-#awayPenalties{justify-items:end}
-.card-time{display:flex;align-items:center;gap:6px;padding:2px 6px;background:#10211e;color:#fff3d3;font:14px Upheaval,monospace;border-bottom:2px solid #37433a}
-.card-time::before{content:"";width:6px;height:9px;background:#ffcf40}.card-time.red::before{background:#e64635}
-.card-time b{font:700 14px/1.2 var(--ui-font);font-variant-numeric:tabular-nums;color:white}
-@media(max-width:545px){.bug-stack{width:min(345px,100%)}}
-#scoreboard{
- --edge:polygon(0 7px,3px 7px,3px 3px,7px 3px,7px 0,calc(100% - 7px) 0,calc(100% - 7px) 3px,calc(100% - 3px) 3px,calc(100% - 3px) 7px,100% 7px,100% calc(100% - 7px),calc(100% - 3px) calc(100% - 7px),calc(100% - 3px) calc(100% - 3px),calc(100% - 7px) calc(100% - 3px),calc(100% - 7px) 100%,7px 100%,7px calc(100% - 3px),3px calc(100% - 3px),3px calc(100% - 7px),0 calc(100% - 7px));
- position:relative;width:100%;height:48px;display:grid;grid-template-columns:minmax(0,1fr) 40px 86px 40px minmax(0,1fr);
- align-items:stretch;padding:0 3px 3px;background:#0b1815;clip-path:var(--edge);border-radius:0;color:#fff5de;font:normal 19px/1 Upheaval,monospace
-}
-.bug-team,.bug-goals{--club:var(--home-club,#b7b7b7)}
-.bug-team.away,#awayGoals{--club:var(--away-club,#b7b7b7)}
-.bug-team{display:flex;gap:7px;align-items:center;background:color-mix(in srgb,var(--club) 18%,#101817);padding:1px 9px 0;border-top:3px solid var(--club);justify-content:flex-end;white-space:nowrap}
-.bug-team img{width:27px;height:27px;object-fit:contain}
-.bug-team.away{justify-content:flex-start}
-#scoreboard[data-burn-home] :is(.bug-team:not(.away),#homeGoals),
-#scoreboard[data-burn-away] :is(.bug-team.away,#awayGoals){background:#ffde4c;border-color:#fff8a0;color:#2c2100;box-shadow:inset 0 0 14px #fff2a0,0 0 12px #ffdf4c}
-@media(prefers-reduced-motion:no-preference){
- #scoreboard[data-burn-home] :is(.bug-team:not(.away),#homeGoals),
- #scoreboard[data-burn-away] :is(.bug-team.away,#awayGoals){animation:burn-side-pulse .9s ease-in-out infinite alternate}
-}
-@keyframes burn-side-pulse{to{background:#664800;color:#fff7bc;box-shadow:inset 0 0 5px #f8a91e,0 0 4px #ffdb36}}
-.bug-shirt{width:23px;height:22px;background:linear-gradient(90deg,#3975a6 36%,#78b9e6 36% 55%,#4892c8 55%);clip-path:polygon(23% 5%,39% 0,43% 13%,58% 13%,62% 0,78% 5%,100% 27%,82% 49%,73% 40%,73% 100%,27% 100%,27% 40%,17% 49%,0 27%)}
-.bug-goals{display:grid;place-items:center;font:normal 32px/1 Upheaval,monospace;color:#fff9e9;background:color-mix(in srgb,var(--club) 45%,#101817);border-top:3px solid var(--club)}
-.bug-time{background:#101c19;display:grid;align-content:center;justify-items:center;gap:1px;border-top:3px solid #a88559}
-#bugPeriod{color:#f2c68b;font:normal 14px/1 Upheaval,monospace;letter-spacing:.04em}
-#bugClock{font:normal 25px/1 Upheaval,monospace;font-variant-numeric:tabular-nums;letter-spacing:0;color:white}
-.bug-short{display:none}
-#shotStats{top:102px}
-@media(max-width:545px){#scoreboard{width:min(345px,100%);grid-template-columns:1fr 32px 80px 32px 1fr}.bug-long{display:none}.bug-short{display:inline}.bug-team{padding-inline:6px;gap:4px}.bug-team img{width:22px;height:22px}}
-[data-debug]{display:none!important}#scoreboard{pointer-events:auto;cursor:pointer}.bug-team .bug-long,.bug-away-name{font-size:clamp(13px,2.65cqw,16px)}.bug-team img{flex:none}
-@container (min-width:541px) and (max-width:635px){
- .bug-team .bug-long,.bug-team .bug-away-name{white-space:normal;text-wrap:balance;line-height:1}
- .bug-team .bug-long{text-align:right}
-}
-@container(max-width:540px){.bug-away-name{white-space:normal;text-wrap:balance;font-size:12px;line-height:1}.bug-long{display:none}.bug-short{display:inline}.bug-team{padding-inline:5px;gap:4px}}
-@container(max-width:320px){.bug-team img{display:none}#scoreboard{grid-template-columns:1fr 28px 70px 28px 1fr}}@media(max-width:470px) and (pointer:coarse){
- #stick{left:5px}
- #pass,#cross,#through,#kick{width:50px;height:50px;font-size:11px;padding:0}
- #kick,#cross{right:70px}#pass,#through{right:8px}#cross,#through{bottom:calc(max(15px,env(safe-area-inset-bottom)) + 62px)}
- #shotResult{left:calc(50% - 6px);max-width:calc(100% - 228px);font-size:14px;padding-inline:3px}
-}
-.exhaustion-marker{position:absolute;transform:translate(-50%,-100%);pointer-events:none;white-space:nowrap;font:20px/1 Upheaval,monospace;color:#ffefcc;text-shadow:1px 0 #251a23,-1px 0 #251a23,0 -1px #251a23,1px 2px #251a23}.exhaustion-marker b{font-weight:normal}.exhaustion-marker b+b{font-size:.8em;vertical-align:3px}.exhaustion-marker small{font-size:.6em;vertical-align:6px}.in-replay .bug-stack{visibility:hidden}
-.replay-dissolve{position:absolute;inset:0;pointer-events:none}
-.replay-backdrop{position:absolute;inset:0;pointer-events:none}
-.replay-inset>canvas:first-of-type+canvas{position:relative;transform-origin:center;animation:broadcast-in .78s cubic-bezier(.48,.03,.23,1) both}
-@keyframes broadcast-in{0%,16%{transform:translate(30%,-28%) scale(.32);outline:5px solid #fff3dc;box-shadow:0 0 0 10px #cf5729}90%{outline:2px solid #fff3dc}100%{transform:none;outline:0 solid transparent}}
-.training .bug-stack{visibility:hidden}
-.training-panel{position:absolute;z-index:2;top:8px;left:50%;transform:translateX(-50%);width:min(470px,94%);padding:8px 12px;background:#17110ff2;color:#fff1dc;border-top:2px solid #ef793a}
-.training-panel>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.training-panel strong{font:18px Upheaval,monospace}.training-panel span{font:600 12px var(--ui-font);color:#ffc38b}
-.training-panel p{margin:4px 0 7px;font:13px var(--ui-font)}.training-panel nav{display:flex;gap:6px}.training-panel button{padding:4px 10px;background:#33221b;border-color:#75533d;font:13px var(--ui-font)}
-.training-panel [data-start]{margin-left:auto;background:#913e20}
-@media(max-height:480px){.training-panel{padding:3px 8px;top:2px}.training-panel p{margin:1px 0;font-size:11px}.training-panel button{padding:2px 6px}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>TBFC Arcade · Match</title>
+    <style>
+      :root {
+        --ui-font: Oxanium, system-ui, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #142a24;
+        color: #fff6da;
+        font: 15px var(--ui-font);
+      }
+      body {
+        background: #000;
+        display: grid;
+        place-items: center;
+        height: 100dvh;
+      }
+      main {
+        position: relative;
+        width: min(100vw, 177.777778dvh);
+        aspect-ratio: 16/9;
+        overflow: hidden;
+      }
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+        image-rendering: pixelated;
+      }
+      header,
+      footer {
+        position: absolute;
+        left: max(16px, env(safe-area-inset-left));
+        right: max(16px, env(safe-area-inset-right));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        pointer-events: none;
+      }
+      header {
+        top: 12px;
+      }
+      header strong,
+      footer span {
+        background: #102b25eb;
+        padding: 8px 12px;
+        border-radius: 4px;
+      }
+      header small {
+        color: #ffaf49;
+      }
+      button {
+        background: #153b30;
+        color: #fff6da;
+        border: 1px solid #b4c3a4;
+        border-radius: 6px;
+        padding: 10px 14px;
+        font: inherit;
+        cursor: pointer;
+        pointer-events: auto;
+      }
+      footer {
+        bottom: 10px;
+        font-size: 13px;
+      }
+      #stick,
+      #kick,
+      #pass,
+      #cross,
+      #through {
+        display: none;
+        position: absolute;
+        bottom: max(15px, env(safe-area-inset-bottom));
+        touch-action: none;
+        user-select: none;
+        border-radius: 50%;
+      }
+      #stick {
+        left: 18px;
+        width: 98px;
+        height: 98px;
+        border: 2px solid #fff7;
+        background: #102f2766;
+      }
+      #knob {
+        position: absolute;
+        left: 31px;
+        top: 31px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #ffeacbba;
+      }
+      #pass,
+      #kick,
+      #cross,
+      #through {
+        width: 68px;
+        height: 68px;
+        padding: 0;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+        color: #fff8ed;
+        border: 1px solid var(--action-border);
+        background: var(--action-color);
+        box-shadow:
+          0 3px 8px #0003,
+          inset 0 1px 0 #ffffff18;
+      }
+      #pass {
+        --action-color: #396449;
+        --action-border: #91b59b;
+        right: 22px;
+      }
+      #kick {
+        --action-color: #914943;
+        --action-border: #d29b92;
+        right: 102px;
+      }
+      #cross {
+        --action-color: #3e6085;
+        --action-border: #95b1ce;
+      }
+      #through {
+        --action-color: #a58b43;
+        --action-border: #d8c58a;
+        color: #211e16;
+      }
+      #pass:active,
+      #kick:active,
+      #cross:active,
+      #through:active {
+        filter: brightness(1.18);
+        transform: scale(0.96);
+      }
+      #pass:focus-visible,
+      #kick:focus-visible,
+      #cross:focus-visible,
+      #through:focus-visible {
+        outline: 2px solid #fff8ed;
+        outline-offset: 3px;
+      }
+      #message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #173a2d;
+        padding: 18px;
+      }
+      #shotResult {
+        position: absolute;
+        left: 50%;
+        bottom: max(12%, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 90%;
+        padding: 3px 10px 5px;
+        text-align: center;
+        pointer-events: none;
+        font:
+          clamp(16px, 2.6vw, 32px)/1.1 Upheaval,
+          monospace;
+        color: #fff7ce;
+        background: #101914e0;
+        border-bottom: 2px solid #cc6530;
+      }
+      #passCall {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        pointer-events: none;
+        white-space: nowrap;
+        font:
+          clamp(18px, 2.4vw, 30px)/1 Upheaval,
+          monospace;
+        color: #ffe477;
+        text-shadow:
+          -2px 0 #17241e,
+          2px 0 #17241e,
+          0 -2px #17241e,
+          0 3px #17241e;
+        animation: pass-call-flash 0.45s steps(1, end) infinite;
+      }
+      @keyframes pass-call-flash {
+        50% {
+          opacity: 0.3;
+        }
+      }
+      #shotFeedback[data-grade="PERFECT PASS"] {
+        color: #ffe477;
+      }
+      #shotResult:empty {
+        display: none;
+      }
+      @media (pointer: coarse), (hover: none) {
+        #shotResult {
+          max-width: clamp(110px, calc(100% - 365px), 78%);
+        }
+      }
+      #message:empty {
+        display: none;
+      }
+      @media (pointer: coarse), (hover: none) {
+        #stick,
+        #kick,
+        #pass,
+        #cross,
+        #through {
+          display: block;
+        }
+        footer {
+          display: none;
+        }
+      }
+      #nameplate {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        pointer-events: none;
+        min-width: 156px;
+        margin-top: -14px;
+        text-align: center;
+        color: #fff;
+        font:
+          normal 16pt/34px Upheaval,
+          monospace;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      #nameTrack {
+        position: relative;
+        background: #000;
+      }
+      #staminaCapacity,
+      #staminaFill {
+        position: absolute;
+        inset: 0;
+        transform-origin: left;
+      }
+      #staminaCapacity {
+        background: #9c3916;
+      }
+      #staminaFill {
+        background: #ca5126;
+      }
+      #controlled {
+        position: relative;
+        display: block;
+        padding: 0 18px;
+      }
+      #cross,
+      #through {
+        bottom: calc(max(15px, env(safe-area-inset-bottom)) + 80px);
+      }
+      #cross {
+        right: 102px;
+      }
+      #through {
+        right: 22px;
+      }
+      #meter {
+        position: absolute;
+        top: calc(100% + 2px);
+        width: 100%;
+        height: 12px;
+        background: #060606;
+      }
+      #powerFill {
+        height: 100%;
+        background: #48aa2d;
+        transform-origin: left;
+        transform: scaleX(0);
+      }
+      #padStatus {
+        font-size: 12px;
+        color: #fff6da;
+        background: #153b30;
+        padding: 5px 8px;
+        border-radius: 4px;
+      }
+      @media (max-width: 680px) {
+        #padStatus {
+          font-size: 10px;
+          padding: 3px;
+        }
+      }
+      #shotStats {
+        position: absolute;
+        top: 54px;
+        left: 12px;
+        max-width: 96vw;
+        background: #122d24ee;
+        color: #fff5da;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font: 12px var(--ui-font);
+      }
+      #shotStats summary {
+        cursor: pointer;
+        font-weight: bold;
+      }
+      #shotStats table {
+        margin-top: 6px;
+        border-spacing: 6px 3px;
+        text-align: right;
+      }
+      #shotStats th:first-child {
+        text-align: left;
+      }
+      #scoreboard {
+        font:
+          19px Upheaval,
+          monospace;
+        white-space: nowrap;
+      }
+      @media (max-width: 800px) {
+        #padStatus {
+          display: none;
+        }
+        #scoreboard {
+          font-size: 15px;
+        }
+      }
+      #shotFeedback {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        pointer-events: none;
+        white-space: nowrap;
+        font:
+          clamp(22px, 3vw, 36px)/1 Upheaval,
+          monospace;
+        color: #fff7de;
+        text-shadow:
+          -2px 0 #19241d,
+          2px 0 #19241d,
+          0 -2px #19241d,
+          0 3px #19241d;
+      }
+      #shotFeedback[data-grade="GREAT SHOT"] {
+        color: #ffe276;
+      }
+      #shotFeedback[data-grade="TOO MUCH"] {
+        color: #ffaa83;
+      }
+      #goalBanner {
+        position: absolute;
+        inset: 30% 0 auto;
+        text-align: center;
+        font:
+          clamp(66px, 12vw, 164px)/1 Upheaval,
+          monospace;
+        color: #ffebaa;
+        text-shadow:
+          4px 5px #462419,
+          0 8px #ba451e;
+        pointer-events: none;
+      }
+      #replayPanel {
+        position: absolute;
+        bottom: 12%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        padding: 5px 9px;
+        background: #142a24ed;
+        color: white;
+      }
+      #replayLabel {
+        font:
+          20px Upheaval,
+          monospace;
+        margin-right: 8px;
+      }
+      #shotFeedback[data-grade$="CARD"]::before {
+        content: "";
+        display: inline-block;
+        width: 0.52em;
+        height: 0.76em;
+        margin-right: 0.24em;
+        background: #ffdb30;
+        border: 2px solid #392e10;
+        vertical-align: baseline;
+        transform: rotate(-8deg);
+      }
+      #shotFeedback[data-grade="RED CARD"]::before {
+        background: #ef4038;
+      }
+      header {
+        top: max(6px, env(safe-area-inset-top));
+        justify-content: flex-end;
+        align-items: flex-start;
+      }
+      header {
+        display: grid;
+        justify-content: stretch;
+        gap: 6px;
+      }
+      header > div {
+        justify-self: end;
+      }
+      .bug-stack {
+        container-type: inline-size;
+        width: min(660px, 100%);
+        justify-self: center;
+        min-width: 0;
+      }
+      .bug-penalties {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 0 5px;
+      }
+      .bug-penalties > div {
+        display: grid;
+        justify-items: start;
+        gap: 2px;
+      }
+      #awayPenalties {
+        justify-items: end;
+      }
+      .card-time {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 6px;
+        background: #10211e;
+        color: #fff3d3;
+        font:
+          14px Upheaval,
+          monospace;
+        border-bottom: 2px solid #37433a;
+      }
+      .card-time::before {
+        content: "";
+        width: 6px;
+        height: 9px;
+        background: #ffcf40;
+      }
+      .card-time.red::before {
+        background: #e64635;
+      }
+      .card-time b {
+        font: 700 14px/1.2 var(--ui-font);
+        font-variant-numeric: tabular-nums;
+        color: white;
+      }
+      @media (max-width: 545px) {
+        .bug-stack {
+          width: min(345px, 100%);
+        }
+      }
+      #scoreboard {
+        --edge: polygon(
+          0 7px,
+          3px 7px,
+          3px 3px,
+          7px 3px,
+          7px 0,
+          calc(100% - 7px) 0,
+          calc(100% - 7px) 3px,
+          calc(100% - 3px) 3px,
+          calc(100% - 3px) 7px,
+          100% 7px,
+          100% calc(100% - 7px),
+          calc(100% - 3px) calc(100% - 7px),
+          calc(100% - 3px) calc(100% - 3px),
+          calc(100% - 7px) calc(100% - 3px),
+          calc(100% - 7px) 100%,
+          7px 100%,
+          7px calc(100% - 3px),
+          3px calc(100% - 3px),
+          3px calc(100% - 7px),
+          0 calc(100% - 7px)
+        );
+        position: relative;
+        width: 100%;
+        height: 48px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 40px 86px 40px minmax(0, 1fr);
+        align-items: stretch;
+        padding: 0 3px 3px;
+        background: #0b1815;
+        clip-path: var(--edge);
+        border-radius: 0;
+        color: #fff5de;
+        font:
+          normal 19px/1 Upheaval,
+          monospace;
+      }
+      .bug-team,
+      .bug-goals {
+        --club: var(--home-club, #b7b7b7);
+      }
+      .bug-team.away,
+      #awayGoals {
+        --club: var(--away-club, #b7b7b7);
+      }
+      .bug-team {
+        display: flex;
+        gap: 7px;
+        align-items: center;
+        background: color-mix(in srgb, var(--club) 18%, #101817);
+        padding: 1px 9px 0;
+        border-top: 3px solid var(--club);
+        justify-content: flex-end;
+        white-space: nowrap;
+      }
+      .bug-team img {
+        width: 27px;
+        height: 27px;
+        object-fit: contain;
+      }
+      .bug-team.away {
+        justify-content: flex-start;
+      }
+      #scoreboard[data-burn-home] :is(.bug-team:not(.away), #homeGoals),
+      #scoreboard[data-burn-away] :is(.bug-team.away, #awayGoals) {
+        background: #ffde4c;
+        border-color: #fff8a0;
+        color: #2c2100;
+        box-shadow:
+          inset 0 0 14px #fff2a0,
+          0 0 12px #ffdf4c;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        #scoreboard[data-burn-home] :is(.bug-team:not(.away), #homeGoals),
+        #scoreboard[data-burn-away] :is(.bug-team.away, #awayGoals) {
+          animation: burn-side-pulse 0.9s ease-in-out infinite alternate;
+        }
+      }
+      @keyframes burn-side-pulse {
+        to {
+          background: #664800;
+          color: #fff7bc;
+          box-shadow:
+            inset 0 0 5px #f8a91e,
+            0 0 4px #ffdb36;
+        }
+      }
+      .bug-shirt {
+        width: 23px;
+        height: 22px;
+        background: linear-gradient(
+          90deg,
+          #3975a6 36%,
+          #78b9e6 36% 55%,
+          #4892c8 55%
+        );
+        clip-path: polygon(
+          23% 5%,
+          39% 0,
+          43% 13%,
+          58% 13%,
+          62% 0,
+          78% 5%,
+          100% 27%,
+          82% 49%,
+          73% 40%,
+          73% 100%,
+          27% 100%,
+          27% 40%,
+          17% 49%,
+          0 27%
+        );
+      }
+      .bug-goals {
+        display: grid;
+        place-items: center;
+        font:
+          normal 32px/1 Upheaval,
+          monospace;
+        color: #fff9e9;
+        background: color-mix(in srgb, var(--club) 45%, #101817);
+        border-top: 3px solid var(--club);
+      }
+      .bug-time {
+        background: #101c19;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        gap: 1px;
+        border-top: 3px solid #a88559;
+      }
+      #bugPeriod {
+        color: #f2c68b;
+        font:
+          normal 14px/1 Upheaval,
+          monospace;
+        letter-spacing: 0.04em;
+      }
+      #bugClock {
+        font:
+          normal 25px/1 Upheaval,
+          monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0;
+        color: white;
+      }
+      .bug-short {
+        display: none;
+      }
+      #shotStats {
+        top: 102px;
+      }
+      @media (max-width: 545px) {
+        #scoreboard {
+          width: min(345px, 100%);
+          grid-template-columns: 1fr 32px 80px 32px 1fr;
+        }
+        .bug-long {
+          display: none;
+        }
+        .bug-short {
+          display: inline;
+        }
+        .bug-team {
+          padding-inline: 6px;
+          gap: 4px;
+        }
+        .bug-team img {
+          width: 22px;
+          height: 22px;
+        }
+      }
+      [data-debug] {
+        display: none !important;
+      }
+      #scoreboard {
+        pointer-events: auto;
+        cursor: pointer;
+      }
+      .bug-team .bug-long,
+      .bug-away-name {
+        font-size: clamp(13px, 2.65cqw, 16px);
+      }
+      .bug-team img {
+        flex: none;
+      }
+      @container (min-width:541px) and (max-width:635px) {
+        .bug-team .bug-long,
+        .bug-team .bug-away-name {
+          white-space: normal;
+          text-wrap: balance;
+          line-height: 1;
+        }
+        .bug-team .bug-long {
+          text-align: right;
+        }
+      }
+      @container (max-width:540px) {
+        .bug-away-name {
+          white-space: normal;
+          text-wrap: balance;
+          font-size: 12px;
+          line-height: 1;
+        }
+        .bug-long {
+          display: none;
+        }
+        .bug-short {
+          display: inline;
+        }
+        .bug-team {
+          padding-inline: 5px;
+          gap: 4px;
+        }
+      }
+      @container (max-width:320px) {
+        .bug-team img {
+          display: none;
+        }
+        #scoreboard {
+          grid-template-columns: 1fr 28px 70px 28px 1fr;
+        }
+      }
+      @media (max-width: 470px) and (pointer: coarse) {
+        #stick {
+          left: 5px;
+        }
+        #pass,
+        #cross,
+        #through,
+        #kick {
+          width: 50px;
+          height: 50px;
+          font-size: 11px;
+          padding: 0;
+        }
+        #kick,
+        #cross {
+          right: 70px;
+        }
+        #pass,
+        #through {
+          right: 8px;
+        }
+        #cross,
+        #through {
+          bottom: calc(max(15px, env(safe-area-inset-bottom)) + 62px);
+        }
+        #shotResult {
+          left: calc(50% - 6px);
+          max-width: calc(100% - 228px);
+          font-size: 14px;
+          padding-inline: 3px;
+        }
+      }
+      .exhaustion-marker {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        pointer-events: none;
+        white-space: nowrap;
+        font:
+          20px/1 Upheaval,
+          monospace;
+        color: #ffefcc;
+        text-shadow:
+          1px 0 #251a23,
+          -1px 0 #251a23,
+          0 -1px #251a23,
+          1px 2px #251a23;
+      }
+      .exhaustion-marker b {
+        font-weight: normal;
+      }
+      .exhaustion-marker b + b {
+        font-size: 0.8em;
+        vertical-align: 3px;
+      }
+      .exhaustion-marker small {
+        font-size: 0.6em;
+        vertical-align: 6px;
+      }
+      .in-replay .bug-stack {
+        visibility: hidden;
+      }
+      .replay-dissolve {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .replay-backdrop {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .replay-inset > canvas:first-of-type + canvas {
+        position: relative;
+        transform-origin: center;
+        animation: broadcast-in 0.78s cubic-bezier(0.48, 0.03, 0.23, 1) both;
+      }
+      @keyframes broadcast-in {
+        0%,
+        16% {
+          transform: translate(30%, -28%) scale(0.32);
+          outline: 5px solid #fff3dc;
+          box-shadow: 0 0 0 10px #cf5729;
+        }
+        90% {
+          outline: 2px solid #fff3dc;
+        }
+        100% {
+          transform: none;
+          outline: 0 solid transparent;
+        }
+      }
+      .training .bug-stack {
+        visibility: hidden;
+      }
+      .training-panel {
+        position: absolute;
+        z-index: 2;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(470px, 94%);
+        padding: 8px 12px;
+        background: #17110ff2;
+        color: #fff1dc;
+        border-top: 2px solid #ef793a;
+      }
+      .training-panel > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .training-panel strong {
+        font:
+          18px Upheaval,
+          monospace;
+      }
+      .training-panel span {
+        font: 600 12px var(--ui-font);
+        color: #ffc38b;
+      }
+      .training-panel p {
+        margin: 4px 0 7px;
+        font: 13px var(--ui-font);
+      }
+      .training-panel nav {
+        display: flex;
+        gap: 6px;
+      }
+      .training-panel button {
+        padding: 4px 10px;
+        background: #33221b;
+        border-color: #75533d;
+        font: 13px var(--ui-font);
+      }
+      .training-panel [data-start] {
+        margin-left: auto;
+        background: #913e20;
+      }
+      @media (max-height: 480px) {
+        .training-panel {
+          padding: 3px 8px;
+          top: 2px;
+        }
+        .training-panel p {
+          margin: 1px 0;
+          font-size: 11px;
+        }
+        .training-panel button {
+          padding: 2px 6px;
+        }
+      }
 
-kbd.key-hint,kbd.pad-hint{box-sizing:border-box;vertical-align:middle;align-items:center;justify-content:center;white-space:nowrap;font:700 12px/1 var(--ui-font);letter-spacing:0;margin-inline:2px}
-kbd.key-hint{display:inline-flex;min-width:1.6em;height:1.65em;padding:0 .32em;color:#ffebd6;background:#302923;border:1px solid #9e8270;border-bottom-width:2px;border-radius:4px}
-kbd.pad-hint{display:none;color:#fff;height:1.7em;min-width:1.7em;padding:0 .34em;background:linear-gradient(#57585c,#26272b);border:1px solid #888;border-radius:40%;box-shadow:inset 0 -2px #0007;text-shadow:0 1px #0009}
-[data-controller] kbd.key-hint{display:none}[data-controller] kbd.pad-hint{display:inline-flex}
-kbd.pad-hint:is([data-pad=A],[data-pad=B],[data-pad=X],[data-pad=Y]){border-radius:50%;width:1.7em;padding:0;border-color:#ffffff52}
-kbd[data-pad=A]{background:linear-gradient(#3b994c,#24642e)}kbd[data-pad=B]{background:linear-gradient(#db4e43,#952b29)}kbd[data-pad=X]{background:linear-gradient(#3d90d4,#1f579a)}kbd[data-pad=Y]{background:linear-gradient(#f6d05a,#d89917);color:#201803;text-shadow:none}
-.pad-direction{display:none}[data-controller] .pad-direction{display:inline}kbd.pad-hint[data-pad=LS]{border-radius:50%;width:1.7em;padding:0}
-kbd.pad-hint:is([data-pad=RB],[data-pad=LB],[data-pad=RT]){border-radius:8px 8px 3px 3px}
-html[data-broadcast] main{width:100vw;height:100dvh;aspect-ratio:auto}
-@media (pointer:coarse) and (max-width:900px), (pointer:coarse) and (max-height:500px){
- main{width:100vw;height:100dvh;aspect-ratio:auto}
-}
-html[data-broadcast] main>:not(canvas){display:none!important}
-main[data-paused]>canvas{filter:brightness(.55)}
-main[data-loading]{visibility:hidden}
-#pitchError{position:fixed;inset:0;place-content:center;text-align:center;padding:20px;background:#000}
-#pitchError:not([hidden]){display:grid}
-#pitchError button{justify-self:center;margin-top:18px;padding:10px 24px;border:2px solid #ffae72;background:#943916;color:#fff4df;font:inherit;cursor:pointer}
-html[data-broadcast] #pitchError{display:none}
-.celebration-lab>header,.celebration-lab>#pass,.celebration-lab>#cross,.celebration-lab>#through{display:none}
-.celebration-controls{position:absolute;inset:6px auto auto 50%;transform:translateX(-50%);width:max-content;max-width:96%;padding:5px 8px;text-align:center;background:#19120ef2;border-top:2px solid #df622e;color:#fff3dd}
-.celebration-lab>#kick{display:block}.celebration-controls nav>span{align-self:center;font:600 13px var(--ui-font)}
-.celebration-controls output{font:20px Upheaval,monospace}
-.celebration-controls nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px}
-.celebration-controls button{background:#32241c;border-color:#8a6346;padding:4px 7px;font:600 13px var(--ui-font)}
-main[data-simulation] :is(#stick,#kick,#pass,#cross,#through,#switchPlayer,footer){display:none!important}
-#burnHud{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;width:100%;color:#fff;font:clamp(9px,1.7vw,13px)/1 Upheaval,monospace}
-#burnHud[hidden],.training #burnHud{display:none}
-.burn-title{grid-column:2;grid-row:1;background:#19130f;border:1px solid #604839;padding:3px 5px;font:inherit}
-.burn-meter{min-width:0;width:75%;height:9px;background:#19130f;padding:2px;border:1px solid #604839;box-sizing:content-box}
-.burn-meter:first-child{grid-column:1;grid-row:1;justify-self:end}
-.burn-meter:last-child{grid-column:3;grid-row:1;justify-self:start}
-.burn-meter>span{display:block;background:#332c26;height:100%;overflow:hidden}
-.burn-meter i{display:block;height:100%;transform:scaleX(var(--burn));transform-origin:right;transition:transform .2s;background:repeating-linear-gradient(90deg,transparent 0 6px,#21161066 6px 8px),linear-gradient(to top,color-mix(in srgb,var(--club),black 35%) 0 34%,var(--club) 34% 70%,color-mix(in srgb,var(--club),white 45%) 70% 100%)}
-.burn-meter:last-child i{transform-origin:left}
-.burn-meter[data-on-fire]{border-color:var(--club);box-shadow:0 0 6px var(--club)}
-@media(prefers-reduced-motion:no-preference){.burn-meter[data-on-fire] i{animation:burn-pulse 1s ease-in-out infinite alternate}}
-@keyframes burn-pulse{to{filter:brightness(1.65)}}
-#message:has(.kickoff-prompt){top:auto;bottom:max(12px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);padding:0;background:transparent;pointer-events:none}
-.kickoff-prompt{display:flex;align-items:center;gap:.5em;padding:.3em .65em;background:#191813f2;border-bottom:3px solid #e67a39;color:#fff3db;font:clamp(16px,2.5vw,28px)/1 Upheaval,monospace}
-.kickoff-prompt kbd.pad-hint{display:inline-flex;font-size:.68em}
-main[data-paused]>:not(canvas){visibility:hidden!important}
-#nameplate{min-width:0;line-height:1.3;margin-top:-.25em}
-#controlled{padding:0 .2em;overflow:hidden;text-overflow:ellipsis}
-#nameplate #meter{height:.4em}
-html[data-pad-focus] button:enabled:focus{appearance:none;outline:2px solid #ffa559!important;outline-offset:-2px;box-shadow:inset 0 0 0 2px #a44920!important;-webkit-tap-highlight-color:transparent}
-html[data-pad-focus] .pause-menu button:enabled:focus{background:#a64018;border-color:#ef864c;color:#fff7e5}
-.match-goal-card{position:absolute;left:50%;bottom:max(12px,env(safe-area-inset-bottom));transform:translateX(-50%);display:grid;justify-items:center;gap:2px;color:#fff1cd;font:clamp(15px,2.5vw,29px)/1 Upheaval,monospace;pointer-events:none}
-.match-goal-card[hidden]{display:none}.match-goal-card>div{background:#100e0c;padding:.2em .55em}
-.match-goal-card>div{display:flex;align-items:center;gap:.28em;border-bottom:3px solid #ce602a;white-space:nowrap}
-.match-goal-card em{font-style:normal}.match-goal-card :is(i,span){width:1.035em;height:1.035em;background-size:contain;background-position:center;background-repeat:no-repeat;image-rendering:pixelated}
-.match-goal-card i{background-size:3200% 400%;background-position:0 0}.match-goal-card .match-goal-sprite{background-size:1350% 170%;background-position:2% 0}
-main:has(.match-goal-card:not([hidden])) #message:has(.kickoff-prompt){bottom:calc(max(12px,env(safe-area-inset-bottom)) + clamp(48px,7vw,82px))}
-.celebration-lab.lab-kickoff>header{display:grid}.lab-kickoff .celebration-controls,.lab-kickoff>#kick{visibility:hidden}
-</style></head><body><main data-loading><canvas aria-label="TBFC versus Shooting Stars FC match pitch"></canvas><header><section class="bug-stack"><strong id="scoreboard" role="img" aria-label="Score and match clock"><span class="bug-team"><span class="bug-long">Turf Burners FC</span><span class="bug-short">TBFC</span><img id="bugCrest" alt=""></span><b class="bug-goals" id="homeGoals">0</b><span class="bug-time"><span id="bugPeriod">1ST</span><span id="bugClock">0:00</span></span><b class="bug-goals" id="awayGoals">0</b><span class="bug-team away"><img id="awayCrest" alt=""><span class="bug-away-name">Shooting Stars FC</span></span></strong><div id="burnHud" hidden></div><div class="bug-penalties"><div id="homePenalties" aria-label="TBFC penalties"></div><div id="awayPenalties" aria-label="Shooting Stars FC penalties"></div></div></section><div data-debug><span id="padStatus" role="status">Press a controller button to connect</span> <button id="sound" aria-label="Match sound">Sound on</button> <button id="changeView" title="Toggle camera (right stick click or comma / period)" aria-label="Cycle camera view">Sideline</button> <button id="switchPlayer">Switch</button> <button id="reset">Restart match</button> <button id="pause">Pause</button></div></header><details data-debug id="shotStats"><summary>Shot stats</summary><table aria-label="Practice shots by distance from goal"><thead><tr><th>Range</th><th>Shots</th><th>Goals</th><th>Saves</th><th>Misses</th><th>Woodwork</th></tr></thead><tbody><tr><th>Close · &lt;7</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><th>Mid · 7–&lt;14</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><th>Long · 14+</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></tbody></table></details><footer data-debug><span><kbd class="key-hint">WASD</kbd><kbd class="pad-hint" data-pad="LS">LS</kbd> Move　<kbd class="key-hint">→</kbd><kbd class="pad-hint" data-pad="LB">LB</kbd> Switch　<kbd class="key-hint">, .</kbd><kbd class="pad-hint" data-pad="R3">R3</kbd> Camera　<kbd class="key-hint">J</kbd><kbd class="pad-hint" data-pad="A">A</kbd> Pass　<kbd class="key-hint">X</kbd><kbd class="pad-hint" data-pad="X">X</kbd> Cross　<kbd class="key-hint">Y</kbd><kbd class="pad-hint" data-pad="Y">Y</kbd> Through / rush GK　<kbd class="key-hint">K</kbd><kbd class="pad-hint" data-pad="B">B</kbd> Shoot / tackle　<kbd class="key-hint">Shift</kbd><kbd class="pad-hint" data-pad="RT">RT</kbd> Sprint</span></footer><div id="stick" aria-label="Movement pad"><i id="knob"></i></div><button id="pass">PASS</button><button id="kick">KICK</button><button id="cross">CROSS</button><button id="through">THRU</button><div hidden id="nameplate"><div hidden id="meter" role="progressbar" aria-label="Kick power" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="powerFill"></div></div><div id="nameTrack"><div id="staminaCapacity" role="meter" aria-label="Sprint capacity" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"></div><div id="staminaFill" role="meter" aria-label="Sprint remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"></div><span id="controlled">Meghan</span></div></div><div hidden id="shotFeedback" role="status"></div><div hidden id="passCall" aria-label="Teammate asking for a pass">PASS</div><div id="shotResult" role="status"></div><div hidden id="goalBanner" role="status">GOAL!</div><div data-debug hidden id="replayPanel"><span id="replayLabel"></span><button id="skipReplay">Skip replay</button></div><div id="message">Loading pitch…</div></main><div id="pitchError" role="alert" hidden>The pitch could not load. Try reloading with hardware acceleration enabled.</div><script type="module" src="./src/main.ts"></script></body></html>
+      kbd.key-hint,
+      kbd.pad-hint {
+        box-sizing: border-box;
+        vertical-align: middle;
+        align-items: center;
+        justify-content: center;
+        white-space: nowrap;
+        font: 700 12px/1 var(--ui-font);
+        letter-spacing: 0;
+        margin-inline: 2px;
+      }
+      kbd.key-hint {
+        display: inline-flex;
+        min-width: 1.6em;
+        height: 1.65em;
+        padding: 0 0.32em;
+        color: #ffebd6;
+        background: #302923;
+        border: 1px solid #9e8270;
+        border-bottom-width: 2px;
+        border-radius: 4px;
+      }
+      kbd.pad-hint {
+        display: none;
+        color: #fff;
+        height: 1.7em;
+        min-width: 1.7em;
+        padding: 0 0.34em;
+        background: linear-gradient(#57585c, #26272b);
+        border: 1px solid #888;
+        border-radius: 40%;
+        box-shadow: inset 0 -2px #0007;
+        text-shadow: 0 1px #0009;
+      }
+      [data-controller] kbd.key-hint {
+        display: none;
+      }
+      [data-controller] kbd.pad-hint {
+        display: inline-flex;
+      }
+      kbd.pad-hint:is(
+          [data-pad="A"],
+          [data-pad="B"],
+          [data-pad="X"],
+          [data-pad="Y"]
+        ) {
+        border-radius: 50%;
+        width: 1.7em;
+        padding: 0;
+        border-color: #ffffff52;
+      }
+      kbd[data-pad="A"] {
+        background: linear-gradient(#3b994c, #24642e);
+      }
+      kbd[data-pad="B"] {
+        background: linear-gradient(#db4e43, #952b29);
+      }
+      kbd[data-pad="X"] {
+        background: linear-gradient(#3d90d4, #1f579a);
+      }
+      kbd[data-pad="Y"] {
+        background: linear-gradient(#f6d05a, #d89917);
+        color: #201803;
+        text-shadow: none;
+      }
+      .pad-direction {
+        display: none;
+      }
+      [data-controller] .pad-direction {
+        display: inline;
+      }
+      kbd.pad-hint[data-pad="LS"] {
+        border-radius: 50%;
+        width: 1.7em;
+        padding: 0;
+      }
+      kbd.pad-hint:is([data-pad="RB"], [data-pad="LB"], [data-pad="RT"]) {
+        border-radius: 8px 8px 3px 3px;
+      }
+      html[data-broadcast] main {
+        width: 100vw;
+        height: 100dvh;
+        aspect-ratio: auto;
+      }
+      @media (pointer: coarse) and (max-width: 900px),
+        (pointer: coarse) and (max-height: 500px) {
+        main {
+          width: 100vw;
+          height: 100dvh;
+          aspect-ratio: auto;
+        }
+      }
+      html[data-broadcast] main > :not(canvas) {
+        display: none !important;
+      }
+      main[data-paused] > canvas {
+        filter: brightness(0.55);
+      }
+      main[data-loading] {
+        visibility: hidden;
+      }
+      #pitchError {
+        position: fixed;
+        inset: 0;
+        place-content: center;
+        text-align: center;
+        padding: 20px;
+        background: #000;
+      }
+      #pitchError:not([hidden]) {
+        display: grid;
+      }
+      #pitchError button {
+        justify-self: center;
+        margin-top: 18px;
+        padding: 10px 24px;
+        border: 2px solid #ffae72;
+        background: #943916;
+        color: #fff4df;
+        font: inherit;
+        cursor: pointer;
+      }
+      html[data-broadcast] #pitchError {
+        display: none;
+      }
+      .celebration-lab > header,
+      .celebration-lab > #pass,
+      .celebration-lab > #cross,
+      .celebration-lab > #through {
+        display: none;
+      }
+      .celebration-controls {
+        position: absolute;
+        inset: 6px auto auto 50%;
+        transform: translateX(-50%);
+        width: max-content;
+        max-width: 96%;
+        padding: 5px 8px;
+        text-align: center;
+        background: #19120ef2;
+        border-top: 2px solid #df622e;
+        color: #fff3dd;
+      }
+      .celebration-lab > #kick {
+        display: block;
+      }
+      .celebration-controls nav > span {
+        align-self: center;
+        font: 600 13px var(--ui-font);
+      }
+      .celebration-controls output {
+        font:
+          20px Upheaval,
+          monospace;
+      }
+      .celebration-controls nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+      }
+      .celebration-controls button {
+        background: #32241c;
+        border-color: #8a6346;
+        padding: 4px 7px;
+        font: 600 13px var(--ui-font);
+      }
+      main[data-simulation]
+        :is(#stick, #kick, #pass, #cross, #through, #switchPlayer, footer) {
+        display: none !important;
+      }
+      #burnHud {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        width: 100%;
+        color: #fff;
+        font:
+          clamp(9px, 1.7vw, 13px)/1 Upheaval,
+          monospace;
+      }
+      #burnHud[hidden],
+      .training #burnHud {
+        display: none;
+      }
+      .burn-title {
+        grid-column: 2;
+        grid-row: 1;
+        background: #19130f;
+        border: 1px solid #604839;
+        padding: 3px 5px;
+        font: inherit;
+      }
+      .burn-meter {
+        min-width: 0;
+        width: 75%;
+        height: 9px;
+        background: #19130f;
+        padding: 2px;
+        border: 1px solid #604839;
+        box-sizing: content-box;
+      }
+      .burn-meter:first-child {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: end;
+      }
+      .burn-meter:last-child {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: start;
+      }
+      .burn-meter > span {
+        display: block;
+        background: #332c26;
+        height: 100%;
+        overflow: hidden;
+      }
+      .burn-meter i {
+        display: block;
+        height: 100%;
+        transform: scaleX(var(--burn));
+        transform-origin: right;
+        transition: transform 0.2s;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            transparent 0 6px,
+            #21161066 6px 8px
+          ),
+          linear-gradient(
+            to top,
+            color-mix(in srgb, var(--club), black 35%) 0 34%,
+            var(--club) 34% 70%,
+            color-mix(in srgb, var(--club), white 45%) 70% 100%
+          );
+      }
+      .burn-meter:last-child i {
+        transform-origin: left;
+      }
+      .burn-meter[data-on-fire] {
+        border-color: var(--club);
+        box-shadow: 0 0 6px var(--club);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .burn-meter[data-on-fire] i {
+          animation: burn-pulse 1s ease-in-out infinite alternate;
+        }
+      }
+      @keyframes burn-pulse {
+        to {
+          filter: brightness(1.65);
+        }
+      }
+      #message:has(.kickoff-prompt) {
+        top: auto;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 0;
+        background: transparent;
+        pointer-events: none;
+      }
+      .kickoff-prompt {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        padding: 0.3em 0.65em;
+        background: #191813f2;
+        border-bottom: 3px solid #e67a39;
+        color: #fff3db;
+        font:
+          clamp(16px, 2.5vw, 28px)/1 Upheaval,
+          monospace;
+      }
+      .kickoff-prompt kbd.pad-hint {
+        display: inline-flex;
+        font-size: 0.68em;
+      }
+      main[data-paused] > :not(canvas) {
+        visibility: hidden !important;
+      }
+      #nameplate {
+        min-width: 0;
+        line-height: 1.3;
+        margin-top: -0.25em;
+      }
+      #controlled {
+        padding: 0 0.2em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      #nameplate #meter {
+        height: 0.4em;
+      }
+      html[data-pad-focus] button:enabled:focus {
+        appearance: none;
+        outline: 2px solid #ffa559 !important;
+        outline-offset: -2px;
+        box-shadow: inset 0 0 0 2px #a44920 !important;
+        -webkit-tap-highlight-color: transparent;
+      }
+      html[data-pad-focus] .pause-menu button:enabled:focus {
+        background: #a64018;
+        border-color: #ef864c;
+        color: #fff7e5;
+      }
+      .match-goal-card {
+        position: absolute;
+        left: 50%;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+        color: #fff1cd;
+        font:
+          clamp(15px, 2.5vw, 29px)/1 Upheaval,
+          monospace;
+        pointer-events: none;
+      }
+      .match-goal-card[hidden] {
+        display: none;
+      }
+      .match-goal-card > div {
+        background: #100e0c;
+        padding: 0.2em 0.55em;
+      }
+      .match-goal-card > div {
+        display: flex;
+        align-items: center;
+        gap: 0.28em;
+        border-bottom: 3px solid #ce602a;
+        white-space: nowrap;
+      }
+      .match-goal-card em {
+        font-style: normal;
+      }
+      .match-goal-card :is(i, span) {
+        width: 1.035em;
+        height: 1.035em;
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        image-rendering: pixelated;
+      }
+      .match-goal-card i {
+        background-size: 3200% 400%;
+        background-position: 0 0;
+      }
+      .match-goal-card .match-goal-sprite {
+        background-size: 1350% 170%;
+        background-position: 2% 0;
+      }
+      main:has(.match-goal-card:not([hidden])) #message:has(.kickoff-prompt) {
+        bottom: calc(
+          max(12px, env(safe-area-inset-bottom)) + clamp(48px, 7vw, 82px)
+        );
+      }
+      .celebration-lab.lab-kickoff > header {
+        display: grid;
+      }
+      .lab-kickoff .celebration-controls,
+      .lab-kickoff > #kick {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <main data-loading>
+      <canvas aria-label="TBFC versus Shooting Stars FC match pitch"></canvas>
+      <header>
+        <section class="bug-stack">
+          <strong id="scoreboard" role="img" aria-label="Score and match clock"
+            ><span class="bug-team"
+              ><span class="bug-long">Turf Burners FC</span
+              ><span class="bug-short">TBFC</span
+              ><img id="bugCrest" alt="" /></span
+            ><b class="bug-goals" id="homeGoals">0</b
+            ><span class="bug-time"
+              ><span id="bugPeriod">1ST</span
+              ><span id="bugClock">0:00</span></span
+            ><b class="bug-goals" id="awayGoals">0</b
+            ><span class="bug-team away"
+              ><img id="awayCrest" alt="" /><span class="bug-away-name"
+                >Shooting Stars FC</span
+              ></span
+            ></strong
+          >
+          <div id="burnHud" hidden></div>
+          <div class="bug-penalties">
+            <div id="homePenalties" aria-label="TBFC penalties"></div>
+            <div
+              id="awayPenalties"
+              aria-label="Shooting Stars FC penalties"
+            ></div>
+          </div>
+        </section>
+        <div data-debug>
+          <span id="padStatus" role="status"
+            >Press a controller button to connect</span
+          >
+          <button id="sound" aria-label="Match sound">Sound on</button>
+          <button
+            id="changeView"
+            title="Toggle camera (right stick click or comma / period)"
+            aria-label="Cycle camera view"
+          >
+            Sideline
+          </button>
+          <button id="switchPlayer">Switch</button>
+          <button id="reset">Restart match</button>
+          <button id="pause">Pause</button>
+        </div>
+      </header>
+      <details data-debug id="shotStats">
+        <summary>Shot stats</summary>
+        <table aria-label="Practice shots by distance from goal">
+          <thead>
+            <tr>
+              <th>Range</th>
+              <th>Shots</th>
+              <th>Goals</th>
+              <th>Saves</th>
+              <th>Misses</th>
+              <th>Woodwork</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>Close · &lt;7</th>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>Mid · 7–&lt;14</th>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <th>Long · 14+</th>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+          </tbody>
+        </table>
+      </details>
+      <footer data-debug>
+        <span
+          ><kbd class="key-hint">WASD</kbd
+          ><kbd class="pad-hint" data-pad="LS">LS</kbd> Move　<kbd
+            class="key-hint"
+            >→</kbd
+          ><kbd class="pad-hint" data-pad="LB">LB</kbd> Switch　<kbd
+            class="key-hint"
+            >, .</kbd
+          ><kbd class="pad-hint" data-pad="R3">R3</kbd> Camera　<kbd
+            class="key-hint"
+            >J</kbd
+          ><kbd class="pad-hint" data-pad="A">A</kbd> Pass　<kbd
+            class="key-hint"
+            >X</kbd
+          ><kbd class="pad-hint" data-pad="X">X</kbd> Cross　<kbd
+            class="key-hint"
+            >Y</kbd
+          ><kbd class="pad-hint" data-pad="Y">Y</kbd> Through / rush GK　<kbd
+            class="key-hint"
+            >K</kbd
+          ><kbd class="pad-hint" data-pad="B">B</kbd> Shoot / tackle　<kbd
+            class="key-hint"
+            >Shift</kbd
+          ><kbd class="pad-hint" data-pad="RT">RT</kbd> Sprint</span
+        >
+      </footer>
+      <div id="stick" aria-label="Movement pad"><i id="knob"></i></div>
+      <button id="pass">PASS</button><button id="kick">KICK</button
+      ><button id="cross">CROSS</button><button id="through">THRU</button>
+      <div hidden id="nameplate">
+        <div
+          hidden
+          id="meter"
+          role="progressbar"
+          aria-label="Kick power"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <div id="powerFill"></div>
+        </div>
+        <div id="nameTrack">
+          <div
+            id="staminaCapacity"
+            role="meter"
+            aria-label="Sprint capacity"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="100"
+          ></div>
+          <div
+            id="staminaFill"
+            role="meter"
+            aria-label="Sprint remaining"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="100"
+          ></div>
+          <span id="controlled">Meghan</span>
+        </div>
+      </div>
+      <div hidden id="shotFeedback" role="status"></div>
+      <div hidden id="passCall" aria-label="Teammate asking for a pass">
+        PASS
+      </div>
+      <div id="shotResult" role="status"></div>
+      <div hidden id="goalBanner" role="status">GOAL!</div>
+      <div data-debug hidden id="replayPanel">
+        <span id="replayLabel"></span
+        ><button id="skipReplay">Skip replay</button>
+      </div>
+      <div id="message">Loading pitch…</div>
+    </main>
+    <div id="pitchError" role="alert" hidden>
+      The pitch could not load. Try reloading with hardware acceleration
+      enabled.
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
