@@ -1,13 +1,24 @@
 <!-- FIRST TOUCH presentation. Edit these templates without touching game logic. -->
 <template id="lesson">
   <aside class="ft-lesson">
-    <small data-location>CANDLER PARK · ATLANTA</small>
     <strong data-title></strong>
     <p data-prompt></p>
-    <small data-demonstrated hidden><svg class="ft-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8l4 4 8-8" /></svg> Skill Demonstrated</small>
-    <small data-storage hidden>Progress cannot be saved in this browser session.</small>
-    <button data-options><span data-glyph="Esc|Menu"></span> Tutorial options</button>
-    <button data-next><span data-glyph="N|RB"></span> <span data-next-label>Continue when ready</span></button>
+    <small data-demonstrated hidden
+      ><svg class="ft-check" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M2 8l4 4 8-8" />
+      </svg>
+      Skill Demonstrated</small
+    >
+    <small data-storage hidden
+      >Progress cannot be saved in this browser session.</small
+    >
+    <button data-options>
+      <span data-glyph="Esc|Menu"></span> Tutorial options
+    </button>
+    <button data-next>
+      <span data-glyph="N|RB"></span>
+      <span data-next-label>Continue when ready</span>
+    </button>
   </aside>
 </template>
 <template id="dialogue">
@@ -16,20 +27,23 @@
     <div>
       <strong data-speaker></strong>
       <p data-line></p>
-      <button data-continue><span data-glyph="J / Enter|A"></span> <span data-continue-label>Continue</span></button>
+      <button data-continue>
+        <span data-glyph="J / Enter|A"></span>
+        <span data-continue-label>Continue</span>
+      </button>
       <button data-dismiss><span data-glyph="K|B"></span> Dismiss</button>
     </div>
   </section>
 </template>
 <template id="options">
   <div class="ft-pause-page">
-  <section class="ft-options" aria-label="Tutorial Options">
-    <h2>FIRST TOUCH · PAUSED</h2>
-    <nav class="ft-pause-actions" aria-label="Pause Menu">
-      <button data-hint>Coaching Hint</button>
-      <button data-open-chapters>Chapters</button>
-      <button data-exit>Return to Practice</button>
-    </nav>
+    <section class="ft-options" aria-label="Tutorial Options">
+      <h2>FIRST TOUCH · PAUSED</h2>
+      <nav class="ft-pause-actions" aria-label="Pause Menu">
+        <button data-hint>Coaching Hint</button>
+        <button data-open-chapters>Chapters</button>
+        <button data-exit>Return to Practice</button>
+      </nav>
     </section>
     <div class="picker-hints menu-legend">
       <span><span data-glyph="Enter|A"></span> Select</span>
@@ -39,9 +53,12 @@
 </template>
 <template id="options-chapters">
   <div class="ft-pause-page ft-pause-page-chapters">
-  <section class="ft-options ft-options-chapters" aria-label="First Touch Chapters">
-    <h2>CHAPTERS</h2>
-    <nav class="ft-chapter-grid" data-chapters aria-label="Chapters"></nav>
+    <section
+      class="ft-options ft-options-chapters"
+      aria-label="First Touch Chapters"
+    >
+      <h2>CHAPTERS</h2>
+      <nav class="ft-chapter-grid" data-chapters aria-label="Chapters"></nav>
     </section>
     <div class="picker-hints menu-legend">
       <span><span data-glyph="Enter|A"></span> Start Chapter</span>
@@ -50,9 +67,13 @@
   </div>
 </template>
 <template id="completion">
-  <section class="ft-completion" role="dialog" aria-modal="true" aria-labelledby="ft-completion-title">
-    <img class="ft-completion-crest" data-crest alt="Turf Burners FC crest">
-    <small>CANDLER PARK · ATLANTA</small>
+  <section
+    class="ft-completion"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="ft-completion-title"
+  >
+    <img class="ft-completion-crest" data-crest alt="Turf Burners FC crest" />
     <h1 id="ft-completion-title">FIRST TOUCH COMPLETE</h1>
     <p>WELCOME TO TURF BURNERS FC</p>
     <button data-exit><span data-glyph="Enter|A"></span> Continue</button>
@@ -60,4 +81,6 @@
 </template>
 
 <!-- A short instruction and its input badge wrap as one unit. -->
-<template id="instruction"><span class="ft-instruction" data-instruction></span></template>
+<template id="instruction"
+  ><span class="ft-instruction" data-instruction></span
+></template>

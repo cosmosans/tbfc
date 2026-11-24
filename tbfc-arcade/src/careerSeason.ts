@@ -796,15 +796,15 @@ export function stage(round: number, index: number) {
   if (round < 6) return "League · Week " + (round + 1);
   if (round === 6)
     return index < 2
-      ? "Championship semifinal"
+      ? "Championship Semifinal"
       : index === 2
-        ? "Consolation match"
-        : "Best of the Rest semifinal";
+        ? "Consolation Match"
+        : "Best of the Rest Semifinal";
   return [
-    "Championship final",
-    "Third-place match",
-    "Fifth-place match",
-    "Seventh-place match",
+    "Championship Final",
+    "Third-place Match",
+    "Fifth-place Match",
+    "Seventh-place Match",
   ][index];
 }
 export function seasonName(season: number) {

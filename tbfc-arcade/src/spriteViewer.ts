@@ -10,7 +10,7 @@ const rates=[0,8,12,14,16,16,12,8,8,8]
 const secondarySheets=import.meta.glob<string>('./art/{away-preview,sweeper-secondary,wonders-secondary,dancers-secondary,grass-secondary,espresso-secondary,onsider-secondary,net-secondary,diggers-secondary,barely-secondary,mac-secondary,pandas-secondary,stars-secondary,whiff-secondary,orange-secondary,inter-secondary,crossbar-secondary,fleet-secondary}/*.png',{eager:true,query:'?url',import:'default'})
 
 // Visible pixel height of each front idle pose, excluding transparent sheet padding.
-const standingHeights: Record<string,number> = {"Meghan": 46, "Pam": 46, "Jan": 46, "Mandy": 46, "Jeremy": 41, "Chris": 46, "Stubbs": 42, "Spencer": 47, "José": 45, "Steven": 43, "Daniel": 44, "Nelson": 44, "Nadia": 47}
+const standingHeights: Record<string,number> = {"Bjorn": 44, "Meghan": 46, "Pam": 46, "Jan": 46, "Mandy": 46, "Jeremy": 41, "Chris": 46, "Stubbs": 42, "Spencer": 47, "José": 45, "Steven": 43, "Daniel": 44, "Nelson": 44, "Nadia": 47}
 
 export function spriteViewer():Promise<void>{
  const title='Sprite Viewer'

@@ -1124,12 +1124,17 @@ button {
 }
 #career .cr-party-player {
   position: absolute;
-  width: 13%;
+  width: calc(10% * var(--cell-scale));
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }
-#career .cr-party-player.captain {
-  width: 18%;
+#career .cr-ceremony-portrait {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: 5%;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
 }
 #career .cr-party-player i {
   display: block;
@@ -1141,6 +1146,9 @@ button {
     cr-ceremony-frames var(--duration) steps(var(--frames), jump-none) infinite,
     cr-cheer-hop 0.75s ease-in-out infinite alternate;
   animation-delay: var(--delay);
+}
+#career .cr-trophy-lift i {
+  animation: cr-ceremony-frames var(--duration) steps(var(--frames), jump-none) forwards;
 }
 @keyframes cr-ceremony-frames {
   to {
@@ -1155,6 +1163,9 @@ button {
 @media (prefers-reduced-motion: reduce) {
   #career .cr-party-player i {
     animation: none;
+  }
+  #career .cr-trophy-lift i {
+    background-position-x: 100%;
   }
 }
 

@@ -1,3 +1,12 @@
+import bjornIdle from "./art/bjorn-idle.png?url";
+import bjornRun from "./art/bjorn-run.png?url";
+import bjornKick from "./art/bjorn-kick.png?url";
+import bjornHeader from "./art/bjorn-header.png?url";
+import bjornTackle from "./art/bjorn-tackle.png?url";
+import bjornReaction from "./art/bjorn-reaction.png?url";
+import bjornFall from "./art/bjorn-foul.png?url";
+import bjornGoalRunUrl from "./art/bjorn-goal-run.png?url";
+import bjornGoalStandUrl from "./art/bjorn-goal-stand.png?url";
 import {
   millBoards,
   millBankAim,
@@ -241,7 +250,7 @@ import blueIdle from "./art/stars-idle.png?url";
 import blueRun from "./art/stars-run.png?url";
 import meghan_idle from "./art/meghan-new-idle.png?url";
 import meghan_run from "./art/meghan-new-run.png?url";
-const burnerHomeSheets = import.meta.glob<string>("./art/{chris,daniel,jan,jeremy,jose,mandy,meghan,nadia,nelson,pam,spencer,steven,stubbs}-*.png", { eager:true, query:"?url", import:"default" });
+const burnerHomeSheets = import.meta.glob<string>("./art/{bjorn,chris,daniel,jan,jeremy,jose,mandy,meghan,nadia,nelson,pam,spencer,steven,stubbs}-*.png", { eager:true, query:"?url", import:"default" });
 const burnerWhiteSheets = import.meta.glob<string>("./art/away-preview/*.png", { eager:true, query:"?url", import:"default" });
 // Match Vite's resolved URLs so the same lookup works with hashed production assets.
 const whiteKitByHomeUrl = new Map(Object.entries(burnerHomeSheets).map(([path,url]) =>
@@ -365,6 +374,7 @@ async function start() {
     José: [joseIdle, joseRun, joseKick],
     Steven: [stevenIdle, stevenRun, stevenKick],
     Daniel: [danielIdle, danielRun, danielKick],
+    Bjorn: [bjornIdle, bjornRun, bjornKick],
     Nelson: [nelsonIdle, nelsonRun, nelsonKick],
     Nadia: [nadiaIdle, nadiaRun, nadiaKick],
   };
@@ -381,6 +391,7 @@ async function start() {
     Daniel: danielFall,
     Steven: stevenFall,
     José: joseFoulReaction,
+    Bjorn: bjornFall,
     Nelson: nelsonFall,
     Jeremy: jeremyFoul,
   };
@@ -1110,6 +1121,7 @@ async function start() {
     Stubbs: "#12 STUBBS",
   };
   const makeBurner = async (name: string) => {
+    const individual = name === "Bjorn" ? [bjornHeader, bjornTackle, bjornReaction] : name === "Nelson" ? [nelsonJump, nelsonTackle, nelsonReaction] : undefined;
     const fall = fallSheets[name];
     const actor = await createPlayer(
       labels[name] ?? name,
@@ -1122,8 +1134,8 @@ async function start() {
         ? pamHeaderUrl
         : name === "Stubbs"
           ? stubbsHeader
-          : name === "Nelson"
-            ? nelsonJump
+          : individual
+            ? individual[0]
             : name === "Chris"
               ? chrisNewHeader
               : name === "Nadia"
@@ -1149,8 +1161,8 @@ async function start() {
           ? stubbsTackle
           : name === "José"
             ? joseTackleUrl
-            : name === "Nelson"
-              ? nelsonTackle
+            : individual
+              ? individual[1]
               : name === "Chris"
                 ? chrisNewTackle
                 : name === "Nadia"
@@ -1176,8 +1188,8 @@ async function start() {
           ? stubbsReaction
           : name === "José"
             ? joseReactionUrl
-            : name === "Nelson"
-              ? nelsonReaction
+            : individual
+              ? individual[2]
               : name === "Chris"
                 ? chrisNewReaction
                 : name === "Nadia"
@@ -1205,7 +1217,8 @@ async function start() {
             ? joseReactionFlashUrl
             : undefined,
     );
-    if (name === "Daniel") actor.maps[0].userData.celebrationScale = 1;
+    if (name === "Daniel" || name === "Stubbs" || name === "Bjorn")
+      actor.maps[0].userData.celebrationScale = 1;
     return actor;
   };
   const trainingSheets = [trainingIdle, trainingRun, trainingKick];
@@ -1253,6 +1266,7 @@ async function start() {
     if (club.name === "Onsider Trading FC" && rivalWomen[club.name].has(name))
       actor.maps[0].userData.celebrationScale = 1;
     if (
+      club.name === "Inter Your Mom" ||
       club.name === "Net Six & Chill" ||
       club.name === "Atlético Espresso" ||
       club.name === "Whiff City FC" ||
@@ -1944,8 +1958,11 @@ async function start() {
   meghanGoal.repeat.set(54 / meghanGoal.image.width, 1 / 8);
   meghanGoal.userData.directionalCelebration = true;
   meghanGoal.userData.cell = 54;
+  const [bjornGoalRun, bjornGoalStand] = await Promise.all(
+    [bjornGoalRunUrl, bjornGoalStandUrl].map(celebrationSheet),
+  );
   const danielSupport = await celebrationSheet(danielSupportUrl);
-  for (const map of [danielGoalGroup, danielGoalRun, danielSupport]) {
+  for (const map of [danielGoalGroup, danielGoalRun, danielSupport, bjornGoalRun, bjornGoalStand]) {
     const cell = map.image.height / 8;
     map.userData.cell = cell;
     map.userData.directionalCelebration = true;
@@ -1971,6 +1988,7 @@ async function start() {
     Mandy: mandyGoal,
     José: spiderGoalStand,
     Meghan: meghanGoal,
+    Bjorn: bjornGoalStand,
     Nelson: nelsonGoal,
     Jan: janGoal,
     Nadia: nadiaGoalGroup,
@@ -1984,6 +2002,7 @@ async function start() {
     Pam: pamSupport,
     Mandy: mandyGoal,
     Jan: janGoal,
+    Bjorn: bjornGoalStand.clone(),
     Nelson: nelsonGoalSupport,
     Meghan: meghanGoal,
     Nadia: nadiaGoalGroup,
@@ -6313,7 +6332,7 @@ async function start() {
                 ? stevenGoalRun
                 : scorer?.displayName === "Pam"
                   ? pamSkateGoal
-                  : scorer?.displayName === "Nelson"
+                  : scorer?.displayName === "Bjorn" ? bjornGoalRun : scorer?.displayName === "Nelson"
                     ? nelsonGoalRun
                     : scorer?.displayName === "Chris"
                       ? chrisGoalRun

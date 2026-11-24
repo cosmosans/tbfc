@@ -798,6 +798,62 @@
               "note": "Uses new group celebration"
             }
           }
+        },
+        {
+          "name": "Bjorn",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "bjorn-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "bjorn-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Kick": {
+              "file": "bjorn-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Jump / header / air move": {
+              "file": "bjorn-header.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle": {
+              "file": "bjorn-tackle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Tackle reaction (stumble)": {
+              "file": "bjorn-reaction.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Foul reaction (fall)": {
+              "file": "bjorn-foul.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Running celebration": {
+              "file": "bjorn-goal-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Standing celebration": {
+              "file": "bjorn-goal-stand.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Support celebration": {
+              "file": "bjorn-goal-stand.png",
+              "status": "Individual",
+              "note": "Uses his standing celebration."
+            }
+          }
         }
       ]
     },
@@ -26968,6 +27024,69 @@
       "height": 576,
       "cell": 72,
       "columns": 9,
+      "rows": 8
+    },
+    "bjorn-idle.png": {
+      "width": 544,
+      "height": 68,
+      "cell": 68,
+      "columns": 8,
+      "rows": 1
+    },
+    "bjorn-run.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "bjorn-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "bjorn-header.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "bjorn-tackle.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "bjorn-reaction.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "bjorn-foul.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "bjorn-goal-run.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "bjorn-goal-stand.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
       "rows": 8
     }
   }

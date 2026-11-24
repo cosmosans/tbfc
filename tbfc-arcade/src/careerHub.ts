@@ -1,3 +1,14 @@
+import bjornGoalStand from "./art/bjorn-goal-stand.png?url";
+import nelsonTrophyLift from "./art/nelson-trophy-lift.png?url";
+import nadiaTrophyLift from "./art/nadia-trophy-lift.png?url";
+import joseTrophyLift from "./art/jose-trophy-lift.png?url";
+import stubbsTrophyLift from "./art/stubbs-trophy-lift.png?url";
+import mandyTrophyLift from "./art/mandy-trophy-lift.png?url";
+import stevenTrophyLift from "./art/steven-trophy-lift.png?url";
+import meghanTrophyLift from "./art/meghan-trophy-lift.png?url";
+import pamTrophyLift from "./art/pam-trophy-lift.png?url";
+import danielTrophyLift from "./art/daniel-trophy-lift.png?url";
+import chrisTrophyLift from "./art/chris-trophy-lift.png?url";
 import meghan_new_goal_support from "./art/meghan-new-goal-support.png?url";
 import nelson_goal_support from "./art/nelson-goal-support.png?url";
 import mandy_new_goal_team from "./art/mandy-new-goal-team.png?url";
@@ -14,6 +25,7 @@ import stubbs_new_goal_support from "./art/stubbs-new-goal-support.png?url";
 import spencer_idle from "./art/spencer-idle.png?url";
 import { audio } from "./matchAudio";
 import meghanHead from "./art/headshots/meghan.png?url";
+import bjornHead from "./art/headshots/bjorn.png?url";
 import nelsonHead from "./art/headshots/nelson.png?url";
 import mandyHead from "./art/headshots/mandy.png?url";
 import chrisHead from "./art/headshots/chris.png?url";
@@ -73,24 +85,54 @@ import { deleteSlot, loadSlot, saveSlot } from "./careerStore";
 import { halfDurationLabel, type MatchSettings } from "./matchSettings";
 import css from "./career.css?inline";
 
-const ceremonySheets: Record<string, [string, number, number]> = {
-  Meghan: [meghan_new_goal_support, 9, 8],
-  Nelson: [nelson_goal_support, 15, 8],
-  Mandy: [mandy_new_goal_team, 13, 8],
-  Chris: [chris_new_goal_stand, 9, 8],
-  Sean: [sean_celebration_jog, 11, 8],
-  Steven: [steven_new_goal_support, 13, 8],
-  Daniel: [daniel_new_goal_support, 17, 8],
-  Nadia: [nadia_new_goal_support, 15, 8],
-  Jan: [jan_new_goal_support, 15, 8],
-  Jeremy: [jeremy_new_goal_group, 17, 8],
-  José: [spider_jose_new_stand, 17, 8],
-  Pam: [pam_support, 9, 1],
-  Stubbs: [stubbs_new_goal_support, 15, 8],
-  Spencer: [spencer_idle, 1, 1],
+// Cell size includes transparent padding. Figure height is measured in the front-facing row.
+const ceremonySheets: Partial<
+  Record<
+    string,
+    [
+      url: string,
+      frames: number,
+      rows: number,
+      cellSize: number,
+      figureHeight: number,
+    ]
+  >
+> = {
+  Meghan: [meghan_new_goal_support, 9, 8, 54, 46],
+  Bjorn: [bjornGoalStand, 15, 8, 68, 44],
+  Nelson: [nelson_goal_support, 15, 8, 48, 46],
+  Mandy: [mandy_new_goal_team, 13, 8, 68, 45],
+  Chris: [chris_new_goal_stand, 9, 8, 48, 46],
+  Sean: [sean_celebration_jog, 11, 8, 48, 41],
+  Steven: [steven_new_goal_support, 13, 8, 54, 45],
+  Daniel: [daniel_new_goal_support, 17, 8, 68, 46],
+  Nadia: [nadia_new_goal_support, 15, 8, 48, 45],
+  Jan: [jan_new_goal_support, 15, 8, 64, 46],
+  Jeremy: [jeremy_new_goal_group, 17, 8, 60, 41],
+  José: [spider_jose_new_stand, 17, 8, 56, 40],
+  Pam: [pam_support, 9, 1, 48, 44],
+  Stubbs: [stubbs_new_goal_support, 15, 8, 64, 42],
+  Spencer: [spencer_idle, 1, 1, 68, 47],
 };
+const trophyLifts: Partial<
+  Record<string, { url: string; figureHeight: number; frames: number }>
+> = {
+  Chris: { url: chrisTrophyLift, figureHeight: 47, frames: 33 },
+  Daniel: { url: danielTrophyLift, figureHeight: 44, frames: 27 },
+  José: { url: joseTrophyLift, figureHeight: 45, frames: 33 },
+  Nadia: { url: nadiaTrophyLift, figureHeight: 47, frames: 33 },
+  Stubbs: { url: stubbsTrophyLift, figureHeight: 43, frames: 14 },
+  Mandy: { url: mandyTrophyLift, figureHeight: 47, frames: 25 },
+  Steven: { url: stevenTrophyLift, figureHeight: 44, frames: 25 },
+  Meghan: { url: meghanTrophyLift, figureHeight: 46, frames: 26 },
+  Pam: { url: pamTrophyLift, figureHeight: 46, frames: 29 },
+  Nelson: { url: nelsonTrophyLift, figureHeight: 44, frames: 33 },
+};
+
 function trophyCircle(player: string, roster: string[]) {
-  const mates = roster.filter((name) => name !== player);
+  const mates = roster.filter(
+    (name) => name !== player && ceremonySheets[name],
+  );
   return (
     '<div class="cr-ceremony" role="img" aria-label="Turf Burners celebrating around ' +
     player +
@@ -98,11 +140,22 @@ function trophyCircle(player: string, roster: string[]) {
     [...mates, player]
       .map((name, i) => {
         const center = name === player;
+        const lift = center && trophyLifts[name];
+        if (lift) {
+          return `<span class="cr-party-player cr-trophy-lift" style="--cell-scale:${68 / lift.figureHeight};left:50%;top:48%;z-index:48"><i style="background-image:url('${lift.url}');background-size:${lift.frames * 100}% 100%;--frames:${lift.frames};--end:100%;--duration:${lift.frames * 200}ms"></i></span>`;
+        }
         const angle = (2 * Math.PI * i) / mates.length;
-        const [url, frames, rows] = ceremonySheets[name];
+        const sheet = ceremonySheets[name];
+        if (!sheet) {
+          const portrait = headshots[name];
+          return portrait
+            ? `<img class="cr-ceremony-portrait" src="${portrait}" alt="">`
+            : "";
+        }
+        const [url, frames, rows, cellSize, figureHeight] = sheet;
         const x = center ? 50 : 50 + 40 * Math.sin(angle);
         const y = center ? 48 : 47 + 34 * Math.cos(angle);
-        return `<span class="cr-party-player ${center ? "captain" : ""}" style="left:${x}%;top:${y}%;z-index:${Math.round(y)};--delay:-${i * 0.13}s"><i style="background-image:url('${url}');background-size:${name === "Spencer" ? 800 : frames * 100}% ${rows * 100}%;--frames:${Math.max(2, frames)};--end:${frames > 1 ? 100 : 0}%;--duration:${frames / 9}s"></i></span>`;
+        return `<span class="cr-party-player" style="--cell-scale:${cellSize / figureHeight};left:${x}%;top:${y}%;z-index:${Math.round(y)};--delay:-${i * 0.13}s"><i style="background-image:url('${url}');background-size:${name === "Spencer" ? 800 : frames * 100}% ${rows * 100}%;--frames:${Math.max(2, frames)};--end:${frames > 1 ? 100 : 0}%;--duration:${frames / 9}s"></i></span>`;
       })
       .join("") +
     "</div>"
@@ -110,6 +163,7 @@ function trophyCircle(player: string, roster: string[]) {
 }
 export const headshots: Partial<Record<string, string>> = {
   Meghan: meghanHead,
+  Bjorn: bjornHead,
   Nelson: nelsonHead,
   Mandy: mandyHead,
   Chris: chrisHead,
@@ -572,7 +626,7 @@ export function careerHub(
           );
         }
       }
-      const heading = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>TURF BURNERS FC · CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
+      const heading = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
       shell.innerHTML = `${navigation ? `<header class="cr-hub-header">${heading}${navigation}</header>` : heading}${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
         focus
@@ -597,7 +651,7 @@ export function careerHub(
       const stats = [
         ["Goals", goals],
         ["Assists", personal?.assists ?? "—"],
-        ["Completed passes", personal?.passes ?? "—"],
+        ["Completed Passes", personal?.passes ?? "—"],
       ];
       const game = s.schedule[s.round].find((g) => g.a === 0 || g.b === 0)!;
       const teams = careerClubs(s);
@@ -606,8 +660,8 @@ export function careerHub(
         report.simulatedFrom !== undefined
           ? "Simulated from " + Math.floor(report.simulatedFrom) + "′"
           : report.simulated
-            ? "Simulated match"
-            : "Played match";
+            ? "Simulated Match"
+            : "Played Match";
       dialog.innerHTML = `<article><small>Full Time · ${mode}</small><h1 id="cr-recap-title">Match performance</h1>
         ${scoreRow(game.a, game.b, game.score!, game.pens ? "FINAL · " + game.pens.join("–") + " PENS" : "FINAL", "", "vs", teams)}
         <div class="cr-recap-player"><span class="cr-dev-sprite" style="background-image:url('${portraits[s.player]}')"></span><div><small>${report.played.includes(s.player) ? bios[s.player][1] : "Did not play"}</small><h2>${s.player}</h2></div></div>

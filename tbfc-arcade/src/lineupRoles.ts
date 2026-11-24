@@ -10,6 +10,7 @@ export const formations = {
 export type Shape = keyof typeof formations;
 
 export const bios: Record<string, [number, string]> = {
+    Bjorn: [11, "Defender"],
     Nadia: [16, "Forward"],
     Nelson: [7, "Forward"],
     Daniel: [15, "Midfielder"],
