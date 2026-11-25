@@ -1,4 +1,3 @@
-import { freePracticeRoster } from '../practiceMenu'
 import { menuPad, menuDirection } from '../menuPad'
 import { template, element, bind, chapterCard } from './templates'
 import './tutorial.css'
@@ -6,7 +5,7 @@ import { readProgress, isChapterUnlocked, type TutorialLaunch } from './progress
 import chapters from './script.json'
 import '../practiceMenu.css'
 export type PracticeChoice = { drill: number; names: string[]; tutorial?: TutorialLaunch }
-export async function practiceMenu(portraits: Record<string, string>): Promise<PracticeChoice | null> {
+export async function practiceMenu(): Promise<PracticeChoice | null> {
  const root = document.createElement('section'); root.className = 'practice-menu'; document.body.append(root)
  const progress = readProgress()
  return new Promise(resolve => {
@@ -15,12 +14,6 @@ export async function practiceMenu(portraits: Record<string, string>): Promise<P
   history.replaceState({ ...history.state, tutorialDrills: false }, "")
   const finish = (value: PracticeChoice | null) => { cancelAnimationFrame(frame); document.removeEventListener('keydown', key); root.remove(); resolve(value) }
   const launch = (index: number, mode: TutorialLaunch['mode']) => { if (isChapterUnlocked(progress, index)) finish({ drill: -1, names: [], tutorial: { chapter: index, mode } }) }
-  async function free() {
-   // Free Practice opens player selection directly.
-   cancelAnimationFrame(frame); document.removeEventListener('keydown', key); root.remove()
-   const choice = await freePracticeRoster(portraits)
-   resolve(choice ?? await practiceMenu(portraits))
-  }
   function draw() {
    const view = template('practice')
    element(view, '[data-title]').textContent = page === 'home' ? 'Practice' : chapters[chapter].title
@@ -34,8 +27,6 @@ export async function practiceMenu(portraits: Record<string, string>): Promise<P
     chapters.forEach(c => {
      nav.append(chapterCard(c, isChapterUnlocked(progress, c.id), () => { chapter = c.id; page = 'chapter'; draw() }))
     })
-    const freeChoice = template('practice-free')
-    bind(freeChoice, '[data-free]', free); nav.append(freeChoice)
    } else {
     const choices = template('practice-chapter')
     element(choices, '[data-preview]').append(template(`chapter-scene-${chapter}`))

@@ -1,0 +1,6 @@
+#keeper-lab { position:absolute; top:2%; right:2%; z-index:12; max-width:min(42vw,34em); padding:.55em .8em; background:#14100eed; color:#fff1dc; font:clamp(12px,1.4vw,17px) Oxanium,sans-serif; }
+#keeper-lab strong { color:#ffcb92; }
+#keeper-lab summary { margin-top:.35em; cursor:pointer; }
+#keeper-lab label { display:flex; justify-content:space-between; gap:.6em; align-items:center; margin:.5em 0; }
+#keeper-lab input { width:7em; accent-color:#f39b58; }
+#keeper-lab button,#keeper-lab select { color:inherit; background:#372820; border:1px solid #956a4e; padding:.25em .5em; cursor:pointer; }

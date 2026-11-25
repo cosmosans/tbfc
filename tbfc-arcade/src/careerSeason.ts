@@ -1,3 +1,4 @@
+import { milestoneChat } from "./careerMilestones.ts";
 import { matchConversation } from "./careerConversation.ts";
 import { bios } from "./lineupRoles.ts";
 import { playerRatings } from "./playerRatings.ts";
@@ -123,6 +124,9 @@ export type Career = {
 function roll(c: Career) {
   c.seed = (Math.imul(c.seed, 1664525) + 1013904223) >>> 0;
   return c.seed / 4294967296;
+}
+function tierLabel(tier: Tier) {
+  return tier === "beginners" ? "Beginners" : tier.toUpperCase();
 }
 function moveDivision(division: Tier, step: number): Tier {
   return tiers[
@@ -670,6 +674,35 @@ export function finishRound(c: Career, report: Report, ratings: number[]) {
       .reverse()
       .map((e) => e.text),
   );
+  if (c.round >= 5) {
+    const next = c.schedule[c.round + 1];
+    const index = next?.findIndex(g => g.a === 0 || g.b === 0) ?? -1;
+    const opponentSlot = next?.[index];
+    const rival = opponentSlot ? opponentSlot.a || opponentSlot.b : 0;
+    const place = c.round === 7 ? c.schedule[7].flatMap(outcome).indexOf(0) + 1 : 0;
+    const speakers = [c.player, ...report.played, ...c.week.sheet.starters];
+    const facts = {
+      opponent: careerClubNames[c.leagueClubs?.[rival] ?? rival],
+      division: tierLabel(c.division),
+      place: ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"][place || index * 2 + 1],
+      destination: tierLabel(moveDivision(c.division, place === 1 ? 1 : -1)),
+    };
+    const lines = (kind: Parameters<typeof milestoneChat>[0]) => milestoneChat(kind, speakers, c.seed, facts);
+    let chat: string;
+    if (c.round === 5) {
+      chat = lines(table(c, 6)[0].club === 0 ? "firstSeed" : index < 2 ? "semifinal" : "lowerBracket");
+    } else if (c.round === 6) {
+      chat = lines(index === 0 ? "final" : index === 1 ? "thirdMatch" : "placingMatch");
+    } else if (place === 1) {
+      chat = lines("champion");
+      if (c.division !== tiers.at(-1)) chat += "\n" + lines("offer");
+    } else if (place === c.schedule[7].length * 2 && c.division !== tiers[0]) {
+      chat = lines("relegated");
+    } else {
+      chat = lines(place === 2 ? "runnerUp" : "placed");
+    }
+    c.reaction = [c.reaction, chat].filter(Boolean).join("\n");
+  }
 }
 export function archivedMessages(c: Career) {
   return (
@@ -722,6 +755,17 @@ export function nextWeek(
         : finalOrder[0]
       : undefined;
     const relegatedSlot = canRelegate ? finalOrder.at(-1) : undefined;
+    if (place === 1 && canPromote) {
+      const runnerUp = finalOrder[1];
+      const text = milestoneChat(promote ? "promoted" : "stayed",
+        [c.player, ...c.reports[7].played, ...roster], c.seed, {
+          division: tierLabel(c.division),
+          destination: tierLabel(moveDivision(c.division, 1)),
+          opponent: careerClubNames[c.leagueClubs?.[runnerUp] ?? runnerUp],
+        });
+      c.chat[c.chat.length - 1].text += "\n" + text;
+      c.archivedChatCount += text.split("\n").length;
+    }
     c.history.push({
       season: c.season,
       division: c.division,

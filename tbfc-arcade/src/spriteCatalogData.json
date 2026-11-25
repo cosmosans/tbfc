@@ -460,6 +460,36 @@
               "file": null,
               "status": "Missing",
               "note": "No celebration sheet supplied yet"
+            },
+            "Keeper idle": {
+              "file": "spencer-keeper-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Keeper run": {
+              "file": "spencer-keeper-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Keeper kick": {
+              "file": "spencer-keeper-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "spencer-keeper-dive.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "spencer-keeper-walk.png",
+              "status": "Individual",
+              "note": "North uses the north-east walk cycle"
+            },
+            "Hold ball": {
+              "file": "spencer-keeper-hold.png",
+              "status": "Individual",
+              "note": ""
             }
           }
         },
@@ -515,6 +545,36 @@
             "Support celebration": {
               "file": null,
               "status": "Missing",
+              "note": ""
+            },
+            "Keeper idle": {
+              "file": "jose-keeper-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Keeper run": {
+              "file": "jose-keeper-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Keeper kick": {
+              "file": "jose-keeper-kick.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "jose-keeper-dive.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "jose-keeper-hold.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "jose-keeper-walk.png",
+              "status": "Individual",
               "note": ""
             }
           }
@@ -646,7 +706,7 @@
               "note": ""
             },
             "Kick": {
-              "file": "sean-side-kicks.png",
+              "file": "sean-kick.png",
               "status": "Individual",
               "note": ""
             },
@@ -676,13 +736,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "sean-group.png",
+              "status": "Individual",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "sean-group.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "sean-dive-long.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "sean-dive-short.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "sean-carry.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "sean-carry-idle.png",
+              "status": "Individual",
               "note": ""
             }
           }
@@ -2086,13 +2166,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -2707,13 +2807,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -3328,13 +3448,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -3949,13 +4089,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -5191,13 +5351,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -5812,13 +5992,33 @@
               "note": ""
             },
             "Standing celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
               "note": ""
             },
             "Support celebration": {
-              "file": null,
-              "status": "Missing",
+              "file": "rival-keeper-group.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Carry walk": {
+              "file": "rival-keeper-carry.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Hold ball": {
+              "file": "rival-keeper-carry-idle.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Quick dive": {
+              "file": "rival-keeper-dive-short.png",
+              "status": "Shared",
+              "note": ""
+            },
+            "Full dive": {
+              "file": "rival-keeper-dive-long.png",
+              "status": "Shared",
               "note": ""
             }
           }
@@ -12761,16 +12961,16 @@
       "rows": 1
     },
     "rival-keeper-kick.png": {
-      "width": 336,
-      "height": 96,
-      "cell": 48,
-      "columns": 7,
-      "rows": 2
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
     },
     "rival-keeper-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 544,
+      "height": 544,
+      "cell": 68,
       "columns": 8,
       "rows": 8
     },
@@ -12789,9 +12989,9 @@
       "rows": 1
     },
     "sean-run.png": {
-      "width": 384,
-      "height": 384,
-      "cell": 48,
+      "width": 544,
+      "height": 544,
+      "cell": 68,
       "columns": 8,
       "rows": 8
     },
@@ -27087,6 +27287,167 @@
       "height": 544,
       "cell": 68,
       "columns": 15,
+      "rows": 8
+    },
+    "sean-kick.png": {
+      "width": 612,
+      "height": 544,
+      "cell": 68,
+      "columns": 9,
+      "rows": 8
+    },
+    "sean-group.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "sean-dive-long.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "sean-dive-short.png": {
+      "width": 340,
+      "height": 544,
+      "cell": 68,
+      "columns": 5,
+      "rows": 8
+    },
+    "sean-carry.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "sean-carry-idle.png": {
+      "width": 68,
+      "height": 544,
+      "cell": 68,
+      "columns": 1,
+      "rows": 8
+    },
+    "rival-keeper-carry.png": {
+      "width": 544,
+      "height": 544,
+      "cell": 68,
+      "columns": 8,
+      "rows": 8
+    },
+    "rival-keeper-carry-idle.png": {
+      "width": 68,
+      "height": 544,
+      "cell": 68,
+      "columns": 1,
+      "rows": 8
+    },
+    "rival-keeper-dive-short.png": {
+      "width": 340,
+      "height": 544,
+      "cell": 68,
+      "columns": 5,
+      "rows": 8
+    },
+    "rival-keeper-dive-long.png": {
+      "width": 1156,
+      "height": 544,
+      "cell": 68,
+      "columns": 17,
+      "rows": 8
+    },
+    "rival-keeper-group.png": {
+      "width": 1020,
+      "height": 544,
+      "cell": 68,
+      "columns": 15,
+      "rows": 8
+    },
+    "spencer-keeper-idle.png": {
+      "width": 576,
+      "height": 72,
+      "cell": 72,
+      "columns": 8,
+      "rows": 1
+    },
+    "spencer-keeper-run.png": {
+      "width": 576,
+      "height": 576,
+      "cell": 72,
+      "columns": 8,
+      "rows": 8
+    },
+    "spencer-keeper-kick.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-keeper-dive.png": {
+      "width": 648,
+      "height": 576,
+      "cell": 72,
+      "columns": 9,
+      "rows": 8
+    },
+    "spencer-keeper-walk.png": {
+      "width": 576,
+      "height": 576,
+      "cell": 72,
+      "columns": 8,
+      "rows": 8
+    },
+    "spencer-keeper-hold.png": {
+      "width": 72,
+      "height": 576,
+      "cell": 72,
+      "columns": 1,
+      "rows": 8
+    },
+    "jose-keeper-idle.png": {
+      "width": 608,
+      "height": 76,
+      "cell": 76,
+      "columns": 8,
+      "rows": 1
+    },
+    "jose-keeper-run.png": {
+      "width": 608,
+      "height": 608,
+      "cell": 76,
+      "columns": 8,
+      "rows": 8
+    },
+    "jose-keeper-kick.png": {
+      "width": 684,
+      "height": 608,
+      "cell": 76,
+      "columns": 9,
+      "rows": 8
+    },
+    "jose-keeper-dive.png": {
+      "width": 836,
+      "height": 608,
+      "cell": 76,
+      "columns": 11,
+      "rows": 8
+    },
+    "jose-keeper-hold.png": {
+      "width": 76,
+      "height": 608,
+      "cell": 76,
+      "columns": 1,
+      "rows": 8
+    },
+    "jose-keeper-walk.png": {
+      "width": 608,
+      "height": 608,
+      "cell": 76,
+      "columns": 8,
       "rows": 8
     }
   }

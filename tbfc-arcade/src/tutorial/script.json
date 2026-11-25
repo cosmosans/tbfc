@@ -2,7 +2,7 @@
   {
     "id": 0,
     "title": "Welcome to Candler Park",
-    "description": "José, Jeremy, and Chris are already at Candler Park, and there’s room for one more. Step onto the pitch, stretch your legs, and find a camera view that feels like home.",
+    "description": "José, Jeremy, and Chris are at the park, and there’s room for one more. Step onto the pitch, stretch your legs, and find a camera view that feels like home.",
     "prompt": "Move with {move}. Explore the pitch. Change camera with {camera}.",
     "events": ["move", "camera"],
     "cast": ["José", "Jeremy", "Chris"],

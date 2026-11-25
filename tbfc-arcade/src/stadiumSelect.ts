@@ -10,7 +10,7 @@ import southside from './art/stadium-previews/southside.jpg'
 import './stadiumSelect.css'
 
 const grounds=[
- {id:'school',name:'Summerhill',area:'High School',surface:'Turf',image:maynard},
+ {id:'school',name:'Grant Park',area:'High School',surface:'Turf',image:maynard},
  {id:'westend',name:'West End',area:'Transit Station',surface:'Turf',image:westend},
  {id:'southside',name:'Old 4th Ward',area:'Park',surface:'Natural Grass',image:southside},
  {id:'mill',name:'Cabbagetown',area:'Cotton Mill',surface:'Concrete',image:mill},

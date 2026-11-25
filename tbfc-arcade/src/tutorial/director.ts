@@ -124,7 +124,6 @@ export class TutorialDirector {
    const view = template('completion'); element<HTMLImageElement>(view, '[data-crest]').src = crest; bind(view, '[data-exit]', () => this.hooks.exit()); this.root.append(view); return
   }
   const chapter = chapters[this.chapter], card = template('lesson')
-  element(card, '[data-location]').textContent = `CANDLER PARK · ${String(this.chapter).padStart(2, '0')} / 11`
   element(card, '[data-title]').textContent = chapter.title
   const prompt = element(card, '[data-prompt]')
   if (chapter.instructions) {

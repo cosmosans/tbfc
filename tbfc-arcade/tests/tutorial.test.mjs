@@ -40,7 +40,7 @@ test('script has every chapter, valid editable dialogues and the exact camera in
 })
 test('coaching returns intentions without mutating the ball and releases normal scrimmage AI', () => {
  const ball=Object.freeze({x:0,z:0})
- assert.deepEqual(coachingTarget(0,'Steven',3,ball,false),{x:-1,z:11})
+ assert.deepEqual(coachingTarget(0,'Steven',3,ball,false),{x:2,z:11})
  assert.equal(coachingTarget(4,'Steven',3,ball,false),null)
  assert.equal(coachingTarget(11,'José',0,ball,false),null)
  assert.ok(coachingTarget(11,'José',0,ball,true))
@@ -95,9 +95,9 @@ test('teammates commit to independent world-space targets instead of copying eve
 })
 test('arrival and conversation changes replace cached coaching intentions immediately', () => {
  const coach=new TutorialCoaching()
- assert.deepEqual(coach.target(0,'Steven',3,{x:0,z:0},false,false,0),{x:-1,z:11})
+ assert.deepEqual(coach.target(0,'Steven',3,{x:0,z:0},false,false,0),{x:2,z:11})
  const arrived=coach.target(3,'Steven',3,{x:0,z:0},false,false,.1)
- assert.notDeepEqual(arrived,{x:-1,z:11})
+ assert.notDeepEqual(arrived,{x:2,z:11})
  assert.notDeepEqual(coach.target(3,'Steven',3,{x:0,z:0},true,false,.2),arrived)
 })
 
@@ -149,7 +149,7 @@ test('keep-away participants immediately pursue loose balls instead of cached fo
  assert.deepEqual(coach.target(5,'Jeremy',1,{x:9,z:-6},false,false,.1,defenders,true),{x:9,z:-6})
  assert.deepEqual(coach.target(5,'Meghan',0,{x:-8,z:5},false,true,.1,defenders,true),{x:-8,z:5})
  assert.deepEqual(coach.target(5,'Daniel',1,{x:-7,z:4},false,true,.2,defenders,true),{x:-7,z:4})
- assert.deepEqual(coach.target(5,'Mandy',3,{x:9,z:-6},false,true,.1,defenders,true),{x:-1,z:11})
+ assert.deepEqual(coach.target(5,'Mandy',3,{x:9,z:-6},false,true,.1,defenders,true),{x:3,z:-11})
  assert.equal(coach.target(11,'Meghan',0,{x:9,z:-6},false,true,.1,defenders,true),null)
 })
 

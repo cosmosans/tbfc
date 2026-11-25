@@ -1,0 +1,65 @@
+main[data-match-intro] > :not(canvas):not(.match-intro) {
+  visibility: hidden !important;
+}
+.match-intro {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  pointer-events: auto;
+  color: #fff5dc;
+  background: linear-gradient(
+    0deg,
+    #120c0990,
+    transparent 15%,
+    transparent 88%,
+    #120c0933
+  );
+}
+.mi-card {
+  text-align: center;
+  width: 100%;
+  opacity: var(--reveal, 0);
+  clip-path: inset(0 calc(100% - 100% * var(--reveal, 0)) 0 0);
+}
+.mi-clubs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(12px, 3vw, 50px);
+}
+.mi-clubs img {
+  width: min(23vw, 33vh, 250px);
+  height: min(23vw, 33vh, 250px);
+  object-fit: contain;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 4px #110c0bc9);
+}
+.mi-versus {
+  font-size: clamp(18px, 2.3vw, 38px);
+  text-shadow: 0 2px 3px rgb(0 0 0 / 35%);
+}
+.mi-details {
+  background: #100e0edb;
+  padding: 0.4em 0.7em;
+  display: inline-block;
+  margin: 1em auto 0;
+  font-size: clamp(14px, 1.5vw, 23px);
+}
+.mi-details > span:not([hidden]) ~ span:not([hidden])::before {
+  content: "·";
+  margin-inline-end: 0.3em;
+}
+.match-intro [data-intro-pause] {
+  position: absolute;
+  bottom: 5%;
+  left: 4%;
+  padding: 0.65em 1em;
+}
+.match-intro [data-start] {
+  position: absolute;
+  bottom: 5%;
+  right: 4%;
+  padding: 0.65em 1em;
+}

@@ -21,7 +21,9 @@ import close from './audio/07_UI_Menu_Close.wav?url'
 type MenuCue='nav'|'success'|'open'|'close'
 const recordings={nearGoal1,nearGoal2,blast,burnReady,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4,tackle}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
-type Sound=keyof typeof recordings|Impact
+export type IntroVenue='grantPark'|'westend'|'generic'
+type IntroCue='train'|'introBeat'|'introTraffic'|'grantPark'|'kachunk'
+type Sound=keyof typeof recordings|Impact|IntroCue
 
 export class MatchAudio {
  private ctx?:AudioContext
@@ -31,6 +33,7 @@ export class MatchAudio {
  private bed?:GainNode
  private buffers=new Map<Sound,AudioBuffer>()
  private voices=new Set<AudioBufferSourceNode>()
+ private introPaused=false
  private stopped=false
  private finalWhistle=false
  private quiet=false
@@ -77,7 +80,68 @@ export class MatchAudio {
     this.buffers.set(kind,buffer)
    }
   }
-  if(this.ctx.state==='suspended')void this.ctx.resume().catch(()=>{})
+  if(!this.introPaused&&this.ctx.state==='suspended')void this.ctx.resume().catch(()=>{})
+ }
+ setIntroPaused(paused:boolean){
+  if(this.introPaused===paused)return
+  this.introPaused=paused
+  const clock=this.ctx
+  if(clock)void (paused?clock.suspend():clock.resume()).catch(()=>{})
+ }
+ async prepareCue(key:IntroCue,url:string){
+  this.unlock()
+  const ctx=this.ctx
+  if(!ctx||this.buffers.has(key))return
+  try{
+   const response=await fetch(url)
+   if(response.ok)this.buffers.set(key,await ctx.decodeAudioData(await response.arrayBuffer()))
+  }catch{ /* The match can still start without this recording. */ }
+ }
+ introSoundtrack(venue:IntroVenue){
+  const ctx=this.ctx,master=this.master
+  if(!ctx||!master)return undefined
+  const mix=ctx.createGain()
+  mix.connect(master)
+  const sources=new Set<AudioBufferSourceNode>()
+  let fading=false
+  const cue=(key:IntroCue,volume:number)=>{
+   const buffer=this.buffers.get(key)
+   if(!buffer)return
+   const source=ctx.createBufferSource(),level=ctx.createGain()
+   source.buffer=buffer
+   level.gain.value=volume
+   source.connect(level).connect(mix)
+   sources.add(source)
+   source.onended=()=>{
+    source.disconnect();level.disconnect();sources.delete(source)
+    if(fading&&!sources.size)mix.disconnect()
+   }
+   source.start()
+   return {source,level}
+  }
+  const startedAt=ctx.currentTime
+  const schoolTrack=venue==='grantPark'?cue('grantPark',.54):undefined
+  const westEnd=venue==='westend'
+  const traffic=westEnd?cue('introTraffic',.16):undefined
+  if(westEnd)cue('train',.74)
+  return { switchLamp:()=>cue('kachunk',.78), elapsed:()=>schoolTrack?ctx.currentTime-startedAt:undefined, startBeat:()=>{
+   if(venue==='grantPark')return
+   const beat=cue('introBeat',.44)
+   if(traffic){
+    const now=ctx.currentTime
+    const end=now+(beat?.source.buffer?.duration??.65)
+    traffic.level.gain.setValueAtTime(traffic.level.gain.value,Math.max(now,end-.65))
+    traffic.level.gain.linearRampToValueAtTime(0,end)
+    traffic.source.stop(end)
+   }
+  }, fade:()=>{
+   fading=true
+   const now=ctx.currentTime,end=now+.65
+   mix.gain.setValueAtTime(1,now)
+   mix.gain.linearRampToValueAtTime(0,end)
+   for(const source of sources)source.stop(end)
+   if(!sources.size)mix.disconnect()
+  }}
  }
  private sync(){
   if(!this.ctx)return

@@ -15,6 +15,10 @@ export type Destination =
   | "penalties"
   | "burnLab"
   | "stadiumTest"
+  | "introDay"
+  | "introNight"
+  | "matchIntroLab"
+  | "keeperLab"
   | "curveLab"
   | "spriteViewer";
 
@@ -82,7 +86,7 @@ export function mainMenu(
   return new Promise((resolve) => {
     let frame = 0;
     let controllerStatus: HTMLElement | null = null;
-    let screen: "loading" | "intro" | "menu" | "settings" | "debug";
+    let screen: "loading" | "intro" | "menu" | "settings" | "debug" | "introWorkshop";
     const openedAt = performance.now();
     const title =
       '<div class="menu-title"><img src="' +
@@ -120,10 +124,12 @@ export function mainMenu(
       if (next === "menu")
         shell.innerHTML =
           title +
-          '<nav aria-label="Main menu"><button data-action="career">Career Mode</button><button class="menu-kick" data-action="kick">Kick Off</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
+          '<nav aria-label="Main menu"><button class="menu-kick" data-action="kick">Kick Off</button><button data-action="career">Career Mode</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML =
-          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Cabbagetown Intro</button><button data-action="keeperLab">Keeper Distribution</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
+      if (next === "introWorkshop")
+        shell.innerHTML = '<h1 id="menu-title">Cabbagetown Intro</h1><nav aria-label="Time of day"><button data-action="matchIntroLab">Evening</button><button data-action="introNight">Night</button><button data-action="introDay">Day</button><button data-action="back">Back</button></nav>';
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
@@ -184,6 +190,19 @@ export function mainMenu(
         case "spriteViewer":
           leave("spriteViewer");
           break;
+        case "introWorkshop":
+          draw("introWorkshop");
+          break;
+        case "introDay":
+        case "introNight":
+          leave(button.dataset.action);
+          break;
+        case "matchIntroLab":
+          leave("matchIntroLab");
+          break;
+        case "keeperLab":
+          leave("keeperLab");
+          break;
         case "stadiumTest":
           leave("stadiumTest");
           break;
@@ -208,10 +227,14 @@ export function mainMenu(
           break;
         }
         case "back":
-          draw("menu", screen);
+          goBack();
           break;
       }
     };
+    function goBack() {
+      if (screen === "introWorkshop") draw("debug", "introWorkshop");
+      else draw("menu", screen);
+    }
     function move(step: number) {
       const choices = Array.from(
         shell.querySelectorAll<HTMLButtonElement>("button:enabled"),
@@ -235,9 +258,9 @@ export function mainMenu(
         e.preventDefault();
         move(e.key === "ArrowUp" ? -1 : 1);
       }
-      if (e.key === "Escape" && (screen === "settings" || screen === "debug")) {
+      if (e.key === "Escape" && (screen === "settings" || screen === "debug" || screen === "introWorkshop")) {
         e.preventDefault();
-        draw("menu", screen);
+        goBack();
       }
     };
     draw("loading");
@@ -272,8 +295,8 @@ export function mainMenu(
       direction = dir;
       const down = confirm(pad),
         back = !!pad?.buttons[1]?.pressed;
-      if (back && !backHeld && (screen === "settings" || screen === "debug"))
-        draw("menu", screen);
+      if (back && !backHeld && (screen === "settings" || screen === "debug" || screen === "introWorkshop"))
+        goBack();
       else if (down && !held)
         shell
           .querySelector<HTMLButtonElement>(

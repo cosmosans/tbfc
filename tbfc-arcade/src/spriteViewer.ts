@@ -10,7 +10,7 @@ const rates=[0,8,12,14,16,16,12,8,8,8]
 const secondarySheets=import.meta.glob<string>('./art/{away-preview,sweeper-secondary,wonders-secondary,dancers-secondary,grass-secondary,espresso-secondary,onsider-secondary,net-secondary,diggers-secondary,barely-secondary,mac-secondary,pandas-secondary,stars-secondary,whiff-secondary,orange-secondary,inter-secondary,crossbar-secondary,fleet-secondary}/*.png',{eager:true,query:'?url',import:'default'})
 
 // Visible pixel height of each front idle pose, excluding transparent sheet padding.
-const standingHeights: Record<string,number> = {"Bjorn": 44, "Meghan": 46, "Pam": 46, "Jan": 46, "Mandy": 46, "Jeremy": 41, "Chris": 46, "Stubbs": 42, "Spencer": 47, "José": 45, "Steven": 43, "Daniel": 44, "Nelson": 44, "Nadia": 47}
+const standingHeights: Record<string,number> = {"Sean": 45, "Bjorn": 44, "Meghan": 46, "Pam": 46, "Jan": 46, "Mandy": 46, "Jeremy": 41, "Chris": 46, "Stubbs": 42, "Spencer": 47, "José": 45, "Steven": 43, "Daniel": 44, "Nelson": 44, "Nadia": 47}
 
 export function spriteViewer():Promise<void>{
  const title='Sprite Viewer'
@@ -40,7 +40,7 @@ export function spriteViewer():Promise<void>{
  function current(){return teams[team].players[player]}
  function selection(){return slots[slot]===bicycle?{file:'jose-overhead.png',status:'Individual',note:''}:current().animations[slots[slot]]}
  function dimensions(){if(slots[slot]===bicycle)return {cell:48,rows:8,columns:9};const file=selection().file;return file?catalog.dimensions[file]:undefined}
- function frameCount(){const d=dimensions();return !d?0:d.rows===1&&d.columns===8&&[0,8].includes(slot)?1:d.columns}
+ function frameCount(){const d=dimensions();return !d?0:d.rows===1&&d.columns===8&&([0,8].includes(slot)||slots[slot]==='Keeper idle')?1:d.columns}
  function sheetUrl(file:string|null){
   if(!file)return ''
   const folder=kitFolders[teams[team].name]
@@ -54,7 +54,7 @@ export function spriteViewer():Promise<void>{
   ctx.fillStyle='#87b875';ctx.fillRect(0,278,canvas.width,3)
   ctx.fillStyle='#294a32';ctx.fillRect(0,281,canvas.width,39)
   if(!item.file||!d||!image?.complete||image.naturalWidth===0||loadedUrl!==sheetUrl(item.file))return
-  const directionalColumns=d.rows===1&&d.columns===8&&[0,8].includes(slot)
+  const directionalColumns=d.rows===1&&d.columns===8&&([0,8].includes(slot)||slots[slot]==='Keeper idle')
   const col=directionalColumns?direction:Math.min(frame,d.columns-1)
   const row=d.rows>1?Math.min(direction,d.rows-1):0
   const scale=teams[team].name==="Turf Burners FC" && standingHeights[current().name] ? 176 / standingHeights[current().name] : 4
@@ -64,6 +64,8 @@ export function spriteViewer():Promise<void>{
  function refreshList(){
   slots.splice(catalog.slots.length)
   if(teams[team].name==='Turf Burners FC' && current().name==='José')slots.push(bicycle)
+  for(const label of ['Keeper idle','Keeper run','Keeper kick','Full dive','Quick dive','Carry walk','Hold ball'])
+   if(current().animations[label])slots.push(label)
   slot=Math.min(slot,slots.length-1)
   const folder=kitFolders[teams[team].name]
   const hasSecondary=folder && Object.values(current().animations).some(a=>a.file && secondarySheets[`./art/${folder}/${a.file}`])
@@ -87,7 +89,7 @@ export function spriteViewer():Promise<void>{
   $<HTMLElement>('.sv-status').textContent=item.status==='Missing'?'MISSING ANIMATION':item.status==='Placeholder'?'PLACEHOLDER ART · CUSTOM ANIMATION MISSING':item.status==='Shared'?'SHARED ART':'INDIVIDUAL ART'
   $<HTMLElement>('.sv-status').dataset.status=item.status
   $<HTMLElement>('.sv-file').textContent=item.file?`${item.file}${item.note?' · '+item.note:''}`:'No sprite sheet yet'
-  $<HTMLElement>('.sv-summary').textContent=`${person.gender} · ${catalog.slots.filter(label=>person.animations[label].status==='Individual').length} individual animations`
+  $<HTMLElement>('.sv-summary').textContent=`${person.gender} · ${Object.keys(person.animations).filter(label=>person.animations[label].status==='Individual').length} individual animations`
   $<HTMLElement>('.sv-directions span').textContent=d?.rows===1&&d.columns!==8?'One view':directions[direction]
   empty.hidden=!!item.file;empty.textContent=item.file?'':'MISSING SPRITE'
   frame=Math.min(frame,Math.max(0,frameCount()-1))

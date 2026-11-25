@@ -28,7 +28,16 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
   }
   dialog.oncancel=e=>{e.preventDefault();back()}
   function move(step:number){const buttons=Array.from(section.querySelectorAll('button'));buttons[(buttons.indexOf(document.activeElement as HTMLButtonElement)+step+buttons.length)%buttons.length].focus()}
-  dialog.onkeydown=e=>{e.stopPropagation();if(e.key.startsWith('Arrow')){e.preventDefault();move(e.key==='ArrowUp'||e.key==='ArrowLeft'?-1:1)}}
+  dialog.onkeydown=e=>{
+   e.stopPropagation()
+   if(e.key==='Escape'){
+    e.preventDefault()
+    if(!e.repeat)back()
+   }else if(e.key.startsWith('Arrow')){
+    e.preventDefault()
+    move(e.key==='ArrowUp'||e.key==='ArrowLeft'?-1:1)
+   }
+  }
   const buttons=(pad=menuPad())=>[0,1,9].map(i=>!!pad?.buttons[i]?.pressed)
   let previous=buttons(),dir=''
   function poll(){

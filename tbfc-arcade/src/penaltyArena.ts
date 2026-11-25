@@ -1,6 +1,5 @@
+import {showKeeperDive} from "./keeperDive"
 import {CurveGesture} from './burnCurve'
-import rivalFront from './art/rival-keeper-front.png?url'
-import rivalRear from './art/rival-keeper-rear.png?url'
 import rivalReady from './art/rival-keeper-ready.png?url'
 import * as T from 'three'
 import {audio} from './matchAudio'
@@ -12,7 +11,7 @@ import './penaltyArena.css'
 type Actor={displayName:string,sprite:T.Sprite,maps:T.Texture[],runFrames:number,runRows:number,staminaCapacity:number}
 export type KeeperPose='ready'|'shuffleLeft'|'shuffleRight'|'diveLeft'|'diveRight'|'centerBlock'|'saveContact'|'recovery'|'concede'
 type Arena={scene:T.Scene,camera:T.PerspectiveCamera,renderer:T.WebGLRenderer,ball:T.Sprite,
- teams:[Actor[],Actor[]],keepers:[Actor,Actor],names:[string,string],level:number,
+ teams:[Actor[],Actor[]],keeperDiveSheet:(idle:T.Texture,quick:boolean)=>T.Texture,keepers:[Actor,Actor],names:[string,string],level:number,
  rating:(actor:Actor,keeping:boolean)=>number,render:(dt:number)=>void,net:(p:T.Vector3,power:number)=>void,
  fire:(seconds:number,side:Side)=>void,dissolve:()=>void,test:boolean,finish:(kicks:Kick[])=>void}
 const clamp=T.MathUtils.clamp
@@ -43,20 +42,12 @@ export function playPenalties(a:Arena){
   texture.generateMipmaps=false;texture.colorSpace=T.SRGBColorSpace
   return texture
  }
- const keeperKit={ready:keeperTexture(rivalReady),front:keeperTexture(rivalFront),rear:keeperTexture(rivalRear)}
+ const keeperKit={ready:keeperTexture(rivalReady)}
  keeperKit.ready.repeat.set(1/9,1)
- function showDive(actor:Actor,elapsed:number,direction:number,front:boolean){
-  if(!direction||elapsed<0)return
-  const sheet=keeperKit[front?'front':'rear']
-  if(!sheet.image)return
-  const index=Math.min(16,Math.floor(elapsed/.78*17))
-  // Both source sheets depict a dive toward positive pitch Z.
-  const mirror=direction<0
-  sheet.repeat.set((mirror?-1:1)/17,1)
-  sheet.offset.set((index+Number(mirror))/17,0)
-  actor.sprite.material.map=sheet;actor.sprite.material.rotation=0
-  actor.sprite.scale.set(1.7*68/48,1.7*56/48,1)
-  actor.sprite.center.set(.5,2/56)
+ function showDive(actor:Actor,elapsed:number,direction:number){
+  if(elapsed<0)return
+  const dive=a.keeperDiveSheet(actor.maps[0],!direction)
+  showKeeperDive(actor.sprite,dive,direction?faceFor(0,direction):faceFor(-1,0),elapsed/.78,1.7)
  }
  let readyTime=0
  const root=a.renderer.domElement.parentElement!
@@ -190,7 +181,7 @@ export function playPenalties(a:Arena){
    kicker.sprite.position.lerpVectors(prev.taker,b.taker,f)
    keeper.sprite.center.set(.5,2/48);keeper.sprite.scale.setScalar(1.7)
    frame(keeper,0,faceFor(-1,0),0)
-   showDive(keeper,b.dive,b.direction,right)
+   showDive(keeper,b.dive,b.direction)
    const boot=t>=.50&&t<.82
    frame(kicker,boot?2:b.run?1:0,boot?Math.min(6,Math.floor((t-.5)*24)):b.run?Math.floor(t*14):faceFor(1,0),faceFor(1,0))
    const after=Math.max(0,t-goalTime)
@@ -431,7 +422,7 @@ export function playPenalties(a:Arena){
   else frame(kicker,0,face,0)
   keeperPose(keeper,pose,shooting?0:4,time)
   keeper.sprite.center.x=.5
-  if(!shooting&&pose==='ready'&&phase==='ready'){
+  if(!keeper.maps[0].userData.seanKeeper&&!keeper.maps[0].userData.keeperName&&!shooting&&pose==='ready'&&phase==='ready'){
    const readySheet=keeperKit.ready
    readyTime+=dt
    const frameTime=readyTime%3
@@ -441,7 +432,7 @@ export function playPenalties(a:Arena){
     keeper.sprite.scale.x=keeper.sprite.scale.y*56/48
    }else keeper.sprite.scale.x=keeper.sprite.scale.y
   }else{readyTime=0;keeper.sprite.scale.x=keeper.sprite.scale.y}
-  showDive(keeper,dive,dir,shooting)
+  showDive(keeper,dive,dir)
   if(phase==='result'&&kicks.at(-1)?.outcome==='Save'){recordTime=goalTime+age;sample()}
   else if(phase==='run'||phase==='flight')sample()
   reticle.visible=shooting&&phase==='ready';reticle.position.set(20.92,y,z)

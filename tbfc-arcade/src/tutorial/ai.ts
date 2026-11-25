@@ -1,10 +1,14 @@
 import scene from './scene.json' with { type: 'json' }
 export const tutorialAllowsChallenges = (chapter: number) => chapter === 5 || chapter === 11
 
+export function tutorialTouchlineSpot(index: number, away: boolean) {
+ return { x: -13 + 5 * index + (away ? 1 : 0), z: away ? -11 : 11 }
+}
+
 /** Tutorial intentions feed existing steering. No positions, velocities, or possession are written here. */
 export function coachingTarget(chapter: number, name: string, index: number, ball: {x:number;z:number}, chatting: boolean, away = false, defenders: readonly string[] = scene.defendingTeam): {x:number;z:number} | null {
  if (chapter === 11 && !chatting) return null
- if (!isTutorialParticipant(chapter, name, away, defenders)) return { x: -10 + index * 3, z: 11 }
+ if (!isTutorialParticipant(chapter, name, away, defenders)) return tutorialTouchlineSpot(index, away)
  if (away && chapter === 5 && scene.defendingPartners.includes(name)) {
   const lane = scene.defendingPartners.indexOf(name)
   return { x: Math.max(-12, Math.min(12, ball.x + 5)), z: Math.max(-8, Math.min(8, ball.z + (lane - 1) * 4)) }

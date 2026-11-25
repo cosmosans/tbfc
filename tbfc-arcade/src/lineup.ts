@@ -1,8 +1,8 @@
-import {rivalWomen} from './rivalRoster'
-import {careerRating} from './careerDevelopment'
-import type {Career} from './careerSeason'
+import { rivalWomen } from "./rivalRoster";
+import { careerRating } from "./careerDevelopment";
+import type { Career } from "./careerSeason";
 import { profiles, rememberDivision } from "./difficulty";
-import {lineupChemistry} from './lineupChemistry'
+import { lineupChemistry } from "./lineupChemistry";
 import type { MenuMusic } from "./menuMusic";
 import { audio } from "./matchAudio";
 import { menuBumper, hint, reveal } from "./screenUI";
@@ -11,14 +11,14 @@ import { clubAccent, burners, type Fixture } from "./opponentSquads";
 import { menuDirection, menuPad } from "./menuPad";
 import {
   defaultSettings,
-  settingsFields,
+  matchConfirmDialog,
   settingsOptions,
   type MatchSettings,
 } from "./matchSettings";
 import css from "./lineup.css?inline";
 
-import {formations,bios,type Shape} from './lineupRoles'
-export {bios,type Shape} from './lineupRoles'
+import { formations, bios, type Shape } from "./lineupRoles";
+export { bios, type Shape } from "./lineupRoles";
 const shapes = Object.keys(formations) as Shape[];
 const forwardY = 14;
 const keeperY = 86;
@@ -52,7 +52,7 @@ type MatchSquad = {
   current: Selection;
   unavailable: Set<string>;
   exhausted: Set<string>;
-  stamina: ReadonlyMap<string,{charge:number,capacity:number}>;
+  stamina: ReadonlyMap<string, { charge: number; capacity: number }>;
   music: MenuMusic;
 };
 export const burnerEligibility = new Set([
@@ -68,17 +68,23 @@ export function selectLineup(
   match?: MatchSquad,
   settings: MatchSettings = defaultSettings(),
   career?: Selection,
-  bonds?:Record<string,number>,
-  progress?:Career,
+  bonds?: Record<string, number>,
+  progress?: Career,
   managedClub = fixture.home,
-  turn?: { number: number; devices: number[]; first: boolean; draft?: Selection },
+  turn?: {
+    number: number;
+    devices: number[];
+    first: boolean;
+    draft?: Selection;
+  },
 ): Promise<Selection | null> {
   const home = managedClub;
   const key =
     home === burners
       ? "tbfc.match.lineup.v1"
       : "tbfc.match.lineup.v1." + home.name;
-  const countsTowardMinimum=home===burners?burnerEligibility:rivalWomen[home.name];
+  const countsTowardMinimum =
+    home === burners ? burnerEligibility : rivalWomen[home.name];
   const names = Object.keys(portraits);
   let shape: Shape = "1-3-3";
   const slots: (string | null)[] =
@@ -98,7 +104,10 @@ export function selectLineup(
   slots.push(names.find((n) => !slots.includes(n)) ?? null, null, null, null);
   try {
     const saved =
-      match?.current ?? career ?? turn?.draft ?? JSON.parse(localStorage.getItem(key) ?? "null");
+      match?.current ??
+      career ??
+      turn?.draft ??
+      JSON.parse(localStorage.getItem(key) ?? "null");
     if (
       saved &&
       Object.hasOwn(formations, saved.shape) &&
@@ -109,8 +118,16 @@ export function selectLineup(
     ) {
       const team = [...saved.starters, ...saved.bench];
       if (home.name === "Whiff City FC") {
-        const renamed: Record<string, string> = { Wyatt: "Parmesan", Cruz: "Swiss", Lex: "Cheddar", Una: "Gouda", Liv: "Brie" };
-        team.forEach((name, i) => { if (Object.hasOwn(renamed, name)) team[i] = renamed[name]; });
+        const renamed: Record<string, string> = {
+          Wyatt: "Parmesan",
+          Cruz: "Swiss",
+          Lex: "Cheddar",
+          Una: "Gouda",
+          Liv: "Brie",
+        };
+        team.forEach((name, i) => {
+          if (Object.hasOwn(renamed, name)) team[i] = renamed[name];
+        });
       }
       if (
         team.every((n) => names.includes(n)) &&
@@ -150,9 +167,9 @@ export function selectLineup(
   let highlighted: number = 1;
   let editing = -1;
   let pickerFocus = "";
-  function nameplate(name:string){
-    const energy=match?.stamina.get(name);
-    if(!energy)return `<span class="lu-name">${name}</span>`;
+  function nameplate(name: string) {
+    const energy = match?.stamina.get(name);
+    if (!energy) return `<span class="lu-name">${name}</span>`;
     return `<span class="lu-name lu-energy" title="${Math.round(energy.charge)}% stamina remaining" style="--charge:${energy.charge}%;--capacity:${energy.capacity}%">${name}</span>`;
   }
   const avatar = (name: string) =>
@@ -243,12 +260,12 @@ export function selectLineup(
         return;
       }
       if (availableWomen(slots) < 2) return;
-      if (career || turn?.first) { finish(); return; }
+      if (career || turn?.first) {
+        finish();
+        return;
+      }
       const previous = document.activeElement as HTMLElement | null;
-      dialog = document.createElement("dialog");
-      dialog.className = "lu-confirm lu-settings";
-      dialog.setAttribute("aria-labelledby", "lu-question");
-      dialog.innerHTML = `<h2 id="lu-question">Match settings</h2><section class="lu-matchup">${[fixture.home, fixture.away].map((club) => `<div><img src="${club.crest}" alt=""><strong>${club.name}</strong></div>`).join("<b>VS</b>")}</section>${settingsFields(settings)}<div><button id="lu-confirm">Kick off ▸</button><button id="lu-warmup" role="checkbox" aria-checked="${skipWarmup}">Skip Warm Up</button><button id="lu-cancel">Back to lineup</button></div>`;
+      dialog = matchConfirmDialog(fixture, settings, skipWarmup);
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -278,16 +295,23 @@ export function selectLineup(
         : [];
       lastShape = shape;
       const field = [...positions(shape), { role: "GK", lane: 0, y: keeperY }];
-      const chemistry=!match?lineupChemistry(home.name,shape,slots,bonds):null
-      const web=chemistry ? `<svg class="lu-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${chemistry.links.map(({a,b,rating})=>{
-        const color=rating>=70?'#74df85':rating>=40?'#ffc763':'#ff7971'
-        return `<line x1="${50+field[a].lane*3.5}" y1="${field[a].y}" x2="${50+field[b].lane*3.5}" y2="${field[b].y}" stroke="${color}" stroke-width="${rating>=70?4:rating>=40?2.5:1.25}" vector-effect="non-scaling-stroke"/>`
-      }).join('')}</svg>` : ''
+      const chemistry = !match
+        ? lineupChemistry(home.name, shape, slots, bonds)
+        : null;
+      const web = chemistry
+        ? `<svg class="lu-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${chemistry.links
+            .map(({ a, b, rating }) => {
+              const color =
+                rating >= 70 ? "#74df85" : rating >= 40 ? "#ffc763" : "#ff7971";
+              return `<line x1="${50 + field[a].lane * 3.5}" y1="${field[a].y}" x2="${50 + field[b].lane * 3.5}" y2="${field[b].y}" stroke="${color}" stroke-width="${rating >= 70 ? 4 : rating >= 40 ? 2.5 : 1.25}" vector-effect="non-scaling-stroke"/>`;
+            })
+            .join("")}</svg>`
+        : "";
       const role = (i: number) =>
         i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
-      root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${turn ? `P${turn.number} · ` : ""}${home.name}</small><h1>${match ? "Substitutions" : "Lineup select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>'+(progress?'':'<button id="lu-quit">Quit Match</button>') : `<button id="lu-teams">‹ ${turn && !turn.first ? "Previous lineup" : "Teams"}</button>`}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : turn?.first ? "Next lineup" : career ? "Confirm lineup" : "Match settings"} ▸</button></div>
-    <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}>${menuBumper('previous','Previous formation','id="lu-prev"')}${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}${menuBumper('next','Next formation','id="lu-next"')}</div>
-    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry?`<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span><small class="lu-fit">${chemistryText(chemistry)}</small></section>`:""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}<b class="lu-position">${p.role}</b>${avatar(slots[i]!)}${nameplate(slots[i]!)}</button>`).join("")}</div>
+      root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${turn ? `P${turn.number} · ` : ""}${home.name}</small><h1>${match ? "Substitutions" : "Lineup Select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>' + (progress ? "" : '<button id="lu-quit">Quit Match</button>') : `<button id="lu-teams">‹ ${turn && !turn.first ? "Previous lineup" : "Teams"}</button>`}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : turn?.first ? "Next lineup" : career ? "Confirm Lineup" : "Match Settings"} ▸</button></div>
+    <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}>${menuBumper("previous", "Previous Formation", 'id="lu-prev"')}${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}${menuBumper("next", "Next formation", 'id="lu-next"')}</div>
+    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry ? `<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span><small class="lu-fit">${chemistryText(chemistry)}</small></section>` : ""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}<b class="lu-position">${p.role}</b>${avatar(slots[i]!)}${nameplate(slots[i]!)}</button>`).join("")}</div>
     <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
       .slice(7)
       .map(
@@ -298,7 +322,7 @@ export function selectLineup(
         "",
       )}</div></div></div><aside class="lu-details"><h2>Player details</h2><div id="lu-profile"></div>${
       editing >= 0
-        ? `<div class="lu-roster"><h2>${editing < 0 ? "Match squad" : "Choose for " + (editing < 7 ? role(editing) : "bench")}</h2>${(match ? slots.slice(7).filter((n): n is string => !!n) : names.filter(n => !slots.includes(n))).map((n) => `<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n) || editing < 0 || (editing >= 7 && !slots[editing] && slots.slice(0, 7).includes(n)) ? "disabled" : ""}>${avatar(n)}${nameplate(n)}<small>${role(slots.indexOf(n))}</small></button>`).join("")}
+        ? `<div class="lu-roster"><h2>${editing < 0 ? "Match squad" : "Choose for " + (editing < 7 ? role(editing) : "bench")}</h2>${(match ? slots.slice(7).filter((n): n is string => !!n) : names.filter((n) => !slots.includes(n))).map((n) => `<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n) || editing < 0 || (editing >= 7 && !slots[editing] && slots.slice(0, 7).includes(n)) ? "disabled" : ""}>${avatar(n)}${nameplate(n)}<small>${role(slots.indexOf(n))}</small></button>`).join("")}
     ${editing >= 7 ? '<button data-clear id="lu-clear">Leave empty</button>' : ""}${editing >= 0 ? '<button data-back id="lu-back">Back</button>' : ""}</div>`
         : ""
     }</aside></div>
@@ -313,9 +337,15 @@ export function selectLineup(
       });
       if (moving) {
         const links = root.querySelector<SVGElement>(".lu-links");
-        links?.animate([{ opacity: 0 }, { opacity: getComputedStyle(links).opacity }], {
-          delay: slideDuration, duration: 180, easing: "ease-out", fill: "backwards",
-        });
+        links?.animate(
+          [{ opacity: 0 }, { opacity: getComputedStyle(links).opacity }],
+          {
+            delay: slideDuration,
+            duration: 180,
+            easing: "ease-out",
+            fill: "backwards",
+          },
+        );
       }
       profile(slots[highlighted]);
       root.querySelector<HTMLElement>("#" + focus)?.focus();
@@ -361,7 +391,11 @@ export function selectLineup(
           : [null, name === home.keeper ? "Goalkeeper" : "Outfield"];
 
       const ratings =
-        typeof number === "number" ? playerRatings[number]?.map((base,i)=>careerRating(progress,name,ratingLabels[i],base)) : undefined;
+        typeof number === "number"
+          ? playerRatings[number]?.map((base, i) =>
+              careerRating(progress, name, ratingLabels[i], base),
+            )
+          : undefined;
       const stats = ratings
         ? `<dl class="lu-ratings" aria-label="Player ratings out of 100">${ratingLabels
             .map(
@@ -374,8 +408,8 @@ export function selectLineup(
       fire = panel.querySelector("canvas")!.getContext("2d");
       paintFire(0);
     }
-    function chemistryText(result:ReturnType<typeof lineupChemistry>){
-      return result.score+'/100';
+    function chemistryText(result: ReturnType<typeof lineupChemistry>) {
+      return result.score + "/100";
     }
     function previewSwap(button: HTMLElement) {
       if (editing < 0 || match) return;
@@ -384,36 +418,58 @@ export function selectLineup(
         const previous = trial.indexOf(button.dataset.name);
         if (previous >= 0) trial[previous] = trial[editing];
         trial[editing] = button.dataset.name;
-      }
-      else if (button.dataset.slot !== undefined) {
+      } else if (button.dataset.slot !== undefined) {
         const target = Number(button.dataset.slot);
         [trial[target], trial[editing]] = [trial[editing], trial[target]];
       }
       const valid = trial.slice(0, 7).every(Boolean);
-      const result = lineupChemistry(home.name, shape, valid ? trial : slots,bonds);
+      const result = lineupChemistry(
+        home.name,
+        shape,
+        valid ? trial : slots,
+        bonds,
+      );
       const lines = root.querySelectorAll<SVGLineElement>(".lu-links line");
-      result.links.forEach(({a,b,rating}, i) => {
+      result.links.forEach(({ a, b, rating }, i) => {
         const line = lines[i];
-        const color = rating >= 70 ? "#74df85" : rating >= 40 ? "#ffc763" : "#ff7971";
+        const color =
+          rating >= 70 ? "#74df85" : rating >= 40 ? "#ffc763" : "#ff7971";
         line.setAttribute("stroke", color);
         line.style.color = color;
-        line.setAttribute("stroke-width", String(rating >= 70 ? 4 : rating >= 40 ? 2.5 : 1.25));
-        line.classList.toggle("lu-preview", valid && (slots[a] !== trial[a] || slots[b] !== trial[b]));
+        line.setAttribute(
+          "stroke-width",
+          String(rating >= 70 ? 4 : rating >= 40 ? 2.5 : 1.25),
+        );
+        line.classList.toggle(
+          "lu-preview",
+          valid && (slots[a] !== trial[a] || slots[b] !== trial[b]),
+        );
       });
       const meter = root.querySelector<HTMLElement>(".lu-chem-meter")!;
-      root.querySelector(".lu-fit")!.textContent=chemistryText(result);
+      root.querySelector(".lu-fit")!.textContent = chemistryText(result);
       meter.setAttribute("aria-valuenow", String(result.score));
       meter.querySelector("i")!.style.width = result.score + "%";
     }
-    root.addEventListener("pointerover", event => {
-      const button = (event.target as HTMLElement).closest<HTMLButtonElement>("[data-slot],[data-name]");
-      if (event.pointerType === "mouse" && button && button !== document.activeElement) button.focus({preventScroll:true});
+    root.addEventListener("pointerover", (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>(
+        "[data-slot],[data-name]",
+      );
+      if (
+        event.pointerType === "mouse" &&
+        button &&
+        button !== document.activeElement
+      )
+        button.focus({ preventScroll: true });
     });
     root.addEventListener("focusin", (event) => {
       const b = event.target as HTMLElement;
       previewSwap(b);
-      if (b.dataset.name) root.querySelectorAll<HTMLElement>(".lu-marker").forEach(m => m.dataset.current = "false");
-      if (b.closest(".lu-roster") || b.dataset.slot !== undefined) pickerFocus = b.id;
+      if (b.dataset.name)
+        root
+          .querySelectorAll<HTMLElement>(".lu-marker")
+          .forEach((m) => (m.dataset.current = "false"));
+      if (b.closest(".lu-roster") || b.dataset.slot !== undefined)
+        pickerFocus = b.id;
       if (b.dataset.slot !== undefined) {
         highlighted = Number(b.dataset.slot);
         root
@@ -430,7 +486,13 @@ export function selectLineup(
       const current = document.activeElement as HTMLElement | null;
       const focus =
         current && root.contains(current) && current.id ? current.id : "slot-1";
-      draw(editing >= 0 && pickerFocus ? pickerFocus : focus.startsWith("form-") ? "form-" + index : focus);
+      draw(
+        editing >= 0 && pickerFocus
+          ? pickerFocus
+          : focus.startsWith("form-")
+            ? "form-" + index
+            : focus,
+      );
     }
     function close() {
       audio.menu("nav");
@@ -448,14 +510,23 @@ export function selectLineup(
           return;
         }
         const key = b.dataset.setting;
-        if (key === "speed" || key === "time" || key === "weather" || key === "difficulty") {
+        if (
+          key === "speed" ||
+          key === "time" ||
+          key === "weather" ||
+          key === "difficulty"
+        ) {
           if (b.getAttribute("aria-pressed") !== "true") audio.menu("nav");
           if (key === "difficulty") {
-            const division = settingsOptions.difficulty.find(v => v === b.value);
+            const division = settingsOptions.difficulty.find(
+              (v) => v === b.value,
+            );
             if (division) {
               settings.difficulty = division;
               rememberDivision(division);
-              dialog.querySelector<HTMLElement>(".lu-division-detail")!.textContent = profiles[division].label;
+              dialog.querySelector<HTMLElement>(
+                ".lu-division-detail",
+              )!.textContent = profiles[division].label;
             }
           }
           if (key === "speed")
@@ -477,9 +548,9 @@ export function selectLineup(
           return;
         }
         if (b.id === "lu-warmup") {
-          skipWarmup = !skipWarmup;
-          b.setAttribute("aria-checked", String(skipWarmup));
-          audio.menu("nav");
+          // skipWarmup = !skipWarmup;
+          // b.setAttribute("aria-checked", String(skipWarmup));
+          // audio.menu("nav");
         } else if (b.id === "lu-confirm") finish(false, !skipWarmup);
         else if (b.id === "lu-cancel") dialog.close();
         return;
@@ -492,7 +563,11 @@ export function selectLineup(
         audio.menu("nav");
         const target = Number(b.dataset.slot);
         if (!match && editing >= 0) {
-          if ((target < 7 && !slots[editing]) || (editing < 7 && !slots[target])) return;
+          if (
+            (target < 7 && !slots[editing]) ||
+            (editing < 7 && !slots[target])
+          )
+            return;
           [slots[target], slots[editing]] = [slots[editing], slots[target]];
           close();
           return;
@@ -558,8 +633,8 @@ export function selectLineup(
             : editing >= 0 && !match
               ? "[data-slot],.lu-roster button:not(:disabled)"
               : editing >= 0
-              ? ".lu-roster button:not(:disabled)"
-              : "button:not(:disabled)",
+                ? ".lu-roster button:not(:disabled)"
+                : "button:not(:disabled)",
         ),
       ).filter((b) => b.getClientRects().length > 0);
       const current = document.activeElement as HTMLButtonElement;
@@ -597,15 +672,21 @@ export function selectLineup(
           best = b;
         }
       }
-      if(!best){
+      if (!best) {
         // Keep every control reachable when the lineup geometry puts it off axis.
-        best=items.filter(b=>b!==current).map(b=>{
-          const r=b.getBoundingClientRect()
-          const x=r.x+r.width/2-rect.x-rect.width/2
-          const y=r.y+r.height/2-rect.y-rect.height/2
-          const along=x*dx+y*dy
-          return {b,along,across:Math.abs(x*dy-y*dx)}
-        }).filter(v=>v.along>2).sort((a,b)=>a.along+a.across*2.5-b.along-b.across*2.5)[0]?.b
+        best = items
+          .filter((b) => b !== current)
+          .map((b) => {
+            const r = b.getBoundingClientRect();
+            const x = r.x + r.width / 2 - rect.x - rect.width / 2;
+            const y = r.y + r.height / 2 - rect.y - rect.height / 2;
+            const along = x * dx + y * dy;
+            return { b, along, across: Math.abs(x * dy - y * dx) };
+          })
+          .filter((v) => v.along > 2)
+          .sort(
+            (a, b) => a.along + a.across * 2.5 - b.along - b.across * 2.5,
+          )[0]?.b;
       }
       focus(best);
     }
@@ -639,9 +720,16 @@ export function selectLineup(
         else finish(true);
       }
     }
-    const lineupPad = () => turn
-      ? Array.from(navigator.getGamepads?.() ?? []).find(p => p && turn.devices.includes(p.index) && (p.buttons.some(b => b.pressed) || p.axes.some(v => Math.abs(v) > .3)))
-      : menuPad();
+    const lineupPad = () =>
+      turn
+        ? Array.from(navigator.getGamepads?.() ?? []).find(
+            (p) =>
+              p &&
+              turn.devices.includes(p.index) &&
+              (p.buttons.some((b) => b.pressed) ||
+                p.axes.some((v) => Math.abs(v) > 0.3)),
+          )
+        : menuPad();
     let frame = 0,
       lastMove = 0,
       held = "",

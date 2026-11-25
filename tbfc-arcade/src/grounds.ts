@@ -14,7 +14,7 @@ import parkUrl from '../art/stadiums/eastside-commons.glb?url'
 import schoolGroundUrl from '../art/stadiums/high-school-track.glb?url'
 import turfUrl from './art/ground/grass.jpg?url'
 
-export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,homeClub:Club|null,venue:'standard'|'school'|'eastside'|'southside'|'westend'|'topdeck'|'mill'='standard',awayClub?:Club) {
+export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,homeClub:Club|null,venue:'standard'|'school'|'eastside'|'southside'|'westend'|'topdeck'|'mill'='standard',awayClub?:Club,trainSound=true) {
   const schoolGround=venue!=='standard',eastside=venue==='eastside'
   const night=settings.time==='Night',evening=settings.time==='Evening'
   const overcast=settings.weather!=='Sun'
@@ -61,11 +61,11 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
     const {stadiumBallPhysics}=await import('./stadiumCollision')
     const street=venue==='topdeck'?(await import('./topDeckTraffic')).topDeckTraffic(scene,settings.time):null
     const setLighting=schoolLighting(scene,school.scene,renderer,fill,sun,setSkyTime,venue)
-    const setSchoolNight=(on:boolean)=>{setLighting(on);street?.setTime(on?'Night':'Evening')}
+    const setSchoolNight=(on:boolean)=>{setLighting.setNight(on);street?.setTime(on?'Night':'Evening')}
     if(night||venue==='topdeck'&&evening)setSchoolNight(night)
     const traffic=eastside?await (await import('./eastsideCrowd')).eastsideStreetLife(scene,school.scene,homeClub):street?.update
-    const updateTrain=venue==='westend'?(await import('./westEndTrain')).westEndTrain(scene,school.scene):null
-    return {updateTrain,updateWeather:traffic?(dt:number)=>{updateWeather(dt);traffic(dt)}:updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
+    const updateTrain=venue==='westend'?await (await import('./westEndTrain')).westEndTrain(scene,school.scene,trainSound):null
+    return {updateTrain,schoolLights:venue==='school'?setLighting:undefined,updateWeather:traffic?(dt:number)=>{updateWeather(dt);traffic(dt)}:updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
   }
 
   const loader=new T.TextureLoader()

@@ -1,3 +1,4 @@
+import jeremyTrophyLift from "./art/jeremy-trophy-lift.png?url";
 import bjornGoalStand from "./art/bjorn-goal-stand.png?url";
 import nelsonTrophyLift from "./art/nelson-trophy-lift.png?url";
 import nadiaTrophyLift from "./art/nadia-trophy-lift.png?url";
@@ -13,7 +14,7 @@ import meghan_new_goal_support from "./art/meghan-new-goal-support.png?url";
 import nelson_goal_support from "./art/nelson-goal-support.png?url";
 import mandy_new_goal_team from "./art/mandy-new-goal-team.png?url";
 import chris_new_goal_stand from "./art/chris-new-goal-stand.png?url";
-import sean_celebration_jog from "./art/sean-celebration-jog.png?url";
+import seanGroup from "./art/sean-group.png?url";
 import steven_new_goal_support from "./art/steven-new-goal-support.png?url";
 import daniel_new_goal_support from "./art/daniel-new-goal-support.png?url";
 import nadia_new_goal_support from "./art/nadia-new-goal-support.png?url";
@@ -103,7 +104,7 @@ const ceremonySheets: Partial<
   Nelson: [nelson_goal_support, 15, 8, 48, 46],
   Mandy: [mandy_new_goal_team, 13, 8, 68, 45],
   Chris: [chris_new_goal_stand, 9, 8, 48, 46],
-  Sean: [sean_celebration_jog, 11, 8, 48, 41],
+  Sean: [seanGroup, 15, 8, 68, 45],
   Steven: [steven_new_goal_support, 13, 8, 54, 45],
   Daniel: [daniel_new_goal_support, 17, 8, 68, 46],
   Nadia: [nadia_new_goal_support, 15, 8, 48, 45],
@@ -117,6 +118,7 @@ const ceremonySheets: Partial<
 const trophyLifts: Partial<
   Record<string, { url: string; figureHeight: number; frames: number }>
 > = {
+  Jeremy: { url: jeremyTrophyLift, figureHeight: 42, frames: 33 },
   Chris: { url: chrisTrophyLift, figureHeight: 47, frames: 33 },
   Daniel: { url: danielTrophyLift, figureHeight: 44, frames: 27 },
   José: { url: joseTrophyLift, figureHeight: 45, frames: 33 },

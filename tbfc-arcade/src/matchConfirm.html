@@ -1,0 +1,43 @@
+<dialog class="lu-confirm lu-settings" aria-labelledby="lu-question">
+  <h2 id="lu-question">Match Settings</h2>
+
+  <section class="lu-matchup">
+    <div data-club="home">
+      <img alt="" />
+      <strong></strong>
+    </div>
+    <b>VS</b>
+    <div data-club="away">
+      <img alt="" />
+      <strong></strong>
+    </div>
+  </section>
+
+  <fieldset>
+    <legend>Half Length</legend>
+    <div data-options="speed"></div>
+  </fieldset>
+  <fieldset>
+    <legend>Time of Day</legend>
+    <div data-options="time"></div>
+  </fieldset>
+  <fieldset>
+    <legend>Weather</legend>
+    <div data-options="weather"></div>
+  </fieldset>
+  <fieldset class="lu-division">
+    <legend>Division difficulty</legend>
+    <div data-options="difficulty" style="display: flex; gap: 0.5rem"></div>
+    <p class="lu-division-detail"></p>
+  </fieldset>
+
+  <div>
+    <button type="button" id="lu-confirm">Kick off ▸</button>
+    <button type="button" id="lu-cancel">Back to lineup</button>
+  </div>
+</dialog>
+
+<!-- One button is copied into its fieldset for each available setting value. -->
+<template id="match-setting-option">
+  <button type="button" data-setting aria-pressed="false"></button>
+</template>

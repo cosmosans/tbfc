@@ -21,4 +21,13 @@ for group in bpy.data.collections:
     obj.select_set(False)
 for o in bpy.context.scene.objects:
     o.select_set((o.name in bpy.data.collections and o.type=='MESH') or o.name.startswith('WestEndAnchor '))
+# Some Blender venue revisions keep their lettering directly in the scene root.
+for label in bpy.context.scene.collection.objects:
+    if label.type == 'FONT' and not label.hide_render:
+        font = label.data.font
+        if font.filepath and not font.packed_file and not Path(bpy.path.abspath(font.filepath)).is_file():
+            fallback = Path('/System/Library/Fonts/Supplemental/Arial Bold.ttf')
+            label.data.font = bpy.data.fonts.load(str(fallback), check_existing=True) if fallback.exists() else bpy.data.fonts.get('Bfont Regular') or font
+        label.select_set(True)
+        bpy.context.view_layer.objects.active = label
 bpy.ops.export_scene.gltf(filepath=str(output),use_selection=True,export_yup=True)

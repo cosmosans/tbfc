@@ -274,13 +274,8 @@ main.tutorial-session[data-paused] > .first-touch {
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
 }
-.ft-chapter-grid > [data-free],
 .ft-chapter-grid > [data-back] {
   grid-column: 1/-1;
-}
-.ft-chapter-grid > [data-free] {
-  text-align: left;
-  padding: 12px 16px;
 }
 .ft-chapter-grid .ft-chapter-card {
   display: flex;
