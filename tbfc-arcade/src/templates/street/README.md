@@ -30,3 +30,5 @@ No gameplay rules or screen designs were changed by this extraction.
 ## Controller legends
 
 `team-legend.html`, `stadium-legend.html`, `side-legend.html`, `lineup-legend.html` and `mode-legend.html` use the shared `controller-legend` component in `../../menuLegend.css`. That stylesheet owns centering, the normal UI font, mixed-case labels and plain action buttons. Keep styling changes there so all screens stay consistent. Controller badges come from `padBadge()` in `../../screenUI.ts`; controls remain clickable and keyboard-operable.
+
+Use `menu-legend controller-legend` for every menu footer, including dialogs, Career and Practice. Labels use title case in the markup; do not apply uppercase transforms. The shared CSS deliberately enforces transparent action backgrounds in every interaction state so screen-specific button styles cannot restore card chrome. Keep Back/Continue handlers on the legend button instead of rendering a second navigation button.

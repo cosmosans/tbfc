@@ -25,8 +25,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  border-bottom: 3px solid #d7783e;
-  padding-bottom: 12px;
   margin-bottom: 16px;
 }
 #career .cr-heading img {
@@ -108,8 +106,8 @@
   text-align: left;
 }
 #career tr.tb {
-  color: #ffae76;
-  background: #3d291d;
+  color: #fff;
+  background: #ca5126;
 }
 #career .poll,
 #career .msg {
@@ -484,7 +482,7 @@ button {
   list-style: none;
   margin: 0 0 12px;
   padding: 0;
-  background: #191310;
+  background: rgba(0, 0, 0, 0.75);
   border: 1px solid #69403a;
 }
 #career .cr-week::before {
@@ -763,10 +761,8 @@ button {
 }
 #career .cr-hub-header {
   display: flow-root;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  background: #100c09;
+  flex: none;
+  padding: 15px;
 }
 #career nav.cr-sections {
   margin-bottom: 0;
@@ -775,6 +771,7 @@ button {
   justify-content: center;
   flex-wrap: nowrap;
   gap: clamp(3px, 1vw, 8px);
+  background: transparent !important;
 }
 #career .cr-sections button[aria-current="page"] {
   background: #ca5126;
@@ -919,6 +916,43 @@ button {
 #career .cr-hub-header {
   margin-bottom: 12px;
 }
+
+#career.cr-hub-open {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#career.cr-hub-open[hidden] {
+  display: none;
+}
+#career.cr-hub-open .cr-shell {
+  flex: 1;
+  min-height: 0;
+  margin-block: 0;
+}
+#career .cr-hub-content,
+#career .cr-chat-log {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+#career .cr-hub-content {
+  flex: 1;
+}
+#career .cr-chat-content,
+#career .cr-chat-content > .cr-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#career .cr-chat-content > .cr-panel {
+  min-height: 0;
+}
+#career .cr-chat-content h2,
+#career .cr-help {
+  flex: none;
+}
+
 
 #career .cr-panel.cr-upgrade-ready {
   border-color: #a25a36;
@@ -1148,7 +1182,8 @@ button {
   animation-delay: var(--delay);
 }
 #career .cr-trophy-lift i {
-  animation: cr-ceremony-frames var(--duration) steps(var(--frames), jump-none) forwards;
+  animation: cr-ceremony-frames var(--duration) steps(var(--frames), jump-none)
+    forwards;
 }
 @keyframes cr-ceremony-frames {
   to {
@@ -1226,5 +1261,9 @@ button {
   image-rendering: pixelated;
 }
 
-body:has(>.career-backdrop) #career section.cr-panel{background:rgb(25 19 16 / 82%)}
-body:has(>.career-backdrop) #career nav{background:rgb(12 8 6 / 78%)}
+body:has(> .career-backdrop) #career section.cr-panel {
+  background: rgb(0 0 0 / 75%);
+}
+body:has(> .career-backdrop) #career nav {
+  background: rgb(12 8 6 / 78%);
+}

@@ -2362,6 +2362,18 @@ async function start() {
     phase: number;
   }[] = [];
   let celebrating = false;
+  let celebrationSeconds = 0;
+  let skipCelebration = false;
+  let spectatorPassHeld = false;
+
+  function skipGoalPresentation() {
+    if (paused || broadcast || celebrationLab) return;
+    if (celebrating) {
+      if (celebrationSeconds >= 2) skipCelebration = true;
+    } else if (replay.cut >= 0 && !replay.nextAngle()) {
+      reset(shotDirection === attackSign, true);
+    }
+  }
   const goalBanner = el("goalBanner"),
     replayPanel = el("replayPanel");
   function clearReplay(preserveSmoke = false) {
@@ -2713,9 +2725,8 @@ async function start() {
     if (!broadcast) audio.unlock();
     if (crossingDrill && (bins.flying || repReset >= 0 || training.count === 5))
       return;
-    if (replay.cut >= 0 && action === "pass") {
-      if (!paused && !replay.nextAngle())
-        reset(shotDirection === attackSign, true);
+    if ((celebrating || replay.cut >= 0) && action === "pass") {
+      if (source !== "auto") skipGoalPresentation();
       return;
     }
     if (players[active]?.reactionTime > 0) return;
@@ -5367,6 +5378,10 @@ async function start() {
       release(source);
       return;
     }
+    if (index === 0 && (celebrating || replay.cut >= 0)) {
+      skipGoalPresentation();
+      return;
+    }
     if (index === 9) {
       void matchMenu();
       return;
@@ -5901,10 +5916,7 @@ async function start() {
   }
   let labIndex = 0;
   let labControls: ReturnType<typeof celebrationControls> | undefined;
-  el("skipReplay").onclick = () => {
-    if (replay.cut >= 0 || celebrating)
-      reset(shotDirection === attackSign, true);
-  };
+  el("skipReplay").onclick = skipGoalPresentation;
   el("changeView").onclick = () => cycleView(1);
   let restorePracticeIds = () => {};
   const matchPlayers = players.slice(),
@@ -6524,13 +6536,12 @@ async function start() {
       return;
     }
     if (
-      seats?.length === 0 &&
-      replay.cut >= 0 &&
+      (seats?.length === 0 || (simulation && !seats)) &&
+      (celebrating || replay.cut >= 0) &&
       ["KeyJ", "Enter"].includes(e.code)
     ) {
       e.preventDefault();
-      if (!e.repeat && !paused && !replay.nextAngle())
-        reset(shotDirection === attackSign, true);
+      if (!e.repeat) skipGoalPresentation();
       return;
     }
     if (seats && e.code === "Escape") {
@@ -6831,6 +6842,8 @@ async function start() {
     slideZ = 0;
     groupStarted = false;
     frontRow.clear();
+    celebrationSeconds = 0;
+    skipCelebration = false;
     goalAge = 0;
     aerial = null;
     callout.hidden = true;
@@ -7071,15 +7084,11 @@ async function start() {
     if (goalAge > (costumeReveal ? 0.14 : 0.85)) goalBanner.hidden = true;
   }
   function setReplayHint() {
-    const label = el("replayLabel");
-    if (label.dataset.angle === replay.label && label.querySelector("kbd"))
-      return;
-    label.dataset.angle = replay.label;
-    label.innerHTML =
-      replay.label +
-      " · " +
-      hint("J", "A") +
-      (replay.cut === 3 ? " End replay" : " Next angle");
+    replayPanel.hidden = false;
+    const button = el("skipReplay");
+    const caption = replay.cut === 3 ? "End replay" : "Next angle";
+    if (button.textContent?.endsWith(caption)) return;
+    button.innerHTML = hint("J", "A") + " " + caption;
   }
   const film = broadcastDirector();
   let broadcastRotation = 0,
@@ -7245,7 +7254,7 @@ async function start() {
       "<h2>Half time</h2>" +
       matchCard("HT") +
       (rows ? "<h3>Around the League</h3>" + rows : "") +
-      "<button>START SECOND HALF ▸</button>";
+      `<div class="menu-legend controller-legend"><button>${hint("Enter", "A")} Start Second Half</button></div>`;
     document.body.append(dialog);
     dialog.showModal();
     reveal(dialog, "h2,h3,button");
@@ -7287,7 +7296,7 @@ async function start() {
     const summary = document.createElement("dialog");
     summary.className = "career-whistle full-time";
     summary.innerHTML = renderMarkup(fullTimeTemplate, {
-      watchHint: hint("Enter", "Start"),
+      watchHint: hint("Enter", "Menu"),
       nextHint: hint("Enter", "A"),
       backHint: hint("Esc", "B"),
     });
@@ -7718,6 +7727,11 @@ async function start() {
         actor.reactionTime = Math.max(0, actor.reactionTime - dt);
     }
     const connectedPad = broadcast ? undefined : menuPad();
+    if (seats?.length === 0 || (simulation && !seats)) {
+      const down = !!connectedPad?.buttons[0]?.pressed;
+      if (down && !spectatorPassHeld) skipGoalPresentation();
+      spectatorPassHeld = down;
+    }
     const tutorialInput = tutorial?.input(connectedPad) ?? false;
     if (tutorialInput) cancelCharge();
     if (tutorial) {
@@ -8100,9 +8114,14 @@ async function start() {
       repReset -= dt;
       if (repReset <= 0) setupRep();
     }
-    if (!paused && celebrating)
+    if (!paused && celebrating) {
+      if (!document.hidden) celebrationSeconds += elapsed;
+      if (!broadcast && !celebrationLab && celebrationSeconds >= 2 && replayPanel.hidden) {
+        el("skipReplay").innerHTML = hint("J", "A") + " Skip celebration";
+        replayPanel.hidden = false;
+      }
       advanceGoalScene(dt, Math.min(elapsed, 0.1), inputPad);
-    else if (
+    } else if (
       !paused &&
       crossingDrill &&
       training.drill === aerialDrill &&
@@ -9022,9 +9041,7 @@ async function start() {
                   ? "BURNING CURVE!"
                   : "GOAL!";
               goalBanner.hidden = false;
-              replayPanel.hidden = false;
-              el("replayLabel").textContent =
-                shotDirection === attackSign ? homeLabel : matchOpponent.name;
+              replayPanel.hidden = true;
               el("shotResult").textContent = "";
               netTravel = true;
               vx = (shot.targetX - shotStart.x) / shot.duration;
@@ -10169,7 +10186,7 @@ async function start() {
       window.frameElement?.classList.add("feed-live");
     }
     for (const actor of pitchActors) actor.sprite.position.copy(actor.world);
-    if (celebrating && resultTime <= 0) {
+    if (celebrating && (resultTime <= 0 || skipCelebration)) {
       finishGoalEvent();
       celebrating = false;
       if (celebrationLab) {

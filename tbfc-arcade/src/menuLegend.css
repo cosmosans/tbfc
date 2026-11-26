@@ -7,7 +7,7 @@
 /* Controller-first legends share typography as well as layout. Explicit menu
    scopes keep legacy button/footer styles from restoring boxes or display fonts.
    Actions remain real buttons for mouse, keyboard and accessible activation. */
-:is(#team-select, #lineup, .stadium-picker, .kickoff-screen) .controller-legend {
+:is(:root, #team-select, #lineup, #career, #main-menu) .controller-legend {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -20,7 +20,7 @@
   text-transform: none;
   letter-spacing: normal;
 }
-:is(#team-select, #lineup, .stadium-picker, .kickoff-screen) .controller-legend > :is(button, span) {
+:is(:root, #team-select, #lineup, #career, #main-menu) .controller-legend > :is(button, span) {
   width: auto;
   min-height: 0;
   margin: 0;
@@ -36,3 +36,19 @@
 .controller-legend kbd.pad-hint { display: inline-flex; }
 /* Legacy hint() callers emit both inputs; this variant always shows the pad. */
 .controller-legend kbd.key-hint { display: none; }
+
+/* Legend actions must never inherit menu-card chrome, including active/hover
+   states and legacy ID selectors. Keep the visible focus outline for keyboard use. */
+.controller-legend > button,
+.controller-legend > button:is(:hover, :focus, :active, :disabled) {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+.controller-legend[hidden], .controller-legend > [hidden] { display: none !important; }
+
+.controller-legend > button { display: inline-flex; align-items: center; gap: 6px; }
+.controller-legend > button:focus-visible { outline: 2px solid #ffad63 !important; outline-offset: 4px; }

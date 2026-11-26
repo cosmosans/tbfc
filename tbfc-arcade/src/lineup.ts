@@ -14,7 +14,6 @@ import lineupBenchSlotTemplate from "./templates/street/lineup-bench-slot.html?r
 import lineupRosterCategoryTemplate from "./templates/street/lineup-roster-category.html?raw";
 import lineupRosterPlayerTemplate from "./templates/street/lineup-roster-player.html?raw";
 import lineupClearTemplate from "./templates/street/lineup-clear.html?raw";
-import lineupRosterBackTemplate from "./templates/street/lineup-roster-back.html?raw";
 import lineupRosterTemplate from "./templates/street/lineup-roster.html?raw";
 import lineupTemplate from "./templates/street/lineup.html?raw";
 import { streetArena } from "./streetArena";
@@ -309,7 +308,7 @@ export function selectLineup(
       dialog.className = "lu-confirm lu-audio";
       dialog.setAttribute("aria-labelledby", "audio-heading");
       dialog.innerHTML =
-        '<h2 id="audio-heading">Settings</h2><div><button data-channel="music"></button><button data-channel="effects"></button><button id="lu-cancel">Back</button></div>';
+        `<h2 id="audio-heading">Settings</h2><div><button data-channel="music"></button><button data-channel="effects"></button></div><div class="menu-legend controller-legend"><button id="lu-cancel">${padBadge('B')} Back</button><span>${padBadge('LS')} Move</span><span>${padBadge('A')} Select</span></div>`;
       for (const btn of dialog.querySelectorAll<HTMLButtonElement>(
         "[data-channel]",
       )) {
@@ -342,7 +341,7 @@ export function selectLineup(
       dialog = document.createElement("dialog");
       dialog.className = "lu-confirm lu-quit-confirm";
       dialog.setAttribute("aria-labelledby", "quit-question");
-      dialog.innerHTML = `<h2 id="quit-question">Quit match?</h2><p>Are you sure? This match will end.</p><div><button id="quit-yes">${hint("Enter", "A")} Quit</button><button id="lu-cancel">${hint("Esc", "B")} Keep playing</button></div>`;
+      dialog.innerHTML = `<h2 id="quit-question">Quit match?</h2><p>Are you sure? This match will end.</p><div class="menu-legend controller-legend"><button id="quit-yes">${hint("Enter", "A")} Quit</button><button id="lu-cancel">${hint("Esc", "B")} Keep Playing</button></div>`;
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -563,8 +562,6 @@ export function selectLineup(
                   .join(""),
                 slot03:
                   editing >= count ? lineupClearTemplate.slice(0, -1) : "",
-                slot04:
-                  editing >= 0 ? lineupRosterBackTemplate.slice(0, -1) : "",
               })
             : "",
         legend: renderMarkup(lineupLegendTemplate, {
@@ -859,7 +856,7 @@ export function selectLineup(
         editing = target;
         if (match) {
           const candidate = slots.slice(count).find((n) => n && legalSwap(n));
-          draw(candidate ? "name-" + names.indexOf(candidate) : "lu-back");
+          draw(candidate ? "name-" + names.indexOf(candidate) : "lu-legend-back");
           return;
         }
         draw(b.id);
@@ -883,10 +880,6 @@ export function selectLineup(
       }
       if (b.hasAttribute("data-clear")) {
         slots[editing] = null;
-        close();
-        return;
-      }
-      if (b.hasAttribute("data-back")) {
         close();
         return;
       }

@@ -31,8 +31,8 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
   const button=(choice:string,text:string)=>`<button data-choice="${choice}">${text}</button>`
   function draw(){
    section.innerHTML=confirming?
-    '<h3>Simulate Rest of Match?</h3><p>The AI will finish both teams’ remaining time. Your score and match events will count, and the final result will be saved before returning to Central.</p>'+button('back','Keep Playing')+button('simulate','Simulate Rest of Match'):
-    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match')+button('sides','Side Select'):'')+(canSub?button('squad','Substitutions'):'')+button('resume',practice?'Resume Practice':'Resume Match')
+    '<h3>Simulate Rest of Match?</h3><p>The AI will finish both teams’ remaining time. Your score and match events will count, and the final result will be saved before returning to Central.</p>'+button('simulate','Simulate Rest of Match'):
+    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match')+button('sides','Side Select'):'')+(canSub?button('squad','Substitutions'):'')
    if(playground && !confirming){
     const panel=document.createElement('fieldset')
     panel.className='weather-tuning'
@@ -69,7 +69,7 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
     }
     section.prepend(panel)
    }
-   section.insertAdjacentHTML('beforeend',`<p>${hint('Esc','Menu')} Resume　${hint('Esc','B')} Back　${hint('Enter','A')} Select</p>`)
+   section.insertAdjacentHTML('beforeend',`<div class="menu-legend controller-legend"><button data-choice="back">${hint('Esc','B')} Back</button><span>${hint('Arrows','LS')} Move</span><span>${hint('Enter','A')} Select</span><button data-choice="resume">${hint('Esc','Menu')} Resume</button></div>`)
    section.querySelector<HTMLButtonElement>(confirming?'[data-choice=back]':'[data-choice=resume]')!.focus()
   }
   function back(){if(confirming){confirming=false;draw()}else done('resume')}

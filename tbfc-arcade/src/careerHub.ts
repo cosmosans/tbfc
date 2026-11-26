@@ -368,11 +368,15 @@ export function careerHub(
       timer = 0;
       shell.innerHTML = panel(
         "Career save",
-        `<p class="cr-error"></p>${btn("back", "Back to main menu")}`,
+        `<p class="cr-error"></p><div class="menu-legend controller-legend">${btn("back", hint("Esc", "B") + " Back to Main Menu")}</div>`,
       );
       shell.querySelector("p")!.textContent = String(e);
     }
+    function scrollArea() {
+      return shell.querySelector<HTMLElement>(".cr-chat-log, .cr-hub-content:not(.cr-chat-content)") ?? root;
+    }
     function draw(focus = "") {
+      const previousScroll = scrollArea().scrollTop;
       const state = c;
       let content = "";
       let navigation = "";
@@ -431,7 +435,7 @@ export function careerHub(
           ) +
           panel(
             "Roster",
-            `<div class="cr-roster">${grid}</div><h2>Season Settings</h2>${settings}<div class="cr-actions cr-start">${btn("slots", "Back")}${btn("create", "Start Career", true)}</div>`,
+            `<div class="cr-roster">${grid}</div><h2>Season Settings</h2>${settings}<div class="cr-actions cr-start">${btn("create", "Start Career", true)}</div>`,
           ) +
           "</div>";
       } else if (state) {
@@ -629,7 +633,7 @@ export function careerHub(
         }
       }
       const heading = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
-      shell.innerHTML = `${navigation ? `<header class="cr-hub-header">${heading}${navigation}</header>` : heading}${content}<div class="cr-help menu-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
+      shell.innerHTML = `${navigation ? `<header class="cr-hub-header">${heading}${navigation}</header><div class="cr-hub-content${tab === "Team Chat" ? " cr-chat-content" : ""}">${content}</div>` : heading + content}<div class="cr-help menu-legend controller-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
         focus
           ? `[data-action="${focus}"]`
@@ -637,6 +641,8 @@ export function careerHub(
             ? '[aria-current="page"]'
             : "button,select",
       );
+      root.classList.toggle("cr-hub-open", Boolean(navigation));
+      scrollArea().scrollTop = previousScroll;
       target?.focus({ preventScroll: true });
       if (screen === "hub" && state) showRecap(state);
     }
@@ -671,7 +677,7 @@ export function careerHub(
         ${report.simulated ? "<small>Assists and passes aren’t tracked in a full simulation.</small>" : report.simulatedFrom !== undefined ? "<small>Assists and passes cover the played portion.</small>" : ""}
         <div class="cr-recap-xp"><b>+${report.xpEarned} XP</b><span>Level ${1 + Math.floor(s.xp / 100)} · ${s.xp} total XP</span><progress max="100" value="${s.xp % 100}" aria-label="Level progress"></progress>
         <strong>${credits ? credits + (credits === 1 ? " upgrade available" : " upgrades available") : 100 - (s.xp % 100) + " XP to next level"}</strong></div>
-        ${btn("dismiss-recap", s.round === 7 ? "Season wrap-up" : "Continue to My Career", true)}</article>`;
+        <div class="menu-legend controller-legend">${btn("dismiss-recap", hint("Enter", "A") + (s.round === 7 ? " Season Wrap-Up" : " Continue to My Career"))}</div></article>`;
       shell.append(dialog);
       dialog.onclose = () => {
         report.recapPending = false;
@@ -817,7 +823,7 @@ export function careerHub(
       if (a === "delete" && c) {
         const dialog = document.createElement("dialog");
         dialog.className = "cr-keypad cr-delete-dialog";
-        dialog.innerHTML = `<h2>Delete career?</h2><p>${c.player} · ${seasonName(c.season)} · ${division(c.division)} · Slot ${slot + 1}</p><p>This permanently deletes this career and its season history.</p><div class="menu-legend">${btn("cancel-delete", hint("Esc", "B") + " Cancel")}${btn("confirm-delete", hint("Enter", "A") + " Delete")}</div>`;
+        dialog.innerHTML = `<h2>Delete career?</h2><p>${c.player} · ${seasonName(c.season)} · ${division(c.division)} · Slot ${slot + 1}</p><p>This permanently deletes this career and its season history.</p><div class="menu-legend controller-legend">${btn("cancel-delete", hint("Esc", "B") + " Cancel")}${btn("confirm-delete", hint("Enter", "A") + " Delete")}</div>`;
         shell.append(dialog);
         dialog.showModal();
         dialog
@@ -922,11 +928,10 @@ export function careerHub(
       }
       if (a.startsWith("tab")) {
         chosen = undefined;
-        const leavingChat = tab === "Team Chat";
         tab = tabs[Number(a.slice(3))];
         draw(a);
-        if (tab === "Team Chat") root.scrollTop = root.scrollHeight;
-        else if (leavingChat) root.scrollTop = 0;
+        const area = scrollArea();
+        area.scrollTop = tab === "Team Chat" ? area.scrollHeight : 0;
         return;
       }
       if (a === "advance") {
@@ -941,7 +946,7 @@ export function careerHub(
       if (a === "next" || a === "promote") {
         nextWeek(c, roster, burnerEligibility, a === "promote");
         save();
-        root.scrollTop = 0;
+        scrollArea().scrollTop = 0;
         draw();
         return;
       }
@@ -1103,8 +1108,8 @@ export function careerHub(
         .sort((a, b) => a.score - b.score)[0];
       if (nearest) nearest.n.focus();
       else if (!horizontal)
-        root.scrollBy({
-          top: sign * root.clientHeight * 0.65,
+        scrollArea().scrollBy({
+          top: sign * scrollArea().clientHeight * 0.65,
           behavior: "instant",
         });
     }
@@ -1151,7 +1156,7 @@ export function careerHub(
         if (pressed[2] && !previous[2]) changeTab(-1);
         if (pressed[3] && !previous[3]) changeTab(1);
         const scroll = p.axes[3] ?? 0;
-        if (Math.abs(scroll) > 0.22) root.scrollBy(0, scroll * 12);
+        if (Math.abs(scroll) > 0.22) scrollArea().scrollBy(0, scroll * 12);
       }
       dir = d;
       previous = pressed;

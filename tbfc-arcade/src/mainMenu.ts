@@ -1,5 +1,5 @@
 import { audio } from "./matchAudio";
-import { reveal } from "./screenUI";
+import { reveal, padBadge } from "./screenUI";
 import type { MenuMusic } from "./menuMusic";
 import crest from "./art/ground/crest.png?url";
 import { loadingScreen } from "./loading";
@@ -165,11 +165,11 @@ export function mainMenu(
           '<nav aria-label="Main menu"><button class="menu-kick" data-action="kick">Kick Off</button><button data-action="career">Career Mode</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML =
-          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="gulchTest">The Gulch · 3v3</button><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Match Intros</button><button data-action="weatherLab">Weather Playground</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="gulchTest">The Gulch · 3v3</button><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Match Intros</button><button data-action="weatherLab">Weather Playground</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button></nav>';
       if (next === "introWorkshop")
-        shell.innerHTML = `<h1 id="menu-title">Match Intros</h1><nav aria-label="Choose field">${grounds.map(g => `<button data-action="${g.id}">${g.name}</button>`).join("")}<button data-action="back">Back</button></nav>`;
+        shell.innerHTML = `<h1 id="menu-title">Match Intros</h1><nav aria-label="Choose field">${grounds.map(g => `<button data-action="${g.id}">${g.name}</button>`).join("")}</nav>`;
       if (next === "introTime")
-        shell.innerHTML = `<h1 id="menu-title">${stadiumName(introField)} Intro</h1><nav aria-label="Choose time of day">${introTimes.map(t => `<button data-action="${t}">${t}</button>`).join("")}<button data-action="back">Back</button></nav>`;
+        shell.innerHTML = `<h1 id="menu-title">${stadiumName(introField)} Intro</h1><nav aria-label="Choose time of day">${introTimes.map(t => `<button data-action="${t}">${t}</button>`).join("")}</nav>`;
       if (next === "changeLog") shell.innerHTML = changeLog;
       if (next === "settings")
         shell.innerHTML =
@@ -177,7 +177,11 @@ export function mainMenu(
           audioButton("music", "Music", music.musicEnabled) +
           audioButton("sound", "Sound effects", music.soundEnabled) +
           '<button data-action="changeLog">Change log</button>' +
-          '<button data-action="back">Back</button></nav>';
+          '</nav>';
+      if (!["loading", "intro"].includes(next)) {
+        const canBack = next !== "menu";
+        shell.insertAdjacentHTML("beforeend", `<div class="menu-legend controller-legend" aria-label="Menu controls">${canBack ? `<button data-action="back">${padBadge("B")} Back</button>` : ""}<span>${padBadge("LS")} ${next === "changeLog" ? "Scroll" : "Move"}</span>${next === "changeLog" ? "" : `<span>${padBadge("A")} Select</span>`}</div>`);
+      }
       controllerStatus = shell.querySelector(".menu-controller");
       shell
         .querySelector<HTMLButtonElement>(
