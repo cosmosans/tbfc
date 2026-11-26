@@ -1,3 +1,5 @@
+import sideLegendTemplate from './templates/street/side-legend.html?raw'
+import {renderMarkup} from './templates/renderMarkup'
 import {padBadge} from './screenUI'
 import type { Fixture } from './opponentSquads'
 import keyboardIcon from './art/device-keyboard.png'
@@ -12,7 +14,7 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0):Promise<Seat
  const root=document.createElement('section')
  root.id='team-select'
  root.className='side-select'
- root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Back</button><span>← → Choose Side · Enter / Start to Continue</span><button class="ts-next">${padBadge("Menu")} Continue</button></div></div>`
+ root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1><div class="ts-match"></div>${renderMarkup(sideLegendTemplate, {backHint:padBadge("B"),moveHint:padBadge("LS"),continueHint:padBadge("A")})}</div>`
  const grid=root.querySelector('.ts-match')!
  const sides=new Map<number,number>([[-1,keyboardSide]])
  let suggestedPad:number|null=null
@@ -78,14 +80,17 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0):Promise<Seat
   function key(e:KeyboardEvent){
    if(e.repeat)return
    if(e.code==='Escape')finish(true)
-   else if(e.code==='Enter')finish()
+   else if(e.code==='Enter'){
+    e.preventDefault();
+    finish((e.target as HTMLElement).closest('.ts-back')!==null)
+   }
    else if(['ArrowLeft','KeyA','ArrowRight','KeyD'].includes(e.code)){e.preventDefault();move(-1,['ArrowLeft','KeyA'].includes(e.code)?-1:1)}
   }
   function poll(){
    const pads=Array.from(navigator.getGamepads?.()??[]).filter((p):p is Gamepad=>!!p)
    for(const id of sides.keys())if(id>=0&&!pads.some(p=>p.index===id)){sides.delete(id);held.delete(id);paint()}
    for(const p of pads){
-    const cmd=p.buttons[9]?.pressed?'start':p.buttons[1]?.pressed?'back':p.buttons[14]?.pressed||p.axes[0]<-.6?'left':p.buttons[15]?.pressed||p.axes[0]>.6?'right':''
+    const cmd=(p.buttons[0]?.pressed||p.buttons[9]?.pressed)?'start':p.buttons[1]?.pressed?'back':p.buttons[14]?.pressed||p.axes[0]<-.6?'left':p.buttons[15]?.pressed||p.axes[0]>.6?'right':''
     if(!sides.has(p.index)){
      const firstPad=sides.size===1&&sides.get(-1)===0
      sides.set(p.index,firstPad?-1:0)

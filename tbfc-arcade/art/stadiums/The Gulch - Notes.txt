@@ -1,0 +1,90 @@
+THE GULCH — STREET ARENA
+
+Files (relative to tbfc-arcade/)
+  art/stadiums/The Gulch.blend              Editable venue source
+  art/stadiums/STREET Court Template.blend  Appendable STREET_COURT collection
+  art/stadiums/the-gulch.glb                Runtime environment, textures packed
+  art/stadiums/build_gulch.py               Reproducible Blender build/export
+  art/stadiums/gulch-preview.png            Blender overview render
+  art/stadiums/gulch-gameplay.jpg           In-game 3v3 sideline capture
+  src/art/stadium-previews/gulch.jpg        Kickoff menu image
+  src/streetArena.json                     Shared source of court dimensions
+  src/gulch.ts                             Outdoor lighting, train and visibility
+
+Play
+  Debug > The Gulch · 3v3 starts a keeperless, first-to-five match immediately.
+  Kick Off > STREET supports 3v3 and 5v5 on the same court. Its customization
+  screen includes nine paint colours, time of day and weather. The Gulch is
+  STREET's arena; Classic Cabbagetown keeps its original model and dimensions.
+  Debug quit/results return to Debug; ordinary STREET results return to Kickoff.
+
+Scale and orientation
+  One Blender metre equals one game unit, matching the existing mill source.
+  Blender X = game X, Blender Z = height, Blender -Y = game Z.
+  Flat playing surface: 32 x 20 m, centered at the origin.
+  Goals: 2.2 m wide x 1.4 m tall x 0.9 m deep; goal lines X = -16 and +16.
+  Rebound walls: 0.9 m high, 0.28 m thick; upper enclosure reaches 3 m.
+  Centre circle: 2.75 m radius. Compact arcs replace full-size penalty boxes.
+  Existing player sprite scale is 1.62 units and ball sprite scale is 0.40;
+  neither was rescaled to make the smaller court. Formation coordinates and
+  tactical targets instead follow the smaller playing bounds.
+
+Editable source organization
+  STREET_COURT contains COURT_SURFACE, COURT_MARKINGS, GOALS,
+  REBOUND_NORTH/SOUTH/WEST/EAST, FENCE_NORTH/SOUTH/WEST/EAST,
+  GAMEPLAY_MARKERS and GAMEPLAY_COLLISION.
+  Separate scenery collections contain retaining walls, abstract wall art,
+  railway infrastructure, parked boxcars, animated freight wagons, props,
+  skyline, team colour panels, lights, audio markers and six camera references.
+  Append STREET_COURT from either source file to start another arena.
+  The template file is a Blender collection library, intended for File > Append.
+
+Latest art direction
+  Boxcars occupy the far touchline, behind the default sideline view. The rail
+  corridor is entirely outside play. Parked cars keep that backdrop visible
+  between passing trains. The retaining wall is on the camera side and is cut
+  away when it would obscure play. Foreground upper fences fade; their solid
+  rebound boards and all four collision boundaries remain active.
+  There is no lettering on environmental surfaces. Team customization uses
+  plain team-colour panels, without text or crests. The scoreboard remains HUD.
+
+Materials and lighting
+  STREET Surface Paint uses a packed grayscale concrete texture and an
+  independent standard glTF base-colour factor. Runtime recolouring preserves
+  grain, roughness and separately modeled wear/markings. Default: Gulch Slate.
+  Day, Evening and Night use the existing sky/sun pipeline plus court floods.
+  Rain changes concrete roughness; existing outdoor precipitation remains
+  available. Grass slowdown and puddle physics are not applied to this court.
+  Snow uses outdoor snowfall and the existing snow-ball art; no new concrete
+  snow-accumulation physics is introduced.
+
+Export and collision
+  Run from the repository root:
+  /Applications/Blender.app/Contents/MacOS/Blender --factory-startup --background --python tbfc-arcade/art/stadiums/build_gulch.py
+  Blender's bundled NumPy is used for the small packed aggregate texture.
+  No new application packages, downloaded assets or runtime dependencies.
+  Export joins meshes by collection, keeps marker empties and packs textures.
+  Review goals are excluded; the game constructs dimension-matched goals with
+  animated nets. Hidden wire collision guides are excluded from the visible
+  export. Swept analytic collisions implement the continuous four-sided cage,
+  goal openings and above-fence restarts; decorative meshes are not colliders.
+  Runtime export: 1,756,724 bytes, 25,594 triangles, 65 material primitives,
+  one embedded image. Counts exclude live players, goals and team panels.
+
+Validation
+  Production build completed. Thirty focused tests cover STREET rules,
+  Classic mill banks, all four exported rebound faces and goal openings,
+  high-speed corner sweeps, goal depth, both team sizes' tactical bounds,
+  all nine paint presets, curves and replay behavior.
+  Blender source audit: metric scale, all required court collections, six
+  camera references, packed texture and zero environmental font objects.
+  Browser checks include the Debug 3v3 launch, passing/movement, pause,
+  return to Debug, and a regular 5v5 STREET launch with orange paint, daytime
+  rain and keeperless five-player lineups. Both matches reached playable kickoff.
+
+Deferred presentation work
+  The full train-led cinematic and dedicated spatial ambience are not part of
+  this first playable delivery. Intro-camera and audio-emitter markers are
+  included. Train movement and alternating rail signals already run in game.
+  Long balancing sessions, controller hardware and mobile-device performance
+  still need playtesting.

@@ -156,4 +156,4 @@ const accents = [
   "#8ed14c",
   "#f1529d",
 ];
-export function clubAccent(club:Club){return club.name===sweeperCreepers.name?'#A939EC':club.name===cleatwoodMac.name?'#902648':club.name===goalDiggers.name?'#F4A208':club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.indexOf(club)]}
+export function clubAccent(club:Club){return club.name===sweeperCreepers.name?'#A939EC':club.name===cleatwoodMac.name?'#902648':club.name===goalDiggers.name?'#F4A208':club.name===crossbarCowboys.name?'#005962':club.name===netSixAndChill.name?'#ed1b32':club.name===grassAssassins.name?'#31e728':club.name===atleticoEspresso.name?'#7b1f2b':club.name===barelyUnited.name?'#d7d4d2':club.name===alternateOpponent.name?"#d68955":club.name===onsiderTrading.name?"#dcb83b":accents[clubs.findIndex(entry=>entry.name===club.name)]}

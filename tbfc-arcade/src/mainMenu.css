@@ -54,3 +54,14 @@ body:has(>.menu-broadcast) :is(#main-menu,#team-select,#lineup){background:linea
 @keyframes loading-run{to{background-position-x:calc(-1 * var(--run-size) * var(--run-columns))}}
 @media(prefers-reduced-motion:reduce){.menu-loading-runner{animation:none}}
 .menu-loading strong{font:inherit}
+
+#main-menu[data-screen=changeLog]{display:block}
+#main-menu[data-screen=changeLog] .menu-shell{width:min(90vw,760px)}
+.menu-release-notes{margin:18px auto 0;padding:4px 18px 14px;background:#17100ef2;border-block:1px solid #73503c}
+.menu-release-notes h2{margin:14px 0;color:#ffad72;text-align:center;font:clamp(17px,3vh,25px)/1.2 Upheaval,monospace}
+.menu-release-notes ul{margin:0;padding-inline-start:1.3em;text-align:left;font:clamp(15px,2.5vh,20px)/1.45 var(--ui-font)}
+.menu-release-notes li+li{margin-top:.55em}
+.menu-release-notes li::marker{color:#ffad72}
+
+.career-backdrop{position:fixed;inset:0;z-index:19;width:100%;height:100%;object-fit:cover;object-position:85% center;pointer-events:none;background:#101922}
+body:has(>.career-backdrop) :is(#career,#lineup,#team-select){background:linear-gradient(#0c080674,#0c080696)}

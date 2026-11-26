@@ -1225,3 +1225,6 @@ button {
   max-width: none;
   image-rendering: pixelated;
 }
+
+body:has(>.career-backdrop) #career section.cr-panel{background:rgb(25 19 16 / 82%)}
+body:has(>.career-backdrop) #career nav{background:rgb(12 8 6 / 78%)}

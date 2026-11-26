@@ -1,8 +1,9 @@
-import burnerRatings from './burnerChemistry.json'
-import {formations,outOfPosition,type Shape} from './lineupRoles'
+import {isStreetShape,streetFormations} from './matchRules.ts'
+import burnerRatings from './burnerChemistry.json' with {type:'json'}
+import {formations,outOfPosition,type Shape} from './lineupRoles.ts'
 
 // Slots run from the front row back to the keeper, left to right within each row.
-const neighbors:Record<Shape,[number,number][]>={
+const neighbors:Partial<Record<Shape,[number,number][]>>={
  '1-3-3':[[0,1],[1,2],[0,3],[0,4],[1,4],[2,4],[2,5],[3,4],[4,5],[3,6],[4,6],[5,6]],
  '1-3-1-2':[[0,1],[0,2],[1,2],[2,3],[2,4],[2,5],[3,4],[4,5],[3,6],[4,6],[5,6]],
  '1-2-1-3':[[0,1],[1,2],[0,3],[1,3],[2,3],[3,4],[3,5],[4,5],[4,6],[5,6]],
@@ -26,16 +27,18 @@ export function pairRating(club:string,a:string,b:string,bonds:Record<string,num
 }
 
 export function lineupChemistry(club:string,shape:Shape,slots:(string|null)[],bonds:Record<string,number>={}){
- const links=neighbors[shape].map(([a,b])=>({a,b,rating:pairRating(club,slots[a]!,slots[b]!,bonds)}))
+ const count=isStreetShape(shape)?streetFormations[shape].size:7
+ const pairs=isStreetShape(shape)?Array.from({length:count},(_,a)=>Array.from({length:count-a-1},(_,i)=>[a,a+i+1] as [number,number])).flat():neighbors[shape]!
+ const links=pairs.map(([a,b])=>({a,b,rating:pairRating(club,slots[a]!,slots[b]!,bonds)}))
  const strong=new Set(links.filter(l=>l.rating>=70).map(l=>l.a*7+l.b))
  let trios=0
  for(const {a,b} of links){
   if(!strong.has(a*7+b))continue
-  for(let c=b+1;c<7;c++)if(strong.has(a*7+c)&&strong.has(b*7+c))trios++
+  for(let c=b+1;c<count;c++)if(strong.has(a*7+c)&&strong.has(b*7+c))trios++
  }
  const average=links.reduce((sum,l)=>sum+l.rating,0)/links.length
  const roles=[...formations[shape].flat(),'GK']
- const misplaced=slots.slice(0,7).filter((name,i):name is string=>outOfPosition(club,name,roles[i]))
- const positionPenalty=2*misplaced.length
+ const misplaced=slots.slice(0,count).filter((name,i):name is string=>outOfPosition(club,name,roles[i]))
+ const positionPenalty=isStreetShape(shape)?0:2*misplaced.length
  return {links,trios,misplaced,positionPenalty,score:Math.max(0,Math.min(100,Math.round(average+trios*3))-positionPenalty)}
 }

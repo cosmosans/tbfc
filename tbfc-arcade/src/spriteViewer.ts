@@ -38,6 +38,7 @@ export function spriteViewer():Promise<void>{
  let image:HTMLImageElement|undefined,loadedUrl='',loadId=0,padKeys=new Set<string>()
  for(const [index,club] of teams.entries())teamSelect.add(new Option(club.name,String(index)))
  function current(){return teams[team].players[player]}
+ function isOfficial(){return teams[team].name==='Match Officials'}
  function selection(){return slots[slot]===bicycle?{file:'jose-overhead.png',status:'Individual',note:''}:current().animations[slots[slot]]}
  function dimensions(){if(slots[slot]===bicycle)return {cell:48,rows:8,columns:9};const file=selection().file;return file?catalog.dimensions[file]:undefined}
  function frameCount(){const d=dimensions();return !d?0:d.rows===1&&d.columns===8&&([0,8].includes(slot)||slots[slot]==='Keeper idle')?1:d.columns}
@@ -58,11 +59,11 @@ export function spriteViewer():Promise<void>{
   const col=directionalColumns?direction:Math.min(frame,d.columns-1)
   const row=d.rows>1?Math.min(direction,d.rows-1):0
   const scale=teams[team].name==="Turf Burners FC" && standingHeights[current().name] ? 176 / standingHeights[current().name] : 4
-  const cell=d.cell,pad=align.checked?spriteGroundPadding(image,d.columns,d.rows,row,col,slot===3||slot>=7):2
+  const cell=d.cell,pad=align.checked&&!isOfficial()?spriteGroundPadding(image,d.columns,d.rows,row,col,slot===3||slot>=7):2
   ctx.drawImage(image,col*cell,row*cell,cell,cell,160-cell*scale/2,279-(cell-pad)*scale,cell*scale,cell*scale)
  }
  function refreshList(){
-  slots.splice(catalog.slots.length)
+  slots.splice(0,slots.length,...(isOfficial()?Object.keys(current().animations):catalog.slots))
   if(teams[team].name==='Turf Burners FC' && current().name==='José')slots.push(bicycle)
   for(const label of ['Keeper idle','Keeper run','Keeper kick','Full dive','Quick dive','Carry walk','Hold ball'])
    if(current().animations[label])slots.push(label)
@@ -145,7 +146,7 @@ export function spriteViewer():Promise<void>{
  addEventListener('keydown',onKey)
  function tick(now:number){
   const dt=Math.min(.1,(now-last)/1000);last=now
-  if(playing&&frameCount()>1&&selection().file){age+=dt*Number(speed.value);const period=1/(rates[slot]??12);if(age>=period){frame=(frame+Math.floor(age/period))%frameCount();age%=period;$<HTMLElement>('.sv-count').textContent=`FRAME ${frame+1} / ${frameCount()}`;render()}}
+  if(playing&&frameCount()>1&&selection().file){age+=dt*Number(speed.value);const period=isOfficial()?(slots[slot]==='Yellow card'?.09:.16):1/(rates[slot]??12);if(age>=period){frame=(frame+Math.floor(age/period))%frameCount();age%=period;$<HTMLElement>('.sv-count').textContent=`FRAME ${frame+1} / ${frameCount()}`;render()}}
   const pad=menuPad(),pressed=new Set<string>()
   if(pad){
    for(const [label,index] of [['confirm',0],['back',1],['previous',4],['next',5],['teamPrevious',6],['teamNext',7]] as const)if(pad.buttons[index]?.pressed)pressed.add(label)

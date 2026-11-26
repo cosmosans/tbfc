@@ -3,3 +3,36 @@
 .practice-menu .menu-legend button,#career .menu-legend button{padding:0;min-height:0;background:transparent;border:0;font:inherit;color:inherit}
 :is(#lineup,#career) button.menu-bumper{flex:none;padding:4px 7px;border-radius:7px 7px 3px 3px;border-bottom-width:3px;font-size:13px;color:#eeb59c}
 @media(max-width:520px){:is(#lineup,#career) button.menu-bumper{padding:4px;font-size:12px}}
+
+/* Controller-first legends share typography as well as layout. Explicit menu
+   scopes keep legacy button/footer styles from restoring boxes or display fonts.
+   Actions remain real buttons for mouse, keyboard and accessible activation. */
+:is(#team-select, #lineup, .stadium-picker, .kickoff-screen) .controller-legend {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  background: transparent;
+  border: 0;
+  font: 400 13px/1.4 var(--ui-font);
+  text-transform: none;
+  letter-spacing: normal;
+}
+:is(#team-select, #lineup, .stadium-picker, .kickoff-screen) .controller-legend > :is(button, span) {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.controller-legend kbd.pad-hint { display: inline-flex; }
+/* Legacy hint() callers emit both inputs; this variant always shows the pad. */
+.controller-legend kbd.key-hint { display: none; }

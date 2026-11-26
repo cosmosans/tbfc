@@ -22,6 +22,29 @@ export function cottonMill(scene:T.Scene,model:T.Object3D,settings:MatchSettings
   const sconce=new T.PointLight(0xffb260,34,13,1.6)
   sconce.position.set(x,3.3,-24);scene.add(sconce)
  }
+ // The center bay spans the two inner fixture rows.
+ const lenses: {material:T.MeshStandardMaterial,bay:number,litColor:T.Color,litEmission:T.Color,intensity:number}[]=[]
+ roof.traverse(node=>{
+  if(!(node instanceof T.Mesh))return
+  const m=node.material
+  if(!(m instanceof T.MeshStandardMaterial))return
+  const match=/^Mill pendant bay ([123])$/.exec(m.name)
+  if(match)lenses.push({material:m,bay:Number(match[1]),litColor:m.color.clone(),litEmission:m.emissive.clone(),intensity:m.emissiveIntensity})
+ })
+ function lightBays(count:number){
+  for(const lamp of fixtures){
+   const bay=lamp.position.x < -16 ? 1 : lamp.position.x > 16 ? 3 : 2
+   lamp.visible=bay<=count
+  }
+  for(const lens of lenses){
+   const m=lens.material
+   if(lens.bay<=count){
+    m.color.copy(lens.litColor);m.emissive.copy(lens.litEmission);m.emissiveIntensity=lens.intensity
+   }else{
+    m.color.setHex(0x242831);m.emissiveIntensity=0
+   }
+  }
+ }
  const overcast=settings.weather!=='Sun'
  function time(t:MatchSettings['time']){
   const night=t==='Night',evening=t==='Evening'
@@ -32,7 +55,7 @@ export function cottonMill(scene:T.Scene,model:T.Object3D,settings:MatchSettings
   for(const lamp of fixtures)lamp.intensity=night?225:155
  }
  time(settings.time)
- return {setSchoolNight:(on:boolean)=>time(on?'Night':'Evening'),update:(dt:number)=>{
+ return {lightBays,setSchoolNight:(on:boolean)=>time(on?'Night':'Evening'),update:(dt:number)=>{
   for(const fan of fans)fan.rotation.y+=dt*.65
  }}
 }

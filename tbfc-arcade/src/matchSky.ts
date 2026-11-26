@@ -2,7 +2,8 @@ import * as T from 'three'
 import type {MatchSettings} from './matchSettings'
 
 export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalLight,rooftop=false,indoor=false){
- const cover={Sun:.22,Clouds:.74,Rain:.94,Snow:.87}[settings.weather]
+ let weather=settings.weather
+ let cover={Sun:.22,Clouds:.74,Rain:.94,Snow:.87}[settings.weather]
  const horizon=new T.Color(),zenith=new T.Color(),grey=new T.Color()
  scene.background=horizon
  const fog=new T.FogExp2(horizon,settings.weather==='Snow'?.019:settings.weather==='Rain'?.013:.006)
@@ -51,9 +52,10 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
   uniforms.cloudLit.value.setHex(night?0x424e69:evening?0xffccb1:0xffffff)
  }
  setSkyTime(settings.time)
+ function precipitation(){
  const rain=settings.weather==='Rain'
- if(!rain&&settings.weather!=='Snow')return {setSkyTime,updateWeather:(_dt:number)=>{}}
- const count=rain?760:490,stride=rain?6:3
+ if(!rain&&settings.weather!=='Snow')return undefined
+ const count=rain?760:735,stride=rain?6:3
  const points=new Float32Array(count*stride)
  let seed=2311
  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296}
@@ -76,5 +78,22 @@ export function matchSky(scene:T.Scene,settings:MatchSettings,sun:T.DirectionalL
   }
   attr.needsUpdate=true
  }
- update(0);return {setSkyTime,updateWeather:update}
+ update(0)
+ return {update,dispose:()=>{particles.removeFromParent();geom.dispose();particles.material.dispose()}}
+ }
+ let effect=precipitation()
+ function updateWeather(dt:number){
+  if(settings.weather!==weather){
+   weather=settings.weather
+   cover={Sun:.22,Clouds:.74,Rain:.94,Snow:.87}[weather]
+   sky.material.uniforms.cover.value=cover
+   fog.density=weather==='Snow'?.019:weather==='Rain'?.013:.006
+   sun.intensity=(settings.time==='Night'?.7:1.9)*(weather==='Sun'?1:.48)
+   setSkyTime(settings.time)
+   effect?.dispose()
+   effect=precipitation()
+  }
+  effect?.update(dt)
+ }
+ return {setSkyTime,updateWeather}
 }

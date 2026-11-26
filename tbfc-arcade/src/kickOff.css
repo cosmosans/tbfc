@@ -1,0 +1,84 @@
+.kickoff-screen{position:fixed;inset:0;z-index:26;display:grid;place-items:safe center;overflow:auto;background:#151710ed;color:#fff1dc;font-family:var(--ui-font)}
+.ko-shell{width:min(92vw,1000px);padding:22px 0;zoom:var(--menu-scale,1)}
+.ko-shell header{position:static;inset:auto;pointer-events:auto;text-align:center;margin-bottom:20px}.ko-shell h1{font:clamp(30px,5vh,54px)/1 Upheaval,monospace;color:#ffad72;margin:8px 0 0}.ko-shell header small{letter-spacing:2px;font-size:11px}
+.ko-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(95px,1fr));gap:12px}
+.kickoff-screen button{font:inherit;color:inherit;cursor:pointer;background:#302820;border:2px solid #69543b;padding:10px}
+.kickoff-screen button:focus-visible,[data-pad-focus] .kickoff-screen button:focus{outline:3px solid #ffe9a6;outline-offset:3px;box-shadow:0 0 0 5px #9a4f27}
+.kickoff-screen button:hover{border-color:#ffc281}.kickoff-screen button[aria-pressed=true]{border-color:#ffad72;background:#533a28}
+.kickoff-screen .ko-card{padding:0;text-align:left;overflow:hidden;box-shadow:4px 4px #080a08;transition:transform .15s}.ko-card:hover{transform:translateY(-2px)}
+.ko-card img{display:block;width:100%;height:clamp(70px,11vh,130px);object-fit:cover;image-rendering:auto;border-bottom:2px solid #69543b}
+.ko-card>span{display:grid;gap:6px;padding:12px}.ko-card strong{font:30px/1 Upheaval,monospace;letter-spacing:1px}.ko-card b{font-size:10px;color:#ffbd81;letter-spacing:.6px}.ko-card small{font-size:12px}.ko-empty{border:1px solid #fff1dc0b;background:#00000010;min-height:70px}
+.ko-shell footer{position:static;inset:auto;pointer-events:auto;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;font-size:12px}.ko-shell footer button{font:19px Upheaval,monospace}.ko-sizes{display:grid;grid-template-columns:1fr 1fr;gap:24px}.ko-players {
+  /* Six half-steps let a two-player row sit between a three-player row.
+     Tune these two values to adjust formation width and row spacing. */
+  --formation-step: .75em;
+  --formation-row-gap: .45em;
+  display: grid;
+  grid-template-columns: repeat(6, var(--formation-step));
+  grid-template-rows: repeat(2, 1em);
+  justify-content: center;
+  align-content: center;
+  place-items: center;
+  gap: var(--formation-row-gap) 0;
+  height: 180px;
+  background: repeating-linear-gradient(115deg,#30648e,#30648e 35px,#2b597e 36px,#2b597e 70px);
+  color: #ffae70;
+  font-size: 35px;
+}
+.ko-players i { grid-column: span 2; font-style: normal; line-height: 1; text-shadow: 3px 4px #111; }
+/* 3v3: one forward above two supporting players. */
+[data-size="3"] .ko-players i:nth-child(1) { grid-area: 1 / 3 / 2 / span 2; }
+[data-size="3"] .ko-players i:nth-child(2) { grid-area: 2 / 1 / 3 / span 2; }
+[data-size="3"] .ko-players i:nth-child(3) { grid-area: 2 / 5 / 3 / span 2; }
+/* 5v5: two centered on top, three across the bottom. */
+[data-size="5"] .ko-players i:nth-child(-n+3) { grid-row: 2; }
+[data-size="5"] .ko-players i:nth-child(4) { grid-area: 1 / 2 / 2 / span 2; }
+[data-size="5"] .ko-players i:nth-child(5) { grid-area: 1 / 4 / 2 / span 2; }
+.ko-custom{display:grid;grid-template-columns:1.1fr 1fr;gap:30px}.ko-preview{display:grid;align-content:center;gap:14px;text-align:center}.ko-court{height:280px;position:relative;background-color:var(--court);background-image:repeating-linear-gradient(23deg,#fff1 0 1px,transparent 1px 5px),repeating-linear-gradient(-31deg,#0001 0 1px,transparent 1px 7px);border:14px solid #3b3934;outline:2px solid #898076;box-shadow:inset 0 0 0 3px #fffa,inset 0 0 45px #0004;transform:perspective(800px) rotateX(18deg)}.ko-court:before{content:'';position:absolute;left:50%;top:0;bottom:0;border-left:2px solid #fffe}.ko-court i{position:absolute;left:calc(50% - 38px);top:calc(50% - 38px);width:72px;height:72px;border:2px solid #fffe;border-radius:50%}.ko-court b,.ko-court em{position:absolute;top:33%;height:34%;width:16%;border:2px solid #fffe}.ko-court b{left:0}.ko-court em{right:0}.ko-preview small,.ko-settings small{font-size:12px;color:#d3c5b1}.ko-settings h2{font:21px Upheaval,monospace;margin:18px 0 10px}.ko-swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.ko-swatches button{height:44px;background:var(--swatch)!important;border:3px solid #fffa}.ko-swatches [aria-pressed=true]:after{content:'✓';text-shadow:1px 1px 2px #000;color:white}.ko-options{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}.ko-options button{font-size:12px;padding:8px}.ko-options button:disabled{opacity:.35;cursor:default}
+@media(max-width:600px){.ko-grid{gap:7px}.ko-card>span{padding:8px}.ko-card strong{font-size:23px}.ko-card b{font-size:8px}.ko-card small{font-size:10px}.ko-custom{grid-template-columns:1fr}.ko-court{height:180px}.ko-sizes{gap:10px}.ko-players{font-size:22px}.ko-shell footer>span{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.ko-card{transition:none!important}}
+
+#scoreboard[data-mode="street"]{grid-template-columns:minmax(0,1fr) 40px 110px 40px minmax(0,1fr)}#scoreboard[data-mode="street"] .bug-time{min-width:0}#scoreboard[data-mode="street"] #bugClock{font-size:14px;white-space:nowrap}
+
+/* Reuse menu-legend layout; keep setup button chrome out of the mode legend.
+   The badges remain controller-first even before a gamepad is connected. */
+.ko-shell .ko-mode-legend {
+  margin-top: 18px;
+  background: transparent;
+  border: 0;
+  font-size: 13px;
+}
+.kickoff-screen .ko-mode-legend > button,
+.kickoff-screen .ko-mode-legend > span {
+  padding: 0;
+  min-height: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+}
+.ko-mode-legend kbd.pad-hint { display: inline-flex; }
+
+/* Match Classic's equal-width, display-font option rows. Swatches stay distinct. */
+.ko-settings .ko-options { display: flex; gap: 5px; flex-wrap: nowrap; }
+.ko-settings .ko-options button {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 8px;
+  font: 19px/1.2 Upheaval, monospace;
+  border: 1px solid #69403a;
+  border-radius: 3px;
+  background: #0c0806;
+  color: #fff1df;
+}
+.ko-settings .ko-options button[aria-pressed="true"] {
+  background: #c34d24;
+  border-color: #ef864c;
+}
+.ko-settings h2 { color: #eeb59c; }
+.ko-settings [data-difficulty-label] { display: block; text-align: center; }
+.ko-settings-legend { margin-top: 18px; }
+@media (max-width: 600px) {
+  .ko-settings .ko-options button { font-size: 16px; }
+}

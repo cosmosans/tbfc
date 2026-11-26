@@ -44,7 +44,9 @@ with TemporaryDirectory() as scratch:
 
     bpy.ops.wm.open_mainfile(filepath=str(source))
     panels = [obj for obj in bpy.context.scene.objects if obj.name.startswith('Asphalt surface')]
-    collection = panels[0].users_collection[0]
+    # Keep the court's full-field UVs separate from the garage's multiple UV maps.
+    collection = bpy.data.collections.new('Painted rooftop court')
+    bpy.context.scene.collection.children.link(collection)
     for obj in panels:
         bpy.data.objects.remove(obj, do_unlink=True)
     mesh = bpy.data.meshes.new('Court surface')

@@ -83,6 +83,43 @@ export function topDeckTraffic(scene:T.Scene,initialTime:'Day'|'Evening'|'Night'
   }
   return {car,paint,path,length:path.getLength(),distance:0,speed:0,wait:index*2+Math.random()*5}
  })
+ // The model has five parking floors below the pitch, with four-metre bays.
+ const placements:{matrix:T.Matrix4,color:T.Color}[]=[]
+ for(let floor=1;floor<=5;floor++){
+  const featuredBay=Math.random()<.5?1:5
+  for(const side of [-1,1]){
+   for(let x=-27;x<27;x+=4){
+    // Leave the clubhouse core and ground-floor driveway accessible.
+    if(side===-1 && x>=-23 && x<=-15)continue
+    if(side===1 && floor===5 && Math.abs(x)<7)continue
+    if(!(side===-1 && x===featuredBay) && Math.random()>.38)continue
+    transform.position.set(x+(Math.random()-.5)*.35,-3.15*floor,side*(17+(Math.random()-.5)*.4))
+    transform.rotation.set(0,Math.random()<.5?0:Math.PI,0)
+    transform.scale.set(.96+Math.random()*.1,.93+Math.random()*.2,.9+Math.random()*.18)
+    transform.updateMatrix()
+    placements.push({matrix:transform.matrix.clone(),color:new T.Color(paints[Math.floor(Math.random()*paints.length)])})
+   }
+  }
+ }
+ // Batch the parked versions of the street car. Their lamps are unlit.
+ const parkedMaterial=new T.MeshStandardMaterial({roughness:.65})
+ for(const geometry of [cube,wheel]){
+  const parts=lanes[0].car.children.filter((part):part is T.Mesh<T.BufferGeometry,T.MeshStandardMaterial>=>
+   part instanceof T.Mesh && part.geometry===geometry)
+  const parked=new T.InstancedMesh(geometry,parkedMaterial,placements.length*parts.length)
+  parked.name='Midtown parked cars'
+  const matrix=new T.Matrix4()
+  let i=0
+  for(const part of parts){
+   part.updateMatrix()
+   for(const placement of placements){
+    parked.setMatrixAt(i,matrix.multiplyMatrices(placement.matrix,part.matrix))
+    parked.setColorAt(i,part.material===lanes[0].paint?placement.color:part.material.color)
+    i++
+   }
+  }
+  scene.add(parked)
+ }
  function setTime(time:'Day'|'Evening'|'Night'){
   beam.opacity=time==='Day'?0:time==='Night'?1:.65
   fronts.emissiveIntensity=time==='Day'?.08:2

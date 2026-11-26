@@ -4,6 +4,16 @@ import {clubAccent,type Club} from './opponentSquads'
 
 // A venue provides placements; the home club supplies the fabric and crest.
 export async function stadiumBranding(scene:T.Scene,club:Club,venue:string,model?:T.Object3D,millSide:'home'|'away'='home'){
+ if(venue==='gulch'){
+  // The Gulch's environment is deliberately free of lettering, including team prints.
+  const anchor=model?.getObjectByName(millSide==='home'?'Gulch_Home_Banner':'Gulch_Away_Banner')
+  const panel=new T.Mesh(new T.PlaneGeometry(2.5,.68),new T.MeshStandardMaterial({color:clubAccent(club),roughness:.9}))
+  panel.name=club.name+' Gulch colour panel'
+  if(anchor)anchor.getWorldPosition(panel.position)
+  else panel.position.set(millSide==='home'?-10:10,.48,-9.83)
+  scene.add(panel)
+  return
+ }
  const crest=await new T.TextureLoader().loadAsync(club.crest)
  await document.fonts.load('44px Upheaval')
  const canvas=document.createElement('canvas')
@@ -22,21 +32,7 @@ export async function stadiumBranding(scene:T.Scene,club:Club,venue:string,model
  const fabric=new T.CanvasTexture(canvas)
  fabric.colorSpace=T.SRGBColorSpace;fabric.magFilter=T.NearestFilter
  crest.dispose()
- const material=new T.MeshBasicMaterial({map:fabric,side:T.DoubleSide})
- // The same club artwork is used on fabric and boards visible from either side.
- // A two-sided plane otherwise reads backwards when viewed from behind.
- material.onBeforeCompile=shader=>{
-  shader.fragmentShader=shader.fragmentShader.replace(
-   '#include <map_fragment>',
-   `#ifdef USE_MAP
-      vec2 brandUv = vMapUv;
-      if (!gl_FrontFacing) brandUv.x = 1.0 - brandUv.x;
-      vec4 sampledDiffuseColor = texture2D(map, brandUv);
-      diffuseColor *= sampledDiffuseColor;
-    #endif`,
-  )
- }
-
+ const material=printedMaterial(fabric)
  if(venue==='mill'){
   const panel=new T.Mesh(new T.PlaneGeometry(2.45,.79),material)
   panel.name=club.name+' board'
@@ -62,16 +58,96 @@ export async function stadiumBranding(scene:T.Scene,club:Club,venue:string,model
   else node.material=replace(node.material)
  })
 
- const offsets:Record<string,number[]>={
-  standard:[-15,15],school:[-15,15],eastside:[-15,15],southside:[-15,15],westend:[-15,15],topdeck:[-15,15]
- }
- for(const x of offsets[venue]??offsets.standard){
-  const group=new T.Group();group.name='Home club flag template'
-  const pole=new T.Mesh(new T.CylinderGeometry(.045,.055,3.35,6),new T.MeshStandardMaterial({color:0x929d9a,metalness:.6,roughness:.48}))
-  pole.position.set(-1.52,1.68,0);group.add(pole)
-  const flag=new T.Mesh(new T.PlaneGeometry(2.85,1.43),material)
-  flag.position.set(0,2.53,.02);group.add(flag)
+ const flagCanvas=document.createElement('canvas')
+ flagCanvas.width=512
+ flagCanvas.height=256
+ const flagContext=flagCanvas.getContext('2d')!
+ flagContext.fillStyle=clubAccent(club)
+ flagContext.fillRect(0,0,512,256)
+ const crestScale=202/Math.max(image.width,image.height)
+ const w=image.width*crestScale,h=image.height*crestScale
+ flagContext.drawImage(image,(512-w)/2,(256-h)/2,w,h)
+ const flagMap=new T.CanvasTexture(flagCanvas)
+ flagMap.colorSpace=T.SRGBColorSpace
+ flagMap.magFilter=T.NearestFilter
+ const cloth=printedMaterial(flagMap)
+ cloth.vertexColors=true
+ const updates:((dt:number)=>void)[]=[]
+ for(const x of [-15,15]){
+  const group=new T.Group()
+  group.name='Home club flag'
+  const pole=new T.Mesh(new T.CylinderGeometry(.045,.055,3.35,6),new T.MeshStandardMaterial({color:0x929d9a,metalness:.35,roughness:.48}))
+  pole.position.set(-1.52,1.675,0)
+  group.add(pole)
+  const flag=makeFlag(cloth,x)
+  flag.mesh.position.set(-1.49,3.24,0)
+  group.add(flag.mesh)
   group.position.set(x,0,-13.6)
   scene.add(group)
+  updates.push(flag.update)
  }
+ return (dt:number)=>{for(const update of updates)update(dt)}
+}
+
+function printedMaterial(map:T.Texture){
+ const material=new T.MeshBasicMaterial({map,side:T.DoubleSide})
+ material.onBeforeCompile=shader=>{
+  shader.fragmentShader=shader.fragmentShader.replace(
+   '#include <map_fragment>',
+   `#ifdef USE_MAP
+      vec2 brandUv = vMapUv;
+      if (!gl_FrontFacing) brandUv.x = 1.0 - brandUv.x;
+      vec4 sampledDiffuseColor = texture2D(map, brandUv);
+      diffuseColor *= sampledDiffuseColor;
+    #endif`,
+  )
+ }
+
+ return material
+}
+
+// Each row is a strip of fixed-length segments. Damped angular springs let
+// the trailing cloth lag behind the gust while the hoist stays on the pole.
+function makeFlag(material:T.Material,phase:number){
+ const columns=16,rows=4,stride=columns+1
+ const geometry=new T.PlaneGeometry(2.85,1.43,columns,rows)
+ const position=geometry.attributes.position as T.BufferAttribute
+ position.setUsage(T.DynamicDrawUsage)
+ const color=new T.BufferAttribute(new Float32Array(position.count*3),3).setUsage(T.DynamicDrawUsage)
+ geometry.setAttribute('color',color)
+ const angle=new Float32Array(position.count),velocity=new Float32Array(position.count)
+ let time=phase
+ const update=(elapsed:number)=>{
+  const dt=Math.min(elapsed,.1)
+  if(dt<=0)return
+  const steps=Math.ceil(dt*60),step=dt/steps
+  for(let k=0;k<steps;k++){
+   time+=step
+   for(let row=0;row<=rows;row++){
+    const v=row/rows
+    let x=0,z=0
+    for(let col=0;col<=columns;col++){
+     const i=row*stride+col,u=col/columns
+     if(col){
+      const gust=Math.sin(5*time-7*u+.65*v)
+      const flutter=Math.sin(8*time-13*u+1.4*v)
+      const target=(.24+.52*u)*gust+.20*u*flutter
+      velocity[i]+=(95*(target-angle[i])-10*velocity[i])*step
+      angle[i]+=velocity[i]*step
+      x+=2.85/columns*Math.cos(angle[i])
+      z+=2.85/columns*Math.sin(angle[i])
+     }
+     if(k===steps-1){
+      position.setXYZ(i,x,-1.43*v-.13*u*u+.065*u*Math.sin(4*time-6*u+v),z)
+      const shade=.88+.11*Math.sin(angle[i])
+      color.setXYZ(i,shade,shade,shade)
+     }
+    }
+   }
+  }
+  position.needsUpdate=color.needsUpdate=true
+ }
+ for(let i=0;i<12;i++)update(.05)
+ geometry.boundingSphere=new T.Sphere(new T.Vector3(1.4,-.72,0),2.4)
+ return {mesh:new T.Mesh(geometry,material),update}
 }

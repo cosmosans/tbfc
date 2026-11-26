@@ -1,0 +1,13 @@
+{
+  "id": "gulch",
+  "name": "The Gulch",
+  "length": 32,
+  "width": 20,
+  "goalWidth": 2.2,
+  "goalHeight": 1.4,
+  "goalDepth": 0.9,
+  "wallHeight": 0.9,
+  "wallThickness": 0.28,
+  "fenceHeight": 3,
+  "centerCircleRadius": 2.75
+}

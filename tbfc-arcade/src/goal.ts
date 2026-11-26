@@ -1,13 +1,11 @@
 import * as T from 'three'
 
-const height = 2
-const halfWidth = 2
-const bottomDepth = 1.7
-const roofDepth = .92
 const panelRows = 8
 const panelColumns = 16
 
-export function createGoal(scene: T.Scene, lineX: number) {
+export function createGoal(scene: T.Scene, lineX: number, dimensions:{height:number;halfWidth:number;depth?:number}={height:2,halfWidth:2}) {
+  const {height,halfWidth}=dimensions
+  const bottomDepth=dimensions.depth??1.7,roofDepth=dimensions.depth===undefined?.92:dimensions.depth*.62
   const sign = Math.sign(lineX)
   const group = new T.Group()
   group.position.x = lineX

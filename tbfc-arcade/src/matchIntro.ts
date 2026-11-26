@@ -1,3 +1,11 @@
+import { parkOpening, parkCamera, parkBeatAt } from './candlerParkIntro';
+import parkAmbience from './audio/candler-park-opening-ambiance.mp3?url';
+import diamondMix from './audio/old-fourth-ward-intro.mp3?url';
+import midtownMix from './audio/midtown-intro.mp3?url';
+import parkSong from './audio/candler-park-intro.mp3?url';
+import {millBeatAt, millOpening, millSwitchTimes} from './cabbagetownIntro';
+import millCityUrl from './audio/cabbagetown-city.mp3?url';
+import millBeatUrl from './audio/cabbagetown-beat.mp3?url';
 import * as T from "three";
 import { rollBall } from "./ballSpin";
 import type { Club } from "./opponentSquads";
@@ -24,6 +32,39 @@ const westEndOpening: Shot = {
   lookTo: [1, 0, 3],
   fov: 60,
 };
+// The first kick in the traffic-and-music mix lands as the court clears the parapet.
+const midtownBeatAt = 4.16;
+const midtownOpening: Shot = {
+  name: "Parking deck rise",
+  seconds: 6.6,
+  from: [4, -13.3, -27],
+  to: [4, 17.2, -27],
+  lookFrom: [4, -13.3, -18],
+  lookTo: [4, 1, 1],
+  fov: 56,
+};
+const diamondRevealAt = 6.2;
+const homePlateSeconds = 4;
+const diamondOpening: Shot[] = [
+  {
+    name: "Home plate dolly", seconds: homePlateSeconds,
+    from: [6, 1.05, -28], to: [0, 1.4, -33],
+    lookFrom: [-2.5, .8, -38], lookTo: [-5, 1.1, -38],
+    fov: 58,
+  },
+  {
+    name: "Dugout glide", seconds: diamondRevealAt - homePlateSeconds,
+    from: [-20, 1.25, -26], to: [-12, 2.15, -26],
+    lookFrom: [-15, 1.1, -33], lookTo: [-9, 1.5, -34],
+    fov: 56,
+  },
+  {
+    name: "Backstop rise", seconds: 13 - diamondRevealAt,
+    from: [-3, 3.8, -45], to: [-3, 12, -43],
+    lookFrom: [-3, 2.2, -31], lookTo: [0, .6, -2],
+    fov: 59,
+  },
+];
 const pitchShots: Shot[] = [
   {
     name: "Passing circles",
@@ -91,11 +132,21 @@ type Intro = {
   date?: string;
   season?: string;
   introVenue: IntroVenue;
+  exitPreview?: () => void;
+  introCar?: (x:number|null)=>void;
+  millLights?: (count:number)=>void;
   schoolLights?: {positions: T.Vector3[]; lightBanks: (count: number) => void};
   train: (progress: number | null) => void;
 };
 
 export function prepareMatchIntro(venue: IntroVenue) {
+  if (venue === "oldFourthWard") return audio.prepareCue("diamondMix", diamondMix);
+  if (venue === "midtown") return audio.prepareCue("midtownMix", midtownMix);
+  if (venue === "candlerPark") return Promise.all([audio.prepareCue("parkSong", parkSong), audio.prepareCue("parkAmbience", parkAmbience)]);
+  if (venue === "cabbagetown") return Promise.all([
+    audio.prepareCue("millCity",millCityUrl), audio.prepareCue("millBeat",millBeatUrl),
+    audio.prepareCue("kachunk",kachunkUrl),
+  ]);
   if (venue === "grantPark") return Promise.all([
     audio.prepareCue("grantPark", grantParkUrl),
     audio.prepareCue("kachunk", kachunkUrl),
@@ -134,9 +185,15 @@ export function matchIntro(a: Intro) {
   a.root.append(overlay);
   a.root.dataset.matchIntro = "";
   const grantPark = a.introVenue === "grantPark";
+  const mill = a.introVenue === "cabbagetown";
+  let litBays = 0;
+  if (mill) a.millLights?.(0);
   const lamp = grantPark && a.time !== "Day" ? a.schoolLights?.positions[0] : undefined;
   const revealAt = lamp ? montageAt : daytimeSweepAt;
-  const shots = grantPark ? grantParkShots(lamp) :
+  const shots = mill ? [...millOpening,...pitchShots] : grantPark ? grantParkShots(lamp) :
+    a.introVenue === "oldFourthWard" ? [...diamondOpening, ...pitchShots] :
+    a.introVenue === "midtown" ? [midtownOpening, ...pitchShots] :
+    a.introVenue === "candlerPark" ? [parkOpening, ...pitchShots] :
     a.introVenue === "westend" ? [westEndOpening, ...pitchShots] : pitchShots;
   let switched = false;
   if (lamp) a.schoolLights!.lightBanks(0);
@@ -189,16 +246,12 @@ export function matchIntro(a: Intro) {
     requested = false,
     previousA = !!menuPad()?.buttons[0]?.pressed;
   const start = overlay.querySelector<HTMLButtonElement>("[data-start]")!;
-  const pauseButton =
-    overlay.querySelector<HTMLButtonElement>("[data-intro-pause]")!;
   let paused = false;
   function setPaused(on: boolean) {
     paused = on;
     audio.setIntroPaused(on);
-    pauseButton.textContent = on ? "Resume" : "Pause";
     start.disabled = on;
   }
-  pauseButton.onclick = () => setPaused(!paused);
   start.onclick = () => {
     if (!paused) requested = true;
   };
@@ -208,12 +261,10 @@ export function matchIntro(a: Intro) {
     event.preventDefault();
     event.stopImmediatePropagation();
     if (event.type !== "keydown" || event.repeat) return;
-    if (
-      event.code === "Escape" ||
-      (document.activeElement === pauseButton &&
-        ["Enter", "Space"].includes(event.code))
-    )
-      setPaused(!paused);
+    if (event.code === "Escape") {
+      if (a.exitPreview) a.exitPreview();
+      else setPaused(!paused);
+    }
     else if (!paused && ["KeyJ", "Enter", "Space"].includes(event.code))
       requested = true;
   }
@@ -251,6 +302,10 @@ export function matchIntro(a: Intro) {
       eye.fromArray(shot.from).lerp(end.fromArray(shot.to), p),
     );
     aim.fromArray(shot.lookFrom).lerp(end.fromArray(shot.lookTo), turn);
+    if (shot === parkOpening) {
+      const x = parkCamera(local, camera.position, aim);
+      a.introCar?.(x);
+    } else if (a.introVenue === "candlerPark") a.introCar?.(null);
     if (grantPark && shot.name === "Track runners") {
       // Follow the same lane as the runner, looking ahead into the bend.
       lapPosition(elapsed - 1.35, 0, camera.position);
@@ -276,12 +331,19 @@ export function matchIntro(a: Intro) {
       if (elapsed >= montageAt)
         a.schoolLights!.lightBanks(a.schoolLights!.positions.length);
     }
-    const reveal = grantPark ? T.MathUtils.smoothstep(elapsed,
+    if (mill) {
+      const count = millSwitchTimes.filter(at => elapsed >= at).length;
+      if (count !== litBays) {
+        litBays = count;
+        a.millLights?.(count);
+      }
+    }
+    const reveal = a.introVenue === "oldFourthWard" ? T.MathUtils.smoothstep(elapsed, diamondRevealAt, diamondRevealAt + .9) : shot === midtownOpening ? T.MathUtils.smoothstep(local, midtownBeatAt, midtownBeatAt + .8) : shot === parkOpening ? T.MathUtils.smoothstep(local, parkBeatAt, parkBeatAt + .32) : mill ? T.MathUtils.smoothstep(elapsed,millBeatAt,millBeatAt+.8) : grantPark ? T.MathUtils.smoothstep(elapsed,
       revealAt, revealAt + 1.2) : trainShot
       ? T.MathUtils.smoothstep(local, crestRevealAt, crestRevealAt + 1.35)
       : 1;
     overlay.style.setProperty("--reveal", String(reveal));
-    if (!grantPark && reveal > 0 && !beatStarted && soundtrack) {
+    if ((a.introVenue === "generic" || a.introVenue === "westend") && reveal > 0 && !beatStarted && soundtrack) {
       soundtrack.startBeat();
       beatStarted = true;
     }
@@ -405,12 +467,14 @@ export function matchIntro(a: Intro) {
   function dispose() {
     audio.setIntroPaused(false);
     soundtrack?.fade();
+    if (mill) a.millLights?.(3);
     window.removeEventListener("keydown", keyboard, true);
     window.removeEventListener("keyup", keyboard, true);
     overlay.remove();
     delete a.root.dataset.matchIntro;
     if (lamp) a.schoolLights!.lightBanks(a.schoolLights!.positions.length);
     a.train(null);
+    a.introCar?.(null);
     hide.forEach((obj, i) => (obj.visible = visibility[i]));
     group.removeFromParent();
     for (const {sprite} of [...balls, ...shotBalls]) {

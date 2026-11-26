@@ -83,3 +83,32 @@ test('Six-team career has six league weeks and two top-four playoff weeks',()=>{
   assert.equal(c.history.length,5);assert.equal(seasonName(5),'Spring 2028')
  }
 })
+
+const {seasonConditions, careerConditions} = await import('../src/careerSeason.ts')
+test('eight-week weather plans enforce seasonal minimums across years and seeds', () => {
+ for(let season=1;season<=16;season++)for(let seed=0;seed<200;seed++){
+  const plan=seasonConditions(seed,season), quarter=(season-1)%4
+  assert.equal(plan.length,8)
+  assert.deepEqual(plan,seasonConditions(seed,season))
+  const rain=plan.filter(w=>w.weather==='Rain').length
+  const snow=plan.filter(w=>w.weather==='Snow')
+  if(quarter===0)assert.ok(rain>=3)
+  if(quarter===1)assert.ok(rain>=1)
+  if(quarter===2)assert.equal(rain,0)
+  if(quarter===3){assert.ok(snow.length>=2);assert.ok(snow.some(w=>w.time==='Night'))}
+  else assert.equal(snow.length,0)
+ }
+ assert.notDeepEqual(seasonConditions(1,4),seasonConditions(2,4))
+})
+test('career weather survives changing random state and save round trips',()=>{
+ const c=createCareer('Sean','d6',123,roster,women,6,true,true)
+ const plan=structuredClone(c.seasonConditions), seed=c.seed
+ assert.deepEqual(c.week.conditions,plan[0])
+ for(let round=0;round<8;round++){
+  c.round=round;c.seed+=100
+  const restored=JSON.parse(JSON.stringify(c))
+  assert.deepEqual(careerConditions(restored),plan[round])
+  assert.equal(restored.seed,c.seed)
+ }
+ assert.notEqual(c.seed,seed)
+})

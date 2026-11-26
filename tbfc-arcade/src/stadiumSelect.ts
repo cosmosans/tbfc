@@ -1,6 +1,8 @@
 import {menuPad,menuDirection} from './menuPad'
 import {audio} from './matchAudio'
-import {hint} from './screenUI'
+import {padBadge} from './screenUI'
+import {renderMarkup} from './templates/renderMarkup'
+import stadiumLegendTemplate from './templates/street/stadium-legend.html?raw'
 import maynard from './art/stadium-previews/maynard.jpg'
 import eastside from './art/stadium-previews/eastside.jpg'
 import mill from './art/stadium-previews/cottonmill.jpg'
@@ -9,7 +11,7 @@ import westend from './art/stadium-previews/westend.jpg'
 import southside from './art/stadium-previews/southside.jpg'
 import './stadiumSelect.css'
 
-const grounds=[
+export const grounds=[
  {id:'school',name:'Grant Park',area:'High School',surface:'Turf',image:maynard},
  {id:'westend',name:'West End',area:'Transit Station',surface:'Turf',image:westend},
  {id:'southside',name:'Old 4th Ward',area:'Park',surface:'Natural Grass',image:southside},
@@ -17,8 +19,8 @@ const grounds=[
  {id:'eastside',name:'Candler Park',area:'Neighborhood',surface:'Natural Grass',image:eastside},
  {id:'topdeck',name:'Midtown',area:'Rooftop',surface:'Asphalt',image:topdeck},
 ] as const
-export type StadiumId=typeof grounds[number]['id']
-export function stadiumName(id:StadiumId){return grounds.find(g=>g.id===id)!.name}
+export type StadiumId=typeof grounds[number]['id']|'gulch'
+export function stadiumName(id:StadiumId){return id==='gulch'?'The Gulch':grounds.find(g=>g.id===id)!.name}
 export function randomStadium():StadiumId{return grounds[Math.floor(Math.random()*grounds.length)].id}
 export function homeStadium(club:string):StadiumId{
  if(club==='Goal Dancers FC')return 'westend'
@@ -34,7 +36,7 @@ export function selectStadium(home?:StadiumId,initial:StadiumId=home??'school'):
  dialog.innerHTML=`<div class="stadium-inner"><h1 id="stadium-title">Select Stadium</h1>
  <div class="stadium-cards">${grounds.map(g=>`<button type="button" class="stadium-card">
  <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.area} · ${g.surface}</small></span></button>`).join('')}</div>
- <div class="stadium-nav"><button data-back>Back</button><span>${hint('Arrows','LS / D-pad')} Choose field</span><button data-next>Continue ${hint('Enter','A')}</button></div></div>`
+ ${renderMarkup(stadiumLegendTemplate, {backHint:padBadge("B"),moveHint:padBadge("LS"),continueHint:padBadge("A")})}</div>`
  document.body.append(dialog);dialog.showModal()
  const cards=Array.from(dialog.querySelectorAll<HTMLButtonElement>('.stadium-card'))
  let index=grounds.findIndex(g=>g.id===initial)

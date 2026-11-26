@@ -190,13 +190,14 @@ export class GoalReplay {
       animationPose.map.offset.set(animationPose.u,animationPose.v);animationPose.map.repeat.set(animationPose.w,animationPose.h)
       const actor=this.actors[i]
       if(actor){
-        const facing=(pose.face-yaw+8)%8
+        const facing=(animationPose.face-yaw+8)%8
         if(animationPose.mode===0||animationPose.map.userData.directionalIdle)animationPose.map.offset.x=facing*animationPose.w
         else if(animationPose.mode===1||animationPose.map.userData.directionalRun||animationPose.map.userData.directionalCelebration)animationPose.map.offset.y=1-(facing+1)*animationPose.h
         else if(animationPose.mode===2){
-          const directional=[384,512,544].includes(animationPose.map.image.height)
+          // Use the recorded eight-direction layout, regardless of sprite cell size.
+          const directional=animationPose.h===1/8
           if(directional)animationPose.map.offset.y=1-(facing+1)*animationPose.h
-          else if(facing!==0&&facing!==4)animationPose.map.offset.y=1-((facing<4?0:pose.westKickRow)+1)*animationPose.h
+          else if(facing!==0&&facing!==4)animationPose.map.offset.y=1-((facing<4?0:animationPose.westKickRow)+1)*animationPose.h
         }
       }
     }

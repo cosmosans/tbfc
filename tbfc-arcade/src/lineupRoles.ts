@@ -1,4 +1,5 @@
-export const formations = {
+import {streetFormations} from './matchRules.ts'
+export const classicFormations = {
   "1-3-3": [
     ["LW", "ST", "RW"],
     ["LB", "CDM", "RB"],
@@ -7,6 +8,7 @@ export const formations = {
   "1-2-1-3": [["LW", "ST", "RW"], ["CAM"], ["LCB", "RCB"]],
   "1-2-3-1": [["ST"], ["LW", "CAM", "RW"], ["LCB", "RCB"]],
 };
+export const formations = {...classicFormations, ...Object.fromEntries(Object.entries(streetFormations).map(([id,f])=>[id,f.rows]))} as typeof classicFormations & Record<keyof typeof streetFormations, readonly (readonly string[])[]>;
 export type Shape = keyof typeof formations;
 
 export const bios: Record<string, [number, string]> = {
@@ -29,7 +31,7 @@ export const bios: Record<string, [number, string]> = {
 
 const roleGroups:Record<string,string>={
  LW:'Forward',ST:'Forward',RW:'Forward',CAM:'Midfielder',CDM:'Midfielder',
- LB:'Defender',RB:'Defender',LCB:'Defender',RCB:'Defender',GK:'Goalkeeper'
+ CB:'Defender',CM:'Midfielder',LM:'Midfielder',RM:'Midfielder',LB:'Defender',RB:'Defender',LCB:'Defender',RCB:'Defender',GK:'Goalkeeper'
 }
 export function outOfPosition(club:string,name:string|null,role:string){
  return club==='Turf Burners FC' && !!name && !!bios[name] && bios[name][1]!==roleGroups[role]

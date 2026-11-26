@@ -1,4 +1,5 @@
 <dialog class="lu-confirm lu-settings" aria-labelledby="lu-question">
+  <div class="match-settings-panel">
   <h2 id="lu-question">Match Settings</h2>
 
   <section class="lu-matchup">
@@ -31,9 +32,12 @@
     <p class="lu-division-detail"></p>
   </fieldset>
 
-  <div>
-    <button type="button" id="lu-confirm">Kick off ▸</button>
-    <button type="button" id="lu-cancel">Back to lineup</button>
+  </div>
+  <div class="menu-legend controller-legend" aria-label="Match settings controls">
+    <button type="button" id="lu-cancel"><span data-legend-pad="B"></span> Back</button>
+    <span><span data-legend-pad="LS"></span> Move</span>
+    <span><span data-legend-pad="A"></span> Select</span>
+    <button type="button" id="lu-confirm"><span data-legend-pad="Menu"></span> Kick off</button>
   </div>
 </dialog>
 

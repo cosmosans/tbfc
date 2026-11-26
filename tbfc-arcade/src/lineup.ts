@@ -1,3 +1,39 @@
+import { renderMarkup } from "./templates/renderMarkup";
+import lineupPlayerNumberTemplate from "./templates/street/lineup-player-number.html?raw";
+import lineupQuitTemplate from "./templates/street/lineup-quit.html?raw";
+import lineupSettingsTemplate from "./templates/street/lineup-settings.html?raw";
+import lineupAutoPickTemplate from "./templates/street/lineup-auto-pick.html?raw";
+import lineupFormationTemplate from "./templates/street/lineup-formation.html?raw";
+import lineupClassicRulesTemplate from "./templates/street/lineup-classic-rules.html?raw";
+import lineupLegendTemplate from "./templates/street/lineup-legend.html?raw";
+import lineupChemistryTemplate from "./templates/street/lineup-chemistry.html?raw";
+import lineupTiredMarkerTemplate from "./templates/street/lineup-tired-marker.html?raw";
+import lineupRoleCategoryTemplate from "./templates/street/lineup-role-category.html?raw";
+import lineupPlayerSlotTemplate from "./templates/street/lineup-player-slot.html?raw";
+import lineupBenchSlotTemplate from "./templates/street/lineup-bench-slot.html?raw";
+import lineupRosterCategoryTemplate from "./templates/street/lineup-roster-category.html?raw";
+import lineupRosterPlayerTemplate from "./templates/street/lineup-roster-player.html?raw";
+import lineupClearTemplate from "./templates/street/lineup-clear.html?raw";
+import lineupRosterBackTemplate from "./templates/street/lineup-roster-back.html?raw";
+import lineupRosterTemplate from "./templates/street/lineup-roster.html?raw";
+import lineupTemplate from "./templates/street/lineup.html?raw";
+import { streetArena } from "./streetArena";
+import {
+  classicRules,
+  streetShapes,
+  isStreetShape,
+  streetFormations,
+  courtPresets,
+  type MatchRules,
+} from "./matchRules";
+import {
+  autoStreet,
+  assignStreet,
+  category,
+  squadRatings,
+  suitability,
+  naturalCategory,
+} from "./streetSquad";
 import { rivalWomen } from "./rivalRoster";
 import { careerRating } from "./careerDevelopment";
 import type { Career } from "./careerSeason";
@@ -5,7 +41,7 @@ import { profiles, rememberDivision } from "./difficulty";
 import { lineupChemistry } from "./lineupChemistry";
 import type { MenuMusic } from "./menuMusic";
 import { audio } from "./matchAudio";
-import { menuBumper, hint, reveal } from "./screenUI";
+import { menuBumper, hint, padBadge, reveal } from "./screenUI";
 import { playerRatings, ratingLabels } from "./playerRatings";
 import { clubAccent, burners, type Fixture } from "./opponentSquads";
 import { menuDirection, menuPad } from "./menuPad";
@@ -17,16 +53,20 @@ import {
 } from "./matchSettings";
 import css from "./lineup.css?inline";
 
-import { formations, bios, type Shape } from "./lineupRoles";
+import { formations, classicFormations, bios, type Shape } from "./lineupRoles";
 export { bios, type Shape } from "./lineupRoles";
-const shapes = Object.keys(formations) as Shape[];
+const classicShapes = Object.keys(formations).filter(
+  (s) => !isStreetShape(s),
+) as Shape[];
 const forwardY = 14;
 const keeperY = 86;
 export function positions(shape: Shape) {
   const rows = formations[shape];
+  const sx = isStreetShape(shape) ? streetArena.length / 42 : 1,
+    sz = isStreetShape(shape) ? streetArena.width / 24 : 1;
   return rows.flatMap((roles, line) =>
     roles.map((role, i) => {
-      const back = line === rows.length - 1,
+      const back = rows.length > 1 && line === rows.length - 1,
         front = line === 0;
       const width = back ? 7 : role === "ST" && roles.length === 2 ? 3.5 : 10;
       return {
@@ -34,9 +74,18 @@ export function positions(shape: Shape) {
         back,
         front,
         lane:
-          roles.length === 1 ? 0 : width * ((2 * i) / (roles.length - 1) - 1),
-        depth: -3 - (10 * line) / (rows.length - 1),
-        y: forwardY + (line * (keeperY - forwardY)) / rows.length,
+          roles.length === 1
+            ? 0
+            : width * sz * ((2 * i) / (roles.length - 1) - 1),
+        depth:
+          sx *
+          (rows.length === 1
+            ? -7 - (i === 1 ? 2 : 0)
+            : -3 - (10 * line) / (rows.length - 1)),
+        y:
+          rows.length === 1
+            ? 45 + (i === 1 ? 12 : 0)
+            : forwardY + (line * (keeperY - forwardY)) / rows.length,
       };
     }),
   );
@@ -66,6 +115,39 @@ export function selectLineup(
   portraits: Record<string, string>,
   fixture: Fixture,
   match?: MatchSquad,
+  settings?: MatchSettings,
+  career?: Selection,
+  bonds?: Record<string, number>,
+  progress?: Career,
+  managedClub?: typeof burners,
+  turn?: {
+    number: number;
+    devices: number[];
+    first: boolean;
+    draft?: Selection;
+  },
+): Promise<(Selection & { shape: keyof typeof classicFormations }) | null>;
+export function selectLineup(
+  portraits: Record<string, string>,
+  fixture: Fixture,
+  match?: MatchSquad,
+  settings?: MatchSettings,
+  career?: Selection,
+  bonds?: Record<string, number>,
+  progress?: Career,
+  managedClub?: typeof burners,
+  turn?: {
+    number: number;
+    devices: number[];
+    first: boolean;
+    draft?: Selection;
+  },
+  rules?: MatchRules,
+): Promise<Selection | null>;
+export function selectLineup(
+  portraits: Record<string, string>,
+  fixture: Fixture,
+  match?: MatchSquad,
   settings: MatchSettings = defaultSettings(),
   career?: Selection,
   bonds?: Record<string, number>,
@@ -77,16 +159,21 @@ export function selectLineup(
     first: boolean;
     draft?: Selection;
   },
+  rules: MatchRules = classicRules(),
 ): Promise<Selection | null> {
+  const street = rules.mode === "street",
+    count = rules.teamSize;
+  const shapes: Shape[] = street ? streetShapes(count) : classicShapes;
   const home = managedClub;
-  const key =
-    home === burners
+  const key = street
+    ? `tbfc.street.lineup.v1.${count}.${home.name}`
+    : home === burners
       ? "tbfc.match.lineup.v1"
       : "tbfc.match.lineup.v1." + home.name;
   const countsTowardMinimum =
     home === burners ? burnerEligibility : rivalWomen[home.name];
   const names = Object.keys(portraits);
-  let shape: Shape = "1-3-3";
+  let shape: Shape = shapes[0];
   const slots: (string | null)[] =
     home !== burners
       ? [...home.outfield, home.keeper]
@@ -101,6 +188,12 @@ export function selectLineup(
           "Chris",
           "Sean",
         ];
+  if (street)
+    slots.splice(
+      0,
+      slots.length,
+      ...autoStreet(home, names, shape as keyof typeof streetFormations),
+    );
   slots.push(names.find((n) => !slots.includes(n)) ?? null, null, null, null);
   try {
     const saved =
@@ -110,9 +203,9 @@ export function selectLineup(
       JSON.parse(localStorage.getItem(key) ?? "null");
     if (
       saved &&
-      Object.hasOwn(formations, saved.shape) &&
+      shapes.includes(saved.shape) &&
       Array.isArray(saved.starters) &&
-      saved.starters.length === 7 &&
+      saved.starters.length === count &&
       Array.isArray(saved.bench) &&
       saved.bench.length <= 4
     ) {
@@ -141,7 +234,7 @@ export function selectLineup(
   } catch {}
   const availableWomen = (team: (string | null)[]) =>
     team
-      .slice(0, 7)
+      .slice(0, count)
       .filter(
         (n) => n && countsTowardMinimum.has(n) && !match?.unavailable.has(n),
       ).length;
@@ -149,7 +242,7 @@ export function selectLineup(
     if (!match) return true;
     const trial = slots.slice();
     trial[editing] = incoming;
-    return availableWomen(trial) >= 2;
+    return street || availableWomen(trial) >= 2;
   }
   const style = document.createElement("style");
   style.textContent = css;
@@ -158,6 +251,13 @@ export function selectLineup(
   root.id = "lineup";
   root.style.setProperty("--club", clubAccent(home));
   root.toggleAttribute("data-substitutions", !!match);
+  if (street) {
+    root.dataset.street = String(count);
+    root.style.setProperty(
+      "--court",
+      courtPresets.find((c) => c.id === rules.court)!.color,
+    );
+  }
   root.setAttribute(
     "aria-label",
     match ? "Match substitutions" : "Pre-match lineup",
@@ -169,7 +269,8 @@ export function selectLineup(
   let pickerFocus = "";
   function nameplate(name: string) {
     const energy = match?.stamina.get(name);
-    if (!energy) return `<span class="lu-name">${name}</span>`;
+    if (!energy)
+      return `<span class="lu-name">${street && home === burners ? "#" + bios[name][0] + " " : ""}${name}</span>`;
     return `<span class="lu-name lu-energy" title="${Math.round(energy.charge)}% stamina remaining" style="--charge:${energy.charge}%;--capacity:${energy.capacity}%">${name}</span>`;
   }
   const avatar = (name: string) =>
@@ -179,10 +280,10 @@ export function selectLineup(
       const result = {
         shape,
         warmup,
-        starters: slots.slice(0, 7) as string[],
-        bench: slots.slice(7).filter((n): n is string => !!n),
+        starters: slots.slice(0, count) as string[],
+        bench: slots.slice(count).filter((n): n is string => !!n),
       };
-      if (!back && !match && availableWomen(slots) < 2) return;
+      if (!back && !match && !street && availableWomen(slots) < 2) return;
       if (!match) audio.menu(back ? "nav" : "success");
       if (!back && !match && !career)
         try {
@@ -259,8 +360,8 @@ export function selectLineup(
         finish();
         return;
       }
-      if (availableWomen(slots) < 2) return;
-      if (career || turn?.first) {
+      if (!street && availableWomen(slots) < 2) return;
+      if (street || career || turn?.first) {
         finish();
         return;
       }
@@ -289,12 +390,19 @@ export function selectLineup(
             root.querySelectorAll<HTMLElement>(".lu-marker"),
             (marker) => {
               const style = getComputedStyle(marker);
-              return { left: style.left, top: style.top };
+              return {
+                left: style.left,
+                top: style.top,
+                name: marker.dataset.player,
+              };
             },
           )
         : [];
       lastShape = shape;
-      const field = [...positions(shape), { role: "GK", lane: 0, y: keeperY }];
+      const field = [
+        ...positions(shape),
+        ...(street ? [] : [{ role: "GK", lane: 0, y: keeperY }]),
+      ];
       const chemistry = !match
         ? lineupChemistry(home.name, shape, slots, bonds)
         : null;
@@ -308,30 +416,190 @@ export function selectLineup(
             .join("")}</svg>`
         : "";
       const role = (i: number) =>
-        i < 0 ? "Available" : i >= 7 ? "Sub" : field[i].role;
-      root.innerHTML = `<div class="lu-wrap"><div class="lu-heading"><div class="lu-club"><img src="${home.crest}" alt=""><div><small>${turn ? `P${turn.number} · ` : ""}${home.name}</small><h1>${match ? "Substitutions" : "Lineup Select"}</h1></div></div>${match ? '<button id="lu-audio">Settings</button>' + (progress ? "" : '<button id="lu-quit">Quit Match</button>') : `<button id="lu-teams">‹ ${turn && !turn.first ? "Previous lineup" : "Teams"}</button>`}<button id="lu-start" ${!match && availableWomen(slots) < 2 ? "disabled" : ""}>${hint("P", "Menu")} ${match ? "Resume" : turn?.first ? "Next lineup" : career ? "Confirm Lineup" : "Match Settings"} ▸</button></div>
-    <div class="lu-form" aria-label="Formation" ${match ? "hidden" : ""}>${menuBumper("previous", "Previous Formation", 'id="lu-prev"')}${shapes.map((f, i) => `<button id="form-${i}" data-shape="${f}" aria-pressed="${f === shape}">${f}</button>`).join("")}${menuBumper("next", "Next formation", 'id="lu-next"')}</div>
-    <div class="lu-rule">${match ? shape + " · " : ""}Women on field: ${availableWomen(slots)} / 2 minimum${match && !slots.slice(7).some(Boolean) ? " · No substitutes named" : ""}</div>${chemistry ? `<section class="lu-chem"><strong id="lu-chem-label">Team chemistry</strong><span class="lu-chem-meter" role="meter" aria-labelledby="lu-chem-label" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${chemistry.score}"><i style="width:${chemistry.score}%"></i></span><small class="lu-fit">${chemistryText(chemistry)}</small></section>` : ""}<div class="lu-layout"><div><div class="lu-field"><div class="lu-circle"></div>${web}${field.map((p, i) => `<button class="lu-marker" ${match && (match.unavailable.has(slots[i]!) || !slots.slice(7).some(Boolean)) ? "disabled" : ""} data-swapping="${editing === i}" data-current="${i === highlighted}" id="slot-${i}" data-slot="${i}" aria-label="${p.role}, ${slots[i]}${match?.exhausted.has(slots[i]!) ? ", exhausted" : ""}" style="left:${50 + p.lane * 3.5}%;top:${p.y}%">${match?.exhausted.has(slots[i]!) ? '<i class="exhaustion-marker lu-tired" aria-hidden="true"><b>Z</b><b>Z</b><small>zzz…</small></i>' : ""}<b class="lu-position">${p.role}</b>${avatar(slots[i]!)}${nameplate(slots[i]!)}</button>`).join("")}</div>
-    <div class="lu-bench"><h2>Bench <small>${slots.slice(7).filter(Boolean).length}/4</small></h2><div>${slots
-      .slice(7)
-      .map(
-        (n, i) =>
-          `<button ${match ? "disabled" : ""} data-swapping="${editing === i + 7}" data-slot="${i + 7}" id="slot-${i + 7}" aria-label="Sub ${i + 1}, ${n ?? "empty"}">${n ? avatar(n) : ""}${n ? nameplate(n) : "+ Empty"}</button>`,
-      )
-      .join(
-        "",
-      )}</div></div></div><aside class="lu-details"><h2>Player details</h2><div id="lu-profile"></div>${
-      editing >= 0
-        ? `<div class="lu-roster"><h2>${editing < 0 ? "Match squad" : "Choose for " + (editing < 7 ? role(editing) : "bench")}</h2>${(match ? slots.slice(7).filter((n): n is string => !!n) : names.filter((n) => !slots.includes(n))).map((n) => `<button class="lu-player" id="name-${names.indexOf(n)}" data-name="${n}" ${!legalSwap(n) || editing < 0 || (editing >= 7 && !slots[editing] && slots.slice(0, 7).includes(n)) ? "disabled" : ""}>${avatar(n)}${nameplate(n)}<small>${role(slots.indexOf(n))}</small></button>`).join("")}
-    ${editing >= 7 ? '<button data-clear id="lu-clear">Leave empty</button>' : ""}${editing >= 0 ? '<button data-back id="lu-back">Back</button>' : ""}</div>`
-        : ""
-    }</aside></div>
-    <p>${hint("Arrows", "LS")} Move　 ${hint("Enter", "A")} Select　 ${hint("Esc", "B")} Back</p></div>`;
+        i < 0 ? "Available" : i >= count ? "Sub" : field[i].role;
+      root.innerHTML = renderMarkup(lineupTemplate, {
+        home_crest: home.crest,
+        playerNumber: turn
+          ? renderMarkup(lineupPlayerNumberTemplate, {
+              turn_number: turn.number,
+            })
+          : "",
+        home_name: home.name,
+        title: match
+          ? "Substitutions"
+          : street
+            ? "STREET LINEUP"
+            : "Lineup Select",
+        navigation: match
+          ? lineupSettingsTemplate.slice(0, -1) +
+            (progress ? "" : lineupQuitTemplate.slice(0, -1))
+          : "",
+        formationHidden: match ? "hidden" : "",
+        previousFormation: menuBumper(
+          "previous",
+          "Previous Formation",
+          'id="lu-prev"',
+        ),
+        formations: shapes
+          .map((f, i) =>
+            renderMarkup(lineupFormationTemplate, {
+              i: i,
+              f: f,
+              slot03: f === shape,
+              slot04: isStreetShape(f) ? streetFormations[f].label : f,
+            }),
+          )
+          .join(""),
+        nextFormation: menuBumper("next", "Next formation", 'id="lu-next"'),
+        rulesHidden: street ? "hidden" : "",
+        rules: street
+          ? ""
+          : renderMarkup(lineupClassicRulesTemplate, {
+              slot01: match ? shape + " · " : "",
+              slot02: availableWomen(slots),
+              slot03:
+                match && !slots.slice(count).some(Boolean)
+                  ? " · No substitutes named"
+                  : "",
+            }),
+        chemistry: chemistry
+          ? renderMarkup(lineupChemistryTemplate, {
+              chemistry_score: chemistry.score,
+              chemistry_score_2: chemistry.score,
+              slot03: chemistryText(chemistry),
+            })
+          : "",
+        web: web,
+        playerSlots: field
+          .map((p, i) =>
+            renderMarkup(lineupPlayerSlotTemplate, {
+              slot01: slots[i],
+              slot02:
+                match &&
+                (match.unavailable.has(slots[i]!) ||
+                  !slots.slice(count).some(Boolean))
+                  ? "disabled"
+                  : "",
+              slot03: editing === i,
+              slot04: i === highlighted,
+              i: i,
+              i_6: i,
+              p_role: p.role,
+              slot08: slots[i],
+              slot09: match?.exhausted.has(slots[i]!) ? ", exhausted" : "",
+              slot10: 50 + p.lane * 3.5,
+              p_y: p.y,
+              slot12: match?.exhausted.has(slots[i]!)
+                ? lineupTiredMarkerTemplate.slice(0, -1)
+                : "",
+              slot13: street
+                ? renderMarkup(lineupRoleCategoryTemplate, {
+                    slot01: category(p.role),
+                  })
+                : "",
+              p_role_14: p.role,
+              slot15: avatar(slots[i]!),
+              slot16: nameplate(slots[i]!),
+            }),
+          )
+          .join(""),
+        benchCount: slots.slice(count).filter(Boolean).length,
+        benchSlots: slots
+          .slice(count)
+          .map((n, i) =>
+            renderMarkup(lineupBenchSlotTemplate, {
+              slot01: match ? "disabled" : "",
+              slot02: editing === i + count,
+              slot03: i + count,
+              slot04: i + count,
+              slot05: i + 1,
+              slot06: n ?? "empty",
+              slot07: n ? avatar(n) : "",
+              slot08: n ? nameplate(n) : "+ Empty",
+            }),
+          )
+          .join(""),
+        roster:
+          editing >= 0
+            ? renderMarkup(lineupRosterTemplate, {
+                slot01:
+                  editing < 0
+                    ? "Match squad"
+                    : "Choose for " +
+                      (editing < count ? role(editing) : "bench"),
+                slot02: (match
+                  ? slots.slice(count).filter((n): n is string => !!n)
+                  : names
+                      .filter((n) => !slots.includes(n))
+                      .sort((a, b) =>
+                        street && editing < count
+                          ? suitability(home, b, field[editing].role) -
+                            suitability(home, a, field[editing].role)
+                          : 0,
+                      )
+                )
+                  .map((n) =>
+                    renderMarkup(lineupRosterPlayerTemplate, {
+                      slot01: street
+                        ? renderMarkup(lineupRosterCategoryTemplate, {
+                            slot01: naturalCategory(home, n) ?? "OPEN",
+                          })
+                        : "",
+                      slot02: names.indexOf(n),
+                      n: n,
+                      slot04:
+                        !legalSwap(n) ||
+                        editing < 0 ||
+                        (editing >= count &&
+                          !slots[editing] &&
+                          slots.slice(0, count).includes(n))
+                          ? "disabled"
+                          : "",
+                      slot05: avatar(n),
+                      slot06: nameplate(n),
+                      slot07: street ? "" : role(slots.indexOf(n)),
+                    }),
+                  )
+                  .join(""),
+                slot03:
+                  editing >= count ? lineupClearTemplate.slice(0, -1) : "",
+                slot04:
+                  editing >= 0 ? lineupRosterBackTemplate.slice(0, -1) : "",
+              })
+            : "",
+        legend: renderMarkup(lineupLegendTemplate, {
+          // Keep the primary action last, with the same Start shortcut as before.
+        startDisabled:
+          !match && !street && availableWomen(slots) < 2 ? "disabled" : "",
+        startHint: padBadge("Menu"),
+        startLabel: match
+          ? "Resume"
+          : turn?.first
+            ? "Next lineup"
+            : career
+              ? "Confirm Lineup"
+              : "Match Settings",
+
+          moveHint: street ? padBadge("LS") : hint("Arrows", "LS"),
+          selectHint: street ? padBadge("A") : hint("Enter", "A"),
+          backHint: street ? padBadge("B") : hint("Esc", "B"),
+          autoPick:
+            street && !match
+              ? renderMarkup(lineupAutoPickTemplate, {
+                  autoPickHint: padBadge("Y"),
+                })
+              : "",
+        }),
+      });
       const slideDuration = 340;
       root.querySelectorAll<HTMLElement>(".lu-marker").forEach((marker, i) => {
-        if (previous[i])
+        const before = previous.find((p) => p.name === slots[i]);
+        if (before)
           marker.animate(
-            [previous[i], { left: marker.style.left, top: marker.style.top }],
+            [
+              { left: before.left, top: before.top },
+              { left: marker.style.left, top: marker.style.top },
+            ],
             { duration: slideDuration, easing: "ease-out" },
           );
       });
@@ -395,7 +663,9 @@ export function selectLineup(
           ? playerRatings[number]?.map((base, i) =>
               careerRating(progress, name, ratingLabels[i], base),
             )
-          : undefined;
+          : street
+            ? squadRatings(home.name, name)
+            : undefined;
       const stats = ratings
         ? `<dl class="lu-ratings" aria-label="Player ratings out of 100">${ratingLabels
             .map(
@@ -422,7 +692,7 @@ export function selectLineup(
         const target = Number(button.dataset.slot);
         [trial[target], trial[editing]] = [trial[editing], trial[target]];
       }
-      const valid = trial.slice(0, 7).every(Boolean);
+      const valid = trial.slice(0, count).every(Boolean);
       const result = lineupChemistry(
         home.name,
         shape,
@@ -483,6 +753,16 @@ export function selectLineup(
         (shapes.indexOf(shape) + step + shapes.length) % shapes.length;
       audio.menu("nav");
       shape = shapes[index];
+      if (street)
+        slots.splice(
+          0,
+          count,
+          ...assignStreet(
+            home,
+            slots.slice(0, count) as string[],
+            shape as keyof typeof streetFormations,
+          ),
+        );
       const current = document.activeElement as HTMLElement | null;
       const focus =
         current && root.contains(current) && current.id ? current.id : "slot-1";
@@ -555,6 +835,10 @@ export function selectLineup(
         else if (b.id === "lu-cancel") dialog.close();
         return;
       }
+      if (b.id === "lu-auto") {
+        autoPickLineup();
+        return;
+      }
       if (b.id === "lu-prev" || b.id === "lu-next") {
         cycleShape(b.id === "lu-prev" ? -1 : 1);
         return;
@@ -564,8 +848,8 @@ export function selectLineup(
         const target = Number(b.dataset.slot);
         if (!match && editing >= 0) {
           if (
-            (target < 7 && !slots[editing]) ||
-            (editing < 7 && !slots[target])
+            (target < count && !slots[editing]) ||
+            (editing < count && !slots[target])
           )
             return;
           [slots[target], slots[editing]] = [slots[editing], slots[target]];
@@ -574,7 +858,7 @@ export function selectLineup(
         }
         editing = target;
         if (match) {
-          const candidate = slots.slice(7).find((n) => n && legalSwap(n));
+          const candidate = slots.slice(count).find((n) => n && legalSwap(n));
           draw(candidate ? "name-" + names.indexOf(candidate) : "lu-back");
           return;
         }
@@ -585,12 +869,13 @@ export function selectLineup(
         if (
           match &&
           (!legalSwap(b.dataset.name) ||
-            !slots.slice(7).includes(b.dataset.name))
+            !slots.slice(count).includes(b.dataset.name))
         )
           return;
         const old = slots.indexOf(b.dataset.name);
         // A filled starting spot always needs a replacement.
-        if (old >= 0 && old < 7 && !slots[editing] && editing >= 7) return;
+        if (old >= 0 && old < count && !slots[editing] && editing >= count)
+          return;
         if (old >= 0) slots[old] = slots[editing];
         slots[editing] = b.dataset.name;
         close();
@@ -608,6 +893,16 @@ export function selectLineup(
       if (b.dataset.shape) {
         if (b.dataset.shape !== shape) audio.menu("nav");
         shape = b.dataset.shape as Shape;
+        if (street)
+          slots.splice(
+            0,
+            count,
+            ...assignStreet(
+              home,
+              slots.slice(0, count) as string[],
+              shape as keyof typeof streetFormations,
+            ),
+          );
         draw(editing >= 0 ? pickerFocus : "slot-" + highlighted);
         return;
       }
@@ -619,8 +914,10 @@ export function selectLineup(
         confirmQuit();
         return;
       }
-      if (b.id === "lu-teams") {
-        finish(true);
+      if (b.id === "lu-legend-back") {
+        if (editing >= 0) close();
+        else if (match) finish();
+        else finish(true);
         return;
       }
       if (b.id === "lu-start") confirmKickoff();
@@ -690,8 +987,29 @@ export function selectLineup(
       }
       focus(best);
     }
+    // Share the same guarded action across the legend, keyboard and gamepad.
+    // Rebuild the bench from unused players and return focus to the pitch.
+    function autoPickLineup() {
+      if (!street || match || dialog) return;
+      const picked = autoStreet(
+        home,
+        names,
+        shape as keyof typeof streetFormations,
+      );
+      const bench = names.filter((name) => !picked.includes(name)).slice(0, 4);
+      slots.splice(0, slots.length, ...picked, ...bench);
+      editing = -1;
+      highlighted = 0;
+      audio.menu("success");
+      draw("slot-0");
+    }
     function keydown(e: KeyboardEvent) {
       if (!dialog && !e.repeat) {
+        if (street && !match && e.code === "KeyY") {
+          e.preventDefault();
+          autoPickLineup();
+          return;
+        }
         if (e.code === "KeyP") {
           e.preventDefault();
           confirmKickoff();
@@ -734,7 +1052,8 @@ export function selectLineup(
       lastMove = 0,
       held = "",
       a = !!lineupPad()?.buttons[0]?.pressed,
-      b = !!lineupPad()?.buttons[1]?.pressed;
+      b = !!lineupPad()?.buttons[1]?.pressed,
+      y = !!lineupPad()?.buttons[3]?.pressed;
     let lb = false,
       rb = false,
       startHeld = !!lineupPad()?.buttons[9]?.pressed;
@@ -744,8 +1063,17 @@ export function selectLineup(
       if (pad) {
         const start = !!pad.buttons[9]?.pressed,
           opening = start && !startHeld && !dialog;
+        const launchSettings = start && !startHeld && dialog?.classList.contains("lu-settings");
         startHeld = start;
         if (opening) confirmKickoff();
+        // Match the Start/Menu shortcut advertised by the settings legend.
+        if (launchSettings) {
+          dialog?.querySelector<HTMLButtonElement>("#lu-confirm")?.click();
+          return;
+        }
+        const autoPickPressed = !!pad.buttons[3]?.pressed;
+        if (!opening && !dialog && autoPickPressed && !y) autoPickLineup();
+        y = autoPickPressed;
         const left = !!pad.buttons[4]?.pressed,
           right = !!pad.buttons[5]?.pressed;
         if (!match && !dialog && left && !lb && !right) cycleShape(-1);
@@ -772,7 +1100,7 @@ export function selectLineup(
         a = !!pad.buttons[0]?.pressed;
         b = !!pad.buttons[1]?.pressed;
       } else {
-        a = b = lb = rb = startHeld = false;
+        a = b = y = lb = rb = startHeld = false;
         held = "";
       }
       if (root.isConnected) frame = requestAnimationFrame(poll);

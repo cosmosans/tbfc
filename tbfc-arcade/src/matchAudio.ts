@@ -1,3 +1,5 @@
+import {parkBeatAt} from './candlerParkIntro'
+import {millBeatAt,millSwitchTimes} from './cabbagetownIntro'
 import blast from './audio/burner-blast.wav?url'
 import burnReady from './audio/burn-mode-ready.mp3?url'
 import post from './audio/post-hit.mp3?url'
@@ -21,8 +23,8 @@ import close from './audio/07_UI_Menu_Close.wav?url'
 type MenuCue='nav'|'success'|'open'|'close'
 const recordings={nearGoal1,nearGoal2,blast,burnReady,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4,tackle}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
-export type IntroVenue='grantPark'|'westend'|'generic'
-type IntroCue='train'|'introBeat'|'introTraffic'|'grantPark'|'kachunk'
+export type IntroVenue='oldFourthWard'|'midtown'|'candlerPark'|'cabbagetown'|'grantPark'|'westend'|'generic'
+type IntroCue='diamondMix'|'midtownMix'|'parkAmbience'|'parkSong'|'millCity'|'millBeat'|'train'|'introBeat'|'introTraffic'|'grantPark'|'kachunk'
 type Sound=keyof typeof recordings|Impact|IntroCue
 
 export class MatchAudio {
@@ -104,7 +106,7 @@ export class MatchAudio {
   mix.connect(master)
   const sources=new Set<AudioBufferSourceNode>()
   let fading=false
-  const cue=(key:IntroCue,volume:number)=>{
+  const cue=(key:IntroCue,volume:number,when=ctx.currentTime)=>{
    const buffer=this.buffers.get(key)
    if(!buffer)return
    const source=ctx.createBufferSource(),level=ctx.createGain()
@@ -116,15 +118,39 @@ export class MatchAudio {
     source.disconnect();level.disconnect();sources.delete(source)
     if(fading&&!sources.size)mix.disconnect()
    }
-   source.start()
+   source.start(when)
    return {source,level}
   }
   const startedAt=ctx.currentTime
+  if(venue==='cabbagetown'){
+   const city=cue('millCity',.23,startedAt)
+   for(const offset of millSwitchTimes)cue('kachunk',.78,startedAt+offset)
+   const beat=cue('millBeat',.48,startedAt+millBeatAt)
+   if(city && beat){
+    const end=startedAt+millBeatAt+beat.source.buffer!.duration
+    city.level.gain.setValueAtTime(.23,end-.65)
+    city.level.gain.linearRampToValueAtTime(0,end)
+    city.source.stop(end)
+   }
+  }
+  if(venue==='candlerPark'){
+   const opening=cue('parkAmbience',.32,startedAt)
+   const drop=startedAt+parkBeatAt
+   cue('parkSong',.44,drop)
+   if(opening){
+    const fadeEnd=drop+6
+    opening.level.gain.setValueAtTime(.32,drop)
+    opening.level.gain.linearRampToValueAtTime(0,fadeEnd)
+    opening.source.stop(fadeEnd)
+   }
+  }
+  if(venue==='oldFourthWard')cue('diamondMix',.54,startedAt)
+  if(venue==='midtown')cue('midtownMix',.54,startedAt)
   const schoolTrack=venue==='grantPark'?cue('grantPark',.54):undefined
   const westEnd=venue==='westend'
   const traffic=westEnd?cue('introTraffic',.16):undefined
   if(westEnd)cue('train',.74)
-  return { switchLamp:()=>cue('kachunk',.78), elapsed:()=>schoolTrack?ctx.currentTime-startedAt:undefined, startBeat:()=>{
+  return { switchLamp:()=>cue('kachunk',.78), elapsed:()=>schoolTrack||venue==='cabbagetown'||venue==='candlerPark'||venue==='midtown'||venue==='oldFourthWard'?ctx.currentTime-startedAt:undefined, startBeat:()=>{
    if(venue==='grantPark')return
    const beat=cue('introBeat',.44)
    if(traffic){

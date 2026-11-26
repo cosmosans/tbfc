@@ -4,7 +4,14 @@ import type { MenuMusic } from "./menuMusic";
 import crest from "./art/ground/crest.png?url";
 import { loadingScreen } from "./loading";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
+import careerClip from "./art/stadium-previews/grant-park-career.mp4?url";
+import careerPoster from "./art/stadium-previews/grant-park-career.jpg?url";
+import changeLog from "./changeLog.html?raw";
 import css from "./mainMenu.css?inline";
+
+import { grounds, stadiumName, type StadiumId } from "./stadiumSelect";
+
+const introTimes = ["Day", "Evening", "Night"] as const;
 
 export type Destination =
   | "career"
@@ -15,17 +22,46 @@ export type Destination =
   | "penalties"
   | "burnLab"
   | "stadiumTest"
-  | "introDay"
-  | "introNight"
-  | "matchIntroLab"
+  | "gulchTest"
+  | { kind: "matchIntro"; venue: StadiumId; time: typeof introTimes[number] }
+  | "weatherLab"
   | "keeperLab"
   | "curveLab"
   | "spriteViewer";
 
-export function mountMenuBackdrop() {
+export function mountMenuBackdrop(mode: "menu" | "career" = "menu") {
   const style = document.createElement("style");
   style.textContent = css;
   document.head.append(style);
+  if (mode === "career") {
+    const shot = document.createElement("video");
+    shot.className = "career-backdrop";
+    shot.inert = true;
+    shot.setAttribute("aria-hidden", "true");
+    shot.poster = careerPoster;
+    shot.muted = shot.loop = shot.playsInline = true;
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const playback = () => {
+      if (motion.matches || document.hidden) shot.pause();
+      else {
+        if (!shot.hasAttribute("src")) shot.src = careerClip;
+        void shot.play().catch(() => {});
+      }
+    };
+    document.body.append(shot);
+    playback();
+    motion.addEventListener("change", playback);
+    document.addEventListener("visibilitychange", playback);
+    return Object.assign(() => {
+      motion.removeEventListener("change", playback);
+      document.removeEventListener("visibilitychange", playback);
+      shot.pause();
+      shot.remove();
+      shot.removeAttribute("src");
+      shot.load();
+      style.remove();
+    }, { ready: Promise.resolve() });
+  }
   let feed: HTMLIFrameElement | undefined;
   let finishReady = () => {};
   const ready = new Promise<void>((resolve) => {
@@ -71,7 +107,7 @@ export function mainMenu(
   music: MenuMusic,
   showIntro = false,
   backdropReady: Promise<void> = Promise.resolve(),
-  initialMenu: "menu" | "debug" = "menu",
+  initialMenu: "menu" | "debug" | Extract<Destination, { kind: "matchIntro" }> = "menu",
 ): Promise<Destination> {
   const root = document.createElement("section");
   root.id = "main-menu";
@@ -86,7 +122,8 @@ export function mainMenu(
   return new Promise((resolve) => {
     let frame = 0;
     let controllerStatus: HTMLElement | null = null;
-    let screen: "loading" | "intro" | "menu" | "settings" | "debug" | "introWorkshop";
+    let screen: "loading" | "intro" | "menu" | "settings" | "debug" | "introWorkshop" | "introTime" | "changeLog";
+    let introField: StadiumId = typeof initialMenu === "object" ? initialMenu.venue : "school";
     const openedAt = performance.now();
     const title =
       '<div class="menu-title"><img src="' +
@@ -116,6 +153,7 @@ export function mainMenu(
         audio.menu(next === "menu" ? "nav" : "success");
       screen = next;
       root.dataset.screen = next;
+      root.scrollTop = 0;
       if (next === "loading") shell.replaceChildren(loadingScreen());
       if (next === "intro")
         shell.innerHTML =
@@ -127,14 +165,18 @@ export function mainMenu(
           '<nav aria-label="Main menu"><button class="menu-kick" data-action="kick">Kick Off</button><button data-action="career">Career Mode</button><button class="menu-practice" data-action="practice">Practice</button><button data-action="settings">Settings</button><button data-action="debug">Debug</button></nav><small class="menu-controller" role="status"></small>';
       if (next === "debug")
         shell.innerHTML =
-          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Cabbagetown Intro</button><button data-action="keeperLab">Keeper Distribution</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
+          '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="gulchTest">The Gulch · 3v3</button><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Match Intros</button><button data-action="weatherLab">Weather Playground</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button><button data-action="back">Back</button></nav>';
       if (next === "introWorkshop")
-        shell.innerHTML = '<h1 id="menu-title">Cabbagetown Intro</h1><nav aria-label="Time of day"><button data-action="matchIntroLab">Evening</button><button data-action="introNight">Night</button><button data-action="introDay">Day</button><button data-action="back">Back</button></nav>';
+        shell.innerHTML = `<h1 id="menu-title">Match Intros</h1><nav aria-label="Choose field">${grounds.map(g => `<button data-action="${g.id}">${g.name}</button>`).join("")}<button data-action="back">Back</button></nav>`;
+      if (next === "introTime")
+        shell.innerHTML = `<h1 id="menu-title">${stadiumName(introField)} Intro</h1><nav aria-label="Choose time of day">${introTimes.map(t => `<button data-action="${t}">${t}</button>`).join("")}<button data-action="back">Back</button></nav>`;
+      if (next === "changeLog") shell.innerHTML = changeLog;
       if (next === "settings")
         shell.innerHTML =
           '<h1 id="menu-title">Settings</h1><nav aria-label="Settings">' +
           audioButton("music", "Music", music.musicEnabled) +
           audioButton("sound", "Sound effects", music.soundEnabled) +
+          '<button data-action="changeLog">Change log</button>' +
           '<button data-action="back">Back</button></nav>';
       controllerStatus = shell.querySelector(".menu-controller");
       shell
@@ -167,6 +209,22 @@ export function mainMenu(
       const button = (e.target as HTMLElement).closest<HTMLButtonElement>(
         "button:enabled",
       );
+      const action = button?.dataset.action;
+      if (screen === "introWorkshop") {
+        const field = grounds.find(g => g.id === action);
+        if (field) {
+          introField = field.id;
+          draw("introTime");
+          return;
+        }
+      }
+      if (screen === "introTime") {
+        const time = introTimes.find(t => t === action);
+        if (time) {
+          leave({ kind: "matchIntro", venue: introField, time });
+          return;
+        }
+      }
       switch (button?.dataset.action) {
         case "start":
           music.start();
@@ -193,18 +251,14 @@ export function mainMenu(
         case "introWorkshop":
           draw("introWorkshop");
           break;
-        case "introDay":
-        case "introNight":
-          leave(button.dataset.action);
-          break;
-        case "matchIntroLab":
-          leave("matchIntroLab");
-          break;
-        case "keeperLab":
-          leave("keeperLab");
+        case "weatherLab":
+          leave("weatherLab");
           break;
         case "stadiumTest":
           leave("stadiumTest");
+          break;
+        case "gulchTest":
+          leave("gulchTest");
           break;
         case "burnLab":
           leave("burnLab");
@@ -214,6 +268,9 @@ export function mainMenu(
           break;
         case "settings":
           draw("settings");
+          break;
+        case "changeLog":
+          draw("changeLog");
           break;
         case "music":
         case "sound": {
@@ -232,10 +289,16 @@ export function mainMenu(
       }
     };
     function goBack() {
-      if (screen === "introWorkshop") draw("debug", "introWorkshop");
+      if (screen === "changeLog") draw("settings", "changeLog");
+      else if (screen === "introTime") draw("introWorkshop", introField);
+      else if (screen === "introWorkshop") draw("debug", "introWorkshop");
       else draw("menu", screen);
     }
     function move(step: number) {
+      if (screen === "changeLog") {
+        root.scrollBy(0, step * root.clientHeight * .75);
+        return;
+      }
       const choices = Array.from(
         shell.querySelectorAll<HTMLButtonElement>("button:enabled"),
       );
@@ -258,7 +321,7 @@ export function mainMenu(
         e.preventDefault();
         move(e.key === "ArrowUp" ? -1 : 1);
       }
-      if (e.key === "Escape" && (screen === "settings" || screen === "debug" || screen === "introWorkshop")) {
+      if (e.key === "Escape" && (screen === "settings" || screen === "debug" || screen === "introWorkshop" || screen === "introTime" || screen === "changeLog")) {
         e.preventDefault();
         goBack();
       }
@@ -268,7 +331,9 @@ export function mainMenu(
       setTimeout(resolve, Math.max(0, 1500 - (performance.now() - openedAt))),
     );
     void Promise.all([backdropReady, minimum]).then(() => {
-      if (root.isConnected) draw(showIntro ? "intro" : initialMenu);
+      if (!root.isConnected) return;
+      if (typeof initialMenu === "object") draw("introTime", initialMenu.time);
+      else draw(showIntro ? "intro" : initialMenu);
     });
     const confirm = (pad?: Gamepad) =>
       !!(pad?.buttons[0]?.pressed || pad?.buttons[9]?.pressed);
@@ -295,7 +360,7 @@ export function mainMenu(
       direction = dir;
       const down = confirm(pad),
         back = !!pad?.buttons[1]?.pressed;
-      if (back && !backHeld && (screen === "settings" || screen === "debug" || screen === "introWorkshop"))
+      if (back && !backHeld && (screen === "settings" || screen === "debug" || screen === "introWorkshop" || screen === "introTime" || screen === "changeLog"))
         goBack();
       else if (down && !held)
         shell

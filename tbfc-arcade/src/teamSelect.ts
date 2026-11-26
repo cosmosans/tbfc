@@ -1,5 +1,11 @@
+import teamLegendTemplate from './templates/street/team-legend.html?raw';
+import {renderMarkup} from './templates/renderMarkup'
+import teamSelectTemplate from './templates/street/team-select.html?raw'
+import teamHalfStarTemplate from './templates/street/team-half-star.html?raw'
+import teamRankingTemplate from './templates/street/team-ranking.html?raw'
+import teamCardTemplate from './templates/street/team-card.html?raw'
 import { audio } from "./matchAudio";
-import { hint, padBadge, reveal } from "./screenUI";
+import { padBadge, reveal } from "./screenUI";
 import { burners, alternateOpponent, onsiderTrading, barelyUnited, atleticoEspresso, grassAssassins, netSixAndChill, crossbarCowboys, goalDiggers, cleatwoodMac, sweeperCreepers, clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
@@ -13,6 +19,7 @@ function kitIcon(name: string, secondary: boolean) {
 export function selectTeams(
   previous?: Fixture,
   standings?: ReadonlyMap<string, number>,
+  _navigation?: {back:string;next:string},
 ): Promise<Fixture | null> {
   const selectable=[...clubs,alternateOpponent,onsiderTrading,barelyUnited,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
@@ -60,7 +67,15 @@ export function selectTeams(
   root.setAttribute("aria-label", "Select teams");
   const style = document.createElement("style");
   style.textContent = css;
-  root.innerHTML = `<div class="ts-wrap"><header class="ts-heading"><h1>Select teams</h1></header><div class="ts-match"><article></article><span class="ts-vs">VS</span><article></article></div><div class="ts-foot"><button class="ts-back">${padBadge("B")} Main Menu</button><span>${hint("↑ ↓", "LS ↕")} Club · ${hint("← →", "LS ↔")} Side · ${hint("Y", "Y")} Swap Kit · ${hint("Enter", "A")} Continue</span><button class="ts-next">${padBadge("Menu")} Select Stadium</button></div></div>`;
+  root.innerHTML = renderMarkup(teamSelectTemplate, {
+  legend: renderMarkup(teamLegendTemplate, {
+    backHint: padBadge("B"),
+    clubHint: padBadge("LS"),
+    sideHint: padBadge("LS"),
+    kitHint: padBadge("Y"),
+    continueHint: padBadge("A"),
+  })
+});
   root.prepend(style);
   document.body.append(root);
   const main = document.querySelector("main")!;
@@ -77,7 +92,26 @@ export function selectTeams(
     const label = secondary ? "Secondary" : "Primary";
     const rank = standings?.get(club.name);
     card.style.setProperty("--club", clubAccent(club));
-    card.innerHTML = `<div class="ts-side">${role}</div><div class="ts-crest"><button data-step="-1" aria-label="Previous ${role} club">▴</button><img src="${club.crest}" alt=""><button data-step="1" aria-label="Next ${role} club">▾</button></div><h2>${club.name}</h2><div class="ts-stars" aria-label="${club.stars} out of 5 stars"><span>${"★".repeat(Math.floor(club.stars))}</span>${club.stars % 1 ? '<i class="ts-half">☆</i>' : ""}${"☆".repeat(5 - Math.ceil(club.stars))}</div><button type="button" class="ts-kit" data-kit aria-label="${club.name}, ${label} kit${canSwap ? ", swap kit" : ", locked"}" ${canSwap ? "" : "disabled"}><img src="${kitIcon(club.name, secondary)}" alt=""><span>${label}</span></button>${rank == null ? "" : `<small>League position · ${rank}</small>`}`;
+    card.innerHTML = renderMarkup(teamCardTemplate, {
+  role: role,
+  role_2: role,
+  club_crest: club.crest,
+  role_4: role,
+  club_name: club.name,
+  club_stars: club.stars,
+  slot07: "★".repeat(Math.floor(club.stars)),
+  slot08: club.stars % 1 ? teamHalfStarTemplate.slice(0, -1) : "",
+  slot09: "☆".repeat(5 - Math.ceil(club.stars)),
+  club_name_10: club.name,
+  label: label,
+  slot12: canSwap ? ", swap kit" : ", locked",
+  slot13: canSwap ? "" : "disabled",
+  slot14: kitIcon(club.name, secondary),
+  label_15: label,
+  slot16: rank == null ? "" : renderMarkup(teamRankingTemplate, {
+  rank: rank
+})
+});
   }
   function focusSide(i: number) {
     side = i;

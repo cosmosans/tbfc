@@ -11613,6 +11613,32 @@
           }
         }
       ]
+    },
+    {
+      "name": "Match Officials",
+      "players": [
+        {
+          "name": "Referee",
+          "gender": "Male",
+          "animations": {
+            "Idle (rotations)": {
+              "file": "ref-idle.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Run": {
+              "file": "ref-run.png",
+              "status": "Individual",
+              "note": ""
+            },
+            "Yellow card": {
+              "file": "ref-yellow-card.png",
+              "status": "Individual",
+              "note": ""
+            }
+          }
+        }
+      ]
     }
   ],
   "dimensions": {
@@ -27448,6 +27474,27 @@
       "height": 608,
       "cell": 76,
       "columns": 8,
+      "rows": 8
+    },
+    "ref-idle.png": {
+      "width": 384,
+      "height": 48,
+      "cell": 48,
+      "columns": 8,
+      "rows": 1
+    },
+    "ref-run.png": {
+      "width": 384,
+      "height": 384,
+      "cell": 48,
+      "columns": 8,
+      "rows": 8
+    },
+    "ref-yellow-card.png": {
+      "width": 576,
+      "height": 512,
+      "cell": 64,
+      "columns": 9,
       "rows": 8
     }
   }

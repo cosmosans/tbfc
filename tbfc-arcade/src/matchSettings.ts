@@ -1,3 +1,4 @@
+import {padBadge} from "./screenUI";
 import matchConfirmMarkup from "./matchConfirm.html?raw";
 import type { Fixture } from "./opponentSquads";
 import {
@@ -40,6 +41,9 @@ export function matchConfirmDialog(
   const template = document.createElement("template");
   template.innerHTML = matchConfirmMarkup;
   const dialog = template.content.querySelector("dialog")!;
+  for (const badge of dialog.querySelectorAll<HTMLElement>("[data-legend-pad]")) {
+    badge.innerHTML = padBadge(badge.dataset.legendPad!);
+  }
   const option = template.content
     .querySelector<HTMLTemplateElement>("#match-setting-option")!
     .content.querySelector("button")!;

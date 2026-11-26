@@ -46,20 +46,23 @@ main[data-match-intro] > :not(canvas):not(.match-intro) {
   display: inline-block;
   margin: 1em auto 0;
   font-size: clamp(14px, 1.5vw, 23px);
+  transform: skewX(-20deg);
+}
+.mi-details-rotate {
+  transform: skewX(20deg);
 }
 .mi-details > span:not([hidden]) ~ span:not([hidden])::before {
   content: "·";
   margin-inline-end: 0.3em;
-}
-.match-intro [data-intro-pause] {
-  position: absolute;
-  bottom: 5%;
-  left: 4%;
-  padding: 0.65em 1em;
 }
 .match-intro [data-start] {
   position: absolute;
   bottom: 5%;
   right: 4%;
   padding: 0.65em 1em;
+}
+
+.mi-details [data-kind] {
+  font-size: clamp(14px, 3.2vw, 28px);
+  white-space: nowrap;
 }

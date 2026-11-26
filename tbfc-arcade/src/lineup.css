@@ -839,3 +839,36 @@
 #lineup .lu-wrap {
   zoom: var(--menu-scale, 1);
 }
+
+#lineup[data-street] .lu-field{background-color:var(--court,#30648e);background-image:repeating-linear-gradient(23deg,#fff1 0 1px,transparent 1px 5px);border-color:#b2a591;box-shadow:inset 0 0 0 4px #fff9}
+#lineup[data-street="3"] .lu-marker .lu-avatar{transform:scale(1.75);transform-origin:bottom center;margin-top:30px}
+#lineup[data-street="5"] .lu-marker .lu-avatar{transform:scale(1.5);transform-origin:bottom center;margin-top:18px}
+#lineup[data-street] .lu-position{z-index:3;position:relative;background:#173e65;padding:2px 5px;border-radius:2px}
+#lineup[data-street] [data-category="MID"]{background:#23603f}#lineup[data-street] [data-category="ATT"]{background:#984414}
+#lineup[data-street] .lu-form button{font-size:12px}#lineup[data-street] .lu-links{opacity:.7}
+
+#lineup[data-street] .lu-roster [data-category="DEF"]{border-left:4px solid #468ee1}#lineup[data-street] .lu-roster [data-category="MID"]{border-left:4px solid #5aba75}#lineup[data-street] .lu-roster [data-category="ATT"]{border-left:4px solid #f6994e}
+
+/* STREET lineup navigation shares the controller-first legend used by setup. */
+#lineup .lu-legend { margin-top: 16px; }
+#lineup .lu-legend button {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+}
+#lineup[data-street] .lu-legend kbd.pad-hint { display: inline-flex; }
+
+/* Keep the Classic settings legend outside the orange settings frame. */
+.lu-confirm.lu-settings { border: 0; padding: 0; background: transparent; }
+.lu-settings > .match-settings-panel {
+  display: block;
+  padding: 18px;
+  border: 2px solid #ca5126;
+  background: #191514;
+}
+.lu-settings > .controller-legend { margin-top: 0; }
+.lu-settings .controller-legend button { flex: none; }

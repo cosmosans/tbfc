@@ -1,0 +1,40 @@
+<div class="ko-shell">
+  <header>
+    <small>STREET · {{p_teamSize}}V{{p_teamSize_2}} · THE GULCH</small>
+    <h1>MATCH SETTINGS</h1>
+  </header>
+  <div class="ko-custom">
+    <div style="margin-right: 10px" class="ko-preview">
+      <div class="ko-court"><i></i><b></b><em></em></div>
+      <strong data-court-name aria-live="polite"></strong
+      ><small>Painted concrete · Live colour preview</small>
+    </div>
+    <div class="ko-settings">
+      <h2>COURT COLOUR</h2>
+      <div class="ko-swatches">{{courtSwatches}}</div>
+      <h2>MATCH RULES</h2>
+      <div class="ko-options">
+        <button data-rule="timed">Timed match</button>
+        <button data-rule="target">First to 5</button>
+      </div>
+      <h2>HALF LENGTH</h2>
+      <div class="ko-options" data-duration>{{durationOptions}}</div>
+      <h2>TIME OF DAY</h2>
+      <div class="ko-options">{{timeOptions}}</div>
+      <h2>WEATHER</h2>
+      <div class="ko-options">{{weatherOptions}}</div>
+      <h2>DIVISION DIFFICULTY</h2>
+      <div class="ko-options">{{difficultyOptions}}</div>
+      <small data-difficulty-label></small>
+    </div>
+  </div>
+  <div
+    class="menu-legend controller-legend ko-settings-legend"
+    aria-label="Match settings controls"
+  >
+    <button data-back>{{backHint}} Back</button>
+    <span>{{moveHint}} Move</span>
+    <span>{{selectHint}} Select</span>
+    <button data-next>{{startHint}} Kick off</button>
+  </div>
+</div>

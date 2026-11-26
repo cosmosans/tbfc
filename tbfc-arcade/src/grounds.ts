@@ -14,7 +14,7 @@ import parkUrl from '../art/stadiums/eastside-commons.glb?url'
 import schoolGroundUrl from '../art/stadiums/high-school-track.glb?url'
 import turfUrl from './art/ground/grass.jpg?url'
 
-export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,homeClub:Club|null,venue:'standard'|'school'|'eastside'|'southside'|'westend'|'topdeck'|'mill'='standard',awayClub?:Club,trainSound=true) {
+export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,settings:MatchSettings,homeClub:Club|null,venue:'standard'|'school'|'eastside'|'southside'|'westend'|'topdeck'|'mill'|'gulch'='standard',awayClub?:Club,trainSound=true) {
   const schoolGround=venue!=='standard',eastside=venue==='eastside'
   const night=settings.time==='Night',evening=settings.time==='Evening'
   const overcast=settings.weather!=='Sun'
@@ -22,7 +22,9 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
   scene.add(fill)
   const sun=new T.DirectionalLight(night?0xccddff:evening?0xffac70:0xffe5b1,(night?.7:1.9)*(overcast?.48:1))
   sun.position.set(27,evening?5:night?11:24,-16)
-  const {updateWeather,setSkyTime}=matchSky(scene,settings,sun,venue==='topdeck',venue==='mill')
+  const {updateWeather:updateSky,setSkyTime}=matchSky(scene,settings,sun,venue==='topdeck',venue==='mill')
+  let updateFlags:((dt:number)=>void)|void
+  const updateWeather=(dt:number)=>{updateSky(dt);updateFlags?.(dt)}
   if(!schoolGround&&(night||evening)){
    for(const x of [-22,22]){
     const lamp=new T.PointLight(0xe8f3ff,night?230:100,90,1.4)
@@ -43,19 +45,55 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
   renderer.shadowMap.autoUpdate=false
   renderer.shadowMap.needsUpdate=true
 
+  if(venue==='gulch'){
+    const gulch=await (await import('./gulch')).buildGulch(scene,renderer,settings,fill,sun,setSkyTime,homeClub,awayClub)
+    return {updateTrain:null,updateWeather:(dt:number)=>{updateWeather(dt);gulch.update(dt)},setSchoolNight:gulch.setNight,advanceStadiumBall:null}
+  }
+
   if(schoolGround){
     const {GLTFLoader}=await import('three/addons/loaders/GLTFLoader.js')
     const school=await new GLTFLoader().loadAsync(venue==='mill'?millUrl:venue==='topdeck'?topDeckUrl:venue==='westend'?westEndUrl:venue==='southside'?diamondUrl:eastside?parkUrl:schoolGroundUrl)
     school.scene.traverse(object=>{
-      if(object instanceof T.Mesh){object.receiveShadow=true;object.castShadow=true}
+      if(!(object instanceof T.Mesh))return
+      object.receiveShadow=true
+      object.castShadow=true
+      if(venue==='mill' && object.material instanceof T.MeshStandardMaterial && object.material.name==='Mill floor • polished concrete'){
+        const {map,roughnessMap}=object.material
+        for(const texture of [map,roughnessMap]){
+          if(!texture)continue
+          // The slab UVs span the whole building. Mirror the bake at each tile edge.
+          texture.wrapS=texture.wrapT=T.MirroredRepeatWrapping
+          texture.repeat.set(4,4)
+          texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy())
+          texture.needsUpdate=true
+        }
+      }
+      if(venue==='southside' && object.material instanceof T.MeshStandardMaterial){
+        const material=object.material
+        // The ballpark uses direct and hemisphere light. Brushed metal keeps a
+        // diffuse silver body in shade and catches highlights without a reflection pass.
+        if(material.name==='Polished Chrome Metal' || material.name.startsWith('Polished Chrome Metal_')){
+          material.color.setHex(0xc1c8cc)
+          material.map=null
+          material.normalMap=null
+          material.metalnessMap=null
+          material.roughnessMap=null
+          material.metalness=.32
+          material.roughness=.32
+        }else if(material.name.startsWith('Hardware • galvanized')){
+          material.color.setHex(0xb5bfc2)
+          material.metalness=.22
+          material.roughness=.43
+        }
+      }
     })
     scene.add(school.scene)
     if(venue==='topdeck'||venue==='westend')(await import('./urbanTrees')).urbanTrees(scene,venue)
-    if(homeClub)await stadiumBranding(scene,homeClub,venue,school.scene)
+    if(homeClub)updateFlags=await stadiumBranding(scene,homeClub,venue,school.scene)
     if(venue==='mill'){
       if(homeClub&&awayClub)await stadiumBranding(scene,awayClub,venue,school.scene,'away')
       const mill=(await import('./cottonMill')).cottonMill(scene,school.scene,settings,fill,sun,setSkyTime)
-      return {updateTrain:null,setSchoolNight:mill.setSchoolNight,advanceStadiumBall:null,
+      return {millLights:mill.lightBays,updateTrain:null,setSchoolNight:mill.setSchoolNight,advanceStadiumBall:null,
         updateWeather:(dt:number)=>{updateWeather(dt);mill.update(dt)}}
     }
     const {stadiumBallPhysics}=await import('./stadiumCollision')
@@ -63,14 +101,15 @@ export async function buildGrounds(scene:T.Scene, renderer:T.WebGLRenderer,setti
     const setLighting=schoolLighting(scene,school.scene,renderer,fill,sun,setSkyTime,venue)
     const setSchoolNight=(on:boolean)=>{setLighting.setNight(on);street?.setTime(on?'Night':'Evening')}
     if(night||venue==='topdeck'&&evening)setSchoolNight(night)
-    const traffic=eastside?await (await import('./eastsideCrowd')).eastsideStreetLife(scene,school.scene,homeClub):street?.update
+    const neighborhood=eastside?await (await import('./eastsideCrowd')).eastsideStreetLife(scene,school.scene,homeClub):null
+    const traffic=neighborhood?.update??street?.update
     const updateTrain=venue==='westend'?await (await import('./westEndTrain')).westEndTrain(scene,school.scene,trainSound):null
-    return {updateTrain,schoolLights:venue==='school'?setLighting:undefined,updateWeather:traffic?(dt:number)=>{updateWeather(dt);traffic(dt)}:updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
+    return {updateTrain,introCar:neighborhood?.introCar,schoolLights:venue==='school'?setLighting:undefined,updateWeather:traffic?(dt:number)=>{updateWeather(dt);traffic(dt)}:updateWeather,setSchoolNight,advanceStadiumBall:stadiumBallPhysics(school.scene)}
   }
 
   const loader=new T.TextureLoader()
   const [grass,opponentMap]=await Promise.all([loader.loadAsync(turfUrl),homeClub?homeBoard(loader,homeClub):Promise.resolve(null)])
-  if(homeClub)await stadiumBranding(scene,homeClub,venue)
+  if(homeClub)updateFlags=await stadiumBranding(scene,homeClub,venue)
   grass.colorSpace=T.SRGBColorSpace
   grass.wrapS=grass.wrapT=T.MirroredRepeatWrapping
   grass.repeat.set(7,6)

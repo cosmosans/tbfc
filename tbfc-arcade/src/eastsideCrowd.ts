@@ -26,8 +26,8 @@ export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D,homeClub:
  atlas.colorSpace=T.SRGBColorSpace
  atlas.magFilter=T.NearestFilter
  const fans=[
-  {x:-16.4,z:-15.1,frame:0,y:0},
-  {x:-15.6,z:-15.45,frame:3,y:0},
+  {x:-0.75,z:-15.1,frame:0,y:0},
+  {x:1.4,z:-15.45,frame:3,y:0},
   {x:17.4,z:-15.87,frame:2,y:.16},
   {x:15.9,z:-15.2,frame:1,y:0},
   {x:-8.9,z:-15.6,frame:1,y:0},
@@ -59,8 +59,40 @@ export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D,homeClub:
   passing.position.z=direction===1?-30.75:-32.6
   return {direction,passing,models,delay:1+Math.random()*8,speed:0,active:false}
  })
- return (dt:number)=>{
+ const heroLane=lanes[1]
+ const heroCar=heroLane.models[0]
+ if(homeClub && heroCar){
+  const crest=await new T.TextureLoader().loadAsync(homeClub.crest)
+  crest.colorSpace=T.SRGBColorSpace
+  const fit=.13/Math.max(crest.image.width,crest.image.height)
+  // The blue body is a scaled unit box. Its rear faces -X and its right side is +Z.
+  const sticker=new T.Mesh(
+   new T.PlaneGeometry(fit*crest.image.width/heroCar.scale.z,fit*crest.image.height/heroCar.scale.y),
+   new T.MeshBasicMaterial({map:crest,transparent:true,opacity:.7,depthWrite:false}),
+  )
+  sticker.name='Home crest bumper sticker'
+  sticker.rotation.y=-Math.PI/2
+  sticker.position.set(-.501,-.22,.31)
+  heroCar.add(sticker)
+ }
+ let chasing=false
+ function introCar(x:number|null){
+  if(x===null){
+   if(chasing){
+    heroLane.models.forEach(model=>{model.visible=false})
+    heroLane.active=false
+    heroLane.delay=2
+   }
+   chasing=false
+   return
+  }
+  chasing=true
+  heroLane.models.forEach((model,i)=>{model.visible=i===0})
+  heroLane.passing.position.x=x
+ }
+ function update(dt:number){
   for(const lane of lanes){
+   if(chasing && lane===heroLane)continue
    if(!lane.active){
     lane.delay-=dt
     if(lane.delay>0||!lane.models.length)continue
@@ -78,4 +110,5 @@ export async function eastsideStreetLife(scene:T.Scene,park:T.Object3D,homeClub:
    }
   }
  }
+ return {update,introCar}
 }

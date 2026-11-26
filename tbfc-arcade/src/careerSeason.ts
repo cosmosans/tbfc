@@ -61,7 +61,7 @@ type Vote = {
   answer: "Yes" | "No" | "Maybe" | "Late";
   message: string;
 };
-type Conditions = { time: "Day" | "Night"; weather: "Rain" | "Clouds" | "Sun" };
+type Conditions = { time: "Day" | "Night"; weather: "Rain" | "Clouds" | "Sun" | "Snow" };
 type LeagueRow = {
   club: number;
   p: number;
@@ -87,6 +87,7 @@ export type Career = {
   division: Tier;
   seed: number;
   season: number;
+  seasonConditions?: Conditions[];
   round: number;
   day: number;
   schedule: Game[][];
@@ -292,6 +293,36 @@ export function matchConditions(seed: number): Conditions {
     weather: weather[Math.floor((sample / 4294967296) * weather.length)],
   };
 }
+// Plan all eight matchweeks together, without changing the gameplay random stream.
+export function seasonConditions(seed: number, season: number): Conditions[] {
+  let state = (seed ^ Math.imul(season, 0x9e3779b9)) >>> 0;
+  const random = () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+  const quarter = (season - 1) % 4; // Spring, Summer, Fall, Winter
+  const allowed: Conditions["weather"][] = quarter === 3
+    ? ["Sun", "Clouds", "Rain", "Snow"]
+    : quarter === 2 ? ["Sun", "Clouds"] : ["Sun", "Clouds", "Rain"];
+  const weeks: Conditions[] = Array.from({length: 8}, () => ({
+    time: random() < .5 ? "Day" : "Night",
+    weather: allowed[Math.floor(random() * allowed.length)],
+  }));
+  const order = Array.from({length: 8}, (_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  const minimum = [3, 1, 0, 2][quarter];
+  for (const index of order.slice(0, minimum))
+    weeks[index].weather = quarter === 3 ? "Snow" : "Rain";
+  if (quarter === 3) weeks[order[0]].time = "Night";
+  return weeks;
+}
+export function careerConditions(c: Career): Conditions {
+  c.seasonConditions ??= seasonConditions(c.seed, c.season);
+  return {...c.seasonConditions[c.round]};
+}
 function makeWeek(c: Career, roster: string[], women: Set<string>): Week {
   const order = shuffle(c, roster);
   const womenFirst = order.filter((n) => women.has(n));
@@ -344,7 +375,7 @@ function makeWeek(c: Career, roster: string[], women: Set<string>): Week {
     });
   varyMessages(events, c.seed);
   return {
-    conditions: matchConditions(c.seed),
+    conditions: careerConditions(c),
     events: events.sort((a, b) => a.day - b.day),
     sheet: { shape: "1-3-3", starters, bench },
   };
@@ -823,6 +854,7 @@ export function nextWeek(
     else if (relegatedSlot === 0) c.division = moveDivision(c.division, -1);
     c.leagueClubs = careerLeagueIndices(c.division, c.clubDivisions);
     c.season++;
+    c.seasonConditions = undefined;
     c.schedule = fixtures(c, 6);
     c.otherLeagues = makeOtherLeagues(c);
     c.reports = [];

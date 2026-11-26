@@ -1,5 +1,5 @@
 import {varyMessages} from './careerPhrases.ts'
-import {scheduleKickoffs,matchConditions,restoreOtherLeagues,type Career} from './careerSeason.ts'
+import {scheduleKickoffs,matchConditions,careerConditions,restoreOtherLeagues,type Career} from './careerSeason.ts'
 import {startingClubDivisions} from './careerLeague.ts'
 const prefix='tbfc.arcade.career.v1.'
 export function loadSlot(slot:number):Career|null{
@@ -17,6 +17,11 @@ export function loadSlot(slot:number):Career|null{
   const updateLine=(line:string)=>line.replaceAll('Saturday','Thursday').replace('this weekend','Thursday night').replace('My weekend','My Thursday night')
   for(const event of value.week.events)event.message=updateLine(event.message)
   for(const message of value.chat)message.text=updateLine(message.text)
+ }
+ // Upgrade upcoming weather without changing an already played match.
+ if(!value.seasonConditions){
+  const conditions=careerConditions(value)
+  if(!value.reports[value.round])value.week.conditions=conditions
  }
  varyMessages(value.week.events,value.seed,true)
  scheduleKickoffs(value)
