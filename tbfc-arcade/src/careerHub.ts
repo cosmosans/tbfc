@@ -373,7 +373,11 @@ export function careerHub(
       shell.querySelector("p")!.textContent = String(e);
     }
     function scrollArea() {
-      return shell.querySelector<HTMLElement>(".cr-chat-log, .cr-hub-content:not(.cr-chat-content)") ?? root;
+      return (
+        shell.querySelector<HTMLElement>(
+          ".cr-chat-log, .cr-hub-content:not(.cr-chat-content)",
+        ) ?? root
+      );
     }
     function draw(focus = "") {
       const previousScroll = scrollArea().scrollTop;
@@ -471,7 +475,7 @@ export function careerHub(
                   (g) =>
                     `<div>${g.minute}′ · ${g.player} · ${careerClubs(c)[g.club].name}</div>`,
                 )
-                .join("") || "<p>No goals.</p>";
+                .join("") || "";
             if (s.round === 7) {
               const place = s.schedule[7].flatMap(outcome).indexOf(0) + 1;
               summary +=

@@ -1,0 +1,57 @@
+<!-- Edit this file to change the Survival elimination popup's layout and appearance.
+     The game fills [data-portrait], [data-player], and [data-remaining]. -->
+<div class="survival-reveal" role="status">
+  <style>
+    .survival-reveal {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px;
+      background: #110d0d;
+      border-top: 4px solid #f15a32;
+      color: #fff1d2;
+      font:
+        clamp(13px, 2vw, 24px)/1.1 Upheaval,
+        monospace;
+      animation: survival-eliminated-appear 1.4s ease-out;
+      pointer-events: none;
+    }
+    .survival-reveal [data-portrait] {
+      width: 40px;
+      height: 40px;
+      background-position: center;
+      background-size: cover;
+      image-rendering: pixelated;
+    }
+    .survival-reveal [data-portrait] canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+    }
+    .survival-reveal .survival-reveal-text {
+      display: grid;
+      gap: 10px;
+    }
+    .survival-reveal strong {
+      color: #ff6845;
+    }
+    .survival-reveal small {
+      font: 12px/1.1 var(--ui-font);
+    }
+    @keyframes survival-eliminated-appear {
+      from {
+        background: #e94927;
+      }
+      to {
+        background: #110d0d;
+      }
+    }
+  </style>
+  <span data-portrait aria-hidden="true"></span>
+  <span class="survival-reveal-text">
+    <strong>ELIMINATED!</strong>
+    <b data-player></b>
+    <small data-remaining></small>
+  </span>
+</div>

@@ -14,3 +14,6 @@ button.stadium-card[aria-pressed=true]{outline:3px solid #ffb078;outline-offset:
 .stadium-nav [data-next]{background:#ad4726}
 @media(max-width:560px){dialog.stadium-picker[open]{padding:10px}.stadium-cards{gap:7px}.stadium-card img{height:clamp(60px,16vw,90px)}.stadium-copy{padding:5px}.stadium-nav button{font-size:16px}}
 .stadium-picker::backdrop{background:transparent}
+/* Match Team and Side Select's controller legend size on the stadium screen. */
+dialog.stadium-picker .stadium-nav.controller-legend{font:400 13px/1.4 var(--ui-font)}
+dialog.stadium-picker .stadium-nav.controller-legend>:is(button,span){font:inherit!important}

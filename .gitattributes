@@ -1,2 +1,6 @@
 tbfc-arcade/art/stadiums/Cotton[[:space:]]Mill[[:space:]]Lofts.blend filter=lfs diff=lfs merge=lfs -text
 tbfc-arcade/art/stadiums/Southside[[:space:]]Diamond.blend filter=lfs diff=lfs merge=lfs -text
+tbfc-arcade/art/stadiums/The[[:space:]]Gulch[[:space:]]-[[:space:]]before[[:space:]]rail[[:space:]]clearance.blend filter=lfs diff=lfs merge=lfs -text
+tbfc-arcade/art/stadiums/The[[:space:]]Gulch[[:space:]]-[[:space:]]before[[:space:]]viaduct[[:space:]]clearance.blend filter=lfs diff=lfs merge=lfs -text
+tbfc-arcade/art/stadiums/The[[:space:]]Gulch.blend filter=lfs diff=lfs merge=lfs -text
+tbfc-arcade/art/stadiums/The[[:space:]]Gulch.blend1 filter=lfs diff=lfs merge=lfs -text

@@ -365,7 +365,7 @@ export function selectLineup(
         return;
       }
       const previous = document.activeElement as HTMLElement | null;
-      dialog = matchConfirmDialog(fixture, settings, skipWarmup);
+      dialog = matchConfirmDialog(fixture, settings, skipWarmup, rules.mode === "snowpocalypse", rules.mode === "firstToFive" ? rules.targetScore : undefined);
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -789,6 +789,7 @@ export function selectLineup(
         const key = b.dataset.setting;
         if (
           key === "speed" ||
+          key === "targetScore" ||
           key === "time" ||
           key === "weather" ||
           key === "difficulty"
@@ -805,6 +806,10 @@ export function selectLineup(
                 ".lu-division-detail",
               )!.textContent = profiles[division].label;
             }
+          }
+          if (key === "targetScore" && rules.mode === "firstToFive") {
+            const target = Number(b.value);
+            if (target === 3 || target === 5 || target === 10) rules.targetScore = target;
           }
           if (key === "speed")
             settings.speed =

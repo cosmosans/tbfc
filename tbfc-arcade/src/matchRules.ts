@@ -1,5 +1,5 @@
 import {streetGoal} from './streetArena.ts'
-export type GameMode = 'classic' | 'street'
+export type GameMode = 'classic' | 'street' | 'snowpocalypse' | 'longRange' | 'firstToFive' | 'inferno' | 'survival' | 'beatTheClock' | 'airBalls' | 'mysteryMatch' | 'penaltyShootout'
 export type StreetSize = 3 | 5
 export const courtPresets = [
  {id:'slate',name:'Gulch Slate',color:'#515e64'},
@@ -17,11 +17,24 @@ export type MatchRules = {
  mode:GameMode;teamSize:3|5|7;goalkeepers:0|1;arena:string|null;
  goal:{halfWidth:number;height:number;depth?:number};boundary:'touchline'|'enclosed';
  winCondition:'timed'|'target';targetScore:number;halfMinutes:number|null;
+ staminaDrain:number;capacityRecovery:number;permanentBurn:boolean;
  tacticalProfile:'classic'|'totalFootball';court:CourtPreset;
 }
 export function classicRules():MatchRules {
- return {mode:'classic',teamSize:7,goalkeepers:1,arena:null,goal:{halfWidth:2,height:2},boundary:'touchline',winCondition:'timed',targetScore:0,halfMinutes:null,tacticalProfile:'classic',court:'blue'}
+ return {mode:'classic',teamSize:7,goalkeepers:1,arena:null,goal:{halfWidth:2,height:2},boundary:'touchline',winCondition:'timed',targetScore:0,halfMinutes:null,staminaDrain:1,capacityRecovery:0,permanentBurn:false,tacticalProfile:'classic',court:'blue'}
 }
+export function snowpocalypseRules():MatchRules {
+ return {...classicRules(),mode:'snowpocalypse'}
+}
+export function longRangeRules():MatchRules {return {...classicRules(),mode:'longRange'}}
+export function infernoRules():MatchRules {return {...classicRules(),mode:'inferno',permanentBurn:true}}
+export function survivalRules():MatchRules {return {...classicRules(),mode:'survival'}}
+export function airBallsRules():MatchRules {return {...classicRules(),mode:'airBalls'}}
+export function mysteryMatchRules():MatchRules {return {...classicRules(),mode:'mysteryMatch'}}
+export function beatTheClockRules():MatchRules {return {...classicRules(),mode:'beatTheClock',winCondition:'target',targetScore:0}}
+export function penaltyShootoutRules():MatchRules {return {...classicRules(),mode:'penaltyShootout'}}
+export const firstToFiveTargets=[3,5,10] as const
+export function firstToFiveRules(targetScore:number=5):MatchRules {return {...classicRules(),mode:'firstToFive',winCondition:'target',targetScore:firstToFiveTargets.includes(targetScore as 3|5|10)?targetScore:5,staminaDrain:.7,capacityRecovery:.04}}
 export function streetPreferences(value:unknown = null):StreetPreferences {
  const p = (value && typeof value === 'object' ? value : {}) as Partial<StreetPreferences>
  return {teamSize:p.teamSize===5?5:3,court:courtPresets.some(c=>c.id===p.court)?p.court!:'slate',winCondition:p.winCondition==='target'?'target':'timed',halfMinutes:[2,3,5].includes(p.halfMinutes!)?p.halfMinutes!:3,difficulty:typeof p.difficulty==='string'?p.difficulty:undefined,time:['Day','Evening','Night'].includes(p.time!)?p.time!:'Night',weather:['Sun','Clouds','Rain','Snow'].includes(p.weather!)?p.weather!:'Sun'}
@@ -34,7 +47,7 @@ export function streetRules(preferences:StreetPreferences):MatchRules {
 export function gulchDebugRules():MatchRules {
  return {...streetRules(streetPreferences()),winCondition:'target'}
 }
-export function targetReached(rules:MatchRules,home:number,away:number){return rules.winCondition==='target'&&Math.max(home,away)>=rules.targetScore}
+export function targetReached(rules:MatchRules,home:number,away:number){return rules.winCondition==='target'&&rules.targetScore>0&&Math.max(home,away)>=rules.targetScore}
 export function readStreetPreferences():StreetPreferences {
  try{return streetPreferences(JSON.parse(localStorage.getItem('tbfc.street.settings.v1')??'null'))}catch{return streetPreferences()}
 }

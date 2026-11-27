@@ -1,18 +1,25 @@
-import { parkOpening, parkCamera, parkBeatAt } from './candlerParkIntro';
-import parkAmbience from './audio/candler-park-opening-ambiance.mp3?url';
-import diamondMix from './audio/old-fourth-ward-intro.mp3?url';
-import midtownMix from './audio/midtown-intro.mp3?url';
-import parkSong from './audio/candler-park-intro.mp3?url';
-import {millBeatAt, millOpening, millSwitchTimes} from './cabbagetownIntro';
-import millCityUrl from './audio/cabbagetown-city.mp3?url';
-import millBeatUrl from './audio/cabbagetown-beat.mp3?url';
+import { parkOpening, parkCamera, parkBeatAt } from "./candlerParkIntro";
+import parkAmbience from "./audio/candler-park-opening-ambiance.mp3?url";
+import diamondMix from "./audio/old-fourth-ward-intro.mp3?url";
+import midtownMix from "./audio/midtown-intro.mp3?url";
+import parkSong from "./audio/candler-park-intro.mp3?url";
+import { millBeatAt, millOpening, millSwitchTimes } from "./cabbagetownIntro";
+import millCityUrl from "./audio/cabbagetown-city.mp3?url";
+import millBeatUrl from "./audio/cabbagetown-beat.mp3?url";
 import * as T from "three";
 import { rollBall } from "./ballSpin";
 import type { Club } from "./opponentSquads";
 import { cinematicPlayerSize } from "./replay";
 import { spriteGroundPadding } from "./spriteGround";
 import kachunkUrl from "./audio/grant-park-kachunk.mp3?url";
-import { daytimeSweepAt, lampSwitchAt, lapPosition, montageAt, grantParkShots, type IntroShot as Shot } from "./grantParkIntro";
+import {
+  daytimeSweepAt,
+  lampSwitchAt,
+  lapPosition,
+  montageAt,
+  grantParkShots,
+  type IntroShot as Shot,
+} from "./grantParkIntro";
 import grantParkUrl from "./audio/grant-park-intro.mp3?url";
 import { audio, type IntroVenue } from "./matchAudio";
 import beatUrl from "./audio/kassabeat-musical-beat-511114.mp3?url";
@@ -47,21 +54,30 @@ const diamondRevealAt = 6.2;
 const homePlateSeconds = 4;
 const diamondOpening: Shot[] = [
   {
-    name: "Home plate dolly", seconds: homePlateSeconds,
-    from: [6, 1.05, -28], to: [0, 1.4, -33],
-    lookFrom: [-2.5, .8, -38], lookTo: [-5, 1.1, -38],
+    name: "Home plate dolly",
+    seconds: homePlateSeconds,
+    from: [6, 1.05, -28],
+    to: [0, 1.4, -33],
+    lookFrom: [-2.5, 0.8, -38],
+    lookTo: [-5, 1.1, -38],
     fov: 58,
   },
   {
-    name: "Dugout glide", seconds: diamondRevealAt - homePlateSeconds,
-    from: [-20, 1.25, -26], to: [-12, 2.15, -26],
-    lookFrom: [-15, 1.1, -33], lookTo: [-9, 1.5, -34],
+    name: "Dugout glide",
+    seconds: diamondRevealAt - homePlateSeconds,
+    from: [-20, 1.25, -26],
+    to: [-12, 2.15, -26],
+    lookFrom: [-15, 1.1, -33],
+    lookTo: [-9, 1.5, -34],
     fov: 56,
   },
   {
-    name: "Backstop rise", seconds: 13 - diamondRevealAt,
-    from: [-3, 3.8, -45], to: [-3, 12, -43],
-    lookFrom: [-3, 2.2, -31], lookTo: [0, .6, -2],
+    name: "Backstop rise",
+    seconds: 13 - diamondRevealAt,
+    from: [-3, 3.8, -45],
+    to: [-3, 12, -43],
+    lookFrom: [-3, 2.2, -31],
+    lookTo: [0, 0.6, -2],
     fov: 59,
   },
 ];
@@ -129,30 +145,44 @@ type Intro = {
   venue: string;
   time: string;
   kind: string;
+  modeGuide?: string;
+  weatherAdvisory?: boolean;
   date?: string;
   season?: string;
   introVenue: IntroVenue;
   exitPreview?: () => void;
-  introCar?: (x:number|null)=>void;
-  millLights?: (count:number)=>void;
-  schoolLights?: {positions: T.Vector3[]; lightBanks: (count: number) => void};
+  introCar?: (x: number | null) => void;
+  millLights?: (count: number) => void;
+  schoolLights?: {
+    positions: T.Vector3[];
+    lightBanks: (count: number) => void;
+  };
   train: (progress: number | null) => void;
 };
 
 export function prepareMatchIntro(venue: IntroVenue) {
-  if (venue === "oldFourthWard") return audio.prepareCue("diamondMix", diamondMix);
+  if (venue === "oldFourthWard")
+    return audio.prepareCue("diamondMix", diamondMix);
   if (venue === "midtown") return audio.prepareCue("midtownMix", midtownMix);
-  if (venue === "candlerPark") return Promise.all([audio.prepareCue("parkSong", parkSong), audio.prepareCue("parkAmbience", parkAmbience)]);
-  if (venue === "cabbagetown") return Promise.all([
-    audio.prepareCue("millCity",millCityUrl), audio.prepareCue("millBeat",millBeatUrl),
-    audio.prepareCue("kachunk",kachunkUrl),
-  ]);
-  if (venue === "grantPark") return Promise.all([
-    audio.prepareCue("grantPark", grantParkUrl),
-    audio.prepareCue("kachunk", kachunkUrl),
-  ]);
+  if (venue === "candlerPark")
+    return Promise.all([
+      audio.prepareCue("parkSong", parkSong),
+      audio.prepareCue("parkAmbience", parkAmbience),
+    ]);
+  if (venue === "cabbagetown")
+    return Promise.all([
+      audio.prepareCue("millCity", millCityUrl),
+      audio.prepareCue("millBeat", millBeatUrl),
+      audio.prepareCue("kachunk", kachunkUrl),
+    ]);
+  if (venue === "grantPark")
+    return Promise.all([
+      audio.prepareCue("grantPark", grantParkUrl),
+      audio.prepareCue("kachunk", kachunkUrl),
+    ]);
   const cues = [audio.prepareCue("introBeat", beatUrl)];
-  if (venue === "westend") cues.push(audio.prepareCue("introTraffic", trafficUrl));
+  if (venue === "westend")
+    cues.push(audio.prepareCue("introTraffic", trafficUrl));
   return Promise.all(cues);
 }
 
@@ -182,22 +212,46 @@ export function matchIntro(a: Intro) {
       field.hidden = !text;
     }
   }
+  if (a.modeGuide) {
+    const guide = document.createElement("p");
+    guide.className = "mi-mode-guide";
+    guide.textContent = a.modeGuide;
+    overlay.querySelector(".mi-details")!.append(guide);
+  }
+  if (a.weatherAdvisory) {
+    const advisory = document.createElement("p");
+    advisory.className = "mi-weather-advisory";
+    advisory.textContent =
+      "WINTER WEATHER ADVISORY ❄ Atlanta has received a devastating 1.2 inches of snow. The match will proceed as scheduled.";
+    overlay.querySelector(".mi-details")!.append(advisory);
+  }
   a.root.append(overlay);
   a.root.dataset.matchIntro = "";
   const grantPark = a.introVenue === "grantPark";
   const mill = a.introVenue === "cabbagetown";
   let litBays = 0;
   if (mill) a.millLights?.(0);
-  const lamp = grantPark && a.time !== "Day" ? a.schoolLights?.positions[0] : undefined;
+  const lamp =
+    grantPark && a.time !== "Day" ? a.schoolLights?.positions[0] : undefined;
   const revealAt = lamp ? montageAt : daytimeSweepAt;
-  const shots = mill ? [...millOpening,...pitchShots] : grantPark ? grantParkShots(lamp) :
-    a.introVenue === "oldFourthWard" ? [...diamondOpening, ...pitchShots] :
-    a.introVenue === "midtown" ? [midtownOpening, ...pitchShots] :
-    a.introVenue === "candlerPark" ? [parkOpening, ...pitchShots] :
-    a.introVenue === "westend" ? [westEndOpening, ...pitchShots] : pitchShots;
+  const shots = mill
+    ? [...millOpening, ...pitchShots]
+    : grantPark
+      ? grantParkShots(lamp)
+      : a.introVenue === "oldFourthWard"
+        ? [...diamondOpening, ...pitchShots]
+        : a.introVenue === "midtown"
+          ? [midtownOpening, ...pitchShots]
+          : a.introVenue === "candlerPark"
+            ? [parkOpening, ...pitchShots]
+            : a.introVenue === "westend"
+              ? [westEndOpening, ...pitchShots]
+              : pitchShots;
   let switched = false;
   if (lamp) a.schoolLights!.lightBanks(0);
-  const walkAt = shots.slice(0, -1).reduce((time, shot) => time + shot.seconds, 0);
+  const walkAt = shots
+    .slice(0, -1)
+    .reduce((time, shot) => time + shot.seconds, 0);
   const camera = new T.PerspectiveCamera(55, 1, 0.1, 160);
   const group = new T.Group();
   a.scene.add(group);
@@ -210,7 +264,8 @@ export function matchIntro(a: Intro) {
   hide.forEach((obj) => (obj.visible = false));
   const teams = a.teams.map((team, side) =>
     team.map((actor, i) => {
-      const angle = (i * 2 * Math.PI) / (grantPark ? team.length - 3 : team.length);
+      const angle =
+        (i * 2 * Math.PI) / (grantPark ? team.length - 3 : team.length);
       const circle = new T.Vector3(
         (side ? 10 : -10) + 5.5 * Math.cos(angle),
         0,
@@ -237,11 +292,17 @@ export function matchIntro(a: Intro) {
     sprite.material.map = a.ball.material.map!.clone();
     sprite.visible = true;
     group.add(sprite);
-    return { sprite, phase: 0, previous: sprite.position.clone(), placed: false };
+    return {
+      sprite,
+      phase: 0,
+      previous: sprite.position.clone(),
+      placed: false,
+    };
   }
   const balls = teams.map(introBall);
   const shotBalls = grantPark ? teams.map(introBall) : [];
-  const lapOrigin = new T.Vector3(), lapAhead = new T.Vector3();
+  const lapOrigin = new T.Vector3(),
+    lapAhead = new T.Vector3();
   let elapsed = 0,
     requested = false,
     previousA = !!menuPad()?.buttons[0]?.pressed;
@@ -264,8 +325,7 @@ export function matchIntro(a: Intro) {
     if (event.code === "Escape") {
       if (a.exitPreview) a.exitPreview();
       else setPaused(!paused);
-    }
-    else if (!paused && ["KeyJ", "Enter", "Space"].includes(event.code))
+    } else if (!paused && ["KeyJ", "Enter", "Space"].includes(event.code))
       requested = true;
   }
   window.addEventListener("keydown", keyboard, true);
@@ -310,7 +370,7 @@ export function matchIntro(a: Intro) {
       // Follow the same lane as the runner, looking ahead into the bend.
       lapPosition(elapsed - 1.35, 0, camera.position);
       camera.position.y = 2.65;
-      lapPosition(elapsed + .55, 0, aim);
+      lapPosition(elapsed + 0.55, 0, aim);
       aim.y = 1.15;
     }
     if (walking && local > shot.seconds)
@@ -332,18 +392,41 @@ export function matchIntro(a: Intro) {
         a.schoolLights!.lightBanks(a.schoolLights!.positions.length);
     }
     if (mill) {
-      const count = millSwitchTimes.filter(at => elapsed >= at).length;
+      const count = millSwitchTimes.filter((at) => elapsed >= at).length;
       if (count !== litBays) {
         litBays = count;
         a.millLights?.(count);
       }
     }
-    const reveal = a.introVenue === "oldFourthWard" ? T.MathUtils.smoothstep(elapsed, diamondRevealAt, diamondRevealAt + .9) : shot === midtownOpening ? T.MathUtils.smoothstep(local, midtownBeatAt, midtownBeatAt + .8) : shot === parkOpening ? T.MathUtils.smoothstep(local, parkBeatAt, parkBeatAt + .32) : mill ? T.MathUtils.smoothstep(elapsed,millBeatAt,millBeatAt+.8) : grantPark ? T.MathUtils.smoothstep(elapsed,
-      revealAt, revealAt + 1.2) : trainShot
-      ? T.MathUtils.smoothstep(local, crestRevealAt, crestRevealAt + 1.35)
-      : 1;
+    const reveal =
+      a.introVenue === "oldFourthWard"
+        ? T.MathUtils.smoothstep(
+            elapsed,
+            diamondRevealAt,
+            diamondRevealAt + 0.9,
+          )
+        : shot === midtownOpening
+          ? T.MathUtils.smoothstep(local, midtownBeatAt, midtownBeatAt + 0.8)
+          : shot === parkOpening
+            ? T.MathUtils.smoothstep(local, parkBeatAt, parkBeatAt + 0.32)
+            : mill
+              ? T.MathUtils.smoothstep(elapsed, millBeatAt, millBeatAt + 0.8)
+              : grantPark
+                ? T.MathUtils.smoothstep(elapsed, revealAt, revealAt + 1.2)
+                : trainShot
+                  ? T.MathUtils.smoothstep(
+                      local,
+                      crestRevealAt,
+                      crestRevealAt + 1.35,
+                    )
+                  : 1;
     overlay.style.setProperty("--reveal", String(reveal));
-    if ((a.introVenue === "generic" || a.introVenue === "westend") && reveal > 0 && !beatStarted && soundtrack) {
+    if (
+      (a.introVenue === "generic" || a.introVenue === "westend") &&
+      reveal > 0 &&
+      !beatStarted &&
+      soundtrack
+    ) {
       soundtrack.startBeat();
       beatStarted = true;
     }
@@ -355,8 +438,11 @@ export function matchIntro(a: Intro) {
       const beat = elapsed / (1.12 + side * 0.12),
         pass = Math.floor(beat),
         fraction = beat - pass;
-      const inCircle =
-        grantPark ? team.length - 3 : shot.name === "Goal mouth" ? team.length - 1 : team.length;
+      const inCircle = grantPark
+        ? team.length - 3
+        : shot.name === "Goal mouth"
+          ? team.length - 1
+          : team.length;
       const interval = inCircle === 6 ? 5 : 3;
       const passer = (pass * interval) % inCircle,
         next = ((pass + 1) * interval) % inCircle;
@@ -365,9 +451,15 @@ export function matchIntro(a: Intro) {
       const practiceBall = shotBalls[side]?.sprite;
       if (practiceBall) {
         practiceBall.visible = !walking;
-        const travel = shotPhase < .44 ? shotPhase / .44 : Math.max(0, 1 - (shotPhase - .44) / .44);
-        practiceBall.position.set((side ? 1 : -1) * (15 + 5 * travel),
-          .19 + Math.sin(Math.PI * travel) * 1.2, 3 - 3 * travel);
+        const travel =
+          shotPhase < 0.44
+            ? shotPhase / 0.44
+            : Math.max(0, 1 - (shotPhase - 0.44) / 0.44);
+        practiceBall.position.set(
+          (side ? 1 : -1) * (15 + 5 * travel),
+          0.19 + Math.sin(Math.PI * travel) * 1.2,
+          3 - 3 * travel,
+        );
       }
       team.forEach(({ actor, sprite, circle, end: position, maps }, i) => {
         // The keepers peel away first, arriving at their goals ahead of the outfielders.
@@ -382,7 +474,9 @@ export function matchIntro(a: Intro) {
               : walking
                 ? T.MathUtils.smoothstep(local - i * 0.09, 0, 4.8)
                 : 0;
-        const origin = runner ? lapPosition(Math.min(elapsed, walkAt), side, lapOrigin) : circle;
+        const origin = runner
+          ? lapPosition(Math.min(elapsed, walkAt), side, lapOrigin)
+          : circle;
         sprite.position.lerpVectors(origin, position, stride);
         const moving = (runner && !walking) || (stride > 0 && stride < 1);
         const target = moving || walking ? position : team[next].circle;
@@ -399,7 +493,7 @@ export function matchIntro(a: Intro) {
               ? -circle.z
               : target.z - circle.z;
         if (runner && !walking) {
-          lapPosition(elapsed + .05, side, lapAhead);
+          lapPosition(elapsed + 0.05, side, lapAhead);
           dx = lapAhead.x - origin.x;
           dz = lapAhead.z - origin.z;
         } else if (grantPark && (shooter || keeper) && !walking) {
@@ -416,7 +510,8 @@ export function matchIntro(a: Intro) {
         const kicking =
           !walking &&
           !moving &&
-          ((i === passer && fraction < .35) || (shooter && shotPhase < .15)) &&
+          ((i === passer && fraction < 0.35) ||
+            (shooter && shotPhase < 0.15)) &&
           maps[2]?.image.height >= 384;
         const mode = moving ? 1 : kicking ? 2 : 0,
           map = maps[mode];
@@ -426,7 +521,12 @@ export function matchIntro(a: Intro) {
         const col = moving
           ? Math.floor(local * 7 + i) % actor.runFrames
           : kicking
-            ? Math.min(cols - 1, Math.floor((shooter ? shotPhase / .15 : fraction / .35) * cols))
+            ? Math.min(
+                cols - 1,
+                Math.floor(
+                  (shooter ? shotPhase / 0.15 : fraction / 0.35) * cols,
+                ),
+              )
             : face;
         const row = mode === 0 ? 0 : face % rows;
         map.repeat.set(1 / cols, 1 / rows);
@@ -454,8 +554,13 @@ export function matchIntro(a: Intro) {
       for (const copy of collection) {
         const pos = copy.sprite.position;
         if (copy.placed && !walking) {
-          copy.phase = rollBall(copy.sprite, copy.phase, pos.x - copy.previous.x,
-            pos.z - copy.previous.z, -cameraAngle / (Math.PI / 4));
+          copy.phase = rollBall(
+            copy.sprite,
+            copy.phase,
+            pos.x - copy.previous.x,
+            pos.z - copy.previous.z,
+            -cameraAngle / (Math.PI / 4),
+          );
         }
         copy.previous.copy(pos);
         copy.placed = true;
@@ -477,7 +582,7 @@ export function matchIntro(a: Intro) {
     a.introCar?.(null);
     hide.forEach((obj, i) => (obj.visible = visibility[i]));
     group.removeFromParent();
-    for (const {sprite} of [...balls, ...shotBalls]) {
+    for (const { sprite } of [...balls, ...shotBalls]) {
       sprite.material.map!.dispose();
       sprite.material.dispose();
     }

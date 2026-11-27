@@ -1,3 +1,5 @@
+import {supportsMode} from './arenaCapabilities'
+import type {GameMode} from './matchRules'
 import {menuPad,menuDirection} from './menuPad'
 import {audio} from './matchAudio'
 import {padBadge} from './screenUI'
@@ -29,28 +31,29 @@ export function homeStadium(club:string):StadiumId{
  return 'school'
 }
 
-export function selectStadium(home?:StadiumId,initial:StadiumId=home??'school'):Promise<StadiumId|null>{
+export function selectStadium(home?:StadiumId,initial:StadiumId=home??'school',mode:GameMode='classic'):Promise<StadiumId|null>{
+ const eligible=grounds.filter(g=>supportsMode(g.id,mode))
  const dialog=document.createElement('dialog')
  dialog.className='stadium-picker'
  dialog.setAttribute('aria-labelledby','stadium-title')
  dialog.innerHTML=`<div class="stadium-inner"><h1 id="stadium-title">Select Stadium</h1>
- <div class="stadium-cards">${grounds.map(g=>`<button type="button" class="stadium-card">
+ <div class="stadium-cards">${eligible.map(g=>`<button type="button" class="stadium-card">
  <img src="${g.image}" alt=""><span class="stadium-copy"><strong>${g.name}</strong><small>${g.area} · ${g.surface}</small></span></button>`).join('')}</div>
  ${renderMarkup(stadiumLegendTemplate, {backHint:padBadge("B"),moveHint:padBadge("LS"),continueHint:padBadge("A")})}</div>`
  document.body.append(dialog);dialog.showModal()
  const cards=Array.from(dialog.querySelectorAll<HTMLButtonElement>('.stadium-card'))
- let index=grounds.findIndex(g=>g.id===initial)
+ let index=eligible.findIndex(g=>g.id===initial)
  function select(i:number){
-  index=(i+grounds.length)%grounds.length
+  index=(i+eligible.length)%eligible.length
   cards.forEach((c,n)=>c.setAttribute('aria-pressed',String(n===index)))
   cards[index].focus()
  }
- select(index)
+ select(Math.max(0,index))
  return new Promise(resolve=>{
   let frame=0
   function finish(back:boolean){
    cancelAnimationFrame(frame);dialog.close();dialog.remove();audio.menu(back?'nav':'success')
-   resolve(back?null:grounds[index].id)
+   resolve(back?null:eligible[index].id)
   }
   function cycle(step:number){audio.menu('nav');select(index+step)}
   cards.forEach((c,n)=>{c.onclick=()=>select(n)})

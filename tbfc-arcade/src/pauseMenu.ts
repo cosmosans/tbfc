@@ -8,10 +8,10 @@ import {menuDirection,menuPad} from './menuPad'
 import {hint,reveal} from './screenUI'
 
 type Choice='resume'|'squad'|'sides'|'simulate'|'quit'
-export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string):Promise<Choice>{
+export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string,clockLabel?:string):Promise<Choice>{
  const dialog=document.createElement('dialog')
  dialog.className='career-whistle pause-menu';dialog.setAttribute('aria-label',practice?'Practice Paused':'Match Paused')
- const clock=Math.floor(seconds/60)+':'+String(Math.floor(seconds)%60).padStart(2,'0')
+ const clock=clockLabel??Math.floor(seconds/60)+':'+String(Math.floor(seconds)%60).padStart(2,'0')
  const team=(c:Club)=>`<div><img src="${c.crest}" alt=""><b>${c.name}</b></div>`
  dialog.innerHTML=renderMarkup(pauseTemplate, {
   modeLabel: practice?'Practice':'Match',

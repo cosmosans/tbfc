@@ -125,3 +125,12 @@
 #team-select .ts-kit{display:grid;justify-items:center;gap:3px;margin:7px auto 0;padding:3px 12px;background:#100e0be6;color:#fff1df;border:1px solid #624b3b;font:14px Upheaval,monospace;cursor:pointer}
 #team-select .ts-kit:disabled{cursor:default;border-color:transparent}
 #team-select .ts-kit img{height:clamp(28px,7vh,40px);width:auto;image-rendering:pixelated}
+/* Keep Team and Side Select legends at the main-menu legend size. */
+#team-select .ts-foot.controller-legend{zoom:min(1,calc(1.15 / var(--menu-scale,1)))}
+
+/* Beat the Clock keeps the opposing side CPU-only. */
+.side-select[data-beat-clock] .beat-side-error{text-align:center;color:#fff4df;background:#a92a24;padding:8px 12px;font:15px/1.2 Upheaval,monospace;margin:0 0 8px}
+.side-select[data-beat-clock] .beat-side-error[hidden]{display:none}
+.side-select[data-beat-clock] .beat-side-pulse{animation:beat-side-pulse .4s ease-out}
+@keyframes beat-side-pulse{50%{transform:scale(1.035)}}
+.side-select[data-beat-clock] .ts-next:disabled{opacity:.45;cursor:not-allowed}

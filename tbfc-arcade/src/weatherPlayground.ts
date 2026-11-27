@@ -2,7 +2,7 @@ import * as T from 'three'
 import {snowSurface} from './snowSurface'
 import type {MatchSettings} from './matchSettings'
 
-export function weatherPlayground(scene:T.Scene, settings:MatchSettings){
+export function weatherPlayground(scene:T.Scene, settings:MatchSettings, initialSnow=0){
   const tuning={wetSlowdown:30,puddleDrag:90,puddleSize:100}
   const patches:{x:number,z:number,rx:number,rz:number}[]=[]
   for(const scale of [.85,1,1.15]){
@@ -29,10 +29,10 @@ export function weatherPlayground(scene:T.Scene, settings:MatchSettings){
   scene.add(group)
   let snow:ReturnType<typeof snowSurface>|undefined
   function refresh(){
-    if(settings.weather==='Snow') snow??=snowSurface(scene)
+    if(settings.weather==='Snow') snow??=snowSurface(scene,initialSnow)
     if(snow){
       if(snow.mesh.visible && settings.weather!=='Snow')snow.reset()
-      snow.mesh.visible=settings.weather==='Snow'
+      snow.setVisible(settings.weather==='Snow')
     }
     group.visible=settings.weather==='Rain'
     patches.forEach((p,i)=>group.children[i].scale.set(p.rx*tuning.puddleSize/100,p.rz*tuning.puddleSize/100,1))

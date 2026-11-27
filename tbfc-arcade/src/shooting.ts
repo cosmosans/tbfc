@@ -1,27 +1,29 @@
+import {longRangeBalance} from './longRange.ts'
 export type ShotResult = 'Goal' | 'Save' | 'Post' | 'Crossbar' | 'Wide' | 'Over'
 
 // x increases from midfield toward the goal. Power is a fraction of a full charge.
-export function missChances(shooterX:number, z:number, goalX:number, power:number){
+export function missChances(shooterX:number, z:number, goalX:number, power:number,longRange=false){
   const forward=Math.max(0,goalX-shooterX)
   const distance=Math.hypot(forward,z)
   const anglePenalty=1-forward/Math.max(.01,distance)
-  const range=Math.min(1.4,distance/(goalX*5/6))
+  const range=Math.min(1.4,distance/(goalX*5/6))*(longRange?longRangeBalance.distancePenalty:1)
   const excessPower=Math.max(0,(power-.55)/.45)
   const total=Math.min(.85,.04+.36*range**1.5+.14*anglePenalty+.12*excessPower**2)
   const highShare=.20+.40*power
   return {wide:total*(1-highShare),over:total*highShare}
 }
 
-export function planShot(x:number,z:number,keeperZ:number,power:number,goalX:number,shooterX:number,keeperX:number,random=Math.random,defended=true,target=(random()*2-1)*1.65,errorMultiplier=1,halfWidth=2,aimTarget?:number){
+export function planShot(x:number,z:number,keeperZ:number,power:number,goalX:number,shooterX:number,keeperX:number,random=Math.random,defended=true,target=(random()*2-1)*1.65,errorMultiplier=1,halfWidth=2,aimTarget?:number,longRange=false,keeperFactor=1){
   target=aimTarget ?? target*halfWidth/2
   const smallGoal=halfWidth<1.5
   const distance=Math.hypot(goalX-shooterX,z)
   const closeFactor=Math.min(1,distance/8)
-  const progress=Math.min(1,Math.max(0,shooterX/goalX))
+  const progress=Math.min(1,Math.max(longRange?.27:0,shooterX/goalX))
   const angle=(goalX-shooterX)/Math.max(.01,Math.hypot(goalX-shooterX,z))
   const placement=Math.min(1,Math.abs(target-keeperZ)/3)
-  const goalChance=progress*(.45+.25*power+.14*placement)*(.65+.35*angle)
-  const miss=missChances(shooterX,z,goalX,power)
+  const goalChance=progress*(.45+.25*power+.14*placement)*(.65+.35*angle)*(longRange?longRangeBalance.keeperDelay:1)*keeperFactor
+  const miss=missChances(shooterX,z,goalX,power,longRange)
+  if(longRange){miss.wide/=longRangeBalance.accuracyBonus+1;miss.over/=longRangeBalance.accuracyBonus+1}
   const scale=Math.min(errorMultiplier*(smallGoal ? .25+.75*closeFactor**2 : 2/halfWidth),.99/(miss.wide+miss.over))
   miss.wide*=scale
   miss.over*=scale

@@ -87,14 +87,14 @@ test('boxcars sit beyond the far touchline and remain out of the playing area',(
  }
 })
 test('every court colour preserves concrete grain without tinting scenery',()=>{
- for(const preset of courtPresets){
-  const scene=new T.Scene(),paint=new T.MeshStandardMaterial({roughness:.82});paint.name='STREET Surface Paint'
-  paint.map=new T.Texture();paint.roughnessMap=new T.Texture()
+ for(const preset of courtPresets)for(const materialName of ['STREET Surface Paint','rubber_tiles']){
+  const scene=new T.Scene(),paint=new T.MeshStandardMaterial({roughness:.82});paint.name=materialName
+  paint.map=new T.Texture();paint.roughnessMap=new T.Texture();paint.normalMap=new T.Texture()
   const floor=new T.Mesh(new T.PlaneGeometry(32,20),paint),wall=new T.Mesh(new T.BoxGeometry(),new T.MeshStandardMaterial({color:0x999999}))
   scene.add(floor,wall);const originalWall=wall.material
   customizeCourt(scene,preset.id)
   assert.equal(floor.material.color.getHexString(),preset.color.slice(1))
-  assert.equal(floor.material.map,paint.map);assert.equal(floor.material.roughnessMap,paint.roughnessMap);assert.equal(floor.material.roughness,.82)
+  assert.equal(floor.material.normalMap,paint.normalMap);assert.equal(floor.material.map,paint.map);assert.equal(floor.material.roughnessMap,paint.roughnessMap);assert.equal(floor.material.roughness,.82)
   assert.equal(wall.material,originalWall);assert.equal(wall.material.color.getHexString(),'999999')
  }
 })

@@ -50,6 +50,9 @@ export async function buildGulch(scene:T.Scene,renderer:T.WebGLRenderer,settings
  for(const x of [-20,0,20]){
   const lamp=new T.PointLight(0xffba70,40,10,1.6);lamp.position.set(x,3.4,12);scene.add(lamp)
  }
+ // A static court-centre reflection keeps authored metals/glazing readable.
+ // Capture only when lighting changes, never per frame; dispose the previous map.
+ let reflections:T.WebGLRenderTarget|undefined
  function time(value:MatchSettings['time']){
   setSkyTime(value)
   const night=value==='Night',evening=value==='Evening',overcast=settings.weather!=='Sun'
@@ -59,6 +62,12 @@ export async function buildGulch(scene:T.Scene,renderer:T.WebGLRenderer,settings
   sun.position.set(24,night?18:evening?9:28,-18)
   fixtures.forEach(lamp=>lamp.intensity=night?240:evening?100:15)
   renderer.shadowMap.needsUpdate=true
+  scene.environment=null
+  const generator=new T.PMREMGenerator(renderer)
+  const next=generator.fromScene(scene,0,.1,160,{size:256,position:new T.Vector3(0,4,0)})
+  generator.dispose()
+  reflections?.dispose();reflections=next
+  scene.environment=next.texture
  }
  time(settings.time)
  if(home)await stadiumBranding(scene,home,'gulch',model,'home')

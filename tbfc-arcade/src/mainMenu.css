@@ -15,12 +15,17 @@
   margin: auto;
   padding: clamp(8px, 2vh, 22px) 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .menu-title {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: clamp(12px, 3vw, 30px);
+  margin-bottom: clamp(12px, 3vh, 24px);
 }
 .menu-title img {
   display: block;
@@ -90,24 +95,26 @@
   white-space: nowrap;
 }
 .menu-shell nav {
-  display: grid;
-  gap: clamp(3px, 0.8dvh, 8px);
   max-width: 410px;
-  margin: clamp(8px, 2dvh, 22px) auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .menu-shell button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(4px, 1dvh, 10px) 18px;
-  border: 1px solid #73503c;
-  border-radius: 3px;
-  background: #0c0806;
+  padding: 5px;
   color: #fff3df;
   font:
     clamp(16px, 3dvh, 31px)/1 Upheaval,
     monospace;
 }
+
+.menu-shell button:focus {
+  color: orange;
+}
+
 .menu-shell button[data-action="simulate"] {
   white-space: nowrap;
 }
@@ -128,38 +135,50 @@
 }
 /* Quiet title-screen prompt; keyboard, controller and pointer share the entry action. */
 .menu-start-prompt {
-  margin: clamp(18px, 4vh, 36px) 0 0;
   text-align: center;
   color: #fff3df;
-  font: 400 14px/1.5 var(--ui-font);
+  display: block;
+  width: fit-content;
+  margin: 12px auto 0;
+  padding: 4px 10px;
+  background: #17100ed9;
+  border-radius: 3px;
+  font: 600 12px var(--ui-font);
+  color: #c1aca0;
 }
 .menu-shell button:focus-visible {
   outline: none;
 }
+/* Clip the light sweep to the illustrated logo, including its transparent edges. */
+.menu-title {
+  position: relative;
+}
 @media (prefers-reduced-motion: no-preference) {
-  .menu-title h1 {
-    width: fit-content;
+  .menu-title::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
     background: linear-gradient(
-        108deg,
-        #ffad72 41%,
-        #efbd61 47%,
-        #fff3a8 50%,
-        #efbd61 53%,
-        #ffad72 59%
+        110deg,
+        transparent 43%,
+        #fff5cb55 47%,
+        #ffffffdd 50%,
+        #fff5cb55 53%,
+        transparent 57%
       )
-      100% 0 / 300% 100%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
-    animation: arcade-shimmer 5s linear infinite;
+      150% 0 / 300% 100% no-repeat;
+    mask: url("../../src/img/arcade-logo.png") center / contain no-repeat;
+    mix-blend-mode: screen;
+    animation: arcade-shimmer 4s linear infinite;
   }
   @keyframes arcade-shimmer {
     0% {
-      background-position: 100% 0;
+      background-position: 150% 0;
     }
-    18%,
+    50%,
     100% {
-      background-position: 0% 0;
+      background-position: -50% 0;
     }
   }
 }
@@ -215,20 +234,65 @@ body:has(> .menu-broadcast) :is(#main-menu, #team-select, #lineup) {
 .menu-shell nav button:enabled:focus::after {
   content: "▸";
 }
-#main-menu[data-screen="menu"] nav button {
-  position: relative;
+#main-menu .menu-ball-options {
+  margin-inline: auto;
+  gap: clamp(3px, 0.8dvh, 8px);
+}
+#main-menu .menu-ball-options button {
   justify-content: center;
   text-align: center;
   text-transform: uppercase;
+  background: transparent;
+  border: 0;
+  text-shadow: 0 2px 2px #100b08;
 }
-#main-menu[data-screen="menu"] nav button:focus::after {
+#main-menu .menu-ball-options button:focus,
+#main-menu[data-screen="menu"] nav:not(:focus-within) button:first-child {
+  color: #f55706;
+  outline: none;
+}
+#main-menu .menu-ball-options button:focus::after {
+  content: none;
+}
+#main-menu .menu-ball-options button > span {
+  position: relative;
+}
+#main-menu .menu-ball-options button:focus > span::before,
+#main-menu[data-screen="menu"]
+  nav:not(:focus-within)
+  button:first-child
+  > span::before {
+  content: "";
   position: absolute;
-  right: 18px;
+  width: 1.15em;
+  height: 1.15em;
+  right: calc(100% + 0.35em);
+  top: 50%;
+  transform: translateY(-50%);
+  background: url("./art/ball-spin.png") 0 0 / 3200% 400% repeat-x;
+  image-rendering: pixelated;
+  pointer-events: none;
+  animation: menu-ball-roll 1.25s steps(32) infinite;
+}
+@keyframes menu-ball-roll {
+  to {
+    background-position-x: -36.8em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #main-menu .menu-ball-options button > span::before {
+    animation-play-state: paused;
+  }
 }
 
 /* Keep the complete menu in proportion with the current viewport. */
 #main-menu .menu-shell {
   zoom: var(--menu-scale, 1);
+}
+
+/* Keep the main legend at Career's compact scale on large displays. */
+#main-menu[data-screen="menu"] .controller-legend {
+  zoom: min(1, calc(1.15 / var(--menu-scale, 1)));
 }
 
 /* Keep Pam centered over black while the background match reaches its first frame. */
@@ -322,4 +386,32 @@ body:has(> .menu-broadcast) :is(#main-menu, #team-select, #lineup) {
 }
 body:has(> .career-backdrop) :is(#career, #lineup, #team-select) {
   background: linear-gradient(#0c080674, #0c080696);
+}
+
+.menu-controls-modal {
+  width: min(94vw, 960px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 24px);
+  padding: clamp(12px, 2vh, 24px);
+  border: 1px solid #73503c;
+  border-radius: 8px;
+  background: #100d0bf5;
+  color: #fff3df;
+  overflow: auto;
+}
+.menu-controls-modal::backdrop {
+  background: #000b;
+}
+.menu-controls-modal > img {
+  display: block;
+  width: 425px;
+  max-height: calc(100dvh - 120px);
+  object-fit: contain;
+  margin: 0 auto;
+  image-rendering: pixelated;
+}
+
+.menu-controls-modal .controller-legend {
+  margin: 12px 0 0;
+  padding: 4px 0;
 }

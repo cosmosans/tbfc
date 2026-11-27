@@ -1,12 +1,48 @@
-import fullTimeTemplate from './templates/street/full-time.html?raw';
-import {renderMarkup} from './templates/renderMarkup';
-import {streetArena,streetBoards} from './streetArena';
-import {settingsOptions} from './matchSettings';
-import {selectGameMode,selectStreetSize,customizeStreet} from './kickOff';
-import {classicRules,streetRules,gulchDebugRules,readStreetPreferences,streetShapes,validStreetLineup,targetReached,type GameMode} from './matchRules';
-import {autoStreet,squadRatings} from './streetSquad';
-import {streetTargets,type StreetTactics} from './streetAI';
-import {customizeCourt,streetGoalSurrounds} from './streetCourt';
+import fullTimeTemplate from "./templates/street/full-time.html?raw";
+import survivalEliminatedTemplate from "./templates/survival/eliminated.html?raw";
+import { renderMarkup } from "./templates/renderMarkup";
+import { streetArena, streetBoards } from "./streetArena";
+import { settingsOptions } from "./matchSettings";
+import { selectGameMode, selectStreetSize, customizeStreet } from "./kickOff";
+import {
+  physicsFor,
+  snowMotion,
+  approachVelocity,
+  slideTravel,
+  type Motion,
+} from "./matchPhysics";
+import { supportsMode } from "./arenaCapabilities";
+import {
+  classicRules,
+  snowpocalypseRules,
+  longRangeRules,
+  firstToFiveRules,
+  infernoRules,
+  penaltyShootoutRules,
+  survivalRules,
+  beatTheClockRules,
+  mysteryMatchRules,
+  airBallsRules,
+  streetRules,
+  gulchDebugRules,
+  readStreetPreferences,
+  streetShapes,
+  validStreetLineup,
+  targetReached,
+  type GameMode,
+} from "./matchRules";
+import { selectSurvivalElimination, survivalAnchors } from "./survival";
+import {
+  beatStartSeconds,
+  beatClockText,
+  adjustBeatClock,
+  challengeSide,
+  saveBeatBest,
+  type ChallengeSide,
+} from "./beatTheClock";
+import { autoStreet, squadRatings } from "./streetSquad";
+import { streetTargets, type StreetTactics } from "./streetAI";
+import { customizeCourt, streetGoalSurrounds } from "./streetCourt";
 import bjornIdle from "./art/bjorn-idle.png?url";
 import bjornRun from "./art/bjorn-run.png?url";
 import bjornKick from "./art/bjorn-kick.png?url";
@@ -25,6 +61,15 @@ import {
 import { CurveGesture, type CurveStrike } from "./burnCurve";
 import "./menuScale";
 import { playPenalties } from "./penaltyArena";
+import {
+  fullSquadPenaltySelection,
+  readPenaltyLength,
+  selectPenaltySettings,
+  savePenaltyLength,
+  type PenaltySelection,
+  type ShootoutLength,
+} from "./penaltySetup";
+import { shootout } from "./shootoutRules";
 import type { Kick } from "./shootoutRules";
 import { fixtureRequiresWinner } from "./careerSeason";
 import { costumeSmoke } from "./costumeSmoke";
@@ -75,7 +120,7 @@ import { barelyRatings } from "./barelyRatings";
 import { scoreRow, statRow } from "./leagueBoard";
 import "./fullTime.css";
 import { careerHub, headshots, careerRatings, type Ticket } from "./careerHub";
-import { rivalHeadshot } from "./rivalHeadshots";
+import { rivalHeadshot, spriteHeadshot } from "./rivalHeadshots";
 import { pauseMenu } from "./pauseMenu";
 import {
   calendarDate,
@@ -104,7 +149,12 @@ import { createChipBins } from "./chipBins";
 import { practiceMenu } from "./tutorial/practiceMenu";
 import { TutorialDirector } from "./tutorial/director";
 import type { TutorialLaunch } from "./tutorial/progress";
-import { TutorialCoaching, tutorialTouchlineSpot, tutorialAllowsChallenges, isTutorialParticipant as chapterParticipant } from "./tutorial/ai";
+import {
+  TutorialCoaching,
+  tutorialTouchlineSpot,
+  tutorialAllowsChallenges,
+  isTutorialParticipant as chapterParticipant,
+} from "./tutorial/ai";
 import tutorialScene from "./tutorial/scene.json";
 import { dressPark } from "./tutorial/park";
 import { firstTouchSoundtrack } from "./tutorial/soundtrack";
@@ -273,8 +323,16 @@ import {
 } from "./stadiumSelect";
 import { buildGrounds } from "./grounds";
 import { createGoal } from "./goal";
+import { airBallsProfile, airGoalEligible, airAccuracy, aerialFinish, type AirFinish } from "./airBalls";
+import { createMysteryState, advanceMystery, mysteryInterval, mysteryTime, mysteryModifiers, type MysteryId } from "./mysteryMatch";
 import keeperImage from "./art/practice-keeper.png?url";
-import { planShot, shotFeedback, streetShotAim } from "./shooting";
+import {
+  longRangeEligible,
+  goalValue,
+  longRangeBox,
+  longRangeBalance,
+} from "./longRange";
+import { missChances, planShot, shotFeedback, streetShotAim } from "./shooting";
 import { rollBall, spinFrames } from "./ballSpin";
 import ballSheet from "./art/ball-spin.png?url";
 import snowBallSheet from "./art/ball-spin-snow.png?url";
@@ -289,97 +347,351 @@ import blueIdle from "./art/stars-idle.png?url";
 import blueRun from "./art/stars-run.png?url";
 import meghan_idle from "./art/meghan-new-idle.png?url";
 import meghan_run from "./art/meghan-new-run.png?url";
-const burnerHomeSheets = import.meta.glob<string>("./art/{bjorn,chris,daniel,jan,jeremy,jose,mandy,meghan,nadia,nelson,pam,spencer,steven,stubbs}-*.png", { eager:true, query:"?url", import:"default" });
-const burnerWhiteSheets = import.meta.glob<string>("./art/away-preview/*.png", { eager:true, query:"?url", import:"default" });
+const burnerHomeSheets = import.meta.glob<string>(
+  "./art/{bjorn,chris,daniel,jan,jeremy,jose,mandy,meghan,nadia,nelson,pam,spencer,steven,stubbs}-*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const burnerWhiteSheets = import.meta.glob<string>("./art/away-preview/*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
 // Match Vite's resolved URLs so the same lookup works with hashed production assets.
-const whiteKitByHomeUrl = new Map(Object.entries(burnerHomeSheets).map(([path,url]) =>
-  [url, burnerWhiteSheets[path.replace("./art/", "./art/away-preview/")]] as const
-));
-const creeperPrimarySheets = import.meta.glob<string>("./art/sc-*.png", { eager:true, query:"?url", import:"default" });
-const creeperSecondarySheets = import.meta.glob<string>("./art/sweeper-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const creeperSecondaryByUrl = new Map(Object.entries(creeperPrimarySheets).map(([path,url]) =>
-  [url, creeperSecondarySheets[path.replace("./art/", "./art/sweeper-secondary/")]] as const
-));
-const wonderPrimarySheets = import.meta.glob<string>("./art/okw-*.png", { eager:true, query:"?url", import:"default" });
-const wonderSecondarySheets = import.meta.glob<string>("./art/wonders-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const wonderSecondaryByUrl = new Map(Object.entries(wonderPrimarySheets).map(([path,url]) =>
-  [url, wonderSecondarySheets[path.replace("./art/", "./art/wonders-secondary/")]] as const
-));
-const dancerPrimarySheets = import.meta.glob<string>("./art/gd-*.png", { eager:true, query:"?url", import:"default" });
-const dancerSecondarySheets = import.meta.glob<string>("./art/dancers-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const dancerSecondaryByUrl = new Map(Object.entries(dancerPrimarySheets).map(([path,url]) =>
-  [url, dancerSecondarySheets[path.replace("./art/", "./art/dancers-secondary/")]] as const
-));
-const grassPrimarySheets = import.meta.glob<string>("./art/grass-*.png", { eager:true, query:"?url", import:"default" });
-const grassSecondarySheets = import.meta.glob<string>("./art/grass-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const grassSecondaryByUrl = new Map(Object.entries(grassPrimarySheets).map(([path,url]) =>
-  [url, grassSecondarySheets[path.replace("./art/", "./art/grass-secondary/")]] as const
-));
-const espressoPrimarySheets = import.meta.glob<string>("./art/espresso-*.png", { eager:true, query:"?url", import:"default" });
-const espressoSecondarySheets = import.meta.glob<string>("./art/espresso-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const espressoSecondaryByUrl = new Map(Object.entries(espressoPrimarySheets).map(([path,url]) =>
-  [url, espressoSecondarySheets[path.replace("./art/", "./art/espresso-secondary/")]] as const
-));
-const onsiderPrimarySheets = import.meta.glob<string>("./art/onsider-*.png", { eager:true, query:"?url", import:"default" });
-const onsiderSecondarySheets = import.meta.glob<string>("./art/onsider-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const onsiderSecondaryByUrl = new Map(Object.entries(onsiderPrimarySheets).map(([path,url]) =>
-  [url, onsiderSecondarySheets[path.replace("./art/", "./art/onsider-secondary/")]] as const
-));
-const netPrimarySheets = import.meta.glob<string>("./art/net-*.png", { eager:true, query:"?url", import:"default" });
-const netSecondarySheets = import.meta.glob<string>("./art/net-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const netSecondaryByUrl = new Map(Object.entries(netPrimarySheets).map(([path,url]) =>
-  [url, netSecondarySheets[path.replace("./art/", "./art/net-secondary/")]] as const
-));
-const diggersPrimarySheets = import.meta.glob<string>("./art/diggers-*.png", { eager:true, query:"?url", import:"default" });
-const diggersSecondarySheets = import.meta.glob<string>("./art/diggers-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const diggersSecondaryByUrl = new Map(Object.entries(diggersPrimarySheets).map(([path,url]) =>
-  [url, diggersSecondarySheets[path.replace("./art/", "./art/diggers-secondary/")]] as const
-));
-const barelyPrimarySheets = import.meta.glob<string>("./art/barely-*.png", { eager:true, query:"?url", import:"default" });
-const barelySecondarySheets = import.meta.glob<string>("./art/barely-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const barelySecondaryByUrl = new Map(Object.entries(barelyPrimarySheets).map(([path,url]) =>
-  [url, barelySecondarySheets[path.replace("./art/", "./art/barely-secondary/")]] as const
-));
-const macPrimarySheets = import.meta.glob<string>("./art/cm-*.png", { eager:true, query:"?url", import:"default" });
-const macSecondarySheets = import.meta.glob<string>("./art/mac-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const macSecondaryByUrl = new Map(Object.entries(macPrimarySheets).map(([path,url]) =>
-  [url, macSecondarySheets[path.replace("./art/", "./art/mac-secondary/")]] as const
-));
-const pandasPrimarySheets = import.meta.glob<string>("./art/tp-*.png", { eager:true, query:"?url", import:"default" });
-const pandasSecondarySheets = import.meta.glob<string>("./art/pandas-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const pandasSecondaryByUrl = new Map(Object.entries(pandasPrimarySheets).map(([path,url]) =>
-  [url, pandasSecondarySheets[path.replace("./art/", "./art/pandas-secondary/")]] as const
-));
-const starsPrimarySheets = import.meta.glob<string>("./art/ss-roster-*.png", { eager:true, query:"?url", import:"default" });
-const starsSecondarySheets = import.meta.glob<string>("./art/stars-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const starsSecondaryByUrl = new Map(Object.entries(starsPrimarySheets).map(([path,url]) =>
-  [url, starsSecondarySheets[path.replace("./art/", "./art/stars-secondary/")]] as const
-));
-const whiffPrimarySheets = import.meta.glob<string>("./art/whiff-*.png", { eager:true, query:"?url", import:"default" });
-const whiffSecondarySheets = import.meta.glob<string>("./art/whiff-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const whiffSecondaryByUrl = new Map(Object.entries(whiffPrimarySheets).map(([path,url]) =>
-  [url, whiffSecondarySheets[path.replace("./art/", "./art/whiff-secondary/")]] as const
-));
-const orangePrimarySheets = import.meta.glob<string>("./art/orange-*.png", { eager:true, query:"?url", import:"default" });
-const orangeSecondarySheets = import.meta.glob<string>("./art/orange-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const orangeSecondaryByUrl = new Map(Object.entries(orangePrimarySheets).map(([path,url]) =>
-  [url, orangeSecondarySheets[path.replace("./art/", "./art/orange-secondary/")]] as const
-));
-const interPrimarySheets = import.meta.glob<string>("./art/inter-*.png", { eager:true, query:"?url", import:"default" });
-const interSecondarySheets = import.meta.glob<string>("./art/inter-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const interSecondaryByUrl = new Map(Object.entries(interPrimarySheets).map(([path,url]) =>
-  [url, interSecondarySheets[path.replace("./art/", "./art/inter-secondary/")]] as const
-));
-const crossbarPrimarySheets = import.meta.glob<string>("./art/crossbar-*.png", { eager:true, query:"?url", import:"default" });
-const crossbarSecondarySheets = import.meta.glob<string>("./art/crossbar-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const crossbarSecondaryByUrl = new Map(Object.entries(crossbarPrimarySheets).map(([path,url]) =>
-  [url, crossbarSecondarySheets[path.replace("./art/", "./art/crossbar-secondary/")]] as const
-));
-const fleetPrimarySheets = import.meta.glob<string>("./art/ff-*.png", { eager:true, query:"?url", import:"default" });
-const fleetSecondarySheets = import.meta.glob<string>("./art/fleet-secondary/*.png", { eager:true, query:"?url", import:"default" });
-const fleetSecondaryByUrl = new Map(Object.entries(fleetPrimarySheets).map(([path,url]) =>
-  [url, fleetSecondarySheets[path.replace("./art/", "./art/fleet-secondary/")]] as const
-));
+const whiteKitByHomeUrl = new Map(
+  Object.entries(burnerHomeSheets).map(
+    ([path, url]) =>
+      [
+        url,
+        burnerWhiteSheets[path.replace("./art/", "./art/away-preview/")],
+      ] as const,
+  ),
+);
+const creeperPrimarySheets = import.meta.glob<string>("./art/sc-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const creeperSecondarySheets = import.meta.glob<string>(
+  "./art/sweeper-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const creeperSecondaryByUrl = new Map(
+  Object.entries(creeperPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        creeperSecondarySheets[
+          path.replace("./art/", "./art/sweeper-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const wonderPrimarySheets = import.meta.glob<string>("./art/okw-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const wonderSecondarySheets = import.meta.glob<string>(
+  "./art/wonders-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const wonderSecondaryByUrl = new Map(
+  Object.entries(wonderPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        wonderSecondarySheets[
+          path.replace("./art/", "./art/wonders-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const dancerPrimarySheets = import.meta.glob<string>("./art/gd-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const dancerSecondarySheets = import.meta.glob<string>(
+  "./art/dancers-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const dancerSecondaryByUrl = new Map(
+  Object.entries(dancerPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        dancerSecondarySheets[
+          path.replace("./art/", "./art/dancers-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const grassPrimarySheets = import.meta.glob<string>("./art/grass-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const grassSecondarySheets = import.meta.glob<string>(
+  "./art/grass-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const grassSecondaryByUrl = new Map(
+  Object.entries(grassPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        grassSecondarySheets[path.replace("./art/", "./art/grass-secondary/")],
+      ] as const,
+  ),
+);
+const espressoPrimarySheets = import.meta.glob<string>("./art/espresso-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const espressoSecondarySheets = import.meta.glob<string>(
+  "./art/espresso-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const espressoSecondaryByUrl = new Map(
+  Object.entries(espressoPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        espressoSecondarySheets[
+          path.replace("./art/", "./art/espresso-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const onsiderPrimarySheets = import.meta.glob<string>("./art/onsider-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const onsiderSecondarySheets = import.meta.glob<string>(
+  "./art/onsider-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const onsiderSecondaryByUrl = new Map(
+  Object.entries(onsiderPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        onsiderSecondarySheets[
+          path.replace("./art/", "./art/onsider-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const netPrimarySheets = import.meta.glob<string>("./art/net-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const netSecondarySheets = import.meta.glob<string>(
+  "./art/net-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const netSecondaryByUrl = new Map(
+  Object.entries(netPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        netSecondarySheets[path.replace("./art/", "./art/net-secondary/")],
+      ] as const,
+  ),
+);
+const diggersPrimarySheets = import.meta.glob<string>("./art/diggers-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const diggersSecondarySheets = import.meta.glob<string>(
+  "./art/diggers-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const diggersSecondaryByUrl = new Map(
+  Object.entries(diggersPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        diggersSecondarySheets[
+          path.replace("./art/", "./art/diggers-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const barelyPrimarySheets = import.meta.glob<string>("./art/barely-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const barelySecondarySheets = import.meta.glob<string>(
+  "./art/barely-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const barelySecondaryByUrl = new Map(
+  Object.entries(barelyPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        barelySecondarySheets[
+          path.replace("./art/", "./art/barely-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const macPrimarySheets = import.meta.glob<string>("./art/cm-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const macSecondarySheets = import.meta.glob<string>(
+  "./art/mac-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const macSecondaryByUrl = new Map(
+  Object.entries(macPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        macSecondarySheets[path.replace("./art/", "./art/mac-secondary/")],
+      ] as const,
+  ),
+);
+const pandasPrimarySheets = import.meta.glob<string>("./art/tp-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const pandasSecondarySheets = import.meta.glob<string>(
+  "./art/pandas-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const pandasSecondaryByUrl = new Map(
+  Object.entries(pandasPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        pandasSecondarySheets[
+          path.replace("./art/", "./art/pandas-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const starsPrimarySheets = import.meta.glob<string>("./art/ss-roster-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const starsSecondarySheets = import.meta.glob<string>(
+  "./art/stars-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const starsSecondaryByUrl = new Map(
+  Object.entries(starsPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        starsSecondarySheets[path.replace("./art/", "./art/stars-secondary/")],
+      ] as const,
+  ),
+);
+const whiffPrimarySheets = import.meta.glob<string>("./art/whiff-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const whiffSecondarySheets = import.meta.glob<string>(
+  "./art/whiff-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const whiffSecondaryByUrl = new Map(
+  Object.entries(whiffPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        whiffSecondarySheets[path.replace("./art/", "./art/whiff-secondary/")],
+      ] as const,
+  ),
+);
+const orangePrimarySheets = import.meta.glob<string>("./art/orange-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const orangeSecondarySheets = import.meta.glob<string>(
+  "./art/orange-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const orangeSecondaryByUrl = new Map(
+  Object.entries(orangePrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        orangeSecondarySheets[
+          path.replace("./art/", "./art/orange-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const interPrimarySheets = import.meta.glob<string>("./art/inter-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const interSecondarySheets = import.meta.glob<string>(
+  "./art/inter-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const interSecondaryByUrl = new Map(
+  Object.entries(interPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        interSecondarySheets[path.replace("./art/", "./art/inter-secondary/")],
+      ] as const,
+  ),
+);
+const crossbarPrimarySheets = import.meta.glob<string>("./art/crossbar-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const crossbarSecondarySheets = import.meta.glob<string>(
+  "./art/crossbar-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const crossbarSecondaryByUrl = new Map(
+  Object.entries(crossbarPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        crossbarSecondarySheets[
+          path.replace("./art/", "./art/crossbar-secondary/")
+        ],
+      ] as const,
+  ),
+);
+const fleetPrimarySheets = import.meta.glob<string>("./art/ff-*.png", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+const fleetSecondarySheets = import.meta.glob<string>(
+  "./art/fleet-secondary/*.png",
+  { eager: true, query: "?url", import: "default" },
+);
+const fleetSecondaryByUrl = new Map(
+  Object.entries(fleetPrimarySheets).map(
+    ([path, url]) =>
+      [
+        url,
+        fleetSecondarySheets[path.replace("./art/", "./art/fleet-secondary/")],
+      ] as const,
+  ),
+);
 const interMaleGoalUrls = import.meta.glob<string>(
   "./art/inter-*-goal-{run,stand,support}.png",
   { eager: true, query: "?url", import: "default" },
@@ -474,10 +786,14 @@ async function start() {
       return fleetSecondaryByUrl.get(url) ?? url;
     if (fixture?.creepersKit === "secondary" && creeperSecondaryByUrl.has(url))
       return creeperSecondaryByUrl.get(url) ?? url;
-    return fixture?.burnersKit === "white" ? whiteKitByHomeUrl.get(url) ?? url : url;
+    return fixture?.burnersKit === "white"
+      ? (whiteKitByHomeUrl.get(url) ?? url)
+      : url;
   }
-  let rules=classicRules(), streetPrefs=readStreetPreferences(), modeChosen=false;
-  let lastMode:GameMode="classic";
+  let rules = classicRules(),
+    streetPrefs = readStreetPreferences(),
+    modeChosen = false;
+  let lastMode: GameMode = "classic";
   let fixture: Fixture | undefined,
     managingAway = false,
     awayLineup: Selection | null = null,
@@ -489,7 +805,7 @@ async function start() {
   let selectedDrill = -1,
     practiceNames: string[] = [];
   const kickOffSettings: typeof settings = { ...settings, time: "Night" };
-  const classicKickOffSettings={...kickOffSettings};
+  const classicKickOffSettings = { ...kickOffSettings };
   let kickOffVenue: StadiumId | null = null;
   let curveLab = false;
   let gulchDebug = false;
@@ -517,6 +833,15 @@ async function start() {
   let weatherTest = false;
   let keeperTest = false;
   let penaltyLab = false;
+  let penaltyLength: ShootoutLength = readPenaltyLength();
+  let penaltySelections: [PenaltySelection, PenaltySelection] | null = null;
+  function penaltyRating(club: Club, name: string, keeping: boolean) {
+    return (
+      squadRatings(club.name, name)?.[keeping ? 5 : 2] ??
+      playerRatings[bios[name]?.[0]]?.[keeping ? 5 : 2] ??
+      65 + club.stars * 4
+    );
+  }
   let burnLab = false;
   let celebrationLab = false;
   const broadcast =
@@ -554,26 +879,110 @@ async function start() {
       removeBackdrop = mountMenuBackdrop(show ? "career" : "menu");
     }
     const previewReturn = history.state?.previewReturn;
-    if (previewReturn) history.replaceState({ ...history.state, previewReturn: null }, "");
+    if (previewReturn)
+      history.replaceState({ ...history.state, previewReturn: null }, "");
     let destination =
       resume !== undefined
         ? "career"
-        : history.state?.kickoffMenu ? "match" : history.state?.practiceMenu
-          ? "practice"
-          : await mainMenu(music, !returning, removeBackdrop.ready, previewReturn ?? (history.state?.keeperDebug ? "debug" : "menu"));
-    if(history.state?.kickoffMenu)history.replaceState({...history.state,kickoffMenu:false},"");
-    if (history.state?.keeperDebug) history.replaceState({ ...history.state, keeperDebug: false }, "");
+        : history.state?.kickoffMenu
+          ? "match"
+          : history.state?.practiceMenu
+            ? "practice"
+            : await mainMenu(
+                music,
+                !returning,
+                removeBackdrop.ready,
+                previewReturn ??
+                  (history.state?.keeperDebug ? "debug" : "menu"),
+              );
+    if (history.state?.kickoffMenu)
+      history.replaceState({ ...history.state, kickoffMenu: false }, "");
+    if (history.state?.keeperDebug)
+      history.replaceState({ ...history.state, keeperDebug: false }, "");
     do {
-      if(destination!=='match'){rules=classicRules();modeChosen=false;Object.assign(kickOffSettings,classicKickOffSettings)}
-      const rematch=history.state?.streetRematch;
-      if(rematch){
-        history.replaceState({...history.state,streetRematch:null},'');
-        if(rematch.rules?.mode==='street'&&rematch.fixture&&rematch.lineup&&rematch.awayLineup){
-          fixture=rematch.fixture;lineup=rematch.lineup;awayLineup=rematch.awayLineup;seats=rematch.seats;rules=streetRules({...streetPrefs,...rematch.rules});gulchDebug=rematch.gulchDebug===true;Object.assign(settings,rematch.settings);kickOffVenue='gulch';
-          fixture.home=fixture.home.name===burners.name?burners:fixture.home;fixture.away=fixture.away.name===burners.name?burners:fixture.away;
-          managingAway=!!seats?.length&&seats[0].side===1;simulation=!seats?.length;
-          const club=managingAway?fixture.away:fixture.home;
-          portraits=club===burners?burnerPortraits:Object.fromEntries([...club.outfield,...club.bench,club.keeper].map(name=>[name,kitSheet(rivalSprites(club,name)?.idle??trainingIdle)]));
+      if (destination !== "match") {
+        rules = classicRules();
+        modeChosen = false;
+        Object.assign(kickOffSettings, classicKickOffSettings);
+      }
+      const rematch = history.state?.streetRematch;
+      if (rematch) {
+        history.replaceState({ ...history.state, streetRematch: null }, "");
+        if (
+          (rematch.rules?.mode === "street" ||
+            rematch.rules?.mode === "snowpocalypse" ||
+            rematch.rules?.mode === "longRange" ||
+            rematch.rules?.mode === "firstToFive" ||
+            rematch.rules?.mode === "inferno" ||
+            rematch.rules?.mode === "survival" ||
+            rematch.rules?.mode === "beatTheClock") &&
+          rematch.fixture &&
+          rematch.lineup &&
+          (rematch.awayLineup || rematch.rules.mode !== "street")
+        ) {
+          fixture = rematch.fixture;
+          lineup = rematch.lineup;
+          awayLineup = rematch.awayLineup;
+          seats = rematch.seats;
+          rules =
+            rematch.rules.mode === "snowpocalypse"
+              ? snowpocalypseRules()
+              : rematch.rules.mode === "longRange"
+                ? longRangeRules()
+                : rematch.rules.mode === "firstToFive"
+                  ? firstToFiveRules(rematch.rules.targetScore)
+                  : rematch.rules.mode === "inferno"
+                    ? infernoRules()
+                    : rematch.rules.mode === "survival"
+                      ? survivalRules()
+                      : rematch.rules.mode === "beatTheClock"
+                        ? beatTheClockRules()
+                        : rematch.rules.mode === "airBalls"
+                          ? airBallsRules()
+                        : rematch.rules.mode === "mysteryMatch"
+                          ? mysteryMatchRules()
+                          : streetRules({ ...streetPrefs, ...rematch.rules });
+          gulchDebug = rematch.gulchDebug === true;
+          Object.assign(settings, rematch.settings);
+          kickOffVenue =
+            rules.mode === "street"
+              ? "gulch"
+              : supportsMode(rematch.venue ?? "school", rules.mode)
+                ? (rematch.venue ?? "school")
+                : "school";
+          fixture.home =
+            fixture.home.name === burners.name ? burners : fixture.home;
+          fixture.away =
+            fixture.away.name === burners.name ? burners : fixture.away;
+          managingAway = !!seats?.length && seats[0].side === 1;
+          simulation = !seats?.length;
+          if (
+            rules.mode === "beatTheClock" &&
+            (challengeSide(seats) === null ||
+              seats?.some(
+                (seat) =>
+                  seat.device >= 0 && !navigator.getGamepads?.()[seat.device],
+              ))
+          ) {
+            seats = await selectSides(fixture, 0, true);
+            if (!seats) {
+              lineup = null;
+              modeChosen = false;
+              continue;
+            }
+            managingAway = seats[0].side === 1;
+            simulation = false;
+          }
+          const club = managingAway ? fixture.away : fixture.home;
+          portraits =
+            club === burners
+              ? burnerPortraits
+              : Object.fromEntries(
+                  [...club.outfield, ...club.bench, club.keeper].map((name) => [
+                    name,
+                    kitSheet(rivalSprites(club, name)?.idle ?? trainingIdle),
+                  ]),
+                );
           break;
         }
       }
@@ -587,11 +996,16 @@ async function start() {
         fixture = { home: burners, away: barelyUnited, barelyKit: "secondary" };
         const shape = streetShapes(3)[0];
         const squad = (club: Club): Selection => ({
-          shape, starters: autoStreet(club, [...club.outfield, ...club.bench], shape), bench: [], warmup: false,
+          shape,
+          starters: autoStreet(club, [...club.outfield, ...club.bench], shape),
+          bench: [],
+          warmup: false,
         });
         lineup = squad(fixture.home);
         awayLineup = squad(fixture.away);
-        seats = [{ number: 1, device: menuPad()?.index ?? -1, side: -1, actor: 0 }];
+        seats = [
+          { number: 1, device: menuPad()?.index ?? -1, side: -1, actor: 0 },
+        ];
         // Start immediately with the reusable STREET specification.
         kickOffVenue = "gulch";
         settings.time = "Night";
@@ -649,16 +1063,30 @@ async function start() {
         };
         break;
       }
-      if (typeof destination === "object" && destination.kind === "matchIntro") {
+      if (
+        typeof destination === "object" &&
+        destination.kind === "matchIntro"
+      ) {
         introTest = true;
-        fixture = { home: burners, away: clubs.find(club => club.name === "Shooting Stars FC")! };
-        lineup = { shape: "1-3-3", starters: [...burners.outfield, burners.keeper], bench: [...burners.bench] };
+        fixture = {
+          home: burners,
+          away: clubs.find((club) => club.name === "Shooting Stars FC")!,
+        };
+        lineup = {
+          shape: "1-3-3",
+          starters: [...burners.outfield, burners.keeper],
+          bench: [...burners.bench],
+        };
         seats = [{ number: 1, device: -1, side: -1, actor: 0 }];
         kickOffVenue = destination.venue;
         settings.time = destination.time;
         break;
       }
-      if (destination === "burnLab" || destination === "penalties" || destination === "keeperLab") {
+      if (
+        destination === "burnLab" ||
+        destination === "penalties" ||
+        destination === "keeperLab"
+      ) {
         keeperTest = destination === "keeperLab";
         burnLab = destination === "burnLab";
         penaltyLab = destination === "penalties";
@@ -687,7 +1115,10 @@ async function start() {
         destination === "curveLab"
       ) {
         weatherTest = destination === "weatherLab";
-        if (weatherTest) { settings.weather = "Rain"; settings.speed = 5; }
+        if (weatherTest) {
+          settings.weather = "Rain";
+          settings.speed = 5;
+        }
         curveLab = destination === "curveLab";
         stadiumTest = destination === "stadiumTest";
         if (stadiumTest) {
@@ -707,19 +1138,24 @@ async function start() {
         const choice = weatherTest
           ? { drill: freeDrill, names: ["Chris", "Nadia", "Jeremy", "José"] }
           : curveLab
-          ? { drill: freeDrill, names: ["José"] }
-          : stadiumTest
-            ? {
-                drill: freeDrill,
-                names:
-                  topdeck || westend || southside ? ["José"] : ["Pam", "José"],
-              }
-            : await practiceMenu();
+            ? { drill: freeDrill, names: ["José"] }
+            : stadiumTest
+              ? {
+                  drill: freeDrill,
+                  names:
+                    topdeck || westend || southside
+                      ? ["José"]
+                      : ["Pam", "José"],
+                }
+              : await practiceMenu();
         if (!choice) {
           destination = await mainMenu(music);
           continue;
         }
-        tutorialLaunch = "tutorial" in choice ? choice.tutorial as TutorialLaunch | undefined : undefined;
+        tutorialLaunch =
+          "tutorial" in choice
+            ? (choice.tutorial as TutorialLaunch | undefined)
+            : undefined;
         if (tutorialLaunch) {
           // Candler Park is the existing eastside level, including its collision and street-life systems.
           eastside = true;
@@ -728,7 +1164,10 @@ async function start() {
         selectedDrill = choice.drill;
         practiceNames = choice.names;
         standalonePractice = true;
-        fixture = { home: burners, away: tutorialLaunch ? burners : clubs[clubs.length - 1] };
+        fixture = {
+          home: burners,
+          away: tutorialLaunch ? burners : clubs[clubs.length - 1],
+        };
         lineup = {
           shape: "1-3-3",
           starters: [...burners.outfield, burners.keeper],
@@ -741,79 +1180,233 @@ async function start() {
         }
         break;
       }
-      if(!modeChosen){
-        const mode=await selectGameMode(lastMode);
-        if(!mode){destination=await mainMenu(music);continue}
-        lastMode=mode;
-        if(mode==='street'){
-          if(rules.mode==='classic')Object.assign(classicKickOffSettings,kickOffSettings);
-          const preferences=await selectStreetSize(streetPrefs);
-          if(!preferences)continue;
-          streetPrefs=preferences;rules=streetRules(streetPrefs);
-          if(settingsOptions.difficulty.includes(streetPrefs.difficulty as any))kickOffSettings.difficulty=streetPrefs.difficulty as typeof settings.difficulty;
-        }else {rules=classicRules();Object.assign(kickOffSettings,classicKickOffSettings)}
-        modeChosen=true;
+      if (!modeChosen) {
+        const mode = await selectGameMode(lastMode);
+        if (!mode) {
+          destination = await mainMenu(music);
+          continue;
+        }
+        lastMode = mode;
+        if (rules.mode === "classic")
+          Object.assign(classicKickOffSettings, kickOffSettings);
+        if (mode === "street") {
+          const preferences = await selectStreetSize(streetPrefs);
+          if (!preferences) continue;
+          streetPrefs = preferences;
+          rules = streetRules(streetPrefs);
+          if (
+            settingsOptions.difficulty.includes(streetPrefs.difficulty as any)
+          )
+            kickOffSettings.difficulty =
+              streetPrefs.difficulty as typeof settings.difficulty;
+        } else {
+          rules =
+            mode === "snowpocalypse"
+              ? snowpocalypseRules()
+              : mode === "longRange"
+                ? longRangeRules()
+                : mode === "firstToFive"
+                  ? firstToFiveRules()
+                  : mode === "inferno"
+                    ? infernoRules()
+                    : mode === "survival"
+                      ? survivalRules()
+                      : mode === "beatTheClock"
+                        ? beatTheClockRules()
+                        : mode === "airBalls"
+                          ? airBallsRules()
+                        : mode === "mysteryMatch"
+                          ? mysteryMatchRules()
+                          : mode === "penaltyShootout"
+                            ? penaltyShootoutRules()
+                            : classicRules();
+          Object.assign(kickOffSettings, classicKickOffSettings);
+          if (mode === "snowpocalypse") kickOffSettings.weather = "Snow";
+        }
+        modeChosen = true;
       }
-      const selected = await selectTeams(fixture,undefined,{back:"Kickoff",next:rules.mode==="street"?"Side Select":"Select Stadium"});
-      if (!selected) { modeChosen=false;continue; }
+      const selected = await selectTeams(fixture, undefined, {
+        back: "Kickoff",
+        next: rules.mode === "street" ? "Side Select" : "Select Stadium",
+      });
+      if (!selected) {
+        modeChosen = false;
+        continue;
+      }
       fixture = selected;
       const homeVenue = homeStadium(fixture.home.name);
       let selectedVenue: StadiumId | null = homeVenue;
       do {
-        selectedVenue = rules.mode==="street" ? "gulch" : await selectStadium(homeVenue, selectedVenue);
+        selectedVenue =
+          rules.mode === "street"
+            ? "gulch"
+            : await selectStadium(homeVenue, selectedVenue, rules.mode);
         if (!selectedVenue) break;
-        seats = await selectSides(fixture);
-      } while (!seats && rules.mode!=="street");
+        seats = await selectSides(fixture, 0, rules.mode === "beatTheClock");
+      } while (!seats && rules.mode !== "street");
       if (!seats || !selectedVenue) continue;
+      if (rules.mode === "beatTheClock" && challengeSide(seats) === null) {
+        seats = null;
+        continue;
+      }
       kickOffVenue = selectedVenue;
       simulation = seats.length === 0;
-      const orderedSeats = [...seats].sort((a,b) => a.number - b.number);
-      const sides = [...new Set(orderedSeats.map(seat => seat.side))];
+      const orderedSeats = [...seats].sort((a, b) => a.number - b.number);
+      const sides = [...new Set(orderedSeats.map((seat) => seat.side))];
       if (!sides.length) sides.push(-1);
       managingAway = sides[0] === 1;
+      if (rules.mode === "penaltyShootout") {
+        penaltySelections = [
+          fullSquadPenaltySelection(fixture.home),
+          fullSquadPenaltySelection(fixture.away),
+        ];
+        const chosen = await selectPenaltySettings(
+          fixture,
+          kickOffSettings,
+          penaltyLength,
+        );
+        if (!chosen) continue;
+        penaltyLength = chosen.length;
+        savePenaltyLength(chosen.length);
+        Object.assign(kickOffSettings, chosen.settings);
+        Object.assign(settings, chosen.settings);
+        lineup = {
+          shape: "1-3-3",
+          starters: [...fixture.home.outfield, fixture.home.keeper],
+          bench: [],
+          warmup: false,
+        };
+        awayLineup = {
+          shape: "1-3-3",
+          starters: [...fixture.away.outfield, fixture.away.keeper],
+          bench: [],
+          warmup: false,
+        };
+        break;
+      }
       const drafts = new Map<number, Selection>();
       kickOffSettings.time =
-        kickOffVenue === "school" || kickOffVenue === "westend" ? "Night" : "Evening";
-      for (let step = 0; step < sides.length;) {
+        kickOffVenue === "school" || kickOffVenue === "westend"
+          ? "Night"
+          : "Evening";
+      for (let step = 0; step < sides.length; ) {
         const side = sides[step];
         const club = side === 1 ? fixture.away : fixture.home;
-        const art = club === burners
-          ? Object.fromEntries(Object.entries(burnerPortraits).map(([name,url]) => [name, kitSheet(url)]))
-          : Object.fromEntries([...club.outfield, ...club.bench, club.keeper].map(name =>
-              [name, kitSheet(rivalSprites(club, name)?.idle ?? (name === club.keeper ? tealIdle : trainingIdle))]));
+        const art =
+          club === burners
+            ? Object.fromEntries(
+                Object.entries(burnerPortraits).map(([name, url]) => [
+                  name,
+                  kitSheet(url),
+                ]),
+              )
+            : Object.fromEntries(
+                [...club.outfield, ...club.bench, club.keeper].map((name) => [
+                  name,
+                  kitSheet(
+                    rivalSprites(club, name)?.idle ??
+                      (name === club.keeper ? tealIdle : trainingIdle),
+                  ),
+                ]),
+              );
         if (step === 0) portraits = art;
-        const controllers = orderedSeats.filter(seat => seat.side === side);
-        const turn = sides.length === 2 ? { number: controllers[0].number,
-          devices: controllers.map(seat => seat.device), first: step === 0, draft: drafts.get(side) } : undefined;
-        const selected = await selectLineup(art, fixture, undefined, kickOffSettings,
-          undefined, undefined, undefined, club, turn, rules);
+        const controllers = orderedSeats.filter((seat) => seat.side === side);
+        const turn =
+          sides.length === 2
+            ? {
+                number: controllers[0].number,
+                devices: controllers.map((seat) => seat.device),
+                first: step === 0,
+                draft: drafts.get(side),
+              }
+            : undefined;
+        const selected = await selectLineup(
+          art,
+          fixture,
+          undefined,
+          kickOffSettings,
+          undefined,
+          undefined,
+          undefined,
+          club,
+          turn,
+          rules,
+        );
         if (!selected) {
-          if (step > 0) { step--; continue; }
+          if (step > 0) {
+            step--;
+            continue;
+          }
           lineup = null;
           break;
         }
         drafts.set(side, selected);
-        if(rules.mode==='street' && step===sides.length-1){
-          const customized=await customizeStreet({...streetPrefs,difficulty:kickOffSettings.difficulty});
-          if(!customized){streetPrefs=readStreetPreferences();rules=streetRules(streetPrefs);kickOffSettings.difficulty=streetPrefs.difficulty as typeof settings.difficulty;continue;}
-          streetPrefs=customized;rules=streetRules(streetPrefs);kickOffSettings.difficulty=streetPrefs.difficulty as typeof settings.difficulty;
-          kickOffSettings.time=streetPrefs.time;kickOffSettings.weather=streetPrefs.weather;
+        if (rules.mode === "street" && step === sides.length - 1) {
+          const customized = await customizeStreet({
+            ...streetPrefs,
+            difficulty: kickOffSettings.difficulty,
+          });
+          if (!customized) {
+            streetPrefs = readStreetPreferences();
+            rules = streetRules(streetPrefs);
+            kickOffSettings.difficulty =
+              streetPrefs.difficulty as typeof settings.difficulty;
+            continue;
+          }
+          streetPrefs = customized;
+          rules = streetRules(streetPrefs);
+          kickOffSettings.difficulty =
+            streetPrefs.difficulty as typeof settings.difficulty;
+          kickOffSettings.time = streetPrefs.time;
+          kickOffSettings.weather = streetPrefs.weather;
         }
         if (++step === sides.length) {
           awayLineup = drafts.get(1) ?? null;
-          const cpuLineup=(club:Club):Selection=>{
-            if(rules.mode!=='street')return {shape:'1-3-3',starters:[...club.outfield,club.keeper],bench:[...club.bench]};
-            const names=club===burners?Object.keys(burnerPortraits):[...club.outfield,...club.bench,club.keeper];
-            try{const saved=JSON.parse(localStorage.getItem(`tbfc.street.lineup.v1.${rules.teamSize}.${club.name}`)??'null');if(validStreetLineup(saved,names,rules.teamSize))return saved}catch{}
-            const shape=streetShapes(rules.teamSize)[0],starters=autoStreet(club,names,shape);
-            return {shape,starters,bench:names.filter(n=>!starters.includes(n)).slice(0,4)};
+          const cpuLineup = (club: Club): Selection => {
+            if (rules.mode !== "street")
+              return {
+                shape: "1-3-3",
+                starters: [...club.outfield, club.keeper],
+                bench: [...club.bench],
+              };
+            const names =
+              club === burners
+                ? Object.keys(burnerPortraits)
+                : [...club.outfield, ...club.bench, club.keeper];
+            try {
+              const saved = JSON.parse(
+                localStorage.getItem(
+                  `tbfc.street.lineup.v1.${rules.teamSize}.${club.name}`,
+                ) ?? "null",
+              );
+              if (validStreetLineup(saved, names, rules.teamSize)) return saved;
+            } catch {}
+            const shape = streetShapes(rules.teamSize)[0],
+              starters = autoStreet(club, names, shape);
+            return {
+              shape,
+              starters,
+              bench: names.filter((n) => !starters.includes(n)).slice(0, 4),
+            };
           };
-          if(rules.mode==='street')awayLineup=drafts.get(1)??cpuLineup(fixture.away);
-          lineup = { ...(drafts.get(-1) ?? cpuLineup(fixture.home)), warmup: rules.mode==='street'?false:selected.warmup };
+          if (rules.mode === "street")
+            awayLineup = drafts.get(1) ?? cpuLineup(fixture.away);
+          lineup = {
+            ...(drafts.get(-1) ?? cpuLineup(fixture.home)),
+            warmup: rules.mode === "street" ? false : selected.warmup,
+          };
         }
       }
       if (lineup) Object.assign(settings, kickOffSettings);
     } while (!lineup);
+    if (rules.mode === "beatTheClock" && challengeSide(seats) === null) {
+      history.replaceState(
+        { ...history.state, kickoffMenu: true, arcadeMenu: true },
+        "",
+      );
+      location.reload();
+      return;
+    }
     removeBackdrop();
     music.finish();
   }
@@ -826,28 +1419,70 @@ async function start() {
       gains.set(stat, careerRating(c, c.player, stat, base[i]) - base[i]),
     );
   }
-  function trainingFactor(name: string, stat: Attribute, clubName=fixture?.home.name) {
-    if(rules.mode==='street'){
-      const rating=clubName&&squadRatings(clubName,name)?.[ratingLabels.indexOf(stat)];
-      return rating===undefined?1:.75+rating/320;
+  function trainingFactor(
+    name: string,
+    stat: Attribute,
+    clubName = fixture?.home.name,
+  ) {
+    if (rules.mode === "street") {
+      const rating =
+        clubName && squadRatings(clubName, name)?.[ratingLabels.indexOf(stat)];
+      return rating === undefined ? 1 : 0.75 + rating / 320;
     }
-    return ticket && name === ticket.career.player ? 1 + (gains.get(stat) ?? 0) * 0.01 : 1;
+    return ticket && name === ticket.career.player
+      ? 1 + (gains.get(stat) ?? 0) * 0.01
+      : 1;
   }
   let aiHome =
     broadcast || simulation || (!!seats && !seats.some((s) => s.side === -1));
   const { home, away: matchOpponent } = fixture;
   const homeLabel = home === burners ? "TBFC" : home.name;
   const freePractice = selectedDrill === freeDrill;
-  const street=rules.mode==="street";
+  const snowpocalypse = rules.mode === "snowpocalypse";
+  let longRange = rules.mode === "longRange";
+  const firstToFive = rules.mode === "firstToFive";
+  const survival = rules.mode === "survival";
+  const beatTheClock = rules.mode === "beatTheClock";
+  const beatTeam: ChallengeSide | null = beatTheClock
+    ? challengeSide(seats)
+    : null;
+  const beatInitialPlayers = beatTheClock ? seats!.length : 0;
+  let inferno = rules.permanentBurn;
+  let physics = physicsFor(rules.mode);
+  const airBalls = rules.mode === "airBalls";
+  const airIntents = new WeakMap<object, {finish:AirFinish; until:number}>();
+  const airShotPower = new WeakMap<object,number>();
+  let airBounceAt = -Infinity, airWasAloft = false;
+  let invalidAirGoals = 0;
+  let airInvalidUntil = 0;
+  const airIntent = (actor:object):AirFinish => {
+    const intent=airIntents.get(actor);
+    return intent && performance.now()<=intent.until ? intent.finish : "GROUNDED";
+  };
+  const mystery = rules.mode === "mysteryMatch" ? createMysteryState() : null;
+  const mysteryOn = (id:MysteryId) => mystery?.current.id === id;
+  const mysteryKickArc = (power:number, available=Infinity) => {
+    const result=kickArc(power,available);
+    if(mysteryOn("moonBall")) {
+      result.duration /= Math.sqrt(.4);
+      result.height /= .4;
+    }
+    return result;
+  };
+  let slippery = snowpocalypse;
+  if (snowpocalypse) settings.weather = "Snow";
+  const street = rules.mode === "street";
   const gulch = rules.arena === "gulch";
-  const homeShape = positions(lineup.shape);
+  let homeShape = positions(lineup.shape);
   const renderer = new T.WebGLRenderer({
     canvas: document.querySelector("canvas")!,
     antialias: true,
   });
   const scene = new T.Scene();
   scene.background = new T.Color(0x284b37);
-  const liveCamera = street ? {...strikerView,along:-15,side:4,height:8,fov:46} : strikerView;
+  const liveCamera = street
+    ? { ...strikerView, along: -15, side: 4, height: 8, fov: 46 }
+    : strikerView;
   const camera = new T.PerspectiveCamera(liveCamera.fov, 1, 0.1, 140);
   const distance = Math.hypot(liveCamera.along, liveCamera.side);
   const views = [
@@ -875,8 +1510,8 @@ async function start() {
   const kickAnimationSeconds = 0.56;
   const headerAnimationSeconds = 0.56;
   const sprintCadence = 1.2;
-  const fieldX = street ? streetArena.length/2 : 21,
-    fieldZ = street ? streetArena.width/2 : 12;
+  const fieldX = street ? streetArena.length / 2 : 21,
+    fieldZ = street ? streetArena.width / 2 : 12;
   function box(
     x: number,
     y: number,
@@ -895,11 +1530,13 @@ async function start() {
     return mesh;
   }
   if (!standalonePractice && !celebrationLab && !curveLab) {
-    const assigned = street ? "gulch" : broadcast
-      ? randomStadium()
-      : seats !== null
-        ? kickOffVenue
-        : homeStadium(home.name);
+    const assigned = street
+      ? "gulch"
+      : broadcast
+        ? randomStadium()
+        : seats !== null
+          ? kickOffVenue
+          : homeStadium(home.name);
     mill = assigned === "mill";
     topdeck = assigned === "topdeck";
     westend = assigned === "westend";
@@ -917,28 +1554,58 @@ async function start() {
     westend;
   const enclosed = mill || street;
   const courtBoards = street ? streetBoards : millBoards;
-  const venue = gulch ? "gulch" : mill
-    ? "mill"
-    : topdeck
-      ? "topdeck"
-      : westend
-        ? "westend"
-        : southside
-          ? "southside"
-          : eastside
-            ? "eastside"
-            : schoolGround
-              ? "school"
-              : "standard";
-  const introVenue = venue === "southside" ? "oldFourthWard" : venue === "topdeck" ? "midtown" : venue === "eastside" ? "candlerPark" : venue === "mill" ? "cabbagetown" : venue === "school" ? "grantPark" : venue === "westend" ? "westend" : "generic";
-  const playIntro = !gulch && (introTest || !!ticket || (introVenue !== "generic" && !broadcast && !standalonePractice &&
-    !celebrationLab && !keeperTest && !burnLab && !penaltyLab && !weatherTest));
-  const venueName = gulch ? "The Gulch" : stadiumName(venue === "standard" ? "school" : venue);
+  const venue = gulch
+    ? "gulch"
+    : mill
+      ? "mill"
+      : topdeck
+        ? "topdeck"
+        : westend
+          ? "westend"
+          : southside
+            ? "southside"
+            : eastside
+              ? "eastside"
+              : schoolGround
+                ? "school"
+                : "standard";
+  const introVenue =
+    venue === "southside"
+      ? "oldFourthWard"
+      : venue === "topdeck"
+        ? "midtown"
+        : venue === "eastside"
+          ? "candlerPark"
+          : venue === "mill"
+            ? "cabbagetown"
+            : venue === "school"
+              ? "grantPark"
+              : venue === "westend"
+                ? "westend"
+                : "generic";
+  const playIntro =
+    !gulch &&
+    (introTest ||
+      !!ticket ||
+      (introVenue !== "generic" &&
+        !broadcast &&
+        !standalonePractice &&
+        !celebrationLab &&
+        !keeperTest &&
+        !burnLab &&
+        !penaltyLab &&
+        !weatherTest));
+  const venueName = gulch
+    ? "The Gulch"
+    : stadiumName(venue === "standard" ? "school" : venue);
   const runX = enclosed ? courtBoards.x - 0.78 : 20.7;
   const runNorth = enclosed ? courtBoards.north + 0.53 : -11.7,
     runSouth = enclosed ? courtBoards.south - 0.53 : 11.7;
   function outsidePitch() {
-    if(street)return Math.abs(ball.position.x)>fieldX || Math.abs(ball.position.z)>fieldZ;
+    if (street)
+      return (
+        Math.abs(ball.position.x) > fieldX || Math.abs(ball.position.z) > fieldZ
+      );
     if (enclosed)
       return (
         Math.abs(ball.position.x) > fieldX && Math.abs(ball.position.z) < 2
@@ -947,26 +1614,38 @@ async function start() {
       Math.abs(ball.position.x) > fieldX || Math.abs(ball.position.z) > fieldZ
     );
   }
-  const { updateTrain, updateWeather, advanceStadiumBall, setSchoolNight, schoolLights, millLights, introCar } =
-    await buildGrounds(
-      scene,
-      renderer,
-      settings,
-      tutorialLaunch ? home : standalonePractice || celebrationLab ? null : home,
-      venue,
-      matchOpponent,
-      !broadcast,
-    );
-  const outdoorWeather = venue !== "mill" && !gulch && (settings.weather === "Rain" || settings.weather === "Snow");
-  const matchSurface = weatherTest || (outdoorWeather && !standalonePractice)
-    ? weatherPlayground(scene, settings) : undefined;
+  const {
+    updateTrain,
+    updateWeather,
+    advanceStadiumBall,
+    setSchoolNight,
+    schoolLights,
+    millLights,
+    introCar,
+  } = await buildGrounds(
+    scene,
+    renderer,
+    settings,
+    tutorialLaunch ? home : standalonePractice || celebrationLab ? null : home,
+    venue,
+    matchOpponent,
+    !broadcast,
+  );
+  const outdoorWeather =
+    venue !== "mill" &&
+    !gulch &&
+    (settings.weather === "Rain" || settings.weather === "Snow");
+  const matchSurface =
+    weatherTest || (outdoorWeather && !standalonePractice)
+      ? weatherPlayground(scene, settings, snowpocalypse ? 1 : 0)
+      : undefined;
   const useSnowBall = () => venue !== "mill" && settings.weather === "Snow";
   const updateTutorialPark = tutorialLaunch ? dressPark(scene) : undefined;
   if (stadiumTest && (venue === "school" || venue === "westend"))
     setSchoolNight!(true);
   // Top Deck and Southside carry their weathered markings on the ground material.
-  if (!topdeck && !southside && !gulch) {
-    const lines = mill ? 0xe7e3d7 : 0xb8d9b1;
+  if (snowpocalypse || (!topdeck && !southside && !gulch)) {
+    const lines = snowpocalypse ? 0x42637b : mill ? 0xe7e3d7 : 0xb8d9b1;
     for (const z of [-fieldZ, fieldZ]) box(0, 0.01, z, 42, 0.02, 0.07, lines);
     for (const x of [-fieldX, 0, fieldX])
       box(x, 0.01, 0, 0.07, 0.02, 24, lines);
@@ -984,7 +1663,47 @@ async function start() {
     circle.position.y = 0.035;
     scene.add(circle);
   }
-  const makeCannons = stadiumTest || street ? () => (_time: number) => {} : goalCannons;
+  const longRangeMarks: T.Mesh[] = [];
+  if (longRange || mystery) {
+    const line = new T.MeshBasicMaterial({
+      color: 0xffffff,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -3,
+    });
+    const dash = (x: number, z: number, length: number, alongX: boolean) => {
+      const mesh = new T.Mesh(
+        new T.PlaneGeometry(alongX ? length : 0.085, alongX ? 0.085 : length),
+        line,
+      );
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(x, 0.065, z);
+      mesh.visible = longRange;
+      scene.add(mesh);
+      longRangeMarks.push(mesh);
+    };
+    for (const sign of [-1, 1]) {
+      const inner = sign * (longRangeBox.fieldX - longRangeBox.depth);
+      for (
+        let z = -longRangeBox.halfWidth;
+        z < longRangeBox.halfWidth;
+        z += 0.42
+      )
+        dash(inner, Math.min(z + 0.15, longRangeBox.halfWidth), 0.3, false);
+      for (const side of [-1, 1])
+        for (let d = 0; d < longRangeBox.depth; d += 0.42) {
+          const length = Math.min(0.3, longRangeBox.depth - d);
+          dash(
+            sign * (longRangeBox.fieldX - d - length / 2),
+            side * longRangeBox.halfWidth,
+            length,
+            true,
+          );
+        }
+    }
+  }
+  const makeCannons =
+    stadiumTest || street ? () => (_time: number) => {} : goalCannons;
   const coloredSmoke = venue === "topdeck" || venue === "westend";
   const goalColors = [home, matchOpponent].map(
     (club) => new T.Color(clubAccent(club)),
@@ -1057,7 +1776,11 @@ async function start() {
   renderer.domElement.addEventListener("animationend", (e) => {
     if (e.animationName === "broadcast-in") endReplayInset();
   });
-  if(street){customizeCourt(scene,rules.court);if(!gulch)streetGoalSurrounds(scene,rules.goal.halfWidth,rules.goal.height)}
+  if (street) {
+    customizeCourt(scene, rules.court);
+    if (!gulch)
+      streetGoalSurrounds(scene, rules.goal.halfWidth, rules.goal.height);
+  }
   const homeGoal = createGoal(scene, -fieldX, rules.goal);
   const attackingGoal = createGoal(scene, fieldX, rules.goal);
   let aerial: { index: number; style: string; age: number } | null = null;
@@ -1099,9 +1822,7 @@ async function start() {
     const [jumpMap, tackleMap, loadedReactionMap, suppliedReactionFlash] =
       await Promise.all(
         [jumpUrl, tackleUrl, reactionUrl, reactionFlashUrl].map((url) =>
-          url
-            ? loadPlayerSheet(url)
-            : Promise.resolve(undefined),
+          url ? loadPlayerSheet(url) : Promise.resolve(undefined),
         ),
       );
     // Every player can show the tackle stun, even while their reaction art is pending.
@@ -1200,6 +1921,8 @@ async function start() {
   let attackSign = 1,
     half = 1,
     matchSeconds = 0,
+    beatRemaining = beatStartSeconds,
+    beatPendingEnd = false,
     homeScore = 0,
     awayScore = 0;
   let phase: "kickoff" | "freeKick" | "play" | "halftime" | "fulltime" =
@@ -1209,7 +1932,18 @@ async function start() {
     breakSeconds = 0,
     lastBlue = false;
   const scoreboard = el("scoreboard");
-  scoreboard.dataset.mode=rules.mode;
+  scoreboard.dataset.mode = rules.mode;
+  const mysteryHud = document.createElement("div");
+  const mysteryReveal = document.createElement("div");
+  if (mystery) {
+    mysteryHud.className = "mystery-hud";
+    mysteryHud.innerHTML = '<span class="mystery-icon"></span><strong class="mystery-name"></strong><span class="mystery-next"></span><i class="mystery-progress"></i>';
+    scoreboard.after(mysteryHud);
+    mysteryReveal.className = "mystery-reveal";
+    mysteryReveal.setAttribute("role", "status");
+    matchView.append(mysteryReveal);
+  }
+  if (firstToFive) scoreboard.dataset.targetScore = String(rules.targetScore);
   scoreboard.style.setProperty("--home-club", clubAccent(home));
   scoreboard.style.setProperty("--away-club", clubAccent(matchOpponent));
   (el("awayCrest") as HTMLImageElement).src = matchOpponent.crest;
@@ -1233,37 +1967,87 @@ async function start() {
     "aria-label",
     home.name + " versus " + matchOpponent.name,
   );
+  function matchMinute() {
+    return firstToFive || beatTheClock
+      ? Math.ceil(matchSeconds / 60)
+      : Math.min(50, (half - 1) * 25 + Math.ceil(matchSeconds / 60));
+  }
   function updateScore() {
     const seconds = Math.min(1500, Math.floor(matchSeconds));
-    const text = rules.winCondition==='target' ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · STREET ${rules.teamSize}V${rules.teamSize} · ${phase==='fulltime'?'FULL TIME':'FIRST TO '+rules.targetScore}` :
-      homeLabel +
-      " " +
-      homeScore +
-      " – " +
-      awayScore +
-      " " +
-      matchOpponent.name +
-      "  ·  " +
-      (phase === "fulltime" ? "FT" : phase === "halftime" ? "HT" : half + "H") +
-      "  " +
-      Math.floor(seconds / 60) +
-      ":" +
-      String(seconds % 60).padStart(2, "0");
+    const text = beatTheClock
+      ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · BEAT THE CLOCK · ${beatClockText(beatRemaining)}`
+      : rules.winCondition === "target"
+        ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · ${firstToFive ? `FIRST TO ${rules.targetScore} GOALS` : `STREET ${rules.teamSize}V${rules.teamSize} · ${phase === "fulltime" ? "FULL TIME" : "FIRST TO " + rules.targetScore}`}`
+        : homeLabel +
+          " " +
+          homeScore +
+          " – " +
+          awayScore +
+          " " +
+          matchOpponent.name +
+          "  ·  " +
+          (phase === "fulltime"
+            ? "FT"
+            : phase === "halftime"
+              ? "HT"
+              : half + "H") +
+          "  " +
+          Math.floor(seconds / 60) +
+          ":" +
+          String(seconds % 60).padStart(2, "0");
     if (scoreboard.getAttribute("aria-label") === text) return;
     scoreboard.setAttribute("aria-label", text);
     scoreboard.title = text;
     el("homeGoals").textContent = String(homeScore);
     el("awayGoals").textContent = String(awayScore);
-    el("bugPeriod").textContent =
-      phase === "fulltime"
+    el("bugPeriod").textContent = beatTheClock
+      ? "CHALLENGE"
+      : phase === "fulltime"
         ? "FT"
         : phase === "halftime"
           ? "HT"
           : half === 1
             ? "1ST"
             : "2ND";
-    el("bugClock").textContent = rules.winCondition==='target' ? (Math.max(homeScore,awayScore)===rules.targetScore-1?'MATCH POINT':'FIRST TO '+rules.targetScore) : Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
-    if(street)el('bugPeriod').textContent=rules.teamSize+'V'+rules.teamSize;
+    el("bugClock").textContent = beatTheClock
+      ? beatClockText(beatRemaining)
+      : rules.winCondition === "target"
+        ? Math.max(homeScore, awayScore) === rules.targetScore - 1
+          ? "MATCH POINT"
+          : "FIRST TO " + rules.targetScore
+        : Math.floor(seconds / 60) +
+          ":" +
+          String(seconds % 60).padStart(2, "0");
+    scoreboard.toggleAttribute(
+      "data-beat-urgent",
+      beatTheClock && beatRemaining <= 15,
+    );
+    if (street)
+      el("bugPeriod").textContent = rules.teamSize + "V" + rules.teamSize;
+    if (firstToFive) {
+      el("bugPeriod").textContent = `FIRST TO ${rules.targetScore}`;
+      el("bugClock").textContent = "";
+      for (const [id, score] of [
+        ["bugPipsHome", homeScore],
+        ["bugPipsAway", awayScore],
+      ] as const) {
+        if (el(id).children.length !== rules.targetScore)
+          el(id).replaceChildren(
+            ...Array.from({ length: rules.targetScore }, () =>
+              document.createElement("i"),
+            ),
+          );
+        const pips = [...el(id).querySelectorAll("i")];
+        pips.forEach((pip, i) => pip.classList.toggle("filled", i < score));
+        if (score > Number(el(id).dataset.score ?? 0)) {
+          const pip = pips[Math.min(score, pips.length) - 1];
+          pip?.classList.remove("fresh");
+          void pip?.getBoundingClientRect();
+          pip?.classList.add("fresh");
+        }
+        el(id).dataset.score = String(score);
+      }
+    }
   }
   const labels: Record<string, string> = {
     Meghan: "#6 Meghan",
@@ -1271,7 +2055,12 @@ async function start() {
     Stubbs: "#12 STUBBS",
   };
   const makeBurner = async (name: string) => {
-    const individual = name === "Bjorn" ? [bjornHeader, bjornTackle, bjornReaction] : name === "Nelson" ? [nelsonJump, nelsonTackle, nelsonReaction] : undefined;
+    const individual =
+      name === "Bjorn"
+        ? [bjornHeader, bjornTackle, bjornReaction]
+        : name === "Nelson"
+          ? [nelsonJump, nelsonTackle, nelsonReaction]
+          : undefined;
     const fall = fallSheets[name];
     const actor = await createPlayer(
       labels[name] ?? name,
@@ -1368,7 +2157,12 @@ async function start() {
             : undefined,
     );
     if (name === "Sean" && !street) actor.maps[0].userData.seanKeeper = true;
-    if (name === "Sean" || name === "Daniel" || name === "Stubbs" || name === "Bjorn")
+    if (
+      name === "Sean" ||
+      name === "Daniel" ||
+      name === "Stubbs" ||
+      name === "Bjorn"
+    )
       actor.maps[0].userData.celebrationScale = 1;
     return actor;
   };
@@ -1521,13 +2315,25 @@ async function start() {
     ? practiceNames
     : celebrationLab
       ? Object.keys(kits).filter((n) => n !== home.keeper)
-      : lineup.starters.slice(0, rules.teamSize-rules.goalkeepers);
+      : lineup.starters.slice(0, rules.teamSize - rules.goalkeepers);
   const players = await Promise.all(fieldPlayers.map(makeHomePlayer));
-  const awayShape = awayLineup && positions(awayLineup.shape);
-  const awayStarters = awayLineup?.starters ?? [...matchOpponent.outfield, matchOpponent.keeper];
-  const makeAwayPlayer = (name: string) => matchOpponent === burners
-    ? makeBurner(name) : makeRival(matchOpponent, name, guestSheets);
-  const lanes = celebrationLab || freePractice || gulchDebug ? [] : awayShape?.map(p => -p.lane) ?? [-10, 0, 10, -7, 0, 7];
+  let awayShape = awayLineup
+    ? positions(awayLineup.shape)
+    : survival
+      ? positions(lineup.shape)
+      : null;
+  const awayStarters = awayLineup?.starters ?? [
+    ...matchOpponent.outfield,
+    matchOpponent.keeper,
+  ];
+  const makeAwayPlayer = (name: string) =>
+    matchOpponent === burners
+      ? makeBurner(name)
+      : makeRival(matchOpponent, name, guestSheets);
+  const lanes =
+    celebrationLab || freePractice || gulchDebug
+      ? []
+      : (awayShape?.map((p) => -p.lane) ?? [-10, 0, 10, -7, 0, 7]);
   const opponents = await Promise.all(
     (crossingDrill ? [] : lanes).map((_, i) =>
       tutorialLaunch
@@ -1535,6 +2341,127 @@ async function start() {
         : makeAwayPlayer(awayStarters[i]),
     ),
   );
+  type SurvivalPlayer = (typeof players)[number];
+  let pendingSurvival: {
+    side: 0 | 1;
+    actor: SurvivalPlayer;
+    minute: number;
+  } | null = null;
+  const survivalHistory: {
+    side: 0 | 1;
+    name: string;
+    team: string;
+    minute: number;
+  }[] = [];
+  const survivalRemoved = [0, 0];
+  const survivalStrip = document.createElement("div");
+  if (survival) {
+    survivalStrip.className = "survival-strip";
+    survivalStrip.setAttribute("role", "status");
+    scoreboard.after(survivalStrip);
+  }
+  function renderSurvivalStrip(highlight: 0 | 1 | null = null) {
+    if (!survival) return;
+    survivalStrip.replaceChildren();
+    for (const [side, team] of ([players, opponents] as const).entries()) {
+      const row = document.createElement("div");
+      row.className =
+        "survival-team" + (highlight === side ? " survival-highlight" : "");
+      row.style.setProperty(
+        "--survival-color",
+        clubAccent(side === 0 ? home : matchOpponent),
+      );
+      const count = team.filter((actor) => !actor.penalty).length;
+      const label = document.createElement("b");
+      label.textContent = `${count + 1} LEFT`;
+      const icons = document.createElement("span");
+      icons.className = "survival-icons";
+      icons.setAttribute("aria-hidden", "true");
+      for (let i = 0; i < 7; i++) {
+        const pip = document.createElement("i");
+        pip.className = i === 0 ? "keeper" : i <= count ? "active" : "gone";
+        icons.append(pip);
+      }
+      row.append(side === 0 ? label : icons, side === 0 ? icons : label);
+      survivalStrip.append(row);
+    }
+    survivalStrip.setAttribute(
+      "aria-label",
+      `${home.name} ${players.filter((p) => !p.penalty).length + 1} players remaining; ${matchOpponent.name} ${opponents.filter((p) => !p.penalty).length + 1} players remaining`,
+    );
+  }
+  renderSurvivalStrip();
+  function queueSurvivalElimination(side: 0 | 1) {
+    if (!survival || pendingSurvival) return;
+    const team = side === 0 ? players : opponents;
+    const index = selectSurvivalElimination(team, survivalRemoved[side]);
+    if (index >= 0)
+      pendingSurvival = { side, actor: team[index], minute: matchMinute() };
+  }
+  function applySurvivalElimination() {
+    if (!pendingSurvival) return false;
+    const { side, actor, minute } = pendingSurvival;
+    pendingSurvival = null;
+    const team = side === 0 ? players : opponents;
+    const index = team.indexOf(actor);
+    if (index < 0) return false;
+    team.splice(index, 1);
+    actor.sprite.visible = false;
+    actor.moving = false;
+    actor.shooting = false;
+    actor.tackling = false;
+    actor.sprintTime = 0;
+    actor.age = -1;
+    snowVelocities.delete(actor);
+    for (const meter of meters) {
+      meter.chain.delete(actor.displayName);
+      if (meter.pair.includes(actor.displayName)) meter.pair = "";
+    }
+    if (side === 0) {
+      homeShape = survivalAnchors(homeShape, players.length);
+    } else {
+      awayShape = survivalAnchors(awayShape!, opponents.length);
+      lanes.splice(0, lanes.length, ...awayShape.map((p) => -p.lane));
+    }
+    for (const seat of seats ?? [])
+      if (seat.side === (side === 0 ? -1 : 1)) {
+        if (seat.actor === index) seat.actor = -1;
+        else if (seat.actor > index) seat.actor--;
+      }
+    lastHome = lastAway = -1;
+    marks = null;
+    supportOwner = -1;
+    nearCover = farCover = -1;
+    survivalRemoved[side]++;
+    const club = side === 0 ? home : matchOpponent;
+    survivalHistory.push({
+      side,
+      name: actor.displayName,
+      team: club.name,
+      minute,
+    });
+    renderSurvivalStrip(side);
+    goalCard.hidden = true;
+    const portrait =
+      club === burners
+        ? headshots[actor.displayName]
+        : rivalHeadshot(club, actor.displayName);
+    const template = document.createElement("template");
+    template.innerHTML = survivalEliminatedTemplate;
+    const reveal =
+      template.content.querySelector<HTMLElement>(".survival-reveal")!;
+    const face = reveal.querySelector<HTMLElement>("[data-portrait]")!;
+    if (portrait) face.style.backgroundImage = `url(${portrait})`;
+    else face.append(spriteHeadshot(actor.maps[0].image as HTMLImageElement));
+    const shirt = club === burners ? bios[actor.displayName]?.[0] : undefined;
+    reveal.querySelector("[data-player]")!.textContent =
+      actor.displayName.toUpperCase() + (shirt ? ` #${shirt}` : "");
+    reveal.querySelector("[data-remaining]")!.textContent =
+      `${team.filter((p) => !p.penalty).length + 1} PLAYERS REMAINING`;
+    el("goalPresentation").append(reveal);
+    setTimeout(() => reveal.remove(), 1700);
+    return true;
+  }
   const outfield = [...players, ...opponents];
   const referee = await createPlayer(
     "Referee",
@@ -1543,11 +2470,30 @@ async function start() {
     8,
     0.16,
   );
-  const burnerKeepers = new Map<string, Awaited<ReturnType<typeof createPlayer>>>();
-  if (!street && (home === burners || matchOpponent === burners || tutorialLaunch)) {
+  referee.sprite.userData.matchScale = 1.14;
+  const burnerKeepers = new Map<
+    string,
+    Awaited<ReturnType<typeof createPlayer>>
+  >();
+  if (
+    !street &&
+    (home === burners || matchOpponent === burners || tutorialLaunch)
+  ) {
     const keepers = await Promise.all([
-      createPlayer("Spencer", "Spencer", [spencerKeeperIdleUrl, spencerKeeperRunUrl, spencerKeeperKickUrl], 8, .14),
-      createPlayer("José", "José", [joseKeeperIdleUrl, joseKeeperRunUrl, joseKeeperKickUrl], 8, .14),
+      createPlayer(
+        "Spencer",
+        "Spencer",
+        [spencerKeeperIdleUrl, spencerKeeperRunUrl, spencerKeeperKickUrl],
+        8,
+        0.14,
+      ),
+      createPlayer(
+        "José",
+        "José",
+        [joseKeeperIdleUrl, joseKeeperRunUrl, joseKeeperKickUrl],
+        8,
+        0.14,
+      ),
     ]);
     for (const actor of keepers) {
       scene.remove(actor.sprite);
@@ -1557,11 +2503,26 @@ async function start() {
   }
   // Detached compatibility state for legacy animation math; never a pitch actor,
   // roster slot, replay participant or controllable keeper in keeperless rules.
-  const absentKeeper=()=>{const sprite=players[0].sprite.clone();sprite.material=sprite.material.clone();sprite.visible=false;return {...players[0],name:'',displayName:'',sprite,goal:new T.Vector3(),velocity:new T.Vector3()}};
-  const naturalKeeper = street ? absentKeeper() : await makeHomePlayer(lineup.starters[6]);
-  const sean = street || celebrationLab
-    ? naturalKeeper
-    : await makeKeeper(naturalKeeper.displayName);
+  const absentKeeper = () => {
+    const sprite = players[0].sprite.clone();
+    sprite.material = sprite.material.clone();
+    sprite.visible = false;
+    return {
+      ...players[0],
+      name: "",
+      displayName: "",
+      sprite,
+      goal: new T.Vector3(),
+      velocity: new T.Vector3(),
+    };
+  };
+  const naturalKeeper = street
+    ? absentKeeper()
+    : await makeHomePlayer(lineup.starters[6]);
+  const sean =
+    street || celebrationLab
+      ? naturalKeeper
+      : await makeKeeper(naturalKeeper.displayName);
   if (sean !== naturalKeeper) scene.remove(naturalKeeper.sprite);
   sean.name = naturalKeeper.name;
   const homeSlots = street ? [...players] : [...players, sean];
@@ -1589,29 +2550,48 @@ async function start() {
     lateChallenges: m.lateChallenges,
     penalty: m.penalty,
   });
-  const awayGK = street ? absentKeeper() : await makeKeeper(tutorialLaunch ? tutorialScene.awayKeeper : awayStarters[6]);
+  const awayGK = street
+    ? absentKeeper()
+    : await makeKeeper(
+        tutorialLaunch ? tutorialScene.awayKeeper : awayStarters[6],
+      );
   // Keep the generic keeper art available when another player takes over in goal.
   const genericKeeper = identity(awayGK);
-  const homeKeeperArt = home === burners && burnerKeepers.get(naturalKeeper.displayName);
-  if (!street && !celebrationLab && homeKeeperArt) Object.assign(sean, identity(homeKeeperArt));
-  else if (!street && !celebrationLab && naturalKeeper.maps[0].userData.seanKeeper)
+  const homeKeeperArt =
+    home === burners && burnerKeepers.get(naturalKeeper.displayName);
+  if (!street && !celebrationLab && homeKeeperArt)
+    Object.assign(sean, identity(homeKeeperArt));
+  else if (
+    !street &&
+    !celebrationLab &&
+    naturalKeeper.maps[0].userData.seanKeeper
+  )
     Object.assign(sean, identity(naturalKeeper));
-  const awayKeeperArt = (matchOpponent === burners || tutorialLaunch) && burnerKeepers.get(awayGK.displayName);
+  const awayKeeperArt =
+    (matchOpponent === burners || tutorialLaunch) &&
+    burnerKeepers.get(awayGK.displayName);
   if (awayKeeperArt) Object.assign(awayGK, identity(awayKeeperArt));
-  else if (awayGK.displayName === "Sean" && (matchOpponent === burners || tutorialLaunch)) {
+  else if (
+    awayGK.displayName === "Sean" &&
+    (matchOpponent === burners || tutorialLaunch)
+  ) {
     const keeperArt = await makeBurner("Sean");
     scene.remove(keeperArt.sprite);
     Object.assign(awayGK, identity(keeperArt));
   }
-  const awaySlots=street?[...opponents]:[...opponents,awayGK];
+  const awaySlots = street ? [...opponents] : [...opponents, awayGK];
   const managedSlots = managingAway ? awaySlots : homeSlots;
-  const fieldKeeper = street ? naturalKeeper : managingAway ? await makeAwayPlayer(awayStarters[6]) : naturalKeeper;
+  const fieldKeeper = street
+    ? naturalKeeper
+    : managingAway
+      ? await makeAwayPlayer(awayStarters[6])
+      : naturalKeeper;
   if (managingAway) scene.remove(fieldKeeper.sprite);
   const squad = new Map(
-    [...(street?managedSlots:[...managedSlots.slice(0,-1),fieldKeeper]), ...reserves].map((m) => [
-      m.displayName,
-      identity(m),
-    ]),
+    [
+      ...(street ? managedSlots : [...managedSlots.slice(0, -1), fieldKeeper]),
+      ...reserves,
+    ].map((m) => [m.displayName, identity(m)]),
   );
   const careerBookings = new Set<string>();
   let careerFouledPlayer: string | undefined;
@@ -1682,7 +2662,10 @@ async function start() {
       if (rules.goalkeepers && i === 6 && !celebrationLab) {
         const custom = managedClub === burners && burnerKeepers.get(name);
         const keeperArt = custom
-          ? identity(custom) : incoming.maps[0].userData.seanKeeper ? incoming : genericKeeper;
+          ? identity(custom)
+          : incoming.maps[0].userData.seanKeeper
+            ? incoming
+            : genericKeeper;
         Object.assign(slot, keeperArt);
         slot.name = incoming.name;
         slot.displayName = incoming.displayName;
@@ -1697,8 +2680,31 @@ async function start() {
     matchBench.splice(0, matchBench.length, ...bench);
   }
   let squadOpen = false;
-  const pitchActors = [...outfield, referee, ...(street?[]:[sean,awayGK])];
-  const exhaustionMarkers = [...outfield, ...(street?[]:[sean,awayGK])].map((actor) => {
+  const pitchActors = [...outfield, referee, ...(street ? [] : [sean, awayGK])];
+  const infernoAuras = inferno || mystery
+    ? [...outfield, sean, awayGK].map((actor) => {
+        const mesh = new T.Mesh(
+          new T.RingGeometry(0.33, 0.43, 20),
+          new T.MeshBasicMaterial({
+            color: 0xff6b21,
+            transparent: true,
+            opacity: 0.45,
+            depthWrite: false,
+            side: T.DoubleSide,
+          }),
+        );
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.renderOrder = 1;
+        mesh.visible = inferno;
+        scene.add(mesh);
+        return { actor, mesh };
+      })
+    : [];
+
+  const exhaustionMarkers = [
+    ...outfield,
+    ...(street ? [] : [sean, awayGK]),
+  ].map((actor) => {
     const icon = document.createElement("span");
     icon.className = "exhaustion-marker";
     icon.hidden = true;
@@ -1726,8 +2732,11 @@ async function start() {
   function groundStep(dt: number, age: number) {
     if (!matchSurface) return dt;
     if (age === 0) surfaceMomentum = 1;
-    if (ball.position.y > restingHeight + .025) return dt;
-    surfaceMomentum = Math.max(.1, surfaceMomentum * matchSurface.retention(ball.position, dt));
+    if (ball.position.y > restingHeight + 0.025) return dt;
+    surfaceMomentum = Math.max(
+      0.1,
+      surfaceMomentum * matchSurface.retention(ball.position, dt),
+    );
     return dt * matchSurface.groundSpeed() * surfaceMomentum;
   }
   let blueDecisionTime = 0;
@@ -1768,10 +2777,20 @@ async function start() {
       scene.add(mesh);
       return { mesh, sprite };
     });
-  let shot: ReturnType<typeof planShot> | null = null;
+  let shot:
+    | (ReturnType<typeof planShot> & {
+        airFinish?: AirFinish;
+        points?: number;
+        origin?: { x: number; z: number };
+      })
+    | null = null;
+  let airLooseAttempt: {finish:AirFinish; scorer:typeof sean | null; direction:number} | null = null;
+  const airSeatShots = new Map<number, {side:number; start:number; expires:number; power:number; gesture:CurveGesture}>();
   const burnHud = el("burnHud");
-  const burnEnabled = !celebrationLab && !broadcast && (!standalonePractice || !!tutorialLaunch);
+  const burnEnabled =
+    !celebrationLab && !broadcast && (!standalonePractice || !!tutorialLaunch);
   burnHud.hidden = !burnEnabled;
+  burnHud.dataset.mode = rules.mode;
   const meters = [home, matchOpponent].map((club, i) => {
     const node = document.createElement("div");
     node.className = "burn-meter";
@@ -1785,12 +2804,12 @@ async function start() {
     if (i === 0) {
       const title = document.createElement("b");
       title.className = "burn-title";
-      title.textContent = "BURN";
+      title.textContent = inferno ? "BURN ∞" : "BURN";
       burnHud.append(title);
     }
     return {
       node,
-      value: burnLab && i === 0 ? 100 : 0,
+      value: inferno || (burnLab && i === 0) ? 100 : 0,
       seconds: 0,
       pair: "",
       chain: new Set<string>(),
@@ -1807,17 +2826,21 @@ async function start() {
     m.node.style.setProperty(
       "--burn",
       String(
-        m.value === 100 && m.seconds > 0
-          ? m.seconds / burnWindowSeconds
-          : m.value / 100,
+        inferno
+          ? 1
+          : m.value === 100 && m.seconds > 0
+            ? m.seconds / burnWindowSeconds
+            : m.value / 100,
       ),
     );
     m.node.setAttribute("aria-valuenow", String(m.value));
     m.node.setAttribute(
       "aria-valuetext",
-      m.value === 100 && m.seconds > 0
-        ? `Burn available for ${Math.ceil(m.seconds)} more seconds`
-        : `${Math.round(m.value)} percent charged`,
+      inferno
+        ? "Burn permanently active"
+        : m.value === 100 && m.seconds > 0
+          ? `Burn available for ${Math.ceil(m.seconds)} more seconds`
+          : `${Math.round(m.value)} percent charged`,
     );
     m.node.toggleAttribute("data-on-fire", m.value === 100);
     scoreboard.toggleAttribute(
@@ -1828,14 +2851,15 @@ async function start() {
   function resetBurn(side?: number) {
     for (const i of side === undefined ? [0, 1] : [side]) {
       const m = meters[i];
-      m.value = burnLab && i === 0 ? 100 : 0;
+      m.value = inferno || (burnLab && i === 0) ? 100 : 0;
       m.seconds = 0;
       renderBurn(i);
     }
   }
   function changeBurn(delta: number, side = 0) {
     const m = meters[side];
-    if (!burnEnabled || crossingDrill || m.value === 100 || !delta) return;
+    if (!burnEnabled || crossingDrill || inferno || m.value === 100 || !delta)
+      return;
     m.value = T.MathUtils.clamp(m.value + delta, 0, 100);
     if (side === 0 && delta > 0) tutorial?.record("burnCharge");
     if (m.value === 100) {
@@ -1846,6 +2870,44 @@ async function start() {
     renderBurn(side);
   }
   resetBurn();
+  let mysteryRevealUntil = 0;
+  function applyMysteryModifier(previous?:MysteryId) {
+    if (!mystery) return;
+    const id = mystery.current.id;
+    const wasInferno = inferno;
+    inferno = id === "inferno";
+    longRange = id === "longRange";
+    slippery = id === "blackIce";
+    physics = slippery ? physicsFor("snowpocalypse")
+      : id === "heavyBall" ? {...physicsFor("classic"),ballSpeed:.8,rollingResistance:1.35}
+      : physicsFor("classic");
+    for (const mark of longRangeMarks) mark.visible = longRange;
+    for (const aura of infernoAuras) aura.mesh.visible = inferno;
+    if (inferno) resetBurn();
+    else if (wasInferno) {
+      for (const m of meters) { m.value = 100; m.seconds = burnWindowSeconds; }
+      renderBurn(0); renderBurn(1);
+    }
+    burnHud.querySelector(".burn-title")!.textContent = inferno ? "BURN ∞" : "BURN";
+    if (id === "secondWind") {
+      for (const actor of [...players, ...opponents, sean, awayGK]) {
+        actor.sprintCharge = 100;
+        actor.staminaCapacity = 100;
+      }
+    }
+    if (previous === "blackIce") snowVelocities.clear();
+    mysteryHud.style.setProperty("--mystery-color", mystery.current.color);
+    mysteryHud.querySelector(".mystery-icon")!.textContent = mystery.current.icon;
+    mysteryHud.querySelector(".mystery-name")!.textContent = mystery.current.name;
+    mysteryReveal.innerHTML = `<strong>MYSTERY MODIFIER!</strong><b>${mystery.current.icon} ${mystery.current.name}</b><span>${mystery.current.description}</span>`;
+    mysteryReveal.hidden = false;
+    mysteryRevealUntil = performance.now() + 3000;
+    audio.menu("open");
+  }
+  if (mystery) {
+    applyMysteryModifier();
+    mysteryRevealUntil = Infinity;
+  }
   function passBurn(
     side: number,
     from: string,
@@ -1893,9 +2955,13 @@ async function start() {
       to = players[receiver].displayName;
     const fitCost =
       Number(
-        !street && outOfPosition(home.name, from, homeShape[lastSender]?.role ?? "GK"),
+        !street &&
+          outOfPosition(home.name, from, homeShape[lastSender]?.role ?? "GK"),
       ) +
-      Number(!street && outOfPosition(home.name, to, homeShape[receiver]?.role ?? "GK"));
+      Number(
+        !street &&
+          outOfPosition(home.name, to, homeShape[receiver]?.role ?? "GK"),
+      );
     passBurn(
       0,
       from,
@@ -1918,14 +2984,38 @@ async function start() {
   } | null = null;
   const outVelocity = new T.Vector3();
   function ballOut(dx: number, dy: number, dz: number, miss?: "Wide" | "Over") {
-    const goalEnd = Math.abs(ball.position.x)>fieldX ? Math.sign(ball.position.x) : 0;
-    if(street && goalEnd && Math.abs(ball.position.z)<rules.goal.halfWidth-.08 && ball.position.y<rules.goal.height-.08){
-      shotDirection=goalEnd;scorer=lastBlue?opponents[Math.max(0,blueCarrier>=0?blueCarrier:recentKicker)]:players[ballPlayer];
-      shotStart.copy(ball.position);shotStart.x=goalEnd*(fieldX-.02);
-      shot={result:'Goal',targetX:goalEnd*(fieldX+.2),targetZ:ball.position.z,duration:.02};shotTime=0;arc=kickArc(1);shotMultiplier=1;
-      held=inFlight=false;blueCarrier=-1;bluePass=null;return;
+    const goalEnd =
+      Math.abs(ball.position.x) > fieldX ? Math.sign(ball.position.x) : 0;
+    if (
+      (street || (airBalls && !miss)) &&
+      goalEnd &&
+      Math.abs(ball.position.z) < rules.goal.halfWidth - 0.08 &&
+      ball.position.y < rules.goal.height - 0.08
+    ) {
+      shotDirection = goalEnd;
+      scorer = lastBlue
+        ? opponents[Math.max(0, blueCarrier >= 0 ? blueCarrier : recentKicker)]
+        : players[ballPlayer];
+      shotStart.copy(ball.position);
+      shotStart.x = goalEnd * (fieldX - 0.02);
+      shot = {
+        airFinish: airBalls ? (airLooseAttempt?.finish ?? ((goalEnd===attackSign ? lastBlue : !lastBlue) ? "OWN GOAL" : "GROUNDED")) : undefined,
+        result: "Goal",
+        targetX: goalEnd * (fieldX + 0.2),
+        targetZ: ball.position.z,
+        duration: 0.02,
+      };
+      if (airBalls && airLooseAttempt?.scorer) scorer=airLooseAttempt.scorer;
+      shotTime = 0;
+      arc = kickArc(1);
+      shotMultiplier = 1;
+      held = inFlight = false;
+      blueCarrier = -1;
+      bluePass = null;
+      return;
     }
-    const corner = !street && !!goalEnd && (goalEnd === attackSign ? lastBlue : !lastBlue);
+    const corner =
+      !street && !!goalEnd && (goalEnd === attackSign ? lastBlue : !lastBlue);
     lastDelivery = null;
     homePasser = "";
     if (corner) facts.corners[lastBlue ? 0 : 1]++;
@@ -1958,13 +3048,15 @@ async function start() {
       }
       return;
     }
-    el("shotResult").textContent = street ? "COURT RESTART" : goalEnd
-      ? corner
-        ? "CORNER"
-        : miss
-          ? miss.toUpperCase() + " · GOAL KICK"
-          : "GOAL KICK"
-      : "OUT OF TOUCH";
+    el("shotResult").textContent = street
+      ? "COURT RESTART"
+      : goalEnd
+        ? corner
+          ? "CORNER"
+          : miss
+            ? miss.toUpperCase() + " · GOAL KICK"
+            : "GOAL KICK"
+        : "OUT OF TOUCH";
   }
   let keeperRestart: {
     age: number;
@@ -1991,13 +3083,13 @@ async function start() {
   );
   ring.rotation.x = -Math.PI / 2;
   scene.add(ring);
-  const matchBallSheet = () => useSnowBall() ? snowBallSheet : ballSheet;
+  const matchBallSheet = () => (useSnowBall() ? snowBallSheet : ballSheet);
   const ballLoader = new T.TextureLoader();
   const ballMap = await ballLoader.loadAsync(matchBallSheet());
   // Practice can switch weather mid-pass. Keep the current spin frame on the same texture.
-  const alternateBall = weatherTest ? await ballLoader.loadAsync(
-    useSnowBall() ? ballSheet : snowBallSheet,
-  ) : undefined;
+  const alternateBall = weatherTest
+    ? await ballLoader.loadAsync(useSnowBall() ? ballSheet : snowBallSheet)
+    : undefined;
   const initialBallImage = ballMap.image;
   const initiallySnowing = useSnowBall();
   ballMap.magFilter = ballMap.minFilter = T.NearestFilter;
@@ -2021,6 +3113,15 @@ async function start() {
   const practiceBalls: T.Sprite[] = [];
   let pendingCurve: { actor: typeof sean; strike: CurveStrike } | null = null;
   let flightCurve: CurveStrike | null = null;
+  let labBend: {
+    x: number;
+    z: number;
+    dx: number;
+    dz: number;
+    distance: number;
+    amplitude: number;
+    offset: number;
+  } | null = null;
   let awayCharge: { seat: Seat; actor: number; gesture: CurveGesture } | null =
     null;
   let peachShotWindup: { index: number; human: boolean } | null = null;
@@ -2159,42 +3260,96 @@ async function start() {
   const [seanGroup, seanFullDive, seanQuickDive] = await Promise.all(
     [seanGroupUrl, seanFullDiveUrl, seanQuickDiveUrl].map(celebrationSheet),
   );
-  const [greenGroup, greenQuickDive, greenFullDive, greenCarry, greenHold, seanCarry, seanHold] =
-    await Promise.all([greenGroupUrl, greenQuickDiveUrl, greenFullDiveUrl, greenCarryUrl, greenHoldUrl,
-      seanCarryUrl, seanHoldUrl].map(celebrationSheet));
-  for (const sheet of [greenCarry, greenHold, seanCarry, seanHold]) sheet.userData.directionalRun = true;
-  const joseKeeperPoses = burnerKeepers.has("José") ? await Promise.all(
-    [joseKeeperDiveUrl, joseKeeperWalkUrl, joseKeeperHoldUrl].map(celebrationSheet)
-  ) : undefined;
-  const spencerKeeperPoses = burnerKeepers.has("Spencer") ? await Promise.all(
-    [spencerKeeperDiveUrl, spencerKeeperWalkUrl, spencerKeeperHoldUrl].map(celebrationSheet)
-  ) : undefined;
+  const [
+    greenGroup,
+    greenQuickDive,
+    greenFullDive,
+    greenCarry,
+    greenHold,
+    seanCarry,
+    seanHold,
+  ] = await Promise.all(
+    [
+      greenGroupUrl,
+      greenQuickDiveUrl,
+      greenFullDiveUrl,
+      greenCarryUrl,
+      greenHoldUrl,
+      seanCarryUrl,
+      seanHoldUrl,
+    ].map(celebrationSheet),
+  );
+  for (const sheet of [greenCarry, greenHold, seanCarry, seanHold])
+    sheet.userData.directionalRun = true;
+  const joseKeeperPoses = burnerKeepers.has("José")
+    ? await Promise.all(
+        [joseKeeperDiveUrl, joseKeeperWalkUrl, joseKeeperHoldUrl].map(
+          celebrationSheet,
+        ),
+      )
+    : undefined;
+  const spencerKeeperPoses = burnerKeepers.has("Spencer")
+    ? await Promise.all(
+        [spencerKeeperDiveUrl, spencerKeeperWalkUrl, spencerKeeperHoldUrl].map(
+          celebrationSheet,
+        ),
+      )
+    : undefined;
   const snowKeeperSheets = new Map<T.Texture, T.Texture>();
   if (useSnowBall() || weatherTest) {
     const snowAssets = import.meta.glob<string>("./art/*-snow.png", {
-      eager: true, query: "?url", import: "default",
+      eager: true,
+      query: "?url",
+      import: "default",
     });
     const carryPoses: [T.Texture, string][] = [
-      [seanCarry, "sean-carry"], [seanHold, "sean-carry-idle"],
-      [greenCarry, "rival-keeper-carry"], [greenHold, "rival-keeper-carry-idle"],
+      [seanCarry, "sean-carry"],
+      [seanHold, "sean-carry-idle"],
+      [greenCarry, "rival-keeper-carry"],
+      [greenHold, "rival-keeper-carry-idle"],
     ];
-    if (joseKeeperPoses) carryPoses.push(
-      [joseKeeperPoses[1], "jose-keeper-walk"], [joseKeeperPoses[2], "jose-keeper-hold"],
+    if (joseKeeperPoses)
+      carryPoses.push(
+        [joseKeeperPoses[1], "jose-keeper-walk"],
+        [joseKeeperPoses[2], "jose-keeper-hold"],
+      );
+    if (spencerKeeperPoses)
+      carryPoses.push(
+        [spencerKeeperPoses[1], "spencer-keeper-walk"],
+        [spencerKeeperPoses[2], "spencer-keeper-hold"],
+      );
+    await Promise.all(
+      carryPoses.map(async ([original, name]) => {
+        snowKeeperSheets.set(
+          original,
+          await celebrationSheet(snowAssets[`./art/${name}-snow.png`]),
+        );
+      }),
     );
-    if (spencerKeeperPoses) carryPoses.push(
-      [spencerKeeperPoses[1], "spencer-keeper-walk"], [spencerKeeperPoses[2], "spencer-keeper-hold"],
-    );
-    await Promise.all(carryPoses.map(async ([original, name]) => {
-      snowKeeperSheets.set(original, await celebrationSheet(snowAssets[`./art/${name}-snow.png`]));
-    }));
   }
   function keeperDiveSheet(idle: T.Texture, quick: boolean) {
-    if (idle.userData.keeperName === "José" && joseKeeperPoses) return joseKeeperPoses[0];
-    if (idle.userData.keeperName === "Spencer" && spencerKeeperPoses) return spencerKeeperPoses[0];
-    return idle.userData.seanKeeper ? (quick ? seanQuickDive : seanFullDive) : (quick ? greenQuickDive : greenFullDive);
+    if (idle.userData.keeperName === "José" && joseKeeperPoses)
+      return joseKeeperPoses[0];
+    if (idle.userData.keeperName === "Spencer" && spencerKeeperPoses)
+      return spencerKeeperPoses[0];
+    return idle.userData.seanKeeper
+      ? quick
+        ? seanQuickDive
+        : seanFullDive
+      : quick
+        ? greenQuickDive
+        : greenFullDive;
   }
   const danielSupport = await celebrationSheet(danielSupportUrl);
-  for (const map of [greenGroup, seanGroup, danielGoalGroup, danielGoalRun, danielSupport, bjornGoalRun, bjornGoalStand]) {
+  for (const map of [
+    greenGroup,
+    seanGroup,
+    danielGoalGroup,
+    danielGoalRun,
+    danielSupport,
+    bjornGoalRun,
+    bjornGoalStand,
+  ]) {
     const cell = map.image.height / 8;
     map.userData.cell = cell;
     map.userData.directionalCelebration = true;
@@ -2257,10 +3412,12 @@ async function start() {
   >();
   function supportMap(actor: typeof sean) {
     if (actor.maps[0].userData.keeperName) return undefined;
-    const source = (actor === sean || actor === awayGK) && !actor.maps[0].userData.seanKeeper
-      ? greenGroup : fleetCelebrations.get(actor.maps[0])?.support ??
-      onsiderMaleGoals.get(actor.maps[0])?.support ??
-      groupCelebrations[actor.displayName];
+    const source =
+      (actor === sean || actor === awayGK) && !actor.maps[0].userData.seanKeeper
+        ? greenGroup
+        : (fleetCelebrations.get(actor.maps[0])?.support ??
+          onsiderMaleGoals.get(actor.maps[0])?.support ??
+          groupCelebrations[actor.displayName]);
     if (!source) return undefined;
     const current = supportMaps.get(actor);
     if (current?.source === source) return current.map;
@@ -2346,6 +3503,7 @@ async function start() {
   let goalMap: T.Texture | undefined;
   let celebrationRunSeconds = 3.5;
   let groupStarted = false;
+  let ownGoalCelebration = false;
   // The camera flashes on frame nine of Mandy’s 200 ms-per-frame animation.
   const photoAt = 3,
     photoStart = photoAt - 9 * 0.2;
@@ -2468,16 +3626,19 @@ async function start() {
     action: Action;
     power: number;
     curve?: CurveStrike | null;
+    expires?: number;
   } | null = null;
   let charge: { action: Action; source: string; start: number } | null = null;
   let rushSource: string | null = null;
   let puntHold: { source: string; start: number } | null = null;
   let puntPower: number | null = null;
   let keeperGather = 0;
+  let keeperHoldSeconds = 0;
   let keeperSeat: Seat | undefined;
-  const keeperActor = () => keeperSeat?.side === 1 ? awayGK : sean;
-  const keeperTeam = () => keeperSeat?.side === 1 ? opponents : players;
-  const keeperDirection = () => keeperSeat?.side === 1 ? -attackSign : attackSign;
+  const keeperActor = () => (keeperSeat?.side === 1 ? awayGK : sean);
+  const keeperTeam = () => (keeperSeat?.side === 1 ? opponents : players);
+  const keeperDirection = () =>
+    keeperSeat?.side === 1 ? -attackSign : attackSign;
   const keeperDepth = () => keeperPanel?.depth ?? 5.4;
   const keeperWidth = () => keeperPanel?.width ?? 4.6;
   let keeperReady = false;
@@ -2503,7 +3664,11 @@ async function start() {
     ball.position.y = restingHeight;
     camTarget.copy(ball.position);
     el("message").textContent = "";
-    keeperPanel!.say("Hold Y to rush the " + (keeperPanel!.shot ? "shot" : "runner") + " · X changes attack");
+    keeperPanel!.say(
+      "Hold Y to rush the " +
+        (keeperPanel!.shot ? "shot" : "runner") +
+        " · X changes attack",
+    );
   }
   function pickOutlet(step: number) {
     const team = keeperTeam();
@@ -2511,31 +3676,57 @@ async function start() {
       outlet = (outlet + step + team.length) % team.length;
       if (!team[outlet].penalty) break;
     }
-    keeperPanel?.say(team[outlet].displayName + " · Left stick / WASD to aim · J/A throw · K/B punt");
+    keeperPanel?.say(
+      team[outlet].displayName +
+        " · Left stick / WASD to aim · J/A throw · K/B punt",
+    );
   }
-  function directionalMate(team: typeof players, from: T.Vector3, x: number, z: number, eligible: (i: number) => boolean) {
+  function directionalMate(
+    team: typeof players,
+    from: T.Vector3,
+    x: number,
+    z: number,
+    eligible: (i: number) => boolean,
+  ) {
     const magnitude = Math.hypot(x, z);
-    if (magnitude <= .22) return -1;
-    let best = -1, bestScore = -Infinity;
+    if (magnitude <= 0.22) return -1;
+    let best = -1,
+      bestScore = -Infinity;
     team.forEach((mate, i) => {
       if (mate.penalty || !eligible(i)) return;
-      const dx = mate.sprite.position.x - from.x, dz = mate.sprite.position.z - from.z;
+      const dx = mate.sprite.position.x - from.x,
+        dz = mate.sprite.position.z - from.z;
       const distance = Math.hypot(dx, dz);
-      if (distance < .01) return;
+      if (distance < 0.01) return;
       const alignment = (dx * x + dz * z) / (distance * magnitude);
-      if (alignment < .5) return;
-      const score = alignment * 8 - distance * .08;
-      if (score > bestScore) { best = i; bestScore = score; }
+      if (alignment < 0.5) return;
+      const score = alignment * 8 - distance * 0.08;
+      if (score > bestScore) {
+        best = i;
+        bestScore = score;
+      }
     });
     return best;
   }
   function aimOutlet(x: number, z: number) {
-    const next = directionalMate(keeperTeam(), keeperActor().sprite.position, x, z, () => true);
-    if (next >= 0 && next !== outlet) { outlet = next; pickOutlet(0); }
+    const next = directionalMate(
+      keeperTeam(),
+      keeperActor().sprite.position,
+      x,
+      z,
+      () => true,
+    );
+    if (next >= 0 && next !== outlet) {
+      outlet = next;
+      pickOutlet(0);
+    }
   }
   function clampKeeper() {
-    const p = keeperActor().sprite.position, sign = keeperDirection();
-    p.x = sign * T.MathUtils.clamp(sign * p.x, -fieldX + .25, -fieldX + keeperDepth());
+    const p = keeperActor().sprite.position,
+      sign = keeperDirection();
+    p.x =
+      sign *
+      T.MathUtils.clamp(sign * p.x, -fieldX + 0.25, -fieldX + keeperDepth());
     p.z = T.MathUtils.clamp(p.z, -keeperWidth(), keeperWidth());
   }
   function cancelRush() {
@@ -2544,7 +3735,7 @@ async function start() {
     puntPower = null;
   }
   function canRush(away = keeperSeat?.side === 1) {
-    if(street)return false;
+    if (street) return false;
     return (
       !paused &&
       !freePractice &&
@@ -2601,6 +3792,7 @@ async function start() {
     );
   }
   const blastMultiplier = 1.95;
+  const burnShotVelocityScale = 0.85;
   function canBlast(actor: typeof sean) {
     return (
       meters[0].value === 100 &&
@@ -2639,12 +3831,14 @@ async function start() {
       Math.abs(ballPos.z) > fieldZ
     )
       return false;
-    let closest = 0.95,
+    let closest = 0.95 * (airBalls ? airBallsProfile.contact : 1),
       winner: typeof sean | undefined;
     for (const actor of outfield) {
       if (
         !actor.sprite.visible ||
-        (tutorial?.chapter === 5 && players.includes(actor) && actor !== players[active]) ||
+        (tutorial?.chapter === 5 &&
+          players.includes(actor) &&
+          actor !== players[active]) ||
         actor.penalty ||
         actor.age >= 0 ||
         (inFlight && actor === players[lastSender])
@@ -2654,7 +3848,7 @@ async function start() {
         distance = Math.hypot(pos.x - ballPos.x, pos.z - ballPos.z);
       if (ballPos.y > 1 && ballPos.y < 2.5 && distance < 1.5) jump(actor);
       const lift = jumpHeight(actor);
-      if (lift < 0.15 || ballPos.y > 1.35 + lift || distance >= closest)
+      if ((!airBalls && lift < 0.15) || ballPos.y > (1.35 + lift) * (airBalls ? airBallsProfile.contact : 1) || distance >= closest)
         continue;
       closest = distance;
       winner = actor;
@@ -2675,9 +3869,24 @@ async function start() {
       }
       firstTimeCross = true;
     }
-    if (i < 0) blueWins(opponents.indexOf(winner), "AIR BALL");
+    if (i < 0) {
+      const finish=aerialFinish(ball.position.y);
+      const buffer=airBalls ? [...airSeatShots.entries()].find(([,b])=>b.side===1 && performance.now()<=b.expires) : undefined;
+      blueWins(opponents.indexOf(winner), "AIR BALL");
+      if (airBalls && (buffer || !seats?.some(s=>s.side===1))) {
+        airIntents.set(winner,{finish,until:performance.now()+1500});
+        if(buffer) {
+          const strike=buffer[1].gesture.finish(meters[1].value===100);
+          pendingCurve=strike ? {actor:winner,strike} : null;
+          airShotPower.set(winner,buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power);
+          airSeatShots.delete(buffer[0]);
+        }
+        tryBlueShot(false,true);
+      }
+    }
     else {
-      if (i !== active) cancelCharge();
+      if (i !== active && !airBalls) cancelCharge();
+      if (airBalls && aiHome && !charge && !queued) queued={action:"shot",power:.65,expires:performance.now()+600};
       if (!inFlight) homePasser = "";
       bluePass = null;
       blueCarrier = -1;
@@ -2688,7 +3897,10 @@ async function start() {
   }
   function press(action: Action, source: string) {
     if (keeperPanel && !paused) {
-      if (action === "cross" && (keeperReady || keeperGather > 0)) { keeperPanel.toggle(); return; }
+      if (action === "cross" && (keeperReady || keeperGather > 0)) {
+        keeperPanel.toggle();
+        return;
+      }
       if (keeperReady) {
         if (action !== "through") return;
         keeperReady = false;
@@ -2709,9 +3921,14 @@ async function start() {
           shotTime = 0;
           keeperStartX = homeKeeper.position.x;
           keeperStart = homeKeeper.position.z;
-          shot = { result: "Save", targetX: keeperStartX, targetZ: 0, duration: .72 };
+          shot = {
+            result: "Save",
+            targetX: keeperStartX,
+            targetZ: 0,
+            duration: 0.72,
+          };
           arc = kickArc(shotMultiplier, shot.duration);
-          audio.kick(.35);
+          audio.kick(0.35);
         }
         keeperPanel.say("Meet the ball · R/View to retry");
       }
@@ -2800,7 +4017,10 @@ async function start() {
     showPower(0);
   }
   function release(source: string) {
-    if (tutorial?.capturesInput) { cancelCharge(); return; }
+    if (tutorial?.capturesInput) {
+      cancelCharge();
+      return;
+    }
     if (source === rushSource) {
       cancelRush();
       return;
@@ -2825,6 +4045,7 @@ async function start() {
       (action === "shot" && canChargeLooseShot())
     ) {
       queued = {
+        expires: airBalls ? performance.now()+airBallsProfile.inputBufferMs : undefined,
         action,
         power: fraction,
         curve:
@@ -2892,6 +4113,7 @@ async function start() {
     return (Math.round(angle / sector) + 8) % 8;
   }
   function carry() {
+    if (airBalls) airLooseAttempt=null;
     if (kickSpot) {
       ball.position.copy(kickSpot);
       return;
@@ -3012,7 +4234,7 @@ async function start() {
   function organizeKeeperOutlets(dt: number) {
     outletRefresh -= dt;
     if (outletRefresh > 0) return;
-    outletRefresh = .25;
+    outletRefresh = 0.25;
     const foot = homeKeeper.position;
     for (const [i, role] of homeShape.entries()) {
       if (!role.back || players[i].penalty || owner(-1, i)) continue;
@@ -3021,24 +4243,52 @@ async function start() {
       for (const depth of [5, 8, 11]) {
         for (const offset of [0, -2, 2]) {
           const x = T.MathUtils.clamp(foot.x + attackSign * depth, -runX, runX);
-          const z = T.MathUtils.clamp(role.lane + offset + foot.z * .2, runNorth, runSouth);
+          const z = T.MathUtils.clamp(
+            role.lane + offset + foot.z * 0.2,
+            runNorth,
+            runSouth,
+          );
           const { open, lane } = passingSpace(x, z, foot);
-          const score = open + 1.5 * lane - .22 * Math.abs(offset)
-            - .16 * Math.abs(depth - (role.lane ? 5 : 9))
-            - .08 * Math.hypot(x - mate.sprite.position.x, z - mate.sprite.position.z);
-          if (score > best) { best = score; mate.goal.set(x, 0, z); }
+          const score =
+            open +
+            1.5 * lane -
+            0.22 * Math.abs(offset) -
+            0.16 * Math.abs(depth - (role.lane ? 5 : 9)) -
+            0.08 *
+              Math.hypot(
+                x - mate.sprite.position.x,
+                z - mate.sprite.position.z,
+              );
+          if (score > best) {
+            best = score;
+            mate.goal.set(x, 0, z);
+          }
         }
       }
     }
   }
-  let homeTactics:StreetTactics={presser:-1,cover:-1},awayTactics:StreetTactics={presser:-1,cover:-1};
-  function organizeStreetHome(){
-    const result=streetTargets(players.map(p=>p.sprite.position),ball.position,attackSign,held||inFlight?ballPlayer:-1,held||inFlight,homeShape.map(p=>({x:p.depth,z:p.lane})),homeTactics);
-    homeTactics=result;
-    result.targets.forEach((p,i)=>{if(!(inFlight&&i===ballPlayer))players[i].goal.set(p.x,0,p.z)});
+  let homeTactics: StreetTactics = { presser: -1, cover: -1 },
+    awayTactics: StreetTactics = { presser: -1, cover: -1 };
+  function organizeStreetHome() {
+    const result = streetTargets(
+      players.map((p) => p.sprite.position),
+      ball.position,
+      attackSign,
+      held || inFlight ? ballPlayer : -1,
+      held || inFlight,
+      homeShape.map((p) => ({ x: p.depth, z: p.lane })),
+      homeTactics,
+    );
+    homeTactics = result;
+    result.targets.forEach((p, i) => {
+      if (!(inFlight && i === ballPlayer)) players[i].goal.set(p.x, 0, p.z);
+    });
   }
   function organizeAttack(dt: number) {
-    if(street){organizeStreetHome();return}
+    if (street) {
+      organizeStreetHome();
+      return;
+    }
     returnRunTime = Math.max(0, returnRunTime - dt);
     if (
       crossingDrill ||
@@ -3188,11 +4438,14 @@ async function start() {
       }
     }
   }
+  const goalValues = new WeakMap<object, number>();
+  const longAttempts = [0, 0],
+    twoPointGoals = [0, 0];
   const goalCard = document.createElement("div");
   goalCard.className = "match-goal-card";
   goalCard.setAttribute("role", "status");
   goalCard.hidden = true;
-  matchView.append(goalCard);
+  el("goalPresentation").append(goalCard);
   function showGoalCard() {
     const club = shotDirection === attackSign ? home : matchOpponent;
     const name = scorer?.displayName ?? club.name;
@@ -3219,18 +4472,71 @@ async function start() {
       tag.textContent += " · " + (menuPad() ? "A" : "J") + " to pass";
     el("message").replaceChildren(tag);
   }
+  function finishBeatChallenge() {
+    if (!beatTheClock || fullTimeScreen) return;
+    beatRemaining = 0;
+    beatPendingEnd = false;
+    clearReplay();
+    celebrating = false;
+    goalBanner.hidden = true;
+    goalCard.hidden = true;
+    replayPanel.hidden = true;
+    phase = "fulltime";
+    const goals = beatTeam === -1 ? homeScore : awayScore;
+    const conceded = beatTeam === -1 ? awayScore : homeScore;
+    saveBeatBest({
+      goals,
+      conceded,
+      team: beatTeam === -1 ? home.name : matchOpponent.name,
+      difficulty: settings.difficulty,
+      players: beatInitialPlayers,
+      finishedAt: new Date().toISOString(),
+    });
+    updateScore();
+    audio.play("whistle", 0.75, 0.88);
+    audio.finishMatch();
+    music?.startBreak();
+    fullTimeScreen = true;
+    el("pause").setAttribute("disabled", "");
+    el("message").textContent = "TIME'S UP!";
+    showFullTime();
+  }
   function reset(blue = false, afterGoal = false) {
+    if (airBalls) {
+      airLooseAttempt=null; airWasAloft=false; airBounceAt=-Infinity; airSeatShots.clear();
+      for(const actor of [...players,...opponents]) {airIntents.delete(actor); airShotPower.delete(actor);}
+    }
     // Unopposed court practice always returns the ball to the home team.
     if (gulchDebug) blue = false;
-    if(!gulchDebug && afterGoal && targetReached(rules,homeScore,awayScore)){
-      clearReplay();celebrating=false;goalBanner.hidden=true;goalCard.hidden=true;replayPanel.hidden=true;
-      phase='fulltime';updateScore();audio.finishMatch();music?.startBreak();fullTimeScreen=true;el('pause').setAttribute('disabled','');showFullTime();return;
+    if (beatTheClock && afterGoal && beatPendingEnd) {
+      finishBeatChallenge();
+      return;
+    }
+    if (
+      !gulchDebug &&
+      afterGoal &&
+      targetReached(rules, homeScore, awayScore)
+    ) {
+      clearReplay();
+      celebrating = false;
+      goalBanner.hidden = true;
+      goalCard.hidden = true;
+      replayPanel.hidden = true;
+      phase = "fulltime";
+      updateScore();
+      audio.finishMatch();
+      music?.startBreak();
+      fullTimeScreen = true;
+      el("pause").setAttribute("disabled", "");
+      showFullTime();
+      return;
     }
     tutorialReturnKicker = -1;
     goalCard.hidden = !afterGoal;
     lastDelivery = null;
     homePasser = "";
     pendingCurve = flightCurve = awayCharge = null;
+    labBend = null;
     curveRate = 0;
     burningBall.clear();
     jumps.clear();
@@ -3246,6 +4552,7 @@ async function start() {
     struckLoose = false;
     finishCard();
     clearReplay(afterGoal);
+    const eliminated = afterGoal && applySurvivalElimination();
     freeKick = null;
     kickSpot = null;
     recentHomeKicker = null;
@@ -3260,7 +4567,7 @@ async function start() {
     centerPass = false;
     kickoffBlue = blue;
     phase = "kickoff";
-    breakSeconds = 0.9;
+    breakSeconds = eliminated ? 1.8 : 0.9;
     lastBlue = blue;
     supportOwner = -1;
     returnRunTime = 0;
@@ -3318,7 +4625,17 @@ async function start() {
     turnoverGrace = 0.65;
     noticeTime = 0;
     const blueShape = lanes.map((z, i) => [
-      awayShape ? (blue && i === 1 ? 0 : -awayShape[i].depth) : i >= 3 ? 12 : i === 1 ? (blue ? 0 : 4) : 6,
+      awayShape
+        ? blue && i === 1
+          ? 0
+          : -awayShape[i].depth
+        : i >= 3
+          ? 12
+          : i === 1
+            ? blue
+              ? 0
+              : 4
+            : 6,
       blue && awayShape && i === 1 ? 0 : z,
     ]);
     opponents.forEach((o, i) => {
@@ -3348,6 +4665,7 @@ async function start() {
     held = true;
     inFlight = false;
     vx = vz = 0;
+    snowVelocities.clear();
     players.forEach((q) => {
       q.age = -1;
       q.goal.copy(q.sprite.position);
@@ -3392,7 +4710,13 @@ async function start() {
     );
     let shortest = Infinity;
     for (const [i, mate] of players.entries()) {
-      if (mate.penalty || i === shooter || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, false))) continue;
+      if (
+        mate.penalty ||
+        i === shooter ||
+        (tutorial &&
+          !isTutorialParticipant(tutorial.chapter, mate.displayName, false))
+      )
+        continue;
       const distance = mate.sprite.position.distanceToSquared(nearPost);
       if (distance < shortest) {
         shortest = distance;
@@ -3402,7 +4726,13 @@ async function start() {
     let farPostFilled = false,
       trailers = 0;
     for (const [i, mate] of players.entries()) {
-      if (mate.penalty || i === shooter || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, false))) continue;
+      if (
+        mate.penalty ||
+        i === shooter ||
+        (tutorial &&
+          !isTutorialParticipant(tutorial.chapter, mate.displayName, false))
+      )
+        continue;
       if (i === reboundRunner) mate.goal.copy(nearPost);
       else if (!farPostFilled) {
         mate.goal.set(attackSign * (fieldX - 4.2), 0, -nearSide * 2.1);
@@ -3477,8 +4807,11 @@ async function start() {
   cardMap.minFilter = cardMap.magFilter = T.NearestFilter;
   cardMap.generateMipmaps = false;
   cardMap.colorSpace = T.SRGBColorSpace;
-  cardMap.repeat.set(1 / 9, 1 / 8);
+  const cardFrames = cardMap.image.width / (cardMap.image.height / 8);
+  cardMap.repeat.set(1 / cardFrames, 1 / 8);
   cardMap.userData.directionalCelebration = true;
+  // Hold the extended card for a full second after its final animation frame.
+  const cardSceneSeconds = (cardFrames - 1) * 0.09 + 1;
   let cardScene: { offender: typeof sean; time: number; start: number } | null =
     null;
   function finishCard() {
@@ -3489,7 +4822,7 @@ async function start() {
             Math.max(cardScene.start - 1, replay.time - 3.5),
             referee.sprite,
           ),
-          Math.min(50, (half - 1) * 25 + Math.ceil(matchSeconds / 60)) +
+          matchMinute() +
             "′ · " +
             cardScene.offender.displayName +
             " · Yellow Card",
@@ -3518,7 +4851,7 @@ async function start() {
     } else {
       referee.moving = false;
       cardScene.time += dt;
-      if (cardScene.time >= 1.55) {
+      if (cardScene.time >= cardSceneSeconds) {
         finishCard();
         return false;
       }
@@ -3572,6 +4905,7 @@ async function start() {
       actor.moving = false;
       actor.tackling = false;
       actor.velocity.set(0, 0, 0);
+      snowVelocities.delete(actor);
     }
     ball.position.copy(spot);
     feedbackActor = null;
@@ -3653,8 +4987,11 @@ async function start() {
     actor.lateChallenges++;
     if (ticket && actor.lateChallenges === 3 && players.includes(actor))
       careerBookings.add(actor.displayName);
-    const red = actor.lateChallenges >= 6,
-      yellow = actor.lateChallenges === 3;
+    const survivalSide = players.includes(actor) ? players : opponents;
+    const protectedRoster =
+      survival && survivalSide.filter((p) => !p.penalty).length <= 2;
+    const red = actor.lateChallenges >= 6 && !protectedRoster,
+      yellow = actor.lateChallenges === 3 && !protectedRoster;
     feedbackActor = actor;
     feedbackTime = 1.05;
     callout.hidden = false;
@@ -3667,8 +5004,9 @@ async function start() {
       red || yellow
         ? callout.dataset.grade
         : "LATE TACKLE · " + (((actor.lateChallenges - 1) % 3) + 1) + "/3";
-    if(street || (!red && !yellow))return;
+    if (street || (!red && !yellow)) return;
     actor.penalty = red ? Infinity : 120;
+    if (survival) renderSurvivalStrip();
     actor.sprite.visible = false;
     actor.moving = false;
     actor.age = -1;
@@ -3689,6 +5027,7 @@ async function start() {
       actor.penalty = Math.max(0, actor.penalty - seconds);
       if (actor.penalty === 0) {
         actor.sprite.visible = true;
+        if (survival) renderSurvivalStrip();
         actor.sprite.position.set(0, 0, fieldZ - 0.6);
         actor.goal.copy(actor.sprite.position);
         supportOwner = -1;
@@ -3734,7 +5073,7 @@ async function start() {
     );
   }
   function claimDribble() {
-    if(street)return;
+    if (street) return;
     held = false;
     lastSender = -1;
     noticeTime = 0;
@@ -3764,12 +5103,12 @@ async function start() {
     clearanceLoose = false;
     vx = vz = reboundVY = 0;
     lastBlue = true;
-    const human = seats?.find(s => s.side === 1);
+    const human = seats?.find((s) => s.side === 1);
     if (!goalKick && human) {
       keeperSeat = human;
       cancelRush();
       keeperRestart = null;
-      keeper.position.set(start.x + attackSign * .45, 0, start.z);
+      keeper.position.set(start.x + attackSign * 0.45, 0, start.z);
       ball.position.copy(start);
       beginKeeperHold();
       return;
@@ -3808,7 +5147,7 @@ async function start() {
             Math.hypot(pos.x - start.x - t * dx, pos.z - start.z - t * dz),
           );
       }
-      const short = i >= 3;
+      const short = survival ? !!awayShape?.[i].back : i >= 3;
       const score =
         space * 1.8 +
         lane * (short ? 0.9 : 0.35) +
@@ -3850,7 +5189,7 @@ async function start() {
     noticeTime = 0;
   }
   function gatherPunt() {
-    if(street)return false;
+    if (street) return false;
     if (
       !opponents.length ||
       attackSign * ball.position.x < fieldX - 3 ||
@@ -3873,10 +5212,14 @@ async function start() {
     }
     lastDelivery = null;
     homePasser = "";
-    const goalie = keeperActor(), sign = keeperDirection();
+    const goalie = keeperActor(),
+      sign = keeperDirection();
     const foot = goalie.sprite.position;
-    const outside = [foot, ball.position].some(pos =>
-      sign * pos.x > -fieldX + keeperDepth() || Math.abs(pos.z) > keeperWidth());
+    const outside = [foot, ball.position].some(
+      (pos) =>
+        sign * pos.x > -fieldX + keeperDepth() ||
+        Math.abs(pos.z) > keeperWidth(),
+    );
     const power = puntHold ? heldPower(puntHold.start) : puntPower;
     cancelRush();
     cancelCharge();
@@ -3894,13 +5237,13 @@ async function start() {
     lastBlue = goalie === awayGK;
     foot.y = 0;
     goalie.sprite.material.rotation = 0;
-    ball.position.set(foot.x + sign * .42, restingHeight, foot.z);
+    ball.position.set(foot.x + sign * 0.42, restingHeight, foot.z);
     if (outside || power !== null) {
       goalie.face = facing(sign, 0);
-      goalie.age = .12;
+      goalie.age = 0.12;
       goalie.shooting = true;
-      audio.kick(power ?? .85);
-      releaseLooseStrike(sign, -foot.z * .02, power ?? .85);
+      audio.kick(power ?? 0.85);
+      releaseLooseStrike(sign, -foot.z * 0.02, power ?? 0.85);
     } else {
       beginKeeperHold();
     }
@@ -3908,12 +5251,13 @@ async function start() {
     noticeTime = 0;
   }
   function beginKeeperHold() {
+    keeperHoldSeconds = 0;
     keeperGather = 1;
     struckLoose = false;
     outlet = nearestEligible(keeperTeam(), keeperActor().sprite.position);
     if (outlet < 0) {
       keeperGather = 0;
-      releaseLooseStrike(keeperDirection(), 0, .85);
+      releaseLooseStrike(keeperDirection(), 0, 0.85);
       return;
     }
     pickOutlet(0);
@@ -3926,20 +5270,40 @@ async function start() {
     if (outlet < 0) return;
     keeperGather = 0;
     distributeKeeperBall(outlet, action === "shot");
-    keeperPanel?.say((action === "shot" ? "Punt" : "Throw") + " to " + keeperTeam()[outlet].displayName + " · R/View to retry");
+    keeperPanel?.say(
+      (action === "shot" ? "Punt" : "Throw") +
+        " to " +
+        keeperTeam()[outlet].displayName +
+        " · R/View to retry",
+    );
   }
   function distributeKeeperBall(receiver: number, punt: boolean) {
     audio.kick(0.32);
-    const goalie = keeperActor(), target = keeperTeam()[receiver].sprite.position;
-    goalie.face = facing(target.x - ball.position.x, target.z - ball.position.z);
-    goalie.age = .12;
+    const goalie = keeperActor(),
+      target = keeperTeam()[receiver].sprite.position;
+    goalie.face = facing(
+      target.x - ball.position.x,
+      target.z - ball.position.z,
+    );
+    goalie.age = 0.12;
     goalie.shooting = true;
-    const duration = Math.max(.4, ball.position.distanceTo(target) / (punt ? 10 : 13));
+    const duration = Math.max(
+      0.4,
+      ball.position.distanceTo(target) / (punt ? 10 : 13),
+    );
     const loft = punt ? 3.8 : 1.1;
     if (goalie === awayGK) {
       const end = target.clone();
       end.y = restingHeight;
-      bluePass = {sender: goalie.displayName, receiver, start: ball.position.clone(), end, age: 0, duration, loft};
+      bluePass = {
+        sender: goalie.displayName,
+        receiver,
+        start: ball.position.clone(),
+        end,
+        age: 0,
+        duration,
+        loft,
+      };
       return;
     }
     homePasser = sean.displayName;
@@ -3952,9 +5316,9 @@ async function start() {
     passTarget.copy(players[receiver].sprite.position);
     passTarget.y = restingHeight;
     passKind = "cross";
-    passStart.y = .82;
+    passStart.y = 0.82;
     crossLift = loft;
-    passDuration = duration;
+    passDuration = duration / physics.ballSpeed;
     el("shotResult").textContent = "";
   }
   function ownBox(pos: T.Vector3) {
@@ -3964,14 +5328,20 @@ async function start() {
     const [x, z] = readAim(menuPad());
     return Math.hypot(x, z) > 0.22 ? facing(x, z) : facing(attackSign, 0);
   }
-  function releaseLooseStrike(dx: number, dz: number, power: number) {
+  function releaseLooseStrike(
+    dx: number,
+    dz: number,
+    power: number,
+    velocityScale = 1,
+  ) {
+    labBend = null;
     curveRate = 0;
     flightCurve = null;
-    const speed = 7 + 11 * power,
+    const speed = (7 + 11 * power) * physics.ballSpeed * velocityScale,
       length = Math.hypot(dx, dz) || 1;
     vx = (speed * dx) / length;
     vz = (speed * dz) / length;
-    reboundVY = power >= 0.5 ? 6 + 5 * power : 0;
+    reboundVY = (power >= 0.5 ? 6 + 5 * power : 0) * velocityScale;
     clearanceLoose = struckLoose = true;
     held = inFlight = false;
     shot = null;
@@ -4005,7 +5375,14 @@ async function start() {
       )
         continue;
       const to = mate.sprite.position;
-      const route = planMillBank(ball.position, to, defenders, clearance, courtBoards, rules.goal.halfWidth);
+      const route = planMillBank(
+        ball.position,
+        to,
+        defenders,
+        clearance,
+        courtBoards,
+        rules.goal.halfWidth,
+      );
       if (!route) continue;
       const progress =
         (to.x - ball.position.x) * (blue ? -attackSign : attackSign);
@@ -4050,7 +5427,7 @@ async function start() {
     clearanceLoose = struckLoose = true;
     curveRate = 0;
     flightCurve = null;
-    const speed = 15 + 8 * power,
+    const speed = (15 + 8 * power) * physics.ballSpeed,
       length = Math.hypot(dx, dz);
     vx = (speed * dx) / length;
     vz = (speed * dz) / length;
@@ -4101,31 +5478,79 @@ async function start() {
     receiverLaunch.copy(players[target].sprite.position);
     passTarget.copy(receiverLaunch);
     passTarget.y = restingHeight;
-    passDuration = Math.max(0.55, passStart.distanceTo(passTarget) / 8 / 1.45 * 1.35);
+    passDuration =
+      Math.max(0.55, (passStart.distanceTo(passTarget) / 8 / 1.45) * 1.35) /
+      physics.ballSpeed;
     crossLift = 1.35 + 0.45 * passPower;
-    arc = kickArc(1.45, passDuration);
+    arc = mysteryKickArc(1.45, passDuration);
     vx = vz = reboundVY = 0;
-    sender.face = facing(passTarget.x - passStart.x, passTarget.z - passStart.z);
+    sender.face = facing(
+      passTarget.x - passStart.x,
+      passTarget.z - passStart.z,
+    );
     sender.shooting = true;
     sender.age = 0.12;
     audio.kick(passPower);
   }
   function receivePass(collector: number, aerialFinish: boolean) {
-    if (tutorial && !isTutorialParticipant(tutorial.chapter, players[collector].displayName, false)) {
-      const target = lastSender >= 0 && lastSender !== collector && !players[lastSender].penalty && isTutorialParticipant(tutorial.chapter, players[lastSender].displayName, false)
-        ? lastSender : players.findIndex((actor, i) => i !== collector && !actor.penalty && isTutorialParticipant(tutorial.chapter, actor.displayName, false));
-      if (target >= 0) { returnTutorialLob(players[collector], target); return; }
+    if (airBalls) {
+      const buffer=[...airSeatShots.entries()].find(([,b])=>b.side===-1 && performance.now()<=b.expires);
+      if(buffer) {
+        queued={action:"shot",power:buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power,
+          curve:buffer[1].gesture.finish(canBlast(players[collector])),expires:performance.now()+600};
+        airSeatShots.delete(buffer[0]);
+      }
+    }
+    if (
+      tutorial &&
+      !isTutorialParticipant(
+        tutorial.chapter,
+        players[collector].displayName,
+        false,
+      )
+    ) {
+      const target =
+        lastSender >= 0 &&
+        lastSender !== collector &&
+        !players[lastSender].penalty &&
+        isTutorialParticipant(
+          tutorial.chapter,
+          players[lastSender].displayName,
+          false,
+        )
+          ? lastSender
+          : players.findIndex(
+              (actor, i) =>
+                i !== collector &&
+                !actor.penalty &&
+                isTutorialParticipant(
+                  tutorial.chapter,
+                  actor.displayName,
+                  false,
+                ),
+            );
+      if (target >= 0) {
+        returnTutorialLob(players[collector], target);
+        return;
+      }
     }
     tutorialReturnKicker = -1;
     const receiver = players[collector].displayName;
     if (homePasser && homePasser !== receiver && (inFlight || rollingPass)) {
       facts.passes[0]++;
       tutorial?.record("receive");
-      tutorial?.record(passKind === "through" ? "throughReceived" : passKind === "cross" ? "crossReceived" : "passCompleted");
+      tutorial?.record(
+        passKind === "through"
+          ? "throughReceived"
+          : passKind === "cross"
+            ? "crossReceived"
+            : "passCompleted",
+      );
       if (ticket && homePasser === ticket.career.player) facts.personalPasses++;
       lastDelivery = { sender: homePasser, receiver };
     }
     homePasser = "";
+    if (airBalls && queued?.expires && performance.now()>queued.expires) queued=null;
     const intent = charge
       ? {
           action: charge.action,
@@ -4181,13 +5606,18 @@ async function start() {
         goalX = attackSign * fieldX;
       pendingCurve = intent.curve ? { actor, strike: intent.curve } : null;
       const backToGoal = dirs[actor.face][0] * attackSign < -0.35;
-      const style = aerialFinish
+      const halfVolley = airBalls && performance.now()-airBounceAt<=airBallsProfile.halfVolleyMs;
+      const style = halfVolley ? "HALF-VOLLEY" : aerialFinish
         ? ball.position.y > 0.85 && backToGoal && intent.power >= 0.65
           ? "BICYCLE KICK"
           : ball.position.y >= 1.12
             ? "HEADER"
             : "VOLLEY"
         : null;
+      if (airBalls) {
+        airIntents.set(actor,{finish:(style ?? "GROUNDED") as AirFinish,until:performance.now()+1500});
+        airBounceAt=-Infinity; airWasAloft=false;
+      }
       if (style) {
         aerial = { index: collector, style, age: 0 };
         if (style === "HEADER") tutorial?.record("header");
@@ -4219,6 +5649,8 @@ async function start() {
         actor.age = 0;
       } else launchShot(actor);
     } else {
+      if(airBalls && performance.now()-airBounceAt<=airBallsProfile.halfVolleyMs)
+        airIntents.set(players[collector],{finish:"HALF-VOLLEY",until:airBounceAt+airBallsProfile.halfVolleyMs});
       carry();
       if (intent && intended) {
         players[collector].age = -1;
@@ -4248,6 +5680,8 @@ async function start() {
       blastFlying = true;
       if (aerial) audio.kick(1);
     } else audio.kick(shotMultiplier - 1);
+    if (airBalls && kickSpot) airIntents.set(shooter,{finish:"DIRECT FREE KICK",until:performance.now()+1500});
+    if (airBalls) airLooseAttempt={finish:airIntent(shooter),scorer:shooter,direction:attackSign};
     kickSpot = null;
     recentHomeKicker = shooter;
     homeLateTime = lateTackleWindow;
@@ -4271,17 +5705,41 @@ async function start() {
           Math.cos(curve.aim) * attackSign < 0.3))
     ) {
       const aim = curve?.aim ?? gesture.aim;
-      releaseLooseStrike(Math.cos(aim), Math.sin(aim), power);
-      curveRate = curve?.rate ?? 0;
+      releaseLooseStrike(
+        Math.cos(aim),
+        Math.sin(aim),
+        power,
+        blast ? burnShotVelocityScale : 1,
+      );
+      curveRate = (curve?.rate ?? 0) * (mysteryOn("superCurve") ? 2 : 1);
       curveStyle = curve?.style ?? "Straight";
-      reboundVY = 2 + power * 3;
+      if (curveLab && curve) {
+        const dx = Math.cos(aim),
+          dz = Math.sin(aim);
+        const distance = (attackSign * fieldX - ball.position.x) / dx;
+        if (Number.isFinite(distance) && distance > 0 && Math.abs(dx) > 0.15) {
+          labBend = {
+            x: ball.position.x,
+            z: ball.position.z,
+            dx,
+            dz,
+            distance,
+            amplitude:
+              -Math.sign(curve.rate) *
+              Math.min(distance * 0.25, Math.abs(curve.rate) * distance * 0.18),
+            offset: 0,
+          };
+          curveRate = 0;
+        }
+      }
+      reboundVY = (2 + power * 3) * (blast ? burnShotVelocityScale : 1);
       el("shotResult").textContent =
         curveStyle + " · " + Math.round(power * 100) + "%";
       return;
     }
     if (freePractice) {
       const [x, z] = dirs[shooter.face];
-      releaseLooseStrike(x, z, power);
+      releaseLooseStrike(x, z, power, blast ? burnShotVelocityScale : 1);
       return;
     }
     if (crossingDrill && training.drill === 0)
@@ -4289,23 +5747,32 @@ async function start() {
     if (ownBox(shooter.sprite.position)) {
       if (crossingDrill) finishRep(0, "Outside shooting range");
       const [dx, dz] = dirs[shooter.face];
-      releaseLooseStrike(dx, dz, power);
+      releaseLooseStrike(dx, dz, power, blast ? burnShotVelocityScale : 1);
       el("shotResult").textContent = "";
       noticeTime = 0;
       return;
     }
+    const longShot =
+      longRange &&
+      longRangeEligible(ball.position.x, ball.position.z, attackSign);
     const dx = attackSign * fieldX - ball.position.x;
     if (
       !blast &&
-      Math.hypot(dx, ball.position.z) > (7 + 11 * power) ** 2 / 12
+      Math.hypot(dx, ball.position.z) >
+        ((7 + 11 * power) *
+          physics.ballSpeed *
+          (longShot ? longRangeBalance.velocity : 1)) **
+          2 /
+          (12 * physics.rollingResistance)
     ) {
       if (crossingDrill) finishRep(0, "Short of goal");
       releaseLooseStrike(
         curve ? Math.cos(curve.aim) : dx,
         curve ? Math.sin(curve.aim) : -ball.position.z,
         power,
+        blast ? burnShotVelocityScale : 1,
       );
-      curveRate = curve?.rate ?? 0;
+      curveRate = (curve?.rate ?? 0) * (mysteryOn("superCurve") ? 2 : 1);
       curveStyle = curve?.style ?? "Straight";
       return;
     }
@@ -4331,13 +5798,28 @@ async function start() {
       blast
         ? (keeperStart >= 0 ? -1 : 1) * (1.1 + Math.random() * 0.52)
         : undefined,
-      blast ? 0 : 1 / trainingFactor(shooter.displayName, "Shooting"),
+      blast ? 0 : (mysteryOn("shootOnSight") ? .82 : 1) / trainingFactor(shooter.displayName, "Shooting") / (airBalls ? airAccuracy(airIntent(shooter)) : 1),
       rules.goal.halfWidth,
       street && !blast
-        ? streetShotAim(ball.position.z, fieldX - attackSign * ball.position.x,
-            dirs[shooter.face][0] * attackSign, dirs[shooter.face][1])
+        ? streetShotAim(
+            ball.position.z,
+            fieldX - attackSign * ball.position.x,
+            dirs[shooter.face][0] * attackSign,
+            dirs[shooter.face][1],
+          )
         : undefined,
+      longShot || mysteryOn("shootOnSight"),
+      mysteryOn("theWall") ? .72 : 1,
     );
+    shot.points = goalValue(
+      mysteryOn("doublePoints") ? "doublePoints" : longRange ? "longRange" : rules.mode,
+      ball.position.x,
+      ball.position.z,
+      attackSign,
+    );
+    if (mysteryOn("doublePoints")) shot.points = 2;
+    shot.origin = { x: ball.position.x, z: ball.position.z };
+    if (airBalls) { shot.airFinish=airIntent(shooter); airIntents.delete(shooter); }
     if (curve) applyCurve(curve, attackSign);
     if (blast)
       shot.duration = T.MathUtils.clamp(shot.duration * 0.46, 0.17, 0.38);
@@ -4356,7 +5838,22 @@ async function start() {
     }
     shot.targetX *= attackSign;
     if (!celebrationLab) startFollowUpRuns(active);
-    arc = kickArc(shotMultiplier, blast ? shot.duration : Infinity);
+    if (longShot)
+      shot.duration = Math.max(
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) /
+          longRangeBalance.maxShotSpeed,
+        shot.duration / longRangeBalance.velocity,
+      );
+    if (slippery || mysteryOn("heavyBall"))
+      shot.duration = Math.max(
+        0.08,
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
+        shot.duration / physics.ballSpeed,
+      );
+    if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
+    if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED")>1) shot.duration /= airBallsProfile.shotSpeed;
+    if (blast) shot.duration /= burnShotVelocityScale;
+    arc = mysteryKickArc(shotMultiplier, blast ? shot.duration : Infinity);
     shotTime = 0;
   }
   // The initial tangent comes from the locked aim. Accumulating lateral
@@ -4370,10 +5867,21 @@ async function start() {
       Math.abs(dx) /
         (12 * shotMultiplier * Math.max(0.3, Math.abs(Math.cos(curve.aim)))),
     );
-    bendOffset = direction * curve.rate * Math.abs(dx) * duration * 0.39;
+    bendOffset =
+      direction *
+      curve.rate *
+      (mysteryOn("superCurve") ? 2 : 1) *
+      (longRange && shot.points === 2 ? longRangeBalance.curve : 1) *
+      Math.abs(dx) *
+      duration *
+      0.39;
     const endZ = ball.position.z + dx * Math.tan(curve.aim) + bendOffset;
     shot.result =
-      Math.abs(endZ) > rules.goal.halfWidth+.08 ? "Wide" : Math.abs(endZ) >= rules.goal.halfWidth-.08 ? "Post" : "Goal";
+      Math.abs(endZ) > rules.goal.halfWidth + 0.08
+        ? "Wide"
+        : Math.abs(endZ) >= rules.goal.halfWidth - 0.08
+          ? "Post"
+          : "Goal";
     shot.targetZ = endZ;
     shot.targetX = fieldX + 0.02;
     shot.duration = duration;
@@ -4411,12 +5919,18 @@ async function start() {
   function switchPlayer() {
     if (tutorial?.capturesInput) return;
     if (!canSwitch()) return;
-    const nearest = tutorial?.chapter === 5
-      ? players.reduce((best, actor, i) => {
-          if (actor.penalty || !tutorialDefenders.includes(actor.displayName)) return best;
-          return best < 0 || actor.sprite.position.distanceToSquared(ball.position) < players[best].sprite.position.distanceToSquared(ball.position) ? i : best;
-        }, -1)
-      : nearestEligible(players, ball.position);
+    const nearest =
+      tutorial?.chapter === 5
+        ? players.reduce((best, actor, i) => {
+            if (actor.penalty || !tutorialDefenders.includes(actor.displayName))
+              return best;
+            return best < 0 ||
+              actor.sprite.position.distanceToSquared(ball.position) <
+                players[best].sprite.position.distanceToSquared(ball.position)
+              ? i
+              : best;
+          }, -1)
+        : nearestEligible(players, ball.position);
     if (nearest < 0) return;
     players[active].goal.copy(players[active].sprite.position);
     if (active !== nearest) tutorial?.record("switch");
@@ -4432,6 +5946,7 @@ async function start() {
     actor.sprintTime = 0;
   }
   function blueWins(index: number, reason: string) {
+    if (airBalls) airLooseAttempt=null;
     if ((reason.includes("TACKLE WON") || reason === "SPRINT STRIP") && held)
       tackleReaction(players[ballPlayer]);
     lastDelivery = null;
@@ -4461,24 +5976,33 @@ async function start() {
     noticeTime = 0;
   }
   function spendSprint(actor: typeof sean, dt: number) {
-    if (curveLab) return dt;
+    if (curveLab || mysteryOn("secondWind")) return dt * (mysteryOn("superSprint") ? 1.35 : 1);
     const duration =
-      sprintSeconds * trainingFactor(actor.displayName, "Stamina",players.includes(actor)?home.name:matchOpponent.name);
+      sprintSeconds *
+      trainingFactor(
+        actor.displayName,
+        "Stamina",
+        players.includes(actor) ? home.name : matchOpponent.name,
+      );
     const charged = Math.min(dt, (actor.sprintCharge * duration) / 100);
     const remaining = Math.max(
       0,
-      actor.staminaCapacity - charged * capacityLossPerSecond,
+      actor.staminaCapacity -
+        charged * capacityLossPerSecond * rules.staminaDrain,
     );
-    const extra = Math.min(dt - charged, remaining / exhaustedLossPerSecond);
+    const extra = Math.min(
+      dt - charged,
+      remaining / (exhaustedLossPerSecond * rules.staminaDrain),
+    );
     actor.sprintCharge = Math.max(
       0,
       actor.sprintCharge - (charged * 100) / duration,
     );
     actor.staminaCapacity = Math.max(
       0,
-      remaining - extra * exhaustedLossPerSecond,
+      remaining - extra * exhaustedLossPerSecond * rules.staminaDrain,
     );
-    return charged + extra;
+    return (charged + extra) * (mysteryOn("superSprint") ? 1.35 : 1);
   }
   function hasEscapeLane(carrier: typeof sean, distance: number) {
     if (distance < 2 || carrier.staminaCapacity <= 0) return false;
@@ -4507,15 +6031,42 @@ async function start() {
     );
   }
   function keepAwayLooseBall() {
-    return tutorial?.chapter === 5 && !held && !inFlight && !shot && !bluePass && blueCarrier < 0 && !outBall && !keeperRestart && keeperGather <= 0 && resultTime <= 0;
+    return (
+      tutorial?.chapter === 5 &&
+      !held &&
+      !inFlight &&
+      !shot &&
+      !bluePass &&
+      blueCarrier < 0 &&
+      !outBall &&
+      !keeperRestart &&
+      keeperGather <= 0 &&
+      resultTime <= 0
+    );
   }
   function moveBlue(dt: number) {
     const ballPos = ball.position;
-    const streetPlan=street?streetTargets(opponents.map(p=>p.sprite.position),ballPos,-attackSign,blueCarrier,blueCarrier>=0||!!bluePass,lanes.map(z=>({x:0,z})),awayTactics):null;
-    if(streetPlan)awayTactics=streetPlan;
+    const streetPlan = street
+      ? streetTargets(
+          opponents.map((p) => p.sprite.position),
+          ballPos,
+          -attackSign,
+          blueCarrier,
+          blueCarrier >= 0 || !!bluePass,
+          lanes.map((z) => ({ x: 0, z })),
+          awayTactics,
+        )
+      : null;
+    if (streetPlan) awayTactics = streetPlan;
     // Favor the current presser until another defender is clearly better placed.
     const cost = (i: number) =>
-      (opponents[i].penalty || (tutorial && !isTutorialParticipant(tutorial.chapter, opponents[i].displayName, true)))
+      opponents[i].penalty ||
+      (tutorial &&
+        !isTutorialParticipant(
+          tutorial.chapter,
+          opponents[i].displayName,
+          true,
+        ))
         ? Infinity
         : Math.hypot(
             opponents[i].sprite.position.x - ballPos.x,
@@ -4523,19 +6074,21 @@ async function start() {
           ) +
           0.32 * Math.abs(lanes[i] - ballPos.z) -
           (i === pressing ? 1.6 : 0);
-    const nearest = streetPlan?.presser ?? opponents.reduce(
-      (best, _, i) => (cost(i) < cost(best) ? i : best),
-      0,
-    );
+    const nearest =
+      streetPlan?.presser ??
+      opponents.reduce((best, _, i) => (cost(i) < cost(best) ? i : best), 0);
     if (nearest !== pressing) {
       pressing = nearest;
       pressTime = 0;
     }
     for (const [i, o] of opponents.entries()) {
+      const blueBack = survival ? !!awayShape?.[i].back : i >= 3;
+      const blueFront = survival ? !!awayShape?.[i].front : i < 3;
       const pos = o.sprite.position;
       if (o.penalty || o.age >= 0 || o.reactionTime > 0) {
         o.moving = false;
         o.sprintTime = 0;
+        snowVelocities.delete(o);
         continue;
       }
       const human = owner(1, i);
@@ -4544,33 +6097,54 @@ async function start() {
         continue;
       }
       if (o === bankReceiver) o.goal.copy(pos);
-      else if (keeperRestart?.blueBuild || (keeperGather > 0 && keeperActor() === awayGK)) {
-        const depth = i < 3 ? [-5, -8, -5][i] : [12, 8, 12][i - 3];
+      else if (
+        keeperRestart?.blueBuild ||
+        (keeperGather > 0 && keeperActor() === awayGK)
+      ) {
+        const depth = survival
+          ? blueBack
+            ? 12
+            : blueFront
+              ? -5
+              : 2
+          : i < 3
+            ? [-5, -8, -5][i]
+            : [12, 8, 12][i - 3];
         o.goal.set(attackSign * depth, 0, lanes[i]);
       } else if (blueCarrier === i) {
-        if (attackSign * pos.x > -17)
-          o.goal.set(
-            -18 * attackSign,
-            0,
-            T.MathUtils.clamp(pos.z + dribbleSide * 2, -9, 9),
-          );
-        else {
-          if (Math.abs(pos.z - dribbleSide * 9) < 0.5) dribbleSide *= -1;
-          o.goal.set(-18.5 * attackSign, 0, dribbleSide * 9);
-        }
+          const clearLongLane =
+            longRange &&
+            !players.some(
+              (p) =>
+                !p.penalty &&
+                p.sprite.position.distanceToSquared(pos) < 4.5 ** 2,
+            );
+          const attackDepth = clearLongLane
+            ? fieldX - longRangeBox.depth - 1.2
+            : 18;
+          if (attackSign * pos.x > -attackDepth + 1)
+            o.goal.set(
+              -attackDepth * attackSign,
+              0,
+              T.MathUtils.clamp(pos.z + dribbleSide * 2, -9, 9),
+            );
+          else {
+            if (Math.abs(pos.z - dribbleSide * 9) < 0.5) dribbleSide *= -1;
+            o.goal.set(-(attackDepth + 0.5) * attackSign, 0, dribbleSide * 9);
+          }
       } else if (blueCarrier >= 0 || bluePass) {
         const lead = bluePass
           ? bluePass.end
           : opponents[blueCarrier].sprite.position;
         if (bluePass?.receiver === i) o.goal.copy(bluePass.end);
         else {
-          const depth = i < 3 ? 5 : -6;
+          const depth = blueBack ? -6 : 5;
           o.goal.set(
             -attackSign *
               T.MathUtils.clamp(
                 -attackSign * lead.x + depth,
-                i < 3 ? -12 : -18,
-                i < 3 ? 18 : 10,
+                blueBack ? -18 : -12,
+                blueBack ? 10 : 18,
               ),
             0,
             lanes[i] + lead.z * 0.08,
@@ -4582,7 +6156,7 @@ async function start() {
         o.goal.set(
           attackSign *
             T.MathUtils.clamp(
-              attackSign * ballPos.x + (i >= 3 ? 7 : -1),
+              attackSign * ballPos.x + (blueBack ? 7 : -1),
               -13,
               18,
             ),
@@ -4594,13 +6168,40 @@ async function start() {
           ),
         );
       }
-      if(streetPlan && bluePass?.receiver!==i && o!==bankReceiver)o.goal.set(streetPlan.targets[i].x,0,streetPlan.targets[i].z);
-      const coaching = tutorial && tutorialCoaching.target(tutorial.chapter, o.displayName, i, ballPos, tutorial.speaking, true, tutorialTime, tutorialDefenders, keepAwayLooseBall());
-      if (coaching && blueCarrier !== i && bluePass?.receiver !== i) o.goal.set(coaching.x, 0, coaching.z);
-      if (tutorial && blueCarrier === i && !isTutorialParticipant(tutorial.chapter, o.displayName, true)) o.goal.copy(pos);
-      if (tutorial?.chapter === 5 && blueCarrier === i && isTutorialParticipant(5, o.displayName, true)) {
+      if (streetPlan && bluePass?.receiver !== i && o !== bankReceiver)
+        o.goal.set(streetPlan.targets[i].x, 0, streetPlan.targets[i].z);
+      const coaching =
+        tutorial &&
+        tutorialCoaching.target(
+          tutorial.chapter,
+          o.displayName,
+          i,
+          ballPos,
+          tutorial.speaking,
+          true,
+          tutorialTime,
+          tutorialDefenders,
+          keepAwayLooseBall(),
+        );
+      if (coaching && blueCarrier !== i && bluePass?.receiver !== i)
+        o.goal.set(coaching.x, 0, coaching.z);
+      if (
+        tutorial &&
+        blueCarrier === i &&
+        !isTutorialParticipant(tutorial.chapter, o.displayName, true)
+      )
+        o.goal.copy(pos);
+      if (
+        tutorial?.chapter === 5 &&
+        blueCarrier === i &&
+        isTutorialParticipant(5, o.displayName, true)
+      ) {
         // Shield and move laterally within the kickaround instead of running at goal.
-        o.goal.set(T.MathUtils.clamp(pos.x - attackSign * 2, -10, 10), 0, T.MathUtils.clamp(pos.z + dribbleSide * 3, -8, 8));
+        o.goal.set(
+          T.MathUtils.clamp(pos.x - attackSign * 2, -10, 10),
+          0,
+          T.MathUtils.clamp(pos.z + dribbleSide * 3, -8, 8),
+        );
         if (Math.abs(pos.z) > 7.5) dribbleSide = -Math.sign(pos.z);
       }
       o.goal.x = T.MathUtils.clamp(
@@ -4613,26 +6214,62 @@ async function start() {
         enclosed ? runNorth : -11.4,
         enclosed ? runSouth : 11.4,
       );
+      if (slippery) {
+        const pace = i === blueCarrier ? 2.9 : i === nearest ? 3.65 : 2.8;
+        o.velocity.subVectors(o.goal, pos);
+        o.sprintTime =
+          i === blueCarrier && hasEscapeLane(o, o.velocity.length())
+            ? spendSprint(o, dt)
+            : 0;
+        const speed =
+          pace + ((6 - pace) * o.sprintTime) / Math.max(dt, 0.000001);
+        const desired = approachVelocity(
+          pos,
+          o.goal,
+          speed * trainingFactor(o.displayName, "Pace", matchOpponent.name),
+        );
+        if (Math.hypot(desired.x, desired.z) > 0.1)
+          o.face = facing(desired.x, desired.z, o.face);
+        moveOnSnow(o, desired, dt);
+        continue;
+      }
       o.velocity.subVectors(o.goal, pos);
       const distance = o.velocity.length();
       o.moving = distance > (o.moving ? 0.1 : 0.32);
       if (o.moving) {
         o.face = facing(o.velocity.x, o.velocity.z, o.face);
         o.sprintTime =
-          tutorial?.chapter !== 5 && i === blueCarrier && hasEscapeLane(o, distance)
+          tutorial?.chapter !== 5 &&
+          i === blueCarrier &&
+          hasEscapeLane(o, distance)
             ? spendSprint(o, dt)
             : 0;
         const pace = i === blueCarrier ? 2.9 : i === nearest ? 3.65 : 2.8;
         pos.addScaledVector(
           o.velocity,
-          Math.min(1, (pace * dt + (6 - pace) * o.sprintTime) * trainingFactor(o.displayName,"Pace",matchOpponent.name) / distance),
+          Math.min(
+            1,
+            ((pace * dt + (6 - pace) * o.sprintTime) *
+              trainingFactor(o.displayName, "Pace", matchOpponent.name)) /
+              distance,
+          ),
         );
       } else {
         o.sprintTime = 0;
         o.face = facing(ballPos.x - pos.x, ballPos.z - pos.z, o.face);
       }
     }
-    if (tutorial && (tutorial.speaking || !tutorialAllowsChallenges(tutorial.chapter) || !isTutorialParticipant(tutorial.chapter, opponents[nearest].displayName, true))) return;
+    if (
+      tutorial &&
+      (tutorial.speaking ||
+        !tutorialAllowsChallenges(tutorial.chapter) ||
+        !isTutorialParticipant(
+          tutorial.chapter,
+          opponents[nearest].displayName,
+          true,
+        ))
+    )
+      return;
     const carrier = held
       ? players[ballPlayer]
       : homeLateTime > 0.18
@@ -4762,7 +6399,7 @@ async function start() {
     marks = next;
   }
   function organizeDefense() {
-    if(street)return;
+    if (street) return;
     const incomingShot = !!shot && shotDirection === -attackSign;
     const loose = !held && !inFlight && !shot && clearanceLoose;
     const threatPoint =
@@ -4868,10 +6505,15 @@ async function start() {
   function tryBlueShot(blast = false, human = false, windupComplete = false) {
     const carrier = opponents[blueCarrier],
       from = carrier.sprite.position;
+    if (airBalls && !human && airIntent(carrier)==="GROUNDED") return false;
     let target = 0,
       best = -Infinity;
     const dx = -attackSign * fieldX - ball.position.x;
-    for (const z of [-rules.goal.halfWidth*.75, 0, rules.goal.halfWidth*.75]) {
+    for (const z of [
+      -rules.goal.halfWidth * 0.75,
+      0,
+      rules.goal.halfWidth * 0.75,
+    ]) {
       const dz = z - ball.position.z;
       const length = dx * dx + dz * dz;
       let clearance = 4;
@@ -4902,6 +6544,7 @@ async function start() {
         target = z;
       }
     }
+    if (inferno && best === -Infinity && !human) return false;
     if (!blast && meters[1].value === 100) {
       blastShooter = carrier;
       blastWindup = 0;
@@ -4925,6 +6568,7 @@ async function start() {
       return true;
     }
     const curve = pendingCurve?.actor === carrier ? pendingCurve.strike : null;
+    if (airBalls) airLooseAttempt={finish:airIntent(carrier),scorer:carrier,direction:-attackSign};
     if (curve) pendingCurve = null;
     flightCurve = null;
     curveRate = 0;
@@ -4934,10 +6578,20 @@ async function start() {
     shotMultiplier = blast
       ? blastMultiplier
       : 1 + T.MathUtils.clamp(range / 15, 0.28, 0.85);
+    if (airBalls && !blast && airShotPower.has(carrier)) shotMultiplier=1+airShotPower.get(carrier)!;
+    airShotPower.delete(carrier);
     audio.kick(shotMultiplier - 1);
     if (
       (curve && Math.cos(curve.aim) * -attackSign < 0.3) ||
-      (!blast && range > (7 + 11 * (shotMultiplier - 1)) ** 2 / 12)
+      (!blast &&
+        range >
+          ((7 + 11 * (shotMultiplier - 1)) *
+            (longRange &&
+            longRangeEligible(ball.position.x, ball.position.z, -attackSign)
+              ? longRangeBalance.velocity
+              : 1)) **
+            2 /
+            12)
     ) {
       carrier.face = facing(dx, target - ball.position.z);
       if (!windupComplete) carrier.age = 0.12;
@@ -4950,8 +6604,9 @@ async function start() {
         curve ? Math.cos(curve.aim) : dx,
         curve ? Math.sin(curve.aim) : target - ball.position.z,
         shotMultiplier - 1,
+        blast ? burnShotVelocityScale : 1,
       );
-      curveRate = curve?.rate ?? 0;
+      curveRate = (curve?.rate ?? 0) * (mysteryOn("superCurve") ? 2 : 1);
       curveStyle = curve?.style ?? "Straight";
       return true;
     }
@@ -4968,9 +6623,26 @@ async function start() {
       blast
         ? (keeperStart >= 0 ? -1 : 1) * (1.1 + Math.random() * 0.52)
         : target,
-      blast ? 0 : difficulty().shootingError / trainingFactor(carrier.displayName,"Shooting",matchOpponent.name),
+      blast
+        ? 0
+        : (mysteryOn("shootOnSight") ? .82 : 1) * difficulty().shootingError /
+            trainingFactor(carrier.displayName, "Shooting", matchOpponent.name) / (airBalls ? airAccuracy(airIntent(carrier)) : 1),
       rules.goal.halfWidth,
+      undefined,
+      (longRange &&
+        longRangeEligible(ball.position.x, ball.position.z, -attackSign)) ||
+        mysteryOn("shootOnSight"),
+      mysteryOn("theWall") ? .72 : 1,
     );
+    shot.points = goalValue(
+      mysteryOn("doublePoints") ? "doublePoints" : longRange ? "longRange" : rules.mode,
+      ball.position.x,
+      ball.position.z,
+      -attackSign,
+    );
+    if (mysteryOn("doublePoints")) shot.points = 2;
+    shot.origin = { x: ball.position.x, z: ball.position.z };
+    if (airBalls) { shot.airFinish=airIntent(carrier); airIntents.delete(carrier); }
     if (curve) applyCurve(curve, -attackSign);
     if (blast) {
       shot.duration = T.MathUtils.clamp(shot.duration * 0.46, 0.17, 0.38);
@@ -4983,7 +6655,22 @@ async function start() {
     shotDirection = -attackSign;
     shotStart.copy(ball.position);
     shotTime = 0;
-    arc = kickArc(shotMultiplier, blast ? shot.duration : Infinity);
+    if (longRange && shot.points === 2)
+      shot.duration = Math.max(
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) /
+          longRangeBalance.maxShotSpeed,
+        shot.duration / longRangeBalance.velocity,
+      );
+    if (slippery || mysteryOn("heavyBall"))
+      shot.duration = Math.max(
+        0.08,
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
+        shot.duration / physics.ballSpeed,
+      );
+    if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
+    if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED")>1) shot.duration /= airBallsProfile.shotSpeed;
+    if (blast) shot.duration /= burnShotVelocityScale;
+    arc = mysteryKickArc(shotMultiplier, blast ? shot.duration : Infinity);
     carrier.face = facing(shot.targetX - from.x, shot.targetZ - from.z);
     if (!windupComplete) carrier.age = 0.12;
     carrier.shooting = true;
@@ -5003,14 +6690,68 @@ async function start() {
     const carrier = opponents[blueCarrier],
       from = carrier.sprite.position;
     blueDecisionTime = difficulty().reactionDelayMs / 1000;
-    if (tutorial && (!tutorialAllowsChallenges(tutorial.chapter) || !isTutorialParticipant(tutorial.chapter, carrier.displayName, true))) {
-      const target = !players[active].penalty && isTutorialParticipant(tutorial.chapter, players[active].displayName, false)
-        ? active : players.findIndex(actor => !actor.penalty && isTutorialParticipant(tutorial.chapter, actor.displayName, false));
+    if (
+      tutorial &&
+      (!tutorialAllowsChallenges(tutorial.chapter) ||
+        !isTutorialParticipant(tutorial.chapter, carrier.displayName, true))
+    ) {
+      const target =
+        !players[active].penalty &&
+        isTutorialParticipant(
+          tutorial.chapter,
+          players[active].displayName,
+          false,
+        )
+          ? active
+          : players.findIndex(
+              (actor) =>
+                !actor.penalty &&
+                isTutorialParticipant(
+                  tutorial.chapter,
+                  actor.displayName,
+                  false,
+                ),
+            );
       if (target >= 0) returnTutorialLob(carrier, target);
       return;
     }
     const inFinalThird = attackSign * from.x <= -fieldX / 3;
-    if (!human && tutorial?.chapter !== 5 && inFinalThird && tryBlueShot()) return;
+    const awayX = -attackSign * ball.position.x;
+    const miss = longRange
+      ? missChances(awayX, ball.position.z, fieldX, 0.65, true)
+      : null;
+    const expectedLongPoints = miss
+      ? 2 *
+        (1 - (miss.wide + miss.over) / (1 + longRangeBalance.accuracyBonus)) *
+        Math.max(0.27, awayX / fieldX) *
+        0.62 *
+        (homeKeeper.visible ? longRangeBalance.keeperDelay : 1)
+      : 0;
+    const longOpportunity =
+      longRange &&
+      longRangeEligible(ball.position.x, ball.position.z, -attackSign) &&
+      awayX > 2 &&
+      awayX < fieldX - longRangeBox.depth + 2 &&
+      expectedLongPoints >= longRangeBalance.minAiExpectedPoints &&
+      !players.some(
+        (p) =>
+          !p.penalty && p.sprite.position.distanceToSquared(from) < 4.5 ** 2,
+      );
+    const infernoOpportunity =
+      inferno &&
+      awayX > 0 &&
+      Math.hypot(fieldX - awayX, from.z) < 21 &&
+      !players.some(
+        (p) =>
+          !p.penalty && p.sprite.position.distanceToSquared(from) < 3.5 ** 2,
+      );
+    if (
+      !human &&
+      tutorial?.chapter !== 5 &&
+      (inFinalThird || longOpportunity || infernoOpportunity) &&
+      tryBlueShot()
+    )
+      return;
     if (!human && carrier.sprintTime > 0) return;
     if (
       !human &&
@@ -5033,7 +6774,8 @@ async function start() {
           opponents
             .filter((m) => m !== carrier && !m.penalty)
             .map((m) => m.sprite.position),
-          courtBoards, rules.goal.halfWidth,
+          courtBoards,
+          rules.goal.halfWidth,
         )
       ) {
         launchBank(x, z, 0.45, true);
@@ -5043,7 +6785,12 @@ async function start() {
     let receiver = -1,
       best = -Infinity;
     for (const [i, mate] of opponents.entries()) {
-      if (mate.penalty || (tutorial && !isTutorialParticipant(tutorial.chapter, mate.displayName, true))) continue;
+      if (
+        mate.penalty ||
+        (tutorial &&
+          !isTutorialParticipant(tutorial.chapter, mate.displayName, true))
+      )
+        continue;
       if (i === blueCarrier) continue;
       const to = mate.sprite.position,
         dx = to.x - from.x,
@@ -5083,7 +6830,12 @@ async function start() {
         Math.min(space, 5) +
         Math.min(lane, 3) -
         0.1 * Math.sqrt(length) -
-        attackSign * dx * 0.14;
+        attackSign * dx * 0.14 +
+        (longRange &&
+        longRangeEligible(to.x, to.z, -attackSign) &&
+        -attackSign * to.x > 5
+          ? 1.2
+          : 0);
       if (score > best) {
         best = score;
         receiver = i;
@@ -5111,12 +6863,14 @@ async function start() {
       start,
       end,
       age: 0,
-      duration: start.distanceTo(end) / 7.5,
+      duration: start.distanceTo(end) / 7.5 * (airBalls ? airBallsProfile.hangTime : 1),
+      loft: airBalls && -attackSign*end.x>0 ? 1.8 : 0,
     };
     carrier.face = facing(end.x - from.x, end.z - from.z);
     blueCarrier = -1;
   }
   function winBack(index: number, reason: string) {
+    if (airBalls) airLooseAttempt=null;
     if (
       (reason === "TACKLE WON" || reason === "SPRINT STRIP") &&
       blueCarrier >= 0
@@ -5130,7 +6884,8 @@ async function start() {
     if (reason === "TACKLE WON") {
       facts.tackles[0]++;
       tutorial?.record("tackleWon");
-      if (tutorialTackler === players[index]) tutorial?.record("playerTackleWon");
+      if (tutorialTackler === players[index])
+        tutorial?.record("playerTackleWon");
     }
     tutorialTackler = null;
     if (["WON BACK", "TACKLE WON", "INTERCEPTED"].includes(reason))
@@ -5177,14 +6932,25 @@ async function start() {
     radius = 0.6,
     maxHeight = 0.84,
   ) {
-    if (tutorial && defenders === opponents && !tutorialAllowsChallenges(tutorial.chapter)) return -1;
+    if (
+      tutorial &&
+      defenders === opponents &&
+      !tutorialAllowsChallenges(tutorial.chapter)
+    )
+      return -1;
     const dx = end.x - start.x,
       dz = end.z - start.z,
       length = dx * dx + dz * dz;
     let earliest = Infinity,
       winner = -1;
     for (const [i, o] of defenders.entries()) {
-      if (o.penalty || i === exclude || o.tackling || (tutorial?.chapter === 5 && defenders === players && i !== active)) continue;
+      if (
+        o.penalty ||
+        i === exclude ||
+        o.tackling ||
+        (tutorial?.chapter === 5 && defenders === players && i !== active)
+      )
+        continue;
       const pos = o.sprite.position;
       const t = length
         ? T.MathUtils.clamp(
@@ -5287,27 +7053,51 @@ async function start() {
   const switchStickHeld = new Set<number>();
   function pollSwitchStick(pad: Gamepad | null | undefined, seat?: Seat) {
     if (!pad) return;
-    const x = pad.axes[2] ?? 0, z = pad.axes[3] ?? 0;
+    const x = pad.axes[2] ?? 0,
+      z = pad.axes[3] ?? 0;
     const strength = Math.hypot(x, z);
-    if (strength < .32) switchStickHeld.delete(pad.index);
-    if (strength < .62 || switchStickHeld.has(pad.index)) return;
+    if (strength < 0.32) switchStickHeld.delete(pad.index);
+    if (strength < 0.62 || switchStickHeld.has(pad.index)) return;
     switchStickHeld.add(pad.index);
-    if (paused || squadOpen || phase !== "play" || replay.cut >= 0 || celebrating ||
-        keeperReady || keeperGather > 0 || keeperRestart || outBall || shot || freeKick ||
-        resultTime > 0 || tutorial?.capturesInput) return;
+    if (
+      paused ||
+      squadOpen ||
+      phase !== "play" ||
+      replay.cut >= 0 ||
+      celebrating ||
+      keeperReady ||
+      keeperGather > 0 ||
+      keeperRestart ||
+      outBall ||
+      shot ||
+      freeKick ||
+      resultTime > 0 ||
+      tutorial?.capturesInput
+    )
+      return;
     const away = seat?.side === 1;
     if (away ? blueCarrier >= 0 || bluePass : held || inFlight) return;
     const team = seat ? teamActors(seat) : players;
     const current = seat ? seat.actor : active;
     if (!team[current] || team[current].reactionTime > 0) return;
-    const next = directionalMate(team, team[current].sprite.position,
-      view.end ? -z * attackSign : x, view.end ? x * attackSign : z,
-      i => i !== current && !owner(away ? 1 : -1, i) &&
-        (tutorial?.chapter !== 5 || tutorialDefenders.includes(team[i].displayName)));
+    const next = directionalMate(
+      team,
+      team[current].sprite.position,
+      view.end ? -z * attackSign : x,
+      view.end ? x * attackSign : z,
+      (i) =>
+        i !== current &&
+        !owner(away ? 1 : -1, i) &&
+        (tutorial?.chapter !== 5 ||
+          tutorialDefenders.includes(team[i].displayName)),
+    );
     if (next < 0) return;
     team[current].goal.copy(team[current].sprite.position);
     if (seat) seat.actor = next;
-    if (!away) { active = lastHome = next; tutorial?.record("switch"); }
+    if (!away) {
+      active = lastHome = next;
+      tutorial?.record("switch");
+    }
   }
   function seatAim(s: Seat) {
     const pad = seatPad(s);
@@ -5321,6 +7111,23 @@ async function start() {
       Number(!!pad?.buttons[13]?.pressed || key("ArrowDown") || key("KeyS")) -
       Number(!!pad?.buttons[12]?.pressed || key("ArrowUp") || key("KeyW"));
     return view.end ? [-z * attackSign, x * attackSign] : [x, z];
+  }
+  const snowVelocities = new Map<object, Motion>();
+  function moveOnSnow(actor: typeof sean, desired: Motion, dt: number) {
+    if (dt <= 0 || !Number.isFinite(desired.x) || !Number.isFinite(desired.z))
+      return;
+    const velocity = snowVelocities.get(actor) ?? { x: 0, z: 0 };
+    snowVelocities.set(actor, velocity);
+    const step = snowMotion(velocity, desired, dt, physics),
+      pos = actor.sprite.position;
+    const x = pos.x + step.x,
+      z = pos.z + step.z;
+    pos.x = T.MathUtils.clamp(x, -runX, runX);
+    pos.z = T.MathUtils.clamp(z, runNorth, runSouth);
+    if (pos.x !== x) velocity.x = 0;
+    if (pos.z !== z) velocity.z = 0;
+    actor.travel += Math.hypot(step.x, step.z);
+    actor.moving = Math.hypot(velocity.x, velocity.z) > 0.15;
   }
   function driveSeat(s: Seat, dt: number) {
     const actor = teamActors(s)[s.actor],
@@ -5342,6 +7149,7 @@ async function start() {
     actor.moving = actor.age < 0 && Math.hypot(x, z) > 0.24;
     if (!actor.moving) {
       actor.sprintTime = 0;
+      if (slippery && actor.age < 0) moveOnSnow(actor, { x: 0, z: 0 }, dt);
       return;
     }
     actor.face = facing(x, z, actor.face);
@@ -5351,12 +7159,34 @@ async function start() {
       seatPad(s)?.buttons[7]?.pressed;
     actor.sprintTime = sprint ? spendSprint(actor, dt) : 0;
     const step = 4 * dt + 2 * actor.sprintTime;
-    pos.x = T.MathUtils.clamp(pos.x + dx * step, -runX, runX);
-    pos.z = T.MathUtils.clamp(pos.z + dz * step, runNorth, runSouth);
-    actor.travel += step;
+    if (slippery)
+      moveOnSnow(actor, { x: (dx * step) / dt, z: (dz * step) / dt }, dt);
+    else {
+      pos.x = T.MathUtils.clamp(pos.x + dx * step, -runX, runX);
+      pos.z = T.MathUtils.clamp(pos.z + dz * step, runNorth, runSouth);
+      actor.travel += step;
+    }
   }
   function couchInput(s: Seat, index: number, down: boolean) {
     const source = "seat" + s.number + "-" + index;
+    if (airBalls && down && [0,2,3].includes(index)) airSeatShots.delete(s.number);
+    if (airBalls && index===1 && !paused && !celebrating && phase==="play") {
+      const buffered=airSeatShots.get(s.number);
+      if (!down && buffered) {
+        buffered.power=heldPower(buffered.start);
+        buffered.expires=performance.now()+airBallsProfile.inputBufferMs;
+        return;
+      }
+      if (down && !held && blueCarrier<0 && (inFlight || bluePass?.loft || keeperRestart || airWasAloft)) {
+        const g=new CurveGesture(), actor=teamActors(s)[s.actor];
+        if(actor) {
+          const [dx,dz]=dirs[actor.face], [x,z]=seatAim(s);
+          g.reset(Math.atan2(dz,dx)); g.sample(x,z,performance.now());
+          airSeatShots.set(s.number,{side:s.side,start:performance.now(),expires:Infinity,power:.5,gesture:g});
+          return;
+        }
+      }
+    }
     if (!down) {
       if (index === 1 && awayCharge?.seat === s) {
         const intent = awayCharge;
@@ -5390,8 +7220,15 @@ async function start() {
       if (index < 4) keeperAction(faceActions[index]);
       return;
     }
-    if (!paused && phase === "play" && !celebrating && replay.cut < 0 &&
-        !freeKick && index === 3 && canRush(s.side === 1)) {
+    if (
+      !paused &&
+      phase === "play" &&
+      !celebrating &&
+      replay.cut < 0 &&
+      !freeKick &&
+      index === 3 &&
+      canRush(s.side === 1)
+    ) {
       keeperSeat = s;
       rushSource = source;
       return;
@@ -5483,12 +7320,19 @@ async function start() {
     if (tutorial?.chapter === 5 && kind === "pass") {
       // An explicit player pass starts keep-away. Keep control on the defending
       // side and let the existing loose-ball collision code decide who receives.
-      const partners = opponents.filter(actor => !actor.penalty && isTutorialParticipant(5, actor.displayName, true));
+      const partners = opponents.filter(
+        (actor) =>
+          !actor.penalty && isTutorialParticipant(5, actor.displayName, true),
+      );
       const receiver = partners.sort((a, b) => {
         const score = (actor: typeof sean) => {
-          const dx = actor.sprite.position.x - from.x, dz = actor.sprite.position.z - from.z;
-          const distance = Math.max(.01, Math.hypot(dx, dz));
-          return (aimed ? (dx * aimX + dz * aimZ) / distance * 10 : 0) - distance * .2;
+          const dx = actor.sprite.position.x - from.x,
+            dz = actor.sprite.position.z - from.z;
+          const distance = Math.max(0.01, Math.hypot(dx, dz));
+          return (
+            (aimed ? ((dx * aimX + dz * aimZ) / distance) * 10 : 0) -
+            distance * 0.2
+          );
         };
         return score(b) - score(a);
       })[0];
@@ -5496,7 +7340,11 @@ async function start() {
         const dx = receiver.sprite.position.x - ball.position.x;
         const dz = receiver.sprite.position.z - ball.position.z;
         const distance = Math.hypot(dx, dz);
-        const power = T.MathUtils.clamp((Math.sqrt(12 * distance) - 7) / 11, 0, 1);
+        const power = T.MathUtils.clamp(
+          (Math.sqrt(12 * distance) - 7) / 11,
+          0,
+          1,
+        );
         releaseLooseStrike(dx, dz, power);
         reboundVY = 0;
         blueCarrier = -1;
@@ -5507,7 +7355,7 @@ async function start() {
         homePasser = "";
         sender.face = facing(dx, dz);
         sender.shooting = true;
-        sender.age = .12;
+        sender.age = 0.12;
         audio.kick(power);
         tutorial.record("passAttempt");
         return;
@@ -5526,7 +7374,8 @@ async function start() {
         players
           .filter((m) => m !== sender && !m.penalty)
           .map((m) => m.sprite.position),
-        courtBoards, rules.goal.halfWidth,
+        courtBoards,
+        rules.goal.halfWidth,
       )
     ) {
       launchBank(aimX, aimZ, multiplier - 1, false);
@@ -5603,8 +7452,13 @@ async function start() {
         .normalize();
       launchSpeed =
         (6 + 11 * (multiplier - 1)) *
-        trainingFactor(sender.displayName, "Passing");
-      turfDeceleration = 4 * (matchSurface?.friction() ?? 1);
+        trainingFactor(sender.displayName, "Passing") *
+        physics.ballSpeed;
+      turfDeceleration =
+        4 *
+        (slippery
+          ? physics.rollingResistance
+          : (matchSurface?.friction() ?? 1));
       passDuration = launchSpeed / turfDeceleration;
     }
     if (kind === "cross") {
@@ -5631,11 +7485,16 @@ async function start() {
           fieldZ - 0.5,
         );
       }
-      passDuration = Math.max(0.55, passDuration * (1.35 + 0.15 * boxApproach));
+      passDuration = Math.max(0.55, passDuration * (1.35 + 0.15 * boxApproach)) * (airBalls ? airBallsProfile.hangTime : 1);
     }
     if (kind !== "through")
       passDuration /= trainingFactor(sender.displayName, "Passing");
-    arc = kickArc(multiplier, passDuration);
+    if (kind !== "through")
+      passDuration = Math.max(
+        passDuration / physics.ballSpeed,
+        snowpocalypse ? passStart.distanceTo(passTarget) / 45 : 0,
+      );
+    arc = mysteryKickArc(multiplier, passDuration);
     sender.face =
       kind === "through"
         ? facing(passHeading.x, passHeading.z)
@@ -5658,7 +7517,13 @@ async function start() {
   }
   function launchPass(target: number) {
     tutorialReturnKicker = -1;
-    tutorial?.record(passKind === "through" ? "throughAttempt" : passKind === "cross" ? "crossAttempt" : "passAttempt");
+    tutorial?.record(
+      passKind === "through"
+        ? "throughAttempt"
+        : passKind === "cross"
+          ? "crossAttempt"
+          : "passAttempt",
+    );
     if (crossingDrill && training.drill === 1)
       finishRep(0, "Shoot from the setup");
     audio.kick(passPower);
@@ -5680,15 +7545,28 @@ async function start() {
     inFlight = true;
   }
   async function exitSimulation() {
-    history.replaceState({ ...history.state, arcadeMenu: true, ...(gulchDebug ? {keeperDebug:true} : {}) }, "");
+    history.replaceState(
+      {
+        ...history.state,
+        arcadeMenu: true,
+        ...(gulchDebug ? { keeperDebug: true } : {}),
+      },
+      "",
+    );
     music?.carryOver();
     await music?.finish();
     location.reload();
   }
   async function matchMenu() {
-    if (intro) { intro.setPaused(true); return; }
+    if (intro) {
+      intro.setPaused(true);
+      return;
+    }
     if (playIntro && !crossingDrill && !introStarted) return;
-    if (tutorial) { tutorial.options(); return; }
+    if (tutorial) {
+      tutorial.options();
+      return;
+    }
     if (simulation && phase === "fulltime") {
       exitSimulation();
       return;
@@ -5710,12 +7588,25 @@ async function start() {
         [homeScore, awayScore],
         half,
         matchSeconds,
-        !standalonePractice && !simulation && replay.cut < 0 && !celebrating,
+        !survival &&
+          !standalonePractice &&
+          !simulation &&
+          replay.cut < 0 &&
+          !celebrating,
         !!ticket,
         !ticket,
         standalonePractice,
         weatherTest ? matchSurface : undefined,
-        street ? `${rules.teamSize}V${rules.teamSize} · ${rules.winCondition==='target'?'First to 5':(half===1?'First':'Second')+' Half'}` : undefined,
+        street
+          ? `${rules.teamSize}V${rules.teamSize} · ${rules.winCondition === "target" ? "First to 5" : (half === 1 ? "First" : "Second") + " Half"}`
+          : firstToFive
+            ? `FIRST TO ${rules.targetScore} · NO TIME LIMIT`
+            : beatTheClock
+              ? "BEAT THE CLOCK"
+              : airBalls ? "AIR BALLS" : mystery
+                ? "MYSTERY MATCH"
+              : undefined,
+        beatTheClock ? beatClockText(beatRemaining) : undefined,
       );
       if (standalonePractice) {
         if (choice === "quit") endWarmup();
@@ -5780,7 +7671,9 @@ async function start() {
           couchKeys.clear();
           buttons.clear();
           if (keeperGather > 0) {
-            const next = selected.find(s => s.side === (keeperSeat?.side ?? -1));
+            const next = selected.find(
+              (s) => s.side === (keeperSeat?.side ?? -1),
+            );
             if (next) keeperSeat = next;
             else {
               keeperGather = 0;
@@ -5831,7 +7724,8 @@ async function start() {
         ticket?.career.bonds,
         ticket?.career,
         managedClub,
-        undefined, rules,
+        undefined,
+        rules,
       );
       if (!result) {
         pause(false);
@@ -6103,7 +7997,15 @@ async function start() {
   new ResizeObserver(resize).observe(renderer.domElement.parentElement!);
   resize();
   reset();
-  function enterPenalties(finish: (kicks: Kick[]) => void) {
+  function enterPenalties(
+    finish: (kicks: Kick[]) => void,
+    custom?: {
+      teams: [typeof homeSlots, typeof homeSlots];
+      keepers: [typeof sean, typeof sean];
+      controllers: [number | null, number | null];
+      pause?: (kicks: Kick[]) => Promise<boolean>;
+    },
+  ) {
     updateScore();
     fullTimeScreen = true;
     ring.visible = false;
@@ -6112,7 +8014,7 @@ async function start() {
     for (const actor of pitchActors) actor.sprite.visible = false;
     const eligible = (actors: typeof homeSlots) =>
       actors.filter((actor) => Number.isFinite(actor.penalty));
-    const teams: [typeof homeSlots, typeof homeSlots] = [
+    const teams: [typeof homeSlots, typeof homeSlots] = custom?.teams ?? [
       eligible(homeSlots),
       eligible(awaySlots),
     ];
@@ -6123,9 +8025,13 @@ async function start() {
       renderer,
       ball,
       teams,
-      keepers: [teams[0].at(-1)!, teams[1].at(-1)!],
+      keepers: custom?.keepers ?? [teams[0].at(-1)!, teams[1].at(-1)!],
+      attempts: custom ? penaltyLength : undefined,
+      controllers: custom?.controllers,
+      pause: custom?.pause,
       keeperDiveSheet,
       names: [homeLabel, matchOpponent.name],
+      crests: [home.crest, matchOpponent.crest],
       test: penaltyLab,
       finish,
       level: ["beginners", "d6", "d5"].indexOf(settings.difficulty),
@@ -6167,6 +8073,14 @@ async function start() {
           mesh.visible = sprite.visible;
           mesh.position.set(sprite.position.x, 0.024, sprite.position.z);
         }
+        for (const { actor, mesh } of infernoAuras) {
+          mesh.visible = inferno && actor.sprite.visible && !actor.penalty;
+          mesh.position.set(
+            actor.sprite.position.x,
+            0.04,
+            actor.sprite.position.z,
+          );
+        }
         shadow.position.set(ball.position.x, 0.03, ball.position.z);
         updateSpin();
         attackingGoal.update(dt);
@@ -6177,10 +8091,143 @@ async function start() {
   }
   if (keeperTest) {
     keeperPanel = keeperControls(matchView, resetKeeperTest, () => {
-      history.replaceState({ ...history.state, keeperDebug: true, arcadeMenu: true }, "");
+      history.replaceState(
+        { ...history.state, keeperDebug: true, arcadeMenu: true },
+        "",
+      );
       location.reload();
     });
     resetKeeperTest();
+  }
+  if (rules.mode === "penaltyShootout" && penaltySelections) {
+    const pools = [
+      new Map(homeSlots.map((a) => [a.displayName, a])),
+      new Map(awaySlots.map((a) => [a.displayName, a])),
+    ] as [Map<string, typeof sean>, Map<string, typeof sean>];
+    async function actorFor(side: 0 | 1, name: string) {
+      const pool = pools[side];
+      let actor = pool.get(name);
+      if (!actor) {
+        actor =
+          side === 0 ? await makeHomePlayer(name) : await makeAwayPlayer(name);
+        pool.set(name, actor);
+      }
+      return actor;
+    }
+    async function startStandalone() {
+      if (!penaltySelections) return;
+      const teams = (await Promise.all(
+        [0, 1].map(async (side) =>
+          Promise.all(
+            penaltySelections![side as 0 | 1].kickers.map((name) =>
+              actorFor(side as 0 | 1, name),
+            ),
+          ),
+        ),
+      )) as [typeof homeSlots, typeof homeSlots];
+      const keepers = (await Promise.all([
+        actorFor(0, penaltySelections[0].keeper),
+        actorFor(1, penaltySelections[1].keeper),
+      ])) as [typeof sean, typeof sean];
+      for (const pool of pools)
+        for (const actor of pool.values()) actor.sprite.visible = false;
+      const controllers: [number | null, number | null] = [null, null];
+      for (const seat of seats ?? [])
+        controllers[seat.side === -1 ? 0 : 1] ??= seat.device;
+      enterPenalties((kicks) => void showStandaloneResults(kicks), {
+        teams,
+        keepers,
+        controllers,
+        pause: async (current) => {
+          audio.menu("open");
+          audio.state(true, false);
+          const score: [number, number] = [0, 1].map(
+            (side) =>
+              current.filter((k) => k.side === side && k.outcome === "Goal")
+                .length,
+          ) as [number, number];
+          const choice = await pauseMenu(
+            home,
+            matchOpponent,
+            score,
+            1,
+            0,
+            false,
+            false,
+            true,
+            false,
+            undefined,
+            `${penaltyLength} KICKS`,
+            "PENALTIES",
+          );
+          if (choice === "quit") {
+            leaveShootout(true);
+            return true;
+          }
+          audio.menu("close");
+          audio.state(false, true);
+          return false;
+        },
+      });
+    }
+    async function showStandaloneResults(kicks: Kick[]) {
+      // The controller randomizes the starting side; use its completed kick order here.
+      const final = shootout(
+        kicks,
+        (kicks[0]?.side ?? 0) as 0 | 1,
+        penaltyLength,
+      );
+      const panel = document.createElement("dialog");
+      panel.className = "pk-results";
+      const winner = final.winner === 0 ? home : matchOpponent;
+      const heading = document.createElement("h2");
+      heading.textContent = winner.name + " WINS THE SHOOTOUT";
+      panel.append(heading);
+      const summary = document.createElement("p");
+      summary.textContent = `${home.name} ${final.score[0]} – ${final.score[1]} ${matchOpponent.name} · ${penaltyLength} KICKS${kicks.length > 2 * penaltyLength ? " · SUDDEN DEATH" : ""}`;
+      panel.append(summary);
+      const stats = document.createElement("p");
+      const sideStats = (side: 0 | 1) => {
+        const attempts = kicks.filter((k) => k.side === side);
+        return `${attempts.length} attempts · ${attempts.filter((k) => k.outcome === "Goal").length} scored · ${kicks.filter((k) => k.side !== side && k.outcome === "Save").length} keeper saves · ${attempts.filter((k) => k.outcome === "Wide" || k.outcome === "Woodwork").length} missed`;
+      };
+      stats.textContent = `${homeLabel}: ${sideStats(0)}  |  ${matchOpponent.name}: ${sideStats(1)}`;
+      panel.append(stats);
+      const history = document.createElement("ol");
+      for (const kick of kicks) {
+        const item = document.createElement("li");
+        item.textContent = `${kick.side === 0 ? home.name : matchOpponent.name} · ${kick.kicker ?? "Kicker"} vs ${kick.keeper ?? "Keeper"} · ${kick.outcome}`;
+        history.append(item);
+      }
+      panel.append(history);
+      const nav = document.createElement("nav");
+      const button = (label: string, action: () => void) => {
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.onclick = action;
+        nav.append(b);
+      };
+      button("REMATCH", () => {
+        panel.close();
+        panel.remove();
+        void startStandalone();
+      });
+      button("KICK OFF", () => leaveShootout(true));
+      button("MAIN MENU", () => leaveShootout(false));
+      panel.append(nav);
+      document.body.append(panel);
+      panel.showModal();
+      nav.querySelector("button")?.focus();
+    }
+    function leaveShootout(kickoff: boolean) {
+      history.replaceState(
+        { ...history.state, kickoffMenu: kickoff, arcadeMenu: true },
+        "",
+      );
+      location.reload();
+    }
+    await startStandalone();
+    return;
   }
   if (penaltyLab) {
     homeScore = awayScore = 2;
@@ -6205,9 +8252,14 @@ async function start() {
     training.render("");
     training.panel.hidden = false;
     if (weatherTest) {
-      renderer.domElement.setAttribute("aria-label", "Weather Playground · Grant Park");
-      training.panel.querySelector("strong")!.textContent = "Weather Playground";
-      const controls = training.panel.querySelector<HTMLButtonElement>("[data-again]")!;
+      renderer.domElement.setAttribute(
+        "aria-label",
+        "Weather Playground · Grant Park",
+      );
+      training.panel.querySelector("strong")!.textContent =
+        "Weather Playground";
+      const controls =
+        training.panel.querySelector<HTMLButtonElement>("[data-again]")!;
       const weatherButton = document.createElement("button");
       weatherButton.textContent = "Weather settings";
       weatherButton.onclick = () => void matchMenu();
@@ -6292,7 +8344,7 @@ async function start() {
             "Nadia",
           ]
         : managedLineup.starters.slice(0, 3);
-    const available = [...managedSlots.slice(0,6), ...reserves];
+    const available = [...managedSlots.slice(0, 6), ...reserves];
     const trio = available
       .filter((a) => attackNames.includes(a.displayName))
       .slice(0, 3);
@@ -6330,24 +8382,31 @@ async function start() {
   if (tutorialLaunch) {
     // The opposing roster stays white for the entire afternoon. Swap only the
     // rendered map: gameplay and replay retain their original animation identities.
-    const awayNames = new Set(tutorialScene.away.map(name => name.toLowerCase()));
-    const awayUrls = new Set(Object.entries(burnerHomeSheets)
-      .filter(([path]) => awayNames.has(path.split('/').pop()!.split('-')[0]))
-      .map(([, url]) => url));
+    const awayNames = new Set(
+      tutorialScene.away.map((name) => name.toLowerCase()),
+    );
+    const awayUrls = new Set(
+      Object.entries(burnerHomeSheets)
+        .filter(([path]) => awayNames.has(path.split("/").pop()!.split("-")[0]))
+        .map(([, url]) => url),
+    );
     const whiteImages = new Map<string, Promise<T.Texture>>();
     const whiteMaps = new Map<T.Texture, T.Texture>();
     const whiteSources = new Map<T.Source, T.Source>();
-    await Promise.all([...playerSheetSources].map(async ([source, url]) => {
-      const whiteUrl = awayUrls.has(url) && whiteKitByHomeUrl.get(url);
-      if (!whiteUrl) return;
-      if (!whiteImages.has(whiteUrl)) whiteImages.set(whiteUrl, new T.TextureLoader().loadAsync(whiteUrl));
-      const white = await whiteImages.get(whiteUrl)!;
-      const variant = source.clone();
-      variant.source = white.source;
-      variant.needsUpdate = true;
-      whiteMaps.set(source, variant);
-      whiteSources.set(source.source, white.source);
-    }));
+    await Promise.all(
+      [...playerSheetSources].map(async ([source, url]) => {
+        const whiteUrl = awayUrls.has(url) && whiteKitByHomeUrl.get(url);
+        if (!whiteUrl) return;
+        if (!whiteImages.has(whiteUrl))
+          whiteImages.set(whiteUrl, new T.TextureLoader().loadAsync(whiteUrl));
+        const white = await whiteImages.get(whiteUrl)!;
+        const variant = source.clone();
+        variant.source = white.source;
+        variant.needsUpdate = true;
+        whiteMaps.set(source, variant);
+        whiteSources.set(source.source, white.source);
+      }),
+    );
     for (const actor of opponents) {
       let original: T.Texture | null = null;
       actor.sprite.onBeforeRender = () => {
@@ -6370,10 +8429,15 @@ async function start() {
         white.matrixAutoUpdate = original.matrixAutoUpdate;
         actor.sprite.material.map = white;
       };
-      actor.sprite.onAfterRender = () => { actor.sprite.material.map = original; };
+      actor.sprite.onAfterRender = () => {
+        actor.sprite.material.map = original;
+      };
     }
     tutorialMusic = firstTouchSoundtrack(() => music?.musicEnabled ?? false);
-    renderer.domElement.setAttribute("aria-label", "Candler Park · First Touch playable pitch");
+    renderer.domElement.setAttribute(
+      "aria-label",
+      "Candler Park · First Touch playable pitch",
+    );
     matchView.classList.add("tutorial-session");
     meters[1].node.setAttribute("aria-label", "Park teammates Burn");
     phase = "play";
@@ -6384,7 +8448,10 @@ async function start() {
     el("message").textContent = "";
     referee.sprite.visible = false;
     // Initial scene construction is allowed to place actors; chapter changes only change intentions.
-    for (const [team, away] of [[players, false], [opponents, true]] as const) {
+    for (const [team, away] of [
+      [players, false],
+      [opponents, true],
+    ] as const) {
       team.forEach((actor, i) => {
         if (!away && i < 3) return;
         const spot = tutorialTouchlineSpot(i, away);
@@ -6394,18 +8461,41 @@ async function start() {
       });
     }
     tutorial = new TutorialDirector(tutorialLaunch, headshots, {
-      pause: on => { cancelCharge(); keys.clear(); axisX = axisZ = 0; pause(on); },
-      reset: () => { reset(); phase = "play"; el("message").textContent = ""; },
+      pause: (on) => {
+        cancelCharge();
+        keys.clear();
+        axisX = axisZ = 0;
+        pause(on);
+      },
+      reset: () => {
+        reset();
+        phase = "play";
+        el("message").textContent = "";
+      },
       exit: endWarmup,
-      chapter: index => {
+      chapter: (index) => {
         scoreboard.style.visibility = index === 11 ? "visible" : "hidden";
         tutorialTackler = null;
         if (index === 5) {
           const controlled = players[active].displayName;
-          tutorialDefenders = [controlled, controlled === "Jeremy" ? "José" : "Jeremy"];
+          tutorialDefenders = [
+            controlled,
+            controlled === "Jeremy" ? "José" : "Jeremy",
+          ];
         }
       },
-      ready: () => !charge && !inFlight && !shot && !aerial && !bluePass && !outBall && !keeperRestart && !celebrating && replay.cut < 0 && !players[active].moving && !blastShooter,
+      ready: () =>
+        !charge &&
+        !inFlight &&
+        !shot &&
+        !aerial &&
+        !bluePass &&
+        !outBall &&
+        !keeperRestart &&
+        !celebrating &&
+        replay.cut < 0 &&
+        !players[active].moving &&
+        !blastShooter,
     });
   }
   if (simulation) matchView.dataset.simulation = "";
@@ -6424,6 +8514,8 @@ async function start() {
     careerBookings.clear();
     careerFouledPlayer = undefined;
     careerGoals.length = 0;
+    longAttempts.fill(0);
+    twoPointGoals.fill(0);
     highlights.length = 0;
     careerShots.fill(0);
     onTarget.fill(0);
@@ -6435,6 +8527,13 @@ async function start() {
     half = 1;
     attackSign = 1;
     matchSeconds = homeScore = awayScore = 0;
+    beatRemaining = beatStartSeconds;
+    beatPendingEnd = false;
+    if (mystery) {
+      Object.assign(mystery, createMysteryState());
+      applyMysteryModifier();
+      if (!inferno) resetBurn();
+    }
     paused = false;
     matchView.removeAttribute("data-paused");
     el("pause").textContent = "Pause";
@@ -6444,7 +8543,7 @@ async function start() {
       data.penalty = data.lateChallenges = 0;
       data.sprintCharge = data.staminaCapacity = 100;
     }
-    for (const m of [...outfield, ...(street?[]:[sean])]) {
+    for (const m of [...outfield, ...(street ? [] : [sean])]) {
       m.penalty = m.lateChallenges = 0;
       m.sprite.visible = true;
       m.sprintCharge = m.staminaCapacity = 100;
@@ -6520,9 +8619,13 @@ async function start() {
   }
   addEventListener("keydown", (e) => {
     if (keeperPanel && !paused && !squadOpen && !e.repeat) {
-      if (e.code === "KeyR") { resetKeeperTest(); return; }
+      if (e.code === "KeyR") {
+        resetKeeperTest();
+        return;
+      }
       if (keeperGather > 0 && (e.code === "KeyQ" || e.code === "KeyE")) {
-        pickOutlet(e.code === "KeyQ" ? -1 : 1); return;
+        pickOutlet(e.code === "KeyQ" ? -1 : 1);
+        return;
       }
     }
     if (fullTimeScreen) return;
@@ -6644,14 +8747,68 @@ async function start() {
       cancelCharge();
     } else if (!aiHome && !squadOpen && !crossingDrill) void matchMenu();
   });
-  const utilityButtons = keeperTest ? [4, 5, 14, 15, 11, 1] : [4, 14, 15, 11, 1];
+  const utilityButtons = keeperTest
+    ? [4, 5, 14, 15, 11, 1]
+    : [4, 14, 15, 11, 1];
   const utilityHeld = utilityButtons.map(() => false);
   let padIndex: number | null = null;
   function updatePadStatus(text: string) {
     const badge = el("padStatus");
     if (badge.textContent !== text) badge.textContent = text;
   }
+  const beatReconnect = document.createElement("div");
+  beatReconnect.className = "beat-reconnect";
+  beatReconnect.setAttribute("role", "alertdialog");
+  beatReconnect.setAttribute("aria-label", "Controller disconnected");
+  beatReconnect.innerHTML =
+    "<strong>CONTROLLER DISCONNECTED</strong><span>Press any button on a controller to rejoin the challenge.</span>";
+  beatReconnect.hidden = true;
+  if (beatTheClock) matchView.append(beatReconnect);
+  function checkBeatReconnect() {
+    if (!beatTheClock || beatReconnect.hidden || fullTimeScreen) return;
+    const pads = Array.from(navigator.getGamepads?.() ?? []).filter(
+      (pad): pad is Gamepad => !!pad,
+    );
+    const available = pads.find(
+      (pad) =>
+        !seats?.some((seat) => seat.device === pad.index) &&
+        pad.buttons.some((button) => button.pressed),
+    );
+    if (!available) return;
+    const used = new Set((seats ?? []).map((seat) => seat.number));
+    let number = 1;
+    while (used.has(number)) number++;
+    seats ??= [];
+    seats.push({ device: available.index, side: beatTeam!, number, actor: -1 });
+    aiHome = beatTeam === 1;
+    beatReconnect.hidden = true;
+    buttons.set(
+      seats[seats.length - 1],
+      available.buttons.map((button) => button.pressed),
+    );
+    updatePadStatus("Controller reconnected");
+    if (paused && !squadOpen) pause(false);
+  }
   addEventListener("gamepaddisconnected", (event) => {
+    if (
+      beatTheClock &&
+      seats?.some((seat) => seat.device === event.gamepad.index)
+    ) {
+      const departed = seats.find(
+        (seat) => seat.device === event.gamepad.index,
+      )!;
+      buttons.delete(departed);
+      seats = seats.filter((seat) => seat !== departed);
+      seatLabels.get(departed.number)?.root.remove();
+      seatLabels.delete(departed.number);
+      padIndex = null;
+      updatePadStatus("Controller disconnected");
+      if (seats.length === 0) {
+        if (!squadOpen) pause(true);
+        beatReconnect.hidden = false;
+      }
+      return;
+    }
     if (simulation || celebrationLab || event.gamepad.index !== padIndex)
       return;
     padIndex = null;
@@ -6739,6 +8896,7 @@ async function start() {
       actor.runClock = 0;
       actor.tackling = actor.shooting = false;
       actor.velocity.set(0, 0, 0);
+      snowVelocities.delete(actor);
       actor.sprite.material.rotation = 0;
     });
     homeSlots[labIndex].sprite.position.set(fieldX - 4.5, 0, 0);
@@ -6781,7 +8939,11 @@ async function start() {
     const scoringClub = homeGoalScored ? home : matchOpponent;
     const winners = homeGoalScored ? homeSlots : awaySlots;
     const losers = homeGoalScored ? opponents : players;
-    celebrant = scorer;
+    ownGoalCelebration = !!scorer && !winners.includes(scorer);
+    celebrant = ownGoalCelebration
+      ? (winners.find((actor) => actor.sprite.visible && !actor.penalty) ??
+        null)
+      : scorer;
     const interGoal =
       scoringClub.name === "Inter Your Mom" && scorer
         ? interMaleGoals[scorer.displayName]
@@ -6814,24 +8976,32 @@ async function start() {
                 ? stevenGoalRun
                 : scorer?.displayName === "Pam"
                   ? pamSkateGoal
-                  : scorer?.displayName === "Bjorn" ? bjornGoalRun : scorer?.displayName === "Nelson"
-                    ? nelsonGoalRun
-                    : scorer?.displayName === "Chris"
-                      ? chrisGoalRun
-                      : scorer?.displayName === "Nadia"
-                        ? nadiaGoalRun
-                        : scorer?.displayName === "Jan"
-                          ? janGoalRun
-                          : scorer?.displayName === "Daniel"
-                            ? danielGoalRun
-                            : undefined
+                  : scorer?.displayName === "Bjorn"
+                    ? bjornGoalRun
+                    : scorer?.displayName === "Nelson"
+                      ? nelsonGoalRun
+                      : scorer?.displayName === "Chris"
+                        ? chrisGoalRun
+                        : scorer?.displayName === "Nadia"
+                          ? nadiaGoalRun
+                          : scorer?.displayName === "Jan"
+                            ? janGoalRun
+                            : scorer?.displayName === "Daniel"
+                              ? danielGoalRun
+                              : undefined
         : undefined);
+    if (ownGoalCelebration) {
+      goalMap = undefined;
+      runCelebration = undefined;
+    }
     costumeReveal =
       runCelebration === meghanSkate ||
       runCelebration === spiderRun ||
       runCelebration === pamSkateGoal ||
-      ((scoringClub.name === "Trash Pandas FC" || scoringClub.name === "Sweeper Creepers FC" ||
-        scoringClub.name === "Grass Assassins") && !!fleetGoal?.run);
+      ((scoringClub.name === "Trash Pandas FC" ||
+        scoringClub.name === "Sweeper Creepers FC" ||
+        scoringClub.name === "Grass Assassins") &&
+        !!fleetGoal?.run);
     celebrationRunSeconds =
       runCelebration === stubbsSlide
         ? slideDuration
@@ -6857,7 +9027,7 @@ async function start() {
       actor.sprite.material.rotation = 0;
       actor.sprite.position.y = 0;
     }
-    walks = losers
+    walks = (ownGoalCelebration ? [] : losers)
       .filter((a) => a.sprite.visible && !a.penalty)
       .map((actor, i) => ({
         actor,
@@ -6874,7 +9044,11 @@ async function start() {
     // Gathering targets are offsets from the scorer, so the chase follows every turn.
     const keeper = homeGoalScored ? sean : awayGK;
     const mates = winners.filter(
-      (a) => a !== celebrant && a !== keeper && a.sprite.visible && !a.penalty,
+      (a) =>
+        a !== celebrant &&
+        (ownGoalCelebration || a !== keeper) &&
+        a.sprite.visible &&
+        !a.penalty,
     );
     // Keep the south, camera-facing side of the scorer open. Spread the
     // teammates around the far half of the circle with a little variation.
@@ -6883,10 +9057,11 @@ async function start() {
       Math.max(0.75, (mates.length - 1) * 0.68),
     );
     mates.forEach((actor, i) => {
-      const angle =
-        1.5 * Math.PI +
-        (mates.length > 1 ? (i / (mates.length - 1) - 0.5) * spread : 0) +
-        (Math.random() - 0.5) * 0.12;
+      const angle = ownGoalCelebration
+        ? (i / Math.max(1, mates.length)) * Math.PI * 2
+        : 1.5 * Math.PI +
+          (mates.length > 1 ? (i / (mates.length - 1) - 0.5) * spread : 0) +
+          (Math.random() - 0.5) * 0.12;
       const radius = 1.55 + Math.random() * 0.65;
       walks.push({
         actor,
@@ -6902,6 +9077,10 @@ async function start() {
       });
     });
     resultTime = celebrationRunSeconds + 2.8;
+    if (ownGoalCelebration) {
+      celebrationRunSeconds = 0;
+      startGroupCelebration();
+    }
   }
   function startGroupCelebration() {
     groupStarted = true;
@@ -7037,6 +9216,11 @@ async function start() {
       actor.travel += step;
       actor.runClock += realDt * (gather ? speed / 5 : 0.55);
     }
+    if (
+      ownGoalCelebration &&
+      walks.some(({ actor, gather }) => gather && actor.moving)
+    )
+      resultTime = Math.max(resultTime, 2.8);
     if (groupStarted && goalMap === mandyGoal) {
       const groupAge = goalAge - celebrationRunSeconds;
       resultTime =
@@ -7081,7 +9265,17 @@ async function start() {
       camTarget.lerp(celebrant.sprite.position, 1 - Math.exp(-4 * realDt));
     if (costumeReveal && celebrant)
       costumeChange.draw(goalAge, celebrant.sprite.position);
-    if (goalAge > (costumeReveal ? 0.14 : 0.85)) goalBanner.hidden = true;
+    if (
+      beatTheClock
+        ? celebrationSeconds > 3
+        : goalAge >
+      (costumeReveal
+        ? 0.14
+        : firstToFive && Math.max(homeScore, awayScore) >= rules.targetScore - 1
+          ? 2.2
+          : 0.85)
+    )
+      goalBanner.hidden = true;
   }
   function setReplayHint() {
     replayPanel.hidden = false;
@@ -7129,7 +9323,7 @@ async function start() {
       if (player.age >= 0 || decisionIn > 0) return;
       decisionIn = 0.85 + Math.random() * 0.9;
       const range = Math.hypot(fieldX - pos.x * attackSign, pos.z);
-      if (phase === "play" && range < 12) {
+      if (!airBalls && phase === "play" && range < 12) {
         shotMultiplier = 1.7 + Math.random() * 0.3;
         kick();
         return;
@@ -7160,7 +9354,7 @@ async function start() {
             autoZ = dz / (dist || 1);
           }
         }
-        pass(1.65, Math.abs(pos.z) > 7 && range < 17 ? "cross" : "pass");
+        pass(1.65, (airBalls && range<23) || (Math.abs(pos.z) > 7 && range < 17) ? "cross" : "pass");
       }
     } else {
       if (canSwitch() && decisionIn <= 0) {
@@ -7194,14 +9388,14 @@ async function start() {
             const face = portrait
               ? `<img src="${portrait}" alt="">`
               : `<span class="ft-rival" style="background-image:url('${rivalSprites(club === 0 ? home : matchOpponent, g.player)?.idle ?? blueIdle}')"></span>`;
-            return `<li>${face}<b>${g.player}</b> ${g.minute}′</li>`;
+            return `<li>${face}<b>${g.player}</b> ${g.minute}′${longRange || mystery ? ` · +${goalValues.get(g) ?? 1}` : ""}</li>`;
           })
           .join("");
         return (
           '<ul aria-label="' +
           (club === 0 ? home.name : matchOpponent.name) +
           ' scorers">' +
-          (entries || "<li>No goals</li>") +
+          (entries || "") +
           "</ul>"
         );
       })
@@ -7219,9 +9413,18 @@ async function start() {
         "Possession",
         control ? [percent + "%", 100 - percent + "%"] : ["—", "—"],
       ) +
+      (longRange
+        ? statRow("Two-point goals", twoPointGoals) +
+          statRow("Long-range attempts", longAttempts)
+        : "") +
       statRow("Total shots", careerShots) +
       statRow("Shots on target", onTarget) +
-      (street ? "" : statRow("Saves", [onTarget[1] - awayScore, onTarget[0] - homeScore])) +
+      (street
+        ? ""
+        : statRow("Saves", [
+            onTarget[1] - careerGoals.filter((g) => g.club === 0).length,
+            onTarget[0] - careerGoals.filter((g) => g.club === 1).length,
+          ])) +
       statRow("Woodwork", woodwork) +
       statRow("Passes completed", facts.passes) +
       statRow("Tackles won", facts.tackles) +
@@ -7300,9 +9503,23 @@ async function start() {
       nextHint: hint("Enter", "A"),
       backHint: hint("Esc", "B"),
     });
+    if (firstToFive)
+      summary.querySelector(".ft-heading")!.textContent = "MATCH COMPLETE";
+    if (beatTheClock)
+      summary.querySelector(".ft-heading")!.textContent = "TIME'S UP!";
     summary.querySelector("h2")!.outerHTML =
       '<div class="ft-card">' +
-      matchCard(pens ? "FINAL · " + pens.join("–") + " PENS" : "FINAL") +
+      matchCard(
+        pens
+          ? "FINAL · " + pens.join("–") + " PENS"
+          : firstToFive
+            ? `FIRST TO ${rules.targetScore}`
+            : beatTheClock
+              ? "BEAT THE CLOCK"
+              : airBalls ? "AIR BALLS" : mystery
+                ? "MYSTERY MATCH"
+              : "FINAL",
+      ) +
       "</div>";
     let personal: HTMLElement | null = null;
     if (ticket && performanceReport) {
@@ -7311,9 +9528,31 @@ async function start() {
       personal.className = "ft-player";
       personal.innerHTML = `<span class="ft-sprite" style="background-image:url('${burnerPortraits[name]}')"></span><div><small>Player-manager</small><h3>${name}</h3><div>Goals ${goals} · Assists ${facts.assists} · Completed passes ${facts.personalPasses}</div><b class="ft-xp"></b><progress max="100" aria-label="Progress to next level"></progress></div>`;
       summary.querySelector("p")!.replaceWith(personal);
-    } else if(street){
-      summary.querySelector('p')!.textContent=`STREET · ${rules.teamSize}V${rules.teamSize} · ${homeScore===awayScore?'DRAW':(homeScore>awayScore?home.name:matchOpponent.name)+' WINS'} · ${careerGoals.map(g=>g.player+(g.assist?' (assist '+g.assist+')':'')).join(' · ')}`;
-    } else summary.querySelector("p")!.remove();
+    } else if (street) {
+      summary.querySelector("p")!.textContent =
+        `STREET · ${rules.teamSize}V${rules.teamSize} · ${homeScore === awayScore ? "DRAW" : (homeScore > awayScore ? home.name : matchOpponent.name) + " WINS"} · ${careerGoals.map((g) => g.player + (g.assist ? " (assist " + g.assist + ")" : "")).join(" · ")}`;
+    } else if (airBalls) {
+      summary.querySelector("p")!.textContent=`AIR BALLS · ${invalidAirGoals} grounded goals disallowed`;
+    } else if (mystery) {
+      summary.querySelector("p")!.textContent =
+        `MYSTERY MATCH · ${mystery.history.length} modifiers activated (active gameplay time): ${mystery.history.map(entry => `${Math.floor(entry.at/60).toString().padStart(2,"0")}:${Math.floor(entry.at%60).toString().padStart(2,"0")} ${mysteryModifiers.find(mod=>mod.id===entry.id)?.name}`).join(" · ")}`;
+    } else if (firstToFive) {
+      const seconds = Math.floor(matchSeconds);
+      summary.querySelector("p")!.textContent =
+        `FIRST TO ${rules.targetScore} · ${homeScore > awayScore ? home.name : matchOpponent.name} WINS · ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")} elapsed`;
+    } else if (longRange)
+      summary.querySelector("p")!.textContent =
+        "LONG RANGE · Goals outside the dotted box count double.";
+    else if (snowpocalypse)
+      summary.querySelector("p")!.textContent =
+        "SNOWPOCALYPSE · 7V7 · Atlanta shuts down. Football doesn't.";
+    else if (inferno)
+      summary.querySelector("p")!.textContent =
+        "INFERNO · 7V7 · Every player has unlimited Burn.";
+    else if (survival)
+      summary.querySelector("p")!.textContent =
+        `SURVIVAL · ${home.name}: ${players.filter((p) => !p.penalty).length + 1} left, ${survivalHistory.filter((e) => e.side === 0).length} eliminated · ${matchOpponent.name}: ${opponents.filter((p) => !p.penalty).length + 1} left, ${survivalHistory.filter((e) => e.side === 1).length} eliminated. ${survivalHistory.map((e) => `${e.minute}′ ${e.name} eliminated (${e.team})`).join(" · ")}`;
+    else summary.querySelector("p")!.remove();
     document.body.append(summary);
     summary.showModal();
     const start = performance.now(),
@@ -7353,9 +9592,63 @@ async function start() {
     const skip = summary.querySelector<HTMLButtonElement>(".ft-back")!;
     const proceed = summary.querySelector<HTMLButtonElement>(".ft-proceed")!;
     const panel = summary.querySelector<HTMLElement>(".ft-panel")!;
-    if(street){proceed.innerHTML=hint('Esc','B')+(gulchDebug?' Return to Debug':' Return to Kickoff');const rematch=document.createElement('button');rematch.textContent='Rematch';rematch.onclick=()=>{history.replaceState({...history.state,streetRematch:{fixture,lineup,awayLineup,seats,rules,settings,gulchDebug},arcadeMenu:true},'');void finish()};proceed.before(rematch)}
+    if (
+      street ||
+      snowpocalypse ||
+      longRange ||
+      firstToFive ||
+      inferno ||
+      survival ||
+      beatTheClock ||
+      (airBalls || !!mystery)
+    ) {
+      proceed.innerHTML =
+        hint("Esc", "B") +
+        (gulchDebug ? " Return to Debug" : " Return to Kickoff");
+      const rematch = document.createElement("button");
+      rematch.textContent = "Rematch";
+      rematch.onclick = () => {
+        history.replaceState(
+          {
+            ...history.state,
+            streetRematch: {
+              fixture,
+              lineup,
+              awayLineup,
+              seats,
+              rules,
+              settings,
+              gulchDebug,
+              venue,
+            },
+            arcadeMenu: true,
+          },
+          "",
+        );
+        void finish();
+      };
+      proceed.before(rematch);
+    }
     async function finish() {
-      if(street)history.replaceState({...history.state,kickoffMenu:!gulchDebug||!!history.state?.streetRematch,keeperDebug:gulchDebug&&!history.state?.streetRematch,arcadeMenu:true},'');
+      if (
+        street ||
+        snowpocalypse ||
+        longRange ||
+        firstToFive ||
+        inferno ||
+        survival ||
+        beatTheClock ||
+        (airBalls || !!mystery)
+      )
+        history.replaceState(
+          {
+            ...history.state,
+            kickoffMenu: !gulchDebug || !!history.state?.streetRematch,
+            keeperDebug: gulchDebug && !history.state?.streetRematch,
+            arcadeMenu: true,
+          },
+          "",
+        );
       cancelAnimationFrame(cycle);
       music?.carryOver();
       await music?.finish();
@@ -7480,11 +9773,39 @@ async function start() {
       else void finish();
     };
     summary.addEventListener("keydown", (e) => {
-      if(street&&!watching&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.code)){e.preventDefault();moveResult(e.code==='ArrowLeft'||e.code==='ArrowUp'?-1:1);return}
+      if (
+        (street ||
+          snowpocalypse ||
+          longRange ||
+          firstToFive ||
+          inferno ||
+          survival ||
+          beatTheClock ||
+          (airBalls || !!mystery)) &&
+        !watching &&
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)
+      ) {
+        e.preventDefault();
+        moveResult(e.code === "ArrowLeft" || e.code === "ArrowUp" ? -1 : 1);
+        return;
+      }
       if (e.code !== "Enter" && e.code !== "NumpadEnter") return;
       e.preventDefault();
       e.stopPropagation();
-      if(street&&!watching){(document.activeElement as HTMLButtonElement)?.click();return}
+      if (
+        (street ||
+          snowpocalypse ||
+          longRange ||
+          firstToFive ||
+          inferno ||
+          survival ||
+          beatTheClock ||
+          (airBalls || !!mystery)) &&
+        !watching
+      ) {
+        (document.activeElement as HTMLButtonElement)?.click();
+        return;
+      }
       if (watching) advanceClip(performance.now());
       else if (highlights.length) watch.click();
     });
@@ -7495,8 +9816,16 @@ async function start() {
     }
     (watch.hidden ? proceed : watch).focus({ preventScroll: true });
     panel.scrollTop = 0;
-    function moveResult(step:number){const buttons=[...summary.querySelectorAll<HTMLButtonElement>('.ft-legend button:not([hidden])')];const i=buttons.indexOf(document.activeElement as HTMLButtonElement);buttons[(i+step+buttons.length)%buttons.length]?.focus()}
-    let resultDirection='';
+    function moveResult(step: number) {
+      const buttons = [
+        ...summary.querySelectorAll<HTMLButtonElement>(
+          ".ft-legend button:not([hidden])",
+        ),
+      ];
+      const i = buttons.indexOf(document.activeElement as HTMLButtonElement);
+      buttons[(i + step + buttons.length) % buttons.length]?.focus();
+    }
+    let resultDirection = "";
     let held = !!menuPad()?.buttons[0]?.pressed,
       backHeld = !!menuPad()?.buttons[1]?.pressed,
       startHeld = !!menuPad()?.buttons[9]?.pressed;
@@ -7506,11 +9835,37 @@ async function start() {
         start = !!pad?.buttons[9]?.pressed;
       if (pad && Math.abs(pad.axes[3] ?? 0) > 0.2)
         panel.scrollTop += pad.axes[3] * 9;
-      const direction=pad?menuDirection(pad):'';
-      if(street&&!watching&&direction&&direction!==resultDirection)moveResult(direction==='l'||direction==='u'?-1:1);
-      resultDirection=direction;
+      const direction = pad ? menuDirection(pad) : "";
+      if (
+        (street ||
+          snowpocalypse ||
+          longRange ||
+          firstToFive ||
+          inferno ||
+          survival ||
+          beatTheClock ||
+          (airBalls || !!mystery)) &&
+        !watching &&
+        direction &&
+        direction !== resultDirection
+      )
+        moveResult(direction === "l" || direction === "u" ? -1 : 1);
+      resultDirection = direction;
       const back = !!pad?.buttons[1]?.pressed;
-      if(street&&!watching&&down&&!held)(document.activeElement as HTMLButtonElement)?.click();
+      if (
+        (street ||
+          snowpocalypse ||
+          longRange ||
+          firstToFive ||
+          inferno ||
+          survival ||
+          beatTheClock ||
+          (airBalls || !!mystery)) &&
+        !watching &&
+        down &&
+        !held
+      )
+        (document.activeElement as HTMLButtonElement)?.click();
       else if (watching && back && !backHeld) openSummary();
       else if (watching && down && !held) advanceClip(performance.now());
       else if (!watching && back && !backHeld) void finish();
@@ -7606,21 +9961,75 @@ async function start() {
   const careerDetails = career && {
     season: seasonName(career.season),
     date: calendarDate(career, 5),
-    kind: stage(career.round, career.schedule[career.round].findIndex(game => game.a === 0 || game.b === 0)),
+    kind: stage(
+      career.round,
+      career.schedule[career.round].findIndex(
+        (game) => game.a === 0 || game.b === 0,
+      ),
+    ),
   };
   if (playIntro) await prepareMatchIntro(introVenue);
   function startIntro() {
     return matchIntro({
-      scene, renderer, root: matchView, teams: [homeSlots, awaySlots],
-      clubs: [home, matchOpponent], ball, venue: venueName, time: settings.time, kind: street ? `STREET · ${rules.teamSize}V${rules.teamSize}${rules.winCondition==='target'?' · FIRST TO FIVE':''}` : "Friendly",
+      scene,
+      renderer,
+      root: matchView,
+      teams: [homeSlots, awaySlots],
+      weatherAdvisory: snowpocalypse,
+      clubs: [home, matchOpponent],
+      ball,
+      venue: venueName,
+      time: settings.time,
+      kind: airBalls ? "AIR BALLS · 7V7" : mystery
+        ? "MYSTERY MATCH · 7V7"
+        : street
+        ? `STREET · ${rules.teamSize}V${rules.teamSize}${rules.winCondition === "target" ? " · FIRST TO FIVE" : ""}`
+        : firstToFive
+          ? `FIRST TO ${rules.targetScore} · 7V7`
+          : snowpocalypse
+            ? "SNOWPOCALYPSE · 7V7"
+            : inferno
+              ? "INFERNO · 7V7"
+              : survival
+                ? "SURVIVAL · 7V7"
+                : beatTheClock
+                  ? "BEAT THE CLOCK · 7V7"
+                  : "Friendly",
+      modeGuide: airBalls ? "HEADERS. VOLLEYS. SET PIECES. · GROUNDED GOALS DON’T COUNT. · KEEP IT UP!" : mystery
+        ? "THE RULES CHANGE EVERY 60 SECONDS · EXPECT THE UNEXPECTED"
+        : undefined,
       ...careerDetails,
-      exitPreview: introTest ? () => {
-        history.replaceState({ ...history.state, arcadeMenu: true,
-          previewReturn: { kind: "matchIntro", venue: kickOffVenue, time: settings.time } }, "");
-        location.reload();
-      } : undefined,
-      introVenue, schoolLights, millLights, introCar, train: progress => updateTrain?.intro(progress),
-      hide: [referee.sprite, ring, targetRing, landingRing, shadow, ...contactShadows.map(s => s.mesh)],
+      exitPreview: introTest
+        ? () => {
+            history.replaceState(
+              {
+                ...history.state,
+                arcadeMenu: true,
+                previewReturn: {
+                  kind: "matchIntro",
+                  venue: kickOffVenue,
+                  time: settings.time,
+                },
+              },
+              "",
+            );
+            location.reload();
+          }
+        : undefined,
+      introVenue,
+      schoolLights,
+      millLights,
+      introCar,
+      train: (progress) => updateTrain?.intro(progress),
+      hide: [
+        referee.sprite,
+        ring,
+        targetRing,
+        landingRing,
+        shadow,
+        ...contactShadows.map((s) => s.mesh),
+        ...infernoAuras.map((a) => a.mesh),
+      ],
     });
   }
   function tick(now: number) {
@@ -7632,10 +10041,11 @@ async function start() {
     const elapsed = Math.max(0, now - (last ?? now)) / 1000,
       dt =
         Math.min(0.04, elapsed) *
-        (blastShooter ? 0 : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1);
+        (blastShooter ? 0 : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
+        (mysteryOn("turbo") ? 1.5 : mysteryOn("slowMotion") ? .65 : 1);
     last = now;
     if (intro) {
-      const step = document.hidden ? 0 : Math.min(.2, elapsed);
+      const step = document.hidden ? 0 : Math.min(0.2, elapsed);
       if (!intro.paused) updateWeather(step);
       if (!intro.draw(step)) {
         intro.dispose();
@@ -7643,7 +10053,11 @@ async function start() {
         // Record the start press so normal match input waits for a fresh A.
         const pad = menuPad();
         lastPause = !!pad?.buttons[9]?.pressed;
-        for (const seat of seats ?? []) buttons.set(seat, Array.from(pad?.buttons ?? [], button => button.pressed));
+        for (const seat of seats ?? [])
+          buttons.set(
+            seat,
+            Array.from(pad?.buttons ?? [], (button) => button.pressed),
+          );
         reset();
       }
       matchView.removeAttribute("data-loading");
@@ -7681,6 +10095,7 @@ async function start() {
       return;
     }
     if (fullTimeScreen) return;
+    checkBeatReconnect();
     if (squadOpen) {
       requestAnimationFrame(tick);
       return;
@@ -7688,6 +10103,54 @@ async function start() {
     if (aiHome && document.hidden) {
       requestAnimationFrame(tick);
       return;
+    }
+    if (
+      beatTheClock &&
+      !paused &&
+      !squadOpen &&
+      !document.hidden &&
+      phase === "play" &&
+      !celebrating &&
+      replay.cut < 0
+    ) {
+      beatRemaining = Math.max(0, beatRemaining - elapsed);
+      updateScore();
+      if (beatRemaining === 0 && !shot && !inFlight) finishBeatChallenge();
+    }
+    if (airBalls && !paused && phase==="play" && !celebrating) {
+      if(airInvalidUntil && now>=airInvalidUntil) {goalBanner.hidden=true;airInvalidUntil=0;}
+      for (const [number,buffer] of airSeatShots) {
+        if(now>buffer.expires || held || blueCarrier>=0 || outBall || shot) airSeatShots.delete(number);
+        else {
+          const seat=seats?.find(s=>s.number===number);
+          if(seat) {const [x,z]=seatAim(seat); buffer.gesture.sample(x,z,now);}
+        }
+      }
+      if (queued?.expires && now>queued.expires) { queued=null; showPower(0); }
+      if (!held && blueCarrier<0 && !shot && ball.position.y>.8) airWasAloft=true;
+      if (airWasAloft && ball.position.y<=restingHeight+.05) { airBounceAt=now; airWasAloft=false; }
+      if (held || blueCarrier>=0) { airWasAloft=false; airBounceAt=-Infinity; }
+    }
+    if (mystery) {
+      if (mysteryRevealUntil === Infinity) mysteryRevealUntil = now + 3000;
+      if (now >= mysteryRevealUntil) mysteryReveal.hidden = true;
+      if (!paused && !document.hidden && !squadOpen && phase === "play" &&
+          !celebrating && replay.cut < 0 && !outBall && !keeperRestart &&
+          keeperGather <= 0 && resultTime <= 0 && !freeKick) {
+        const old = mystery.current.id;
+        const oldBag = [...mystery.bag];
+        if (advanceMystery(mystery, elapsed)) {
+          if (shot || inFlight || bluePass) {
+            mystery.remaining = 0;
+            mystery.history.pop();
+            mystery.current = mysteryModifiers.find(mod=>mod.id===old)!;
+            mystery.bag = oldBag;
+          } else applyMysteryModifier(old);
+        }
+      }
+      mysteryHud.querySelector(".mystery-next")!.textContent = `NEXT ${mysteryTime(mystery.remaining)}`;
+      mysteryHud.style.setProperty("--mystery-progress", String(Math.max(0,mystery.remaining/mysteryInterval)));
+      mysteryHud.toggleAttribute("data-warning",mystery.remaining<=5);
     }
     if (!paused && !squadOpen && !document.hidden) {
       impactTime = Math.max(0, impactTime - elapsed);
@@ -7713,7 +10176,10 @@ async function start() {
       }
     }
     if (alternateBall) {
-      const image = (useSnowBall()) === initiallySnowing ? initialBallImage : alternateBall.image;
+      const image =
+        useSnowBall() === initiallySnowing
+          ? initialBallImage
+          : alternateBall.image;
       if (ballMap.image !== image) {
         ballMap.image = image;
         ballMap.needsUpdate = true;
@@ -7736,8 +10202,23 @@ async function start() {
     if (tutorialInput) cancelCharge();
     if (tutorial) {
       const moving = players[active].moving;
-      const lull = !charge && !inFlight && !shot && !bluePass && !aerial && !outBall && !keeperRestart && !celebrating && replay.cut < 0 && !moving && !blastShooter;
-      tutorial.update(paused ? 0 : Math.min(elapsed, 0.1), lull, !paused && phase === "play" && !celebrating);
+      const lull =
+        !charge &&
+        !inFlight &&
+        !shot &&
+        !bluePass &&
+        !aerial &&
+        !outBall &&
+        !keeperRestart &&
+        !celebrating &&
+        replay.cut < 0 &&
+        !moving &&
+        !blastShooter;
+      tutorial.update(
+        paused ? 0 : Math.min(elapsed, 0.1),
+        lull,
+        !paused && phase === "play" && !celebrating,
+      );
     }
     soloPad =
       seats?.length === 1 && seats[0].device < 0 ? connectedPad : undefined;
@@ -7797,7 +10278,8 @@ async function start() {
     utilityButtons.forEach((n, i) => {
       const down = !!controlsPad?.buttons[n]?.pressed;
       if (down && !utilityHeld[i]) {
-        if (keeperPanel && (n === 4 || n === 5) && keeperGather > 0 && !paused) pickOutlet(n === 4 ? -1 : 1);
+        if (keeperPanel && (n === 4 || n === 5) && keeperGather > 0 && !paused)
+          pickOutlet(n === 4 ? -1 : 1);
         else if (n === 1) {
           if (simulation && (paused || phase === "fulltime")) exitSimulation();
         } else if (n === 4) {
@@ -7816,6 +10298,19 @@ async function start() {
       padHeld[i] = down;
     }
     tutorialMusic?.update(paused && !tutorial?.isComplete);
+    if (keeperGather > 0 && !paused && !squadOpen && !document.hidden) {
+      keeperHoldSeconds += elapsed;
+      if (keeperHoldSeconds >= 4) {
+        const team = keeperTeam();
+        const receiver =
+          outlet >= 0 && team[outlet] && !team[outlet].penalty
+            ? outlet
+            : nearestEligible(team, keeperActor().sprite.position);
+        keeperGather = 0;
+        if (receiver >= 0) distributeKeeperBall(receiver, true);
+        else releaseLooseStrike(keeperDirection(), 0, 0.85);
+      }
+    }
     audio.state(paused || document.hidden, celebrating || replay.cut >= 0);
     if (replay.cut >= 0) {
       landingRing.visible = false;
@@ -7902,7 +10397,8 @@ async function start() {
       struckLoose = false;
     const keeperX = homeKeeper.position.x,
       keeperZ = homeKeeper.position.z,
-      awayKeeperX = keeper.position.x, awayKeeperZ = keeper.position.z;
+      awayKeeperX = keeper.position.x,
+      awayKeeperZ = keeper.position.z;
     if (!paused && freeKick) {
       camTarget.lerp(freeKick.spot, 1 - Math.exp(-9 * dt));
       if (freeKick.wait > 0) {
@@ -7996,15 +10492,32 @@ async function start() {
           }
         }
       if (!outBall && !keeperRestart) {
-        if (held || inFlight || (keeperGather > 0 && keeperActor() === sean)) facts.control[0] += dt;
-        else if (blueCarrier >= 0 || bluePass || keeperGather > 0) facts.control[1] += dt;
+        if (held || inFlight || (keeperGather > 0 && keeperActor() === sean))
+          facts.control[0] += dt;
+        else if (blueCarrier >= 0 || bluePass || keeperGather > 0)
+          facts.control[1] += dt;
       }
       if (!tutorial && !keeperTest) {
         const before = matchSeconds;
-        matchSeconds = rules.winCondition==='target' ? before+elapsed : Math.min(1500, before + elapsed * 1500 / (60 * (rules.halfMinutes??halfMinutesForSpeed[settings.speed])));
+        matchSeconds = beatTheClock
+          ? before + elapsed
+          : rules.winCondition === "target"
+            ? before + elapsed
+            : Math.min(
+                1500,
+                before +
+                  (elapsed * 1500) /
+                    (60 *
+                      (rules.halfMinutes ??
+                        halfMinutesForSpeed[settings.speed])),
+              );
         surfaceMinutes = (matchSeconds - before) / 60;
       }
-      if (rules.winCondition!=="target" && matchSeconds >= 1500) {
+      if (
+        !beatTheClock &&
+        rules.winCondition !== "target" &&
+        matchSeconds >= 1500
+      ) {
         audio.play("whistle", 0.75, half === 1 ? 1 : 0.88);
         phase = half === 1 ? "halftime" : "fulltime";
         breakSeconds = 3;
@@ -8116,7 +10629,12 @@ async function start() {
     }
     if (!paused && celebrating) {
       if (!document.hidden) celebrationSeconds += elapsed;
-      if (!broadcast && !celebrationLab && celebrationSeconds >= 2 && replayPanel.hidden) {
+      if (
+        !broadcast &&
+        !celebrationLab &&
+        celebrationSeconds >= 2 &&
+        replayPanel.hidden
+      ) {
         el("skipReplay").innerHTML = hint("J", "A") + " Skip Celebration";
         replayPanel.hidden = false;
       }
@@ -8195,12 +10713,20 @@ async function start() {
       if (keeperGather > 0) {
         const [kx, kz] = keeperSeat ? seatAim(keeperSeat) : [x, z];
         const foot = keeperActor().sprite.position;
-        if (Math.hypot(kx, kz) > .22) {
+        if (Math.hypot(kx, kz) > 0.22) {
           aimOutlet(kx, kz);
           const length = Math.max(1, Math.hypot(kx, kz));
-          foot.x += 4 * dt * kx / length;
-          foot.z += 4 * dt * kz / length;
-        }
+          if (slippery)
+            moveOnSnow(
+              keeperActor(),
+              { x: (4 * kx) / length, z: (4 * kz) / length },
+              dt,
+            );
+          else {
+            foot.x += (4 * dt * kx) / length;
+            foot.z += (4 * dt * kz) / length;
+          }
+        } else if (slippery) moveOnSnow(keeperActor(), { x: 0, z: 0 }, dt);
         clampKeeper();
         if (!keeperSeat || keeperSeat === owner(-1, active)) x = z = 0;
       }
@@ -8255,28 +10781,50 @@ async function start() {
       for (const mate of players) mate.sprintTime = 0;
       const burst = (p.sprintTime = wantsSprint ? spendSprint(p, dt) : 0);
       const strideTime = dt + burst * (sprintCadence - 1);
+      const driven = p.moving;
       if (p.moving) {
         p.face = facing(x, z, p.face);
         const [dx, dz] = dirs[p.face];
         const distance =
           (4 * dt + 2 * burst) * trainingFactor(p.displayName, "Pace");
-        pos.x = T.MathUtils.clamp(pos.x + dx * distance, -runX, runX);
-        pos.z = T.MathUtils.clamp(pos.z + dz * distance, runNorth, runSouth);
-        p.travel += 4 * strideTime;
+        if (slippery)
+          moveOnSnow(
+            p,
+            { x: (dx * distance) / dt, z: (dz * distance) / dt },
+            dt,
+          );
+        else {
+          pos.x = T.MathUtils.clamp(pos.x + dx * distance, -runX, runX);
+          pos.z = T.MathUtils.clamp(pos.z + dz * distance, runNorth, runSouth);
+        }
+        if (!slippery) p.travel += 4 * strideTime;
         if (!tutorial?.speaking) {
           tutorial?.record("move");
           if (held) tutorial?.record("dribble");
           if (burst > 0) tutorial?.record("sprint");
         }
       }
+      if (
+        slippery &&
+        !driven &&
+        p.age < 0 &&
+        p.reactionTime <= 0 &&
+        !(keeperGather > 0 && keeperActor() === p)
+      )
+        moveOnSnow(p, { x: 0, z: 0 }, dt);
       if (!celebrationLab && !freePractice) {
         organizeAttack(dt);
         organizeDefense();
-        if (keeperGather > 0 && keeperActor() === sean) organizeKeeperOutlets(dt);
+        if (keeperGather > 0 && keeperActor() === sean)
+          organizeKeeperOutlets(dt);
         else outletRefresh = 0;
       }
       for (const [i, partner] of players.entries()) {
-        if (partner.penalty || (i === active && !(keeperGather > 0 && keeperActor() === sean))) continue;
+        if (
+          partner.penalty ||
+          (i === active && !(keeperGather > 0 && keeperActor() === sean))
+        )
+          continue;
         const human = owner(-1, i);
         if (human && !(keeperGather > 0 && human === keeperSeat)) {
           driveSeat(human, dt);
@@ -8287,9 +10835,17 @@ async function start() {
         else if (nearCover < 0 && i === reboundRunner && canSwitch()) {
           // Lead a moving rebound briefly, then close on the resting ball.
           partner.goal.set(
-            T.MathUtils.clamp(ball.position.x + vx * 0.25, -runX, runX),
+            T.MathUtils.clamp(
+              ball.position.x + vx * (slippery ? 0.45 : 0.25),
+              -runX,
+              runX,
+            ),
             0,
-            T.MathUtils.clamp(ball.position.z + vz * 0.25, runNorth, runSouth),
+            T.MathUtils.clamp(
+              ball.position.z + vz * (slippery ? 0.45 : 0.25),
+              runNorth,
+              runSouth,
+            ),
           );
         }
         if (
@@ -8298,10 +10854,44 @@ async function start() {
         ) {
           partner.moving = false;
           partner.velocity.set(0, 0, 0);
+          snowVelocities.delete(partner);
           continue;
         }
-        const coaching = tutorial && tutorialCoaching.target(tutorial.chapter, partner.displayName, i, ball.position, tutorial.speaking, false, tutorialTime, tutorialDefenders, keepAwayLooseBall());
-        if (coaching && !(inFlight && i === ballPlayer) && i !== reboundRunner) partner.goal.set(T.MathUtils.clamp(coaching.x, -runX, runX), 0, T.MathUtils.clamp(coaching.z, runNorth, runSouth));
+        const coaching =
+          tutorial &&
+          tutorialCoaching.target(
+            tutorial.chapter,
+            partner.displayName,
+            i,
+            ball.position,
+            tutorial.speaking,
+            false,
+            tutorialTime,
+            tutorialDefenders,
+            keepAwayLooseBall(),
+          );
+        if (coaching && !(inFlight && i === ballPlayer) && i !== reboundRunner)
+          partner.goal.set(
+            T.MathUtils.clamp(coaching.x, -runX, runX),
+            0,
+            T.MathUtils.clamp(coaching.z, runNorth, runSouth),
+          );
+        if (slippery) {
+          const pace =
+            i === reboundRunner ||
+            (nearCover >= 0 && (other.x - partner.goal.x) * attackSign > 2)
+              ? 6
+              : 4.6;
+          const desired = approachVelocity(
+            other,
+            partner.goal,
+            pace * trainingFactor(partner.displayName, "Pace"),
+          );
+          if (Math.hypot(desired.x, desired.z) > 0.1)
+            partner.face = facing(desired.x, desired.z, partner.face);
+          moveOnSnow(partner, desired, dt);
+          continue;
+        }
         const distance = other.distanceTo(partner.goal);
         partner.moving = distance > (partner.moving ? 0.08 : 0.28);
         partner.velocity.set(0, 0, 0);
@@ -8310,10 +10900,13 @@ async function start() {
             .subVectors(partner.goal, other)
             .multiplyScalar(
               Math.min(
-                (tutorial?.chapter === 5 ? 4 : i === reboundRunner ||
-                (nearCover >= 0 && (other.x - partner.goal.x) * attackSign > 2)
-                  ? 6
-                  : 4.6) * trainingFactor(partner.displayName, "Pace"),
+                (tutorial?.chapter === 5
+                  ? 4
+                  : i === reboundRunner ||
+                      (nearCover >= 0 &&
+                        (other.x - partner.goal.x) * attackSign > 2)
+                    ? 6
+                    : 4.6) * trainingFactor(partner.displayName, "Pace"),
                 distance / dt,
               ) / distance,
             );
@@ -8346,8 +10939,16 @@ async function start() {
           1,
           (6.4 * dt) / Math.max(0.001, Math.hypot(dx, dz)),
         );
-        foot.x += dx * step;
-        foot.z += dz * step;
+        if (slippery)
+          moveOnSnow(
+            keeperActor(),
+            { x: (dx * step) / dt, z: (dz * step) / dt },
+            dt,
+          );
+        else {
+          foot.x += dx * step;
+          foot.z += dz * step;
+        }
         foot.y = 0;
         keeperActor().sprite.material.rotation = 0;
       }
@@ -8359,9 +10960,20 @@ async function start() {
             -1.55,
             1.55,
           );
-          if (goalie === keeperActor().sprite && (rushing || keeperGather > 0)) continue;
+          if (goalie === keeperActor().sprite && (rushing || keeperGather > 0))
+            continue;
           const homeX =
             attackSign * (goalie === keeper ? keeperHomeX : -keeperHomeX);
+          if (slippery) {
+            const actor = goalie === homeKeeper ? sean : awayGK;
+            moveOnSnow(
+              actor,
+              approachVelocity(goalie.position, { x: homeX, z: cover }, 3),
+              dt,
+            );
+            goalie.position.y *= Math.exp(-7 * dt);
+            continue;
+          }
           goalie.position.x += T.MathUtils.clamp(
             homeX - goalie.position.x,
             -6 * dt,
@@ -8430,15 +11042,24 @@ async function start() {
             tryBlueShot(false, windup.human, true);
         }
         if (actor.tackling) {
-          if ((tutorial && opponents.includes(actor) && !tutorialAllowsChallenges(tutorial.chapter)) ||
-              (tutorial?.chapter === 5 && players.includes(actor) && actor !== players[active])) {
-            actor.tackling = false; actor.age = -1;
+          snowVelocities.delete(actor);
+          if (
+            (tutorial &&
+              opponents.includes(actor) &&
+              !tutorialAllowsChallenges(tutorial.chapter)) ||
+            (tutorial?.chapter === 5 &&
+              players.includes(actor) &&
+              actor !== players[active])
+          ) {
+            actor.tackling = false;
+            actor.age = -1;
             if (tutorialTackler === actor) tutorialTackler = null;
             continue;
           }
           const foot = actor.sprite.position,
             [dx, dz] = dirs[actor.face];
-          const step = 3.5 * (Math.min(0.12, actor.age) - Math.min(0.12, prev));
+          const step =
+            slideTravel(actor.age, physics) - slideTravel(prev, physics);
           foot.x = T.MathUtils.clamp(foot.x + dx * step, -runX, runX);
           foot.z = T.MathUtils.clamp(foot.z + dz * step, runNorth, runSouth);
           if (prev < 0.12 && actor.age >= 0.12) {
@@ -8473,7 +11094,12 @@ async function start() {
               ball.position.y < 0.85 &&
               reaches(
                 ball.position,
-                0.93 * trainingFactor(actor.displayName, "Tackling",players.includes(actor)?home.name:matchOpponent.name),
+                0.93 *
+                  trainingFactor(
+                    actor.displayName,
+                    "Tackling",
+                    players.includes(actor) ? home.name : matchOpponent.name,
+                  ),
               )
             ) {
               audio.play("tackle", 0.4);
@@ -8486,12 +11112,17 @@ async function start() {
               reaches(latePlayer.sprite.position) &&
               !reaches(ball.position)
             ) {
-              awardFreeKick(actor, latePlayer);
-              requestAnimationFrame(tick);
-              return;
+              if (!mysteryOn("noRules")) {
+                awardFreeKick(actor, latePlayer);
+                requestAnimationFrame(tick);
+                return;
+              }
             }
           }
-          if (actor.age >= (actor.tackleMap ? 0.56 : 0.42)) {
+          if (
+            actor.age >=
+            (actor.tackleMap ? 0.56 : 0.42) * physics.slideRecovery
+          ) {
             actor.age = -1;
             actor.tackling = false;
             if (tutorialTackler === actor) tutorialTackler = null;
@@ -8519,7 +11150,8 @@ async function start() {
       }
       const canCollect = () =>
         !perfectPass &&
-        rushing && !!rushSource &&
+        rushing &&
+        !!rushSource &&
         canRush() &&
         ball.position.y <= 1.35 &&
         Math.hypot(
@@ -8529,11 +11161,7 @@ async function start() {
       if (canCollect()) keeperTouch();
       if (keeperGather > 0) {
         const foot = keeperActor().sprite.position;
-        ball.position.set(
-          foot.x + keeperDirection() * .38,
-          .82,
-          foot.z,
-        );
+        ball.position.set(foot.x + keeperDirection() * 0.38, 0.82, foot.z);
       } else if (outBall) {
         if (
           (advanceStadiumBall ?? advanceOutBall)(ball.position, outVelocity, dt)
@@ -8557,11 +11185,19 @@ async function start() {
             clearanceLoose = struckLoose = false;
             vx = vz = reboundVY = 0;
             carry();
-          } else if (street){
-            const team=blueRestart?opponents:players;
-            const point=new T.Vector3(T.MathUtils.clamp(spot.x,-runX+1,runX-1),0,T.MathUtils.clamp(spot.z,runNorth+1,runSouth-1));
-            const taker=nearestEligible(team,point);team[taker].sprite.position.copy(point);ball.position.copy(point);ball.position.y=restingHeight;
-            if(blueRestart)blueWins(taker,'COURT RESTART');else winBack(taker,'COURT RESTART');
+          } else if (street) {
+            const team = blueRestart ? opponents : players;
+            const point = new T.Vector3(
+              T.MathUtils.clamp(spot.x, -runX + 1, runX - 1),
+              0,
+              T.MathUtils.clamp(spot.z, runNorth + 1, runSouth - 1),
+            );
+            const taker = nearestEligible(team, point);
+            team[taker].sprite.position.copy(point);
+            ball.position.copy(point);
+            ball.position.y = restingHeight;
+            if (blueRestart) blueWins(taker, "COURT RESTART");
+            else winBack(taker, "COURT RESTART");
           } else if (end && !corner) {
             lastBlue = end === attackSign;
             const side = Math.sign(ball.position.z) || 1;
@@ -8591,7 +11227,8 @@ async function start() {
               team[taker].face = facing(-x, -z);
               ball.position.set(x, restingHeight, z);
               lastBlue = blueRestart;
-              const restartLabel = (blueRestart ? matchOpponent.name : homeLabel) +
+              const restartLabel =
+                (blueRestart ? matchOpponent.name : homeLabel) +
                 (corner ? " CORNER" : " KICK-IN");
               if (blueRestart) blueWins(taker, restartLabel);
               else winBack(taker, restartLabel);
@@ -8602,9 +11239,9 @@ async function start() {
         }
       } else if (keeperRestart?.blueBuild) {
         keeperRestart.age += dt;
-        if (!keeperRestart.goalKick && keeperRestart.age < .8) {
+        if (!keeperRestart.goalKick && keeperRestart.age < 0.8) {
           keeper.position.x -= attackSign * dt * 1.6;
-          keeperRestart.start.x = keeper.position.x - attackSign * .45;
+          keeperRestart.start.x = keeper.position.x - attackSign * 0.45;
           ball.position.copy(keeperRestart.start);
         }
         const forwards = opponents.slice(0, 3).filter((o) => !o.penalty);
@@ -8684,19 +11321,26 @@ async function start() {
             .copy(players[ballPlayer].sprite.position)
             .sub(receiverLaunch);
           assistOffset.y = 0;
-          assistOffset.clampLength(0, 1);
+          assistOffset.clampLength(0, airBalls && passKind==="cross" ? 1.5 : 1);
           ball.position
             .lerpVectors(passStart, passTarget, fraction)
             .addScaledVector(assistOffset, fraction * fraction);
           ball.position.y =
-            (passKind === "cross" ? T.MathUtils.lerp(passStart.y, restingHeight, fraction) : restingHeight) +
+            (passKind === "cross"
+              ? T.MathUtils.lerp(passStart.y, restingHeight, fraction)
+              : restingHeight) +
             (passKind === "cross"
               ? 4 * crossLift * fraction * (1 - fraction)
               : heightAt(arc, passTime));
         }
         const interceptor = perfectPass
           ? -1
-          : interceptPass(previousPassPosition, ball.position, opponents, tutorialReturnKicker);
+          : interceptPass(
+              previousPassPosition,
+              ball.position,
+              opponents,
+              tutorialReturnKicker,
+            );
         const wantsFinish =
           passKind === "cross" &&
           (charge?.action === "shot" || queued?.action === "shot");
@@ -8709,8 +11353,8 @@ async function start() {
               ball.position,
               players,
               lastSender,
-              wantsFinish ? 1.15 : 0.78,
-              wantsFinish ? 2 : 0.84,
+              wantsFinish ? 1.15 * (airBalls ? airBallsProfile.contact : 1) : 0.78,
+              wantsFinish ? 2 * (airBalls ? airBallsProfile.contact : 1) : 0.84,
             );
         let passContact: "bounce" | "out" | "live" = "live";
         if (enclosed) {
@@ -8759,6 +11403,7 @@ async function start() {
           perfectPass = false;
           if (crossingDrill && training.drill !== 4)
             finishRep(0, "Missed receiver");
+          if (airBalls && passKind==="cross") airBounceAt=performance.now();
           inFlight = false;
           rollingPass = true;
           clearanceLoose = true;
@@ -8767,11 +11412,15 @@ async function start() {
           vx =
             passKind === "through"
               ? 0
-              : ((passTarget.x - passStart.x) / passDuration) * 0.65 * surfaceMomentum;
+              : ((passTarget.x - passStart.x) / passDuration) *
+                0.65 *
+                surfaceMomentum;
           vz =
             passKind === "through"
               ? 0
-              : ((passTarget.z - passStart.z) / passDuration) * 0.65 * surfaceMomentum;
+              : ((passTarget.z - passStart.z) / passDuration) *
+                0.65 *
+                surfaceMomentum;
         }
       } else if (shot) {
         previousPassPosition.copy(ball.position);
@@ -8793,7 +11442,10 @@ async function start() {
             2.2 * t * (1 - t);
         }
         if (shot.result === "Crossbar")
-          ball.position.y = Math.max(ball.position.y, restingHeight + (rules.goal.height-restingHeight) * t);
+          ball.position.y = Math.max(
+            ball.position.y,
+            restingHeight + (rules.goal.height - restingHeight) * t,
+          );
         if (!street && !(rushing && shotDirection === -keeperDirection())) {
           const goalie = shotDirection === attackSign ? keeper : homeKeeper;
           const dive = T.MathUtils.smoothstep(t, 0.25, 1);
@@ -8844,20 +11496,33 @@ async function start() {
               curveContact = true;
             }
           }
-          if (!enclosed && !curveContact && Math.abs(ball.position.z) > fieldZ) {
+          if (
+            !enclosed &&
+            !curveContact &&
+            Math.abs(ball.position.z) > fieldZ
+          ) {
             shot.result = "Wide";
             curveContact = true;
           }
           if (
             !curveContact &&
             t === 1 &&
-            Math.abs(ball.position.z) < rules.goal.halfWidth+.08 &&
-            ball.position.y >= rules.goal.height-.08
+            Math.abs(ball.position.z) < rules.goal.halfWidth + 0.08 &&
+            ball.position.y >= rules.goal.height - 0.08
           ) {
-            shot.result = ball.position.y > rules.goal.height+.08 ? "Over" : "Crossbar";
+            shot.result =
+              ball.position.y > rules.goal.height + 0.08 ? "Over" : "Crossbar";
           }
         }
-        if(street && t===1 && shot.result==='Goal' && (Math.abs(ball.position.z)>=rules.goal.halfWidth-.08 || ball.position.y>=rules.goal.height-.08))shot.result=ball.position.y>=rules.goal.height-.08?'Over':'Wide';
+        if (
+          street &&
+          t === 1 &&
+          shot.result === "Goal" &&
+          (Math.abs(ball.position.z) >= rules.goal.halfWidth - 0.08 ||
+            ball.position.y >= rules.goal.height - 0.08)
+        )
+          shot.result =
+            ball.position.y >= rules.goal.height - 0.08 ? "Over" : "Wide";
         let shotBoard: "live" | "out" | "bounce" = "live";
         if (
           enclosed &&
@@ -8894,6 +11559,23 @@ async function start() {
             blueWins(blocker, "BLOCKED");
           } else winBack(blocker, "BLOCKED");
         } else if (t === 1 || curveContact) {
+          if (airBalls && !crossingDrill && shot.result==="Goal" && !airGoalEligible(shot.airFinish ?? "GROUNDED")) {
+            invalidAirGoals++;
+            const end=shotDirection, side=Math.sign(ball.position.z)||1;
+            shot=null; goalEvent=null; blastFlying=false; held=inFlight=false;
+            blueCarrier=-1; vx=vz=reboundVY=0; resultTime=0;
+            cancelCharge(); lastDelivery=null;
+            const start=new T.Vector3(end*(fieldX-1.5),restingHeight,side*1.5);
+            if(end===attackSign) startBlueBuild(start,true);
+            else keeperRestart={age:0,start,end:new T.Vector3(-end*4,restingHeight,side*3)};
+            el("shotResult").textContent="NO GOAL! · AERIAL FINISHES ONLY!";
+            noticeTime=2;
+            goalBanner.textContent="NO GOAL! · KEEP IT UP!";
+            goalBanner.hidden=false;
+            airInvalidUntil=now+1800;
+            requestAnimationFrame(tick);
+            return;
+          }
           if (shot.result !== "Goal") audio.nearGoal();
           if (crossingDrill) {
             const distance = Math.hypot(fieldX - shotStart.x, shotStart.z),
@@ -8931,8 +11613,14 @@ async function start() {
             {
               const side = shotDirection === attackSign ? 0 : 1;
               careerShots[side]++;
-              if (side === 0 && (shot.result === "Goal" || shot.result === "Save")) tutorial?.record("onTarget");
-              if (side === 0 && shot.result === "Save") tutorial?.record("saved");
+              if (longRange && shot.points === 2) longAttempts[side]++;
+              if (
+                side === 0 &&
+                (shot.result === "Goal" || shot.result === "Save")
+              )
+                tutorial?.record("onTarget");
+              if (side === 0 && shot.result === "Save")
+                tutorial?.record("saved");
               if (shot.result === "Goal" || shot.result === "Save")
                 onTarget[side]++;
               if (shot.result === "Post" || shot.result === "Crossbar")
@@ -8944,13 +11632,12 @@ async function start() {
                   start: replay.time - 6,
                   direction: shotDirection,
                   label:
-                    Math.min(
-                      50,
-                      (half - 1) * 25 + Math.ceil(matchSeconds / 60),
-                    ) +
+                    matchMinute() +
                     "′ · " +
                     (scorer?.displayName ?? "Team") +
-                    " · Goal",
+                    ((longRange || mystery) && shot.points === 2
+                      ? " · +2 GOAL"
+                      : " · Goal"),
                 };
               }
             }
@@ -8987,68 +11674,103 @@ async function start() {
               );
             } else if (shot.result === "Goal") {
               cancelCharge();
-              if (
-                ticket &&
-                shotDirection === attackSign &&
-                lastDelivery &&
-                lastDelivery.receiver === scorer?.displayName &&
-                lastDelivery.sender === ticket.career.player
-              )
-                facts.assists++;
-              careerGoals.push({
-                assist:
-                  (street || shotDirection === attackSign) &&
+                if (
+                  ticket &&
+                  shotDirection === attackSign &&
                   lastDelivery &&
-                  lastDelivery.receiver === scorer?.displayName
-                    ? lastDelivery.sender
-                    : undefined,
-                minute: Math.min(
-                  50,
-                  (half - 1) * 25 + Math.ceil(matchSeconds / 60),
-                ),
-                club:
-                  shotDirection === attackSign
-                    ? 0
-                    : ticket
-                      ? opponent(ticket.career)
-                      : 1,
-                player: scorer?.displayName ?? "Team goal",
-              });
-              if (shotDirection === attackSign) { homeScore++; tutorial?.record("goal"); }
-              else awayScore++;
-              if (tutorial && tutorial.chapter < 11) {
-                // Lessons keep their cast and camera. Use the ordinary boundary/keeper
-                // restart instead of the celebration -> replay -> full-team kickoff path.
-                goalEvent = null;
-                updateScore();
-                ballOut(
-                  (shot.targetX - shotStart.x) / shot.duration * 0.15,
-                  0,
-                  (shot.targetZ - shotStart.z) / shot.duration * 0.15,
-                );
-                el("shotResult").textContent = "GOAL";
-              } else {
-              audio.goalFire();
-              scoringColor = goalColors[shotDirection === attackSign ? 0 : 1];
-              fireEnd = shotDirection;
-              showGoalFire(0);
-              updateScore();
-              endFollowUpRuns();
-              celebrating = true;
-              replay.goal = replay.time;
-              goalBanner.textContent =
-                flightCurve && flightCurve.style !== "Curler"
-                  ? "BURNING CURVE!"
-                  : "GOAL!";
-              goalBanner.hidden = false;
-              replayPanel.hidden = true;
-              el("shotResult").textContent = "";
-              netTravel = true;
-              vx = (shot.targetX - shotStart.x) / shot.duration;
-              vz = (shot.targetZ - shotStart.z) / shot.duration;
-              showGoalCard();
-              startGoalScene();
-              }
+                  lastDelivery.receiver === scorer?.displayName &&
+                  lastDelivery.sender === ticket.career.player
+                )
+                  facts.assists++;
+                const goalRecord = {
+                  assist:
+                    (street || shotDirection === attackSign) &&
+                    lastDelivery &&
+                    lastDelivery.receiver === scorer?.displayName
+                      ? lastDelivery.sender
+                      : undefined,
+                  minute: matchMinute(),
+                  club:
+                    shotDirection === attackSign
+                      ? 0
+                      : ticket
+                        ? opponent(ticket.career)
+                        : 1,
+                  player: scorer?.displayName ?? "Team goal",
+                };
+                careerGoals.push(goalRecord);
+                const points = longRange || mystery ? (shot.points ?? 1) : 1;
+                goalValues.set(goalRecord, points);
+                const beatScored =
+                  beatTheClock &&
+                  (shotDirection === attackSign ? -1 : 1) === beatTeam;
+                if (longRange && points === 2)
+                  twoPointGoals[shotDirection === attackSign ? 0 : 1]++;
+                queueSurvivalElimination(shotDirection === attackSign ? 0 : 1);
+                if (beatTheClock) {
+                  beatRemaining = adjustBeatClock(
+                    beatRemaining,
+                    shotDirection === attackSign ? -1 : 1,
+                    beatTeam!,
+                  );
+                  beatPendingEnd = beatRemaining === 0;
+                }
+                if (shotDirection === attackSign) {
+                  homeScore += points;
+                  tutorial?.record("goal");
+                } else awayScore += points;
+                if (tutorial && tutorial.chapter < 11) {
+                  // Lessons keep their cast and camera. Use the ordinary boundary/keeper
+                  // restart instead of the celebration -> replay -> full-team kickoff path.
+                  goalEvent = null;
+                  updateScore();
+                  ballOut(
+                    ((shot.targetX - shotStart.x) / shot.duration) * 0.15,
+                    0,
+                    ((shot.targetZ - shotStart.z) / shot.duration) * 0.15,
+                  );
+                  el("shotResult").textContent = "GOAL";
+                } else {
+                  audio.goalFire();
+                  scoringColor =
+                    goalColors[shotDirection === attackSign ? 0 : 1];
+                  fireEnd = shotDirection;
+                  showGoalFire(0);
+                  updateScore();
+                  endFollowUpRuns();
+                  celebrating = true;
+                  replay.goal = replay.time;
+                  goalBanner.textContent =
+                    firstToFive && targetReached(rules, homeScore, awayScore)
+                      ? "MATCH WINNER!"
+                      : firstToFive &&
+                          homeScore === rules.targetScore - 1 &&
+                          awayScore === rules.targetScore - 1
+                        ? "NEXT GOAL WINS!"
+                        : firstToFive &&
+                            Math.max(homeScore, awayScore) ===
+                              rules.targetScore - 1
+                          ? "MATCH POINT!"
+                          : (longRange || mystery) && points === 2
+                            ? "DOUBLE POINTS!"
+                            : flightCurve && flightCurve.style !== "Curler"
+                              ? "BURNING CURVE!"
+                              : "GOAL!";
+                  if (airBalls) goalBanner.textContent=shot.airFinish && shot.airFinish!=="GROUNDED" ? shot.airFinish+"!" : "GOAL!";
+                  goalBanner.classList.toggle("beat-clock-goal", beatTheClock);
+                  if (beatTheClock) {
+                    goalBanner.innerHTML = `<span class="beat-goal-title">GOAL!</span><span class="beat-time-change ${beatScored ? "positive" : "negative"}">${beatScored ? "+30 seconds!" : "-15 seconds!"}</span>`;
+                    audio.play(beatScored ? "burnReady" : "keeperSave", 0.65);
+                  }
+                  goalBanner.hidden = false;
+                  replayPanel.hidden = true;
+                  el("shotResult").textContent = "";
+                  netTravel = true;
+                  vx = (shot.targetX - shotStart.x) / shot.duration;
+                  vz = (shot.targetZ - shotStart.z) / shot.duration;
+                  showGoalCard();
+                  startGoalScene();
+                }
             } else {
               if (shot.result === "Save") audio.kick(0.13);
               else audio.play(shot.result === "Post" ? "post" : "bar", 0.48);
@@ -9067,6 +11789,8 @@ async function start() {
               reboundVY = shot.result === "Crossbar" ? -2 : 2;
               lastSender = -1;
             }
+            if (airBalls && shot && ["Save","Post","Crossbar"].includes(shot.result))
+              airLooseAttempt={finish:shot.airFinish ?? "GROUNDED",scorer:scorer ?? null,direction:shotDirection};
             shot = null;
           }
         }
@@ -9074,21 +11798,59 @@ async function start() {
         resultTime -= dt;
       } else if (bluePass) {
         previousPassPosition.copy(ball.position);
-        bluePass.age += groundStep(dt, bluePass.age);
+        bluePass.age += groundStep(dt, bluePass.age) * physics.ballSpeed;
         const t = Math.min(1, bluePass.age / bluePass.duration);
         ball.position.lerpVectors(bluePass.start, bluePass.end, t);
         ball.position.y += 4 * (bluePass.loft ?? 0) * t * (1 - t);
         const cut = interceptPass(previousPassPosition, ball.position, players);
-        outVelocity.subVectors(ball.position,previousPassPosition).divideScalar(Math.max(dt,.000001));
-        const blueContact=street?millContact(previousPassPosition,ball.position,outVelocity,rules.goal):'live';
-        if(blueContact==='bounce'){
-          bluePass=null;vx=outVelocity.x;vz=outVelocity.z;reboundVY=outVelocity.y;clearanceLoose=struckLoose=true;audio.play('board',.42);
-        }else if(street&&(blueContact==='out'||outsidePitch()))ballOut(outVelocity.x,outVelocity.y,outVelocity.z);
+        outVelocity
+          .subVectors(ball.position, previousPassPosition)
+          .divideScalar(Math.max(dt, 0.000001));
+        const blueContact = street
+          ? millContact(
+              previousPassPosition,
+              ball.position,
+              outVelocity,
+              rules.goal,
+            )
+          : "live";
+        if (blueContact === "bounce") {
+          bluePass = null;
+          vx = outVelocity.x;
+          vz = outVelocity.z;
+          reboundVY = outVelocity.y;
+          clearanceLoose = struckLoose = true;
+          audio.play("board", 0.42);
+        } else if (street && (blueContact === "out" || outsidePitch()))
+          ballOut(outVelocity.x, outVelocity.y, outVelocity.z);
         else if (bluePass.loft && claimAirball()) {
           /* Claimed in flight. */
         } else if (cut >= 0) winBack(cut, "INTERCEPTED");
-        else if (t === 1) {
-          if(street)lastDelivery={sender:bluePass.sender,receiver:opponents[bluePass.receiver].displayName};
+        else if (
+          slippery &&
+          t === 1 &&
+          opponents[bluePass.receiver].sprite.position.distanceTo(
+            ball.position,
+          ) > 1.4
+        ) {
+          vx =
+            ((bluePass.end.x - bluePass.start.x) / bluePass.duration) *
+            physics.ballSpeed *
+            0.65;
+          vz =
+            ((bluePass.end.z - bluePass.start.z) / bluePass.duration) *
+            physics.ballSpeed *
+            0.65;
+          bluePass = null;
+          rollingPass = clearanceLoose = true;
+          lastBlue = true;
+          reboundVY = 0;
+        } else if (t === 1) {
+          if (street)
+            lastDelivery = {
+              sender: bluePass.sender,
+              receiver: opponents[bluePass.receiver].displayName,
+            };
           passBurn(
             1,
             bluePass.sender,
@@ -9096,9 +11858,25 @@ async function start() {
             bluePass.loft ? 8 : 5,
           );
           facts.passes[1]++;
+          const aerialDelivery=airBalls && !!bluePass.loft;
           blueCarrier = bluePass.receiver;
           bluePass = null;
           blueDecisionTime = difficulty().reactionDelayMs / 1000;
+          if(aerialDelivery) {
+            const actor=opponents[blueCarrier];
+            airIntents.set(actor,{finish:"HALF-VOLLEY",until:performance.now()+airBallsProfile.halfVolleyMs});
+            const buffer=[...airSeatShots.entries()].find(([,b])=>b.side===1 && performance.now()<=b.expires);
+            if(buffer || !seats?.some(s=>s.side===1)) {
+              airIntents.set(actor,{finish:"HALF-VOLLEY",until:performance.now()+1500});
+              if(buffer) {
+                airShotPower.set(actor,buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power);
+                const strike=buffer[1].gesture.finish(meters[1].value===100);
+                pendingCurve=strike ? {actor,strike} : null;
+                airSeatShots.delete(buffer[0]);
+              }
+              tryBlueShot(false,true);
+            }
+          }
         }
       } else if (blueCarrier >= 0) {
         lastBlue = true;
@@ -9110,8 +11888,9 @@ async function start() {
           restingHeight,
           foot.z + dz * 0.38,
         );
-        if(street&&outsidePitch()){ballOut(dx*4,0,dz*4);}
-        else if (
+        if (street && outsidePitch()) {
+          ballOut(dx * 4, 0, dz * 4);
+        } else if (
           tutorial?.chapter !== 5 &&
           turnoverGrace <= 0 &&
           o.sprintTime > 0 &&
@@ -9138,7 +11917,7 @@ async function start() {
       } else if (!held) {
         previousPassPosition.copy(ball.position);
         if (reboundVY !== 0 || ball.position.y > restingHeight) {
-          reboundVY -= 17 * dt;
+          reboundVY -= (mysteryOn("moonBall") ? 6.8 : 17) * dt;
           ball.position.y += reboundVY * dt;
           if (ball.position.y <= restingHeight) {
             ball.position.y = restingHeight;
@@ -9147,8 +11926,21 @@ async function start() {
             reboundVY = reboundVY < -1.5 ? -reboundVY * 0.35 : 0;
           }
         }
-        const onWetGround = matchSurface && ball.position.y <= restingHeight + .025;
-        const friction = onWetGround ? matchSurface.friction() : 1;
+        if (slippery) {
+          const speed = Math.hypot(vx, vz);
+          if (speed > 45) {
+            vx *= 45 / speed;
+            vz *= 45 / speed;
+          }
+        }
+        const onWetGround =
+          matchSurface && ball.position.y <= restingHeight + 0.025;
+        const friction =
+          (slippery || mysteryOn("heavyBall")) && ball.position.y <= restingHeight + 0.025
+            ? physics.rollingResistance
+            : onWetGround
+              ? matchSurface.friction()
+              : 1;
         const groundScale = onWetGround ? matchSurface.groundSpeed() : 1;
         if (onWetGround) {
           const retention = matchSurface.retention(ball.position, dt);
@@ -9169,10 +11961,14 @@ async function start() {
           if (speed > 0) {
             const deceleration = 6 * friction;
             const travelTime = Math.min(dt, speed / deceleration),
-              factor = travelTime * (1 - (.5 * deceleration * travelTime) / speed);
+              factor =
+                travelTime * (1 - (0.5 * deceleration * travelTime) / speed);
             ball.position.x += vx * factor * groundScale;
             ball.position.z += vz * factor * groundScale;
-            const remaining = Math.max(0, 1 - (deceleration * travelTime) / speed);
+            const remaining = Math.max(
+              0,
+              1 - (deceleration * travelTime) / speed,
+            );
             vx *= remaining;
             vz *= remaining;
           }
@@ -9182,6 +11978,26 @@ async function start() {
           const drag = Math.exp(-1.25 * friction * dt);
           vx *= drag;
           vz *= drag;
+        }
+        if (curveLab && labBend && struckLoose) {
+          const bend = labBend;
+          const progress = Math.max(
+            0,
+            Math.min(
+              1,
+              ((ball.position.x - bend.x) * bend.dx +
+                (ball.position.z - bend.z) * bend.dz) /
+                bend.distance,
+            ),
+          );
+          // The bow peaks halfway out and returns to the original aiming line.
+          const offset =
+            progress === 1 ? 0 : bend.amplitude * Math.sin(Math.PI * progress);
+          const change = offset - bend.offset;
+          ball.position.x -= bend.dz * change;
+          ball.position.z += bend.dx * change;
+          bend.offset = offset;
+          if (progress === 1) labBend = null;
         }
         let boardExit = false;
         if (enclosed) {
@@ -9210,7 +12026,8 @@ async function start() {
           for (const [i, mate] of players.entries()) {
             if (
               mate.penalty ||
-              (tutorial?.chapter === 5 && !isTutorialParticipant(5, mate.displayName, false)) ||
+              (tutorial?.chapter === 5 &&
+                !isTutorialParticipant(5, mate.displayName, false)) ||
               mate.age >= 0 ||
               (celebrationLab && i !== labIndex)
             )
@@ -9232,7 +12049,13 @@ async function start() {
                 ball.position.x - o.sprite.position.x,
                 ball.position.z - o.sprite.position.z,
               );
-              if (!o.penalty && o.age < 0 && distance < closest && (tutorial?.chapter !== 5 || isTutorialParticipant(5, o.displayName, true))) {
+              if (
+                !o.penalty &&
+                o.age < 0 &&
+                distance < closest &&
+                (tutorial?.chapter !== 5 ||
+                  isTutorialParticipant(5, o.displayName, true))
+              ) {
                 blueCollector = i;
                 closest = distance;
               }
@@ -9264,7 +12087,12 @@ async function start() {
               charge?.action === "shot" ||
               queued?.action === "shot" ||
               (rollingPass && collector !== lastSender) ||
-              (tutorial && !isTutorialParticipant(tutorial.chapter, players[collector].displayName, false))
+              (tutorial &&
+                !isTutorialParticipant(
+                  tutorial.chapter,
+                  players[collector].displayName,
+                  false,
+                ))
             )
               receivePass(collector, false);
             else {
@@ -9292,6 +12120,10 @@ async function start() {
       for (const actor of celebrationLab ? homeSlots : outfield) {
         const running = actor.moving && actor.age < 0;
         if (actor.sprintTime === 0) {
+          actor.staminaCapacity = Math.min(
+            100,
+            actor.staminaCapacity + dt * rules.capacityRecovery,
+          );
           actor.sprintCharge = Math.min(
             actor.staminaCapacity,
             actor.sprintCharge + (dt * actor.staminaCapacity) / rechargeSeconds,
@@ -9343,35 +12175,49 @@ async function start() {
       updateSpin();
       camTarget.lerp(ball.position, 1 - Math.exp(-9 * dt));
     }
-    const carryingKeeper = keeperGather > 0 ? keeperActor()
-      : keeperRestart?.blueBuild && !keeperRestart.goalKick ? awayGK : null;
+    const carryingKeeper =
+      keeperGather > 0
+        ? keeperActor()
+        : keeperRestart?.blueBuild && !keeperRestart.goalKick
+          ? awayGK
+          : null;
     ball.visible = shadow.visible = !carryingKeeper?.sprite.visible;
     if (!paused && !celebrating && !celebrationLab) {
-      for (const goalie of (street?[]:[sean,awayGK])) {
+      for (const goalie of street ? [] : [sean, awayGK]) {
         const homeSide = goalie === sean;
         const outward = homeSide ? attackSign : -attackSign;
         const pos = goalie.sprite.position;
         const dx = pos.x - (homeSide ? keeperX : awayKeeperX);
         const dz = pos.z - (homeSide ? keeperZ : awayKeeperZ);
-        goalie.moving = phase === "play" && pos.y < .05 && Math.hypot(dx, dz) > .15 * dt;
+        goalie.moving =
+          phase === "play" && pos.y < 0.05 && Math.hypot(dx, dz) > 0.15 * dt;
         if (goalie.age < 0 || goalie === carryingKeeper) {
           if (goalie.moving) goalie.face = facing(outward * Math.abs(dx), dz);
           else if (goalie !== carryingKeeper) {
-            goalie.face = facing(outward * Math.max(.01, Math.abs(ball.position.x - pos.x)), ball.position.z - pos.z);
-          } else if (dirs[goalie.face][0] * outward < 0) goalie.face = facing(outward, 0);
+            goalie.face = facing(
+              outward * Math.max(0.01, Math.abs(ball.position.x - pos.x)),
+              ball.position.z - pos.z,
+            );
+          } else if (dirs[goalie.face][0] * outward < 0)
+            goalie.face = facing(outward, 0);
         }
-        const backwards = dx * outward < -.01 * dt;
-        goalie.runClock = goalie.moving ? T.MathUtils.euclideanModulo(
-          goalie.runClock + (backwards ? -dt : dt), goalie.frameSeconds * goalie.runFrames) : 0;
+        const backwards = dx * outward < -0.01 * dt;
+        goalie.runClock = goalie.moving
+          ? T.MathUtils.euclideanModulo(
+              goalie.runClock + (backwards ? -dt : dt),
+              goalie.frameSeconds * goalie.runFrames,
+            )
+          : 0;
       }
     }
     const kickLabel =
-      keeperGather > 0 ? "PUNT" :
-      canTackle() && !(rushSource && canRush())
-        ? "TACKLE"
-        : held && ownBox(players[active].sprite.position)
-          ? "CLEAR"
-          : "KICK";
+      keeperGather > 0
+        ? "PUNT"
+        : canTackle() && !(rushSource && canRush())
+          ? "TACKLE"
+          : held && ownBox(players[active].sprite.position)
+            ? "CLEAR"
+            : "KICK";
     if (el("kick").textContent !== kickLabel)
       el("kick").textContent = kickLabel;
     updateLandingRing();
@@ -9388,7 +12234,7 @@ async function start() {
     if (keeperGather > 0 && outlet >= 0) {
       targetRing.visible = true;
       targetRing.position.copy(keeperTeam()[outlet].sprite.position);
-      targetRing.position.y = .04;
+      targetRing.position.y = 0.04;
     }
     switchButton.disabled = !canSwitch();
     for (const { mesh, sprite } of contactShadows) {
@@ -9399,6 +12245,10 @@ async function start() {
         sprite.position.z + 0.12,
       );
       mesh.scale.setScalar(0.7);
+    }
+    for (const { actor, mesh } of infernoAuras) {
+      mesh.visible = inferno && actor.sprite.visible && !actor.penalty;
+      mesh.position.set(actor.sprite.position.x, 0.04, actor.sprite.position.z);
     }
     shadow.scale.setScalar(1.15 - 0.16 * (ball.position.y - restingHeight));
     shadow.position.set(ball.position.x, 0.03, ball.position.z);
@@ -9502,11 +12352,13 @@ async function start() {
         );
         continue;
       }
-      const keeperCheering = actor === (shotDirection === attackSign ? sean : awayGK);
+      const keeperCheering =
+        actor === (shotDirection === attackSign ? sean : awayGK);
       const groupMap =
         celebrating &&
         groupStarted &&
-        (keeperCheering || ((actor !== sean || celebrationLab) && actor !== awayGK))
+        (keeperCheering ||
+          ((actor !== sean || celebrationLab) && actor !== awayGK))
           ? supportMap(actor)
           : undefined;
       const groupWalk = walks.find((w) => w.actor === actor && w.gather);
@@ -9514,9 +12366,11 @@ async function start() {
         celebrating &&
         groupStarted &&
         !actor.moving &&
-        actor !== celebrant &&
+        (actor !== celebrant || ownGoalCelebration) &&
         groupMap &&
-        (groupWalk || keeperCheering)
+        (groupWalk ||
+          keeperCheering ||
+          (ownGoalCelebration && actor === celebrant))
       ) {
         const cell = groupMap.userData.cell ?? 48,
           frames = groupMap.image.width / cell;
@@ -9539,7 +12393,8 @@ async function start() {
             ((cinematicPlayerSize * cell) / 48) * celebrationScale,
           );
         else if (
-          groupMap.userData.greenKeeperGroup || cell === 50 ||
+          groupMap.userData.greenKeeperGroup ||
+          cell === 50 ||
           cell === 54 ||
           actor.displayName === "Jan" ||
           actor.displayName === "Jeremy" ||
@@ -9705,8 +12560,11 @@ async function start() {
         );
         actor.sprite.center.y = 2 / (showing ? 64 : 48);
         if (showing) {
-          const col = Math.min(8, Math.floor(cardScene!.time / 0.09));
-          cardMap.offset.set(col / 9, (7 - spriteFace) / 8);
+          const col = Math.min(
+            cardFrames - 1,
+            Math.floor(cardScene!.time / 0.09),
+          );
+          cardMap.offset.set(col / cardFrames, (7 - spriteFace) / 8);
           actor.sprite.material.map = cardMap;
           continue;
         }
@@ -9800,7 +12658,10 @@ async function start() {
         spriteGroundPadding(tex.image, cols, rows, row, col) / poseCell,
       );
       if (actor.tackling && actor.tackleMap) {
-        const frame = Math.min(8, Math.floor((actor.age / 0.56) * 9));
+        const frame = Math.min(
+          8,
+          Math.floor((actor.age / (0.56 * physics.slideRecovery)) * 9),
+        );
         actor.tackleMap.repeat.set(1 / 9, 1 / 8);
         actor.tackleMap.offset.set(frame / 9, (7 - spriteFace) / 8);
         actor.sprite.material.map = actor.tackleMap;
@@ -9812,7 +12673,11 @@ async function start() {
             cell,
         );
       }
-      if (actor.displayName === "José" && !actor.maps[0].userData.keeperName && !actor.tackling) {
+      if (
+        actor.displayName === "José" &&
+        !actor.maps[0].userData.keeperName &&
+        !actor.tackling
+      ) {
         actor.sprite.scale.setScalar(cinematicPlayerSize);
         actor.sprite.center.set(0.5, 2 / 48);
       }
@@ -9882,10 +12747,24 @@ async function start() {
         if (actor === carryingKeeper) {
           const walking = actor.moving;
           const name = actor.maps[0].userData.keeperName;
-          const poses = name === "José" ? joseKeeperPoses : name === "Spencer" ? spencerKeeperPoses : undefined;
-          const original = poses ? poses[walking ? 1 : 2]
-            : pink ? (walking ? seanCarry : seanHold) : (walking ? greenCarry : greenHold);
-          const sheet = useSnowBall() ? snowKeeperSheets.get(original) ?? original : original;
+          const poses =
+            name === "José"
+              ? joseKeeperPoses
+              : name === "Spencer"
+                ? spencerKeeperPoses
+                : undefined;
+          const original = poses
+            ? poses[walking ? 1 : 2]
+            : pink
+              ? walking
+                ? seanCarry
+                : seanHold
+              : walking
+                ? greenCarry
+                : greenHold;
+          const sheet = useSnowBall()
+            ? (snowKeeperSheets.get(original) ?? original)
+            : original;
           const cell = sheet.image.height / 8;
           const frames = sheet.image.width / cell;
           const col = Math.floor(actor.runClock / actor.frameSeconds) % frames;
@@ -9894,8 +12773,11 @@ async function start() {
           sheet.offset.set(col / frames, (7 - row) / 8);
           actor.sprite.material.map = sheet;
           actor.sprite.material.rotation = 0;
-          actor.sprite.scale.setScalar(cinematicPlayerSize * cell / 48);
-          actor.sprite.center.set(.5, spriteGroundPadding(sheet.image, frames, 8, row, col) / cell);
+          actor.sprite.scale.setScalar((cinematicPlayerSize * cell) / 48);
+          actor.sprite.center.set(
+            0.5,
+            spriteGroundPadding(sheet.image, frames, 8, row, col) / cell,
+          );
         }
         const activeDive =
           shot &&
@@ -9906,8 +12788,13 @@ async function start() {
           const quick = Math.abs(lateral) < 1;
           const sheet = keeperDiveSheet(actor.maps[0], quick);
           const face = facing(0, Math.sign(lateral) || 1);
-          showKeeperDive(actor.sprite, sheet, (face + screenRotation() + 8) % 8,
-            shotTime / shot.duration, cinematicPlayerSize);
+          showKeeperDive(
+            actor.sprite,
+            sheet,
+            (face + screenRotation() + 8) % 8,
+            shotTime / shot.duration,
+            cinematicPlayerSize,
+          );
         }
       }
       if (
@@ -9938,7 +12825,7 @@ async function start() {
     }
     if (cardScene && cardScene.time > 0) {
       const center = referee.sprite.position,
-        t = cardScene.time / 1.55,
+        t = cardScene.time / cardSceneSeconds,
         yaw =
           Math.atan2(
             cardScene.offender.sprite.position.x - center.x,
@@ -9961,8 +12848,15 @@ async function start() {
       );
     camera.updateMatrixWorld();
     if (matchSurface && !paused && !squadOpen && !document.hidden)
-      matchSurface.updateSnow(dt, weatherTest ? elapsed * 25 / (60 * halfMinutesForSpeed[settings.speed]) : surfaceMinutes, pitchActors,
-        ball, ball.position.y <= restingHeight + .025);
+      matchSurface.updateSnow(
+        dt,
+        weatherTest
+          ? (elapsed * 25) / (60 * halfMinutesForSpeed[settings.speed])
+          : surfaceMinutes,
+        pitchActors,
+        ball,
+        ball.position.y <= restingHeight + 0.025,
+      );
     const canvas = renderer.domElement;
     for (const actor of pitchActors) {
       const matchScale = actor.sprite.userData.matchScale ?? 1;
@@ -10003,7 +12897,8 @@ async function start() {
       screenPoint.y = snap(screenPoint.y, 2 / canvas.height);
       actor.sprite.position.copy(screenPoint.unproject(camera));
     }
-    const selected = keeperGather > 0 ? keeperActor().sprite : players[active].sprite;
+    const selected =
+      keeperGather > 0 ? keeperActor().sprite : players[active].sprite;
     screenUp.setFromMatrixColumn(camera.matrixWorld, 1);
     headScreen
       .copy(selected.position)
@@ -10047,7 +12942,10 @@ async function start() {
           label = createSeatLabel(seat.number);
           seatLabels.set(seat.number, label);
         }
-        const actor = keeperGather > 0 && keeperSeat === seat ? keeperActor() : teamActors(seat)[seat.actor];
+        const actor =
+          keeperGather > 0 && keeperSeat === seat
+            ? keeperActor()
+            : teamActors(seat)[seat.actor];
         label.root.hidden =
           !actor?.sprite.visible || celebrating || replay.cut >= 0;
         if (label.root.hidden) continue;

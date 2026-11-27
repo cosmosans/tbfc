@@ -1,0 +1,50 @@
+{
+  "source_sha256": "a3c3615f916a133bd035e0590a96d926a8cf3e3b1ad2c73eba1d77e57d20cdbe",
+  "materials": [
+    {
+      "material": "Rusted Corroded Iron",
+      "objects": 32,
+      "resolution": 1024
+    },
+    {
+      "material": "Rust.001",
+      "objects": 4,
+      "resolution": 1024
+    },
+    {
+      "material": "Painted Rust Metal",
+      "objects": 9,
+      "resolution": 1024
+    },
+    {
+      "material": "Brown & Teal Rusted Metal",
+      "objects": 4,
+      "resolution": 1024
+    },
+    {
+      "material": "rubber_tiles",
+      "objects": 1,
+      "resolution": 2048
+    },
+    {
+      "material": "Old concrete road scan",
+      "objects": 1,
+      "resolution": 2048
+    },
+    {
+      "material": "Concrete used",
+      "objects": 21,
+      "resolution": 2048
+    },
+    {
+      "material": "Rust",
+      "objects": 27,
+      "resolution": 1024
+    },
+    {
+      "material": "Wood",
+      "objects": 238,
+      "resolution": 2048
+    }
+  ]
+}

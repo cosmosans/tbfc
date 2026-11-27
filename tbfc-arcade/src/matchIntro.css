@@ -46,10 +46,6 @@ main[data-match-intro] > :not(canvas):not(.match-intro) {
   display: inline-block;
   margin: 1em auto 0;
   font-size: clamp(14px, 1.5vw, 23px);
-  transform: skewX(-20deg);
-}
-.mi-details-rotate {
-  transform: skewX(20deg);
 }
 .mi-details > span:not([hidden]) ~ span:not([hidden])::before {
   content: "·";
@@ -65,4 +61,25 @@ main[data-match-intro] > :not(canvas):not(.match-intro) {
 .mi-details [data-kind] {
   font-size: clamp(14px, 3.2vw, 28px);
   white-space: nowrap;
+}
+
+.mi-weather-advisory {
+  font-style: normal;
+  max-width: 500px;
+  margin: 12px auto 0;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: #fff;
+  text-wrap: balance;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+}
+.mi-mode-guide {
+  max-width: 520px;
+  margin: 4px auto;
+  color: #f7d190;
+  font: 14px/1.4 Upheaval, monospace;
+  text-align: center;
+  text-wrap: balance;
 }

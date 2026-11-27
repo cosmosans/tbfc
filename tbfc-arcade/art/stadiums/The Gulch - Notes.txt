@@ -96,3 +96,30 @@ East/west horizon enclosure
   Tune warehouse_blocks in build_gulch.py; front faces stay outside X = +/-35 m.
   All scenery remains text-free and outside the playable collision boundaries.
   Updated export: 2797068 bytes, 44918 triangles.
+
+Current material-pass source: rail clearance repair
+  The saved .blend now has editable Boolean rail portals on both warehouse ends.
+  RAIL_UNDERPASSES holds the hidden wire cutters, concrete frames and tunnel backs.
+  Both rail lines have clearance to 6.6 m, including wagon-width margins.
+  patch_gulch_rail_clearance.py patches the current saved file without rebuilding.
+  Do not run build_gulch.py over the current material pass: it regenerates the venue.
+  A pre-repair backup is The Gulch - before rail clearance.blend.
+  This repair is included in the current material-pass game export.
+
+West elevated viaduct clearance
+  Moved the west deck, both edge beams and both supporting pillars together
+  from X=-35 to X=-31 m, matching the east assembly setback. Its outer edge
+  now ends at X=-34.5 m, clear of the warehouse facade and projecting trim.
+  Materials and rail underpasses preserved; included in the material-pass game export.
+  Backup: The Gulch - before viaduct clearance.blend.
+
+Artist material-pass export
+  export_gulch.py reads the saved source without modifying it. Run with Blender
+  --factory-startup --background --python art/stadiums/export_gulch.py.
+  Do not use build_gulch.py to export artist edits: it rebuilds the source.
+  Nine textured materials have portable colour, normal, roughness and metalness
+  maps, with separate packed game UVs. Lighting is not baked into the colours.
+  Gym tile tint remains a colour factor so palette choices preserve seams and
+  finish. Runtime scenery reflections are captured once per lighting change.
+  gulch-baked stores bake images; gulch-bake-report.json records source checksum.
+  Both rail clearance repairs are included. The self-contained GLB is about 62 MB.

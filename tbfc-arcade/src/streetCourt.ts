@@ -8,7 +8,7 @@ export function customizeCourt(scene:T.Scene,preset:CourtPreset){
   if(!(node instanceof T.Mesh))return
   const replace=(m:T.Material)=>{
    if(!['STREET Surface Paint','rubber_tiles','Scuffed blue'].includes(m.name)||!(m instanceof T.MeshStandardMaterial))return m
-   if(preset==='blue'&&m.name!=='STREET Surface Paint')return m
+   if(preset==='blue'&&m.name==='Scuffed blue')return m
    const material=m.clone();material.color.copy(color);if(m.name==='Scuffed blue')material.color.multiplyScalar(1.15);return material
   }
   node.material=Array.isArray(node.material)?node.material.map(replace):replace(node.material)

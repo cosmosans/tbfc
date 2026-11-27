@@ -2,6 +2,7 @@ import {parkBeatAt} from './candlerParkIntro'
 import {millBeatAt,millSwitchTimes} from './cabbagetownIntro'
 import blast from './audio/burner-blast.wav?url'
 import burnReady from './audio/burn-mode-ready.mp3?url'
+import keeperSave from './audio/keeper-save.wav?url'
 import post from './audio/post-hit.mp3?url'
 import cheer from './audio/goal-crowd-immediate.mp3?url'
 import stadium from './audio/stadium.mp3?url'
@@ -21,7 +22,7 @@ import open from './audio/06_UI_Menu_Open.wav?url'
 import close from './audio/07_UI_Menu_Close.wav?url'
 
 type MenuCue='nav'|'success'|'open'|'close'
-const recordings={nearGoal1,nearGoal2,blast,burnReady,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4,tackle}
+const recordings={nearGoal1,nearGoal2,blast,burnReady,keeperSave,post,nav,success,open,close,stadium,goal,cheer,whistle,kick1,kick2,kick3,kick4,tackle}
 type Impact='post'|'bar'|'board'|'bounce'|'net'
 export type IntroVenue='oldFourthWard'|'midtown'|'candlerPark'|'cabbagetown'|'grantPark'|'westend'|'generic'
 type IntroCue='diamondMix'|'midtownMix'|'parkAmbience'|'parkSong'|'millCity'|'millBeat'|'train'|'introBeat'|'introTraffic'|'grantPark'|'kachunk'

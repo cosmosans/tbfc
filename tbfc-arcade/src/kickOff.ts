@@ -1,6 +1,5 @@
 import { renderMarkup } from "./templates/renderMarkup";
 import modeCardTemplate from "./templates/street/mode-card.html?raw";
-import modeEmptyTemplate from "./templates/street/mode-empty.html?raw";
 import modeLegendTemplate from "./templates/street/mode-legend.html?raw";
 import modeSelectTemplate from "./templates/street/mode-select.html?raw";
 import teamSizeDotTemplate from "./templates/street/team-size-dot.html?raw";
@@ -23,12 +22,21 @@ import {
   type StreetPreferences,
 } from "./matchRules";
 import { selectableDivisions, profiles } from "./difficulty";
-import classicArt from "./art/stadium-previews/maynard.jpg";
-import streetArt from "./art/stadium-previews/gulch.jpg";
+import firstToFiveArt from "./art/mode-cards/first-to-five.png";
+import streetArt from "./art/mode-cards/street.png";
+import classicModeArt from "./art/mode-cards/classic.png";
+import snowpocalypseArt from "./art/mode-cards/snowpocalypse.png";
+import infernoArt from "./art/mode-cards/inferno.png";
+import penaltyShootoutArt from "./art/mode-cards/penalty-shootout.png";
+import longRangeArt from "./art/mode-cards/long-range.png";
+import survivalArt from "./art/mode-cards/survival.png";
+import beatTheClockArt from "./art/mode-cards/beat-the-clock.png";
+import airBallsArt from "./art/mode-cards/air-balls.png";
+import mysteryMatchArt from "./art/mode-cards/mystery-match.png";
 import "./kickOff.css";
 
 // One input lifecycle shared by the mode grid, team sizes and court settings.
-function screen<T>(
+export function screen<T>(
   draw: (root: HTMLElement, finish: (value: T | null) => void) => void,
 ): Promise<T | null> {
   const root = document.createElement("section");
@@ -102,9 +110,8 @@ function screen<T>(
       if (e.repeat && (e.key === "Enter" || e.key === " ")) e.preventDefault();
     };
     draw(root, finish);
-    root
-      .querySelector<HTMLButtonElement>('[aria-pressed="true"],button')
-      ?.focus();
+    if (!root.contains(document.activeElement))
+      root.querySelector<HTMLButtonElement>("button")?.focus();
     reveal(root, "h1,.ko-card,.ko-preview,.ko-settings,footer,.ko-mode-legend");
     function poll(now: number) {
       if (done) return;
@@ -141,35 +148,89 @@ export function selectGameMode(initial: GameMode = "classic") {
         {
           id: "classic",
           title: "CLASSIC",
-          subtitle: "7V7 SOCCER",
-          tag: "The beautiful game.",
-          image: classicArt,
+          tag: "Grown adults playing 7v7 coed soccer after work. The beautiful game.",
+          image: classicModeArt,
         },
         {
           id: "street",
-          title: "STREET (BETA)",
-          subtitle: "3V3 / 5V5 — NO KEEPERS",
-          tag: "Off the wall action.",
+          title: "STREET",
+          tag: "3v3 or 5v5 with smaller goals, rebound walls, and no keepers.",
           image: streetArt,
+        },
+        {
+          id: "firstToFive",
+          title: "FIRST TO 5",
+          tag: "No time limit, no halftime. Choose first to 3, 5, or 10 goals.",
+          image: firstToFiveArt,
+        },
+        {
+          id: "longRange",
+          title: "LONG RANGE",
+          tag: "Goals from outside the dotted box count double.",
+          image: longRangeArt,
+        },
+        {
+          id: "snowpocalypse",
+          title: "SNOWPOCALYPSE",
+          tag: "7v7 soccer in extreme (for ATL) winter conditions. Bring the bread and milk.",
+          image: snowpocalypseArt,
+        },
+        {
+          id: "survival",
+          title: "SURVIVAL",
+          tag: "Every goal costs your team a random player. Winning has consequences.",
+          image: survivalArt,
+        },
+        {
+          id: "inferno",
+          title: "INFERNO",
+          tag: "Both teams Burn meters remain permanently filled. ",
+          image: infernoArt,
+        },
+        {
+          id: "beatTheClock",
+          title: "BEAT THE CLOCK",
+          tag: "Start with 90 seconds. Score to gain 30, concede and lose 15.",
+          image: beatTheClockArt,
+        },
+        {
+          id: "airBalls",
+          title: "AIR BALLS",
+          tag: "Headers, volleys, free kicks, and penalties only.",
+          image: airBallsArt,
+        },
+        {
+          id: "mysteryMatch",
+          title: "MYSTERY MATCH",
+          tag: "The rules change every minute. Fire, ice, and unpredictable chaos.",
+          image: mysteryMatchArt,
+        },
+        {
+          id: "penaltyShootout",
+          title: "PENALTIES",
+          tag: "Take your kicks, make your saves, and settle it from the spot.",
+          image: penaltyShootoutArt,
         },
       ]
         .map((m) =>
           renderMarkup(modeCardTemplate, {
             m_id: m.id,
-            selected: initial === m.id,
             m_image: m.image,
             m_title: m.title,
-            m_subtitle: m.subtitle,
             m_tag: m.tag,
           }),
         )
         .join(""),
-      emptySlots: modeEmptyTemplate.slice(0, -1).repeat(7),
       footer: selectionLegend(),
     });
-    root
-      .querySelectorAll<HTMLButtonElement>("[data-mode]")
-      .forEach((b) => (b.onclick = () => finish(b.dataset.mode as GameMode)));
+    root.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((b) => {
+      if (b.dataset.mode === initial) b.focus();
+      b.onpointermove = (event) => {
+        if (event.pointerType === "mouse" && document.activeElement !== b)
+          b.focus();
+      };
+      b.onclick = () => finish(b.dataset.mode as GameMode);
+    });
     root.querySelector<HTMLButtonElement>("[data-back]")!.onclick = () =>
       finish(null);
   });

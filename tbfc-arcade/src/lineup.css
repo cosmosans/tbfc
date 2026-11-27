@@ -479,6 +479,8 @@
 .lu-settings fieldset button {
   padding: 6px 11px;
 }
+.lu-settings .goal-target-options {flex-wrap:nowrap}
+.lu-settings .goal-target-options button {flex:1;white-space:nowrap}
 
 .lu-portrait {
   position: relative;

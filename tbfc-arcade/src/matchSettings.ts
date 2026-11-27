@@ -1,6 +1,7 @@
 import {padBadge} from "./screenUI";
 import matchConfirmMarkup from "./matchConfirm.html?raw";
 import type { Fixture } from "./opponentSquads";
+import {firstToFiveTargets} from "./matchRules";
 import {
   selectableDivisions,
   preferredDivision,
@@ -37,6 +38,8 @@ export function matchConfirmDialog(
   fixture: Fixture,
   settings: MatchSettings,
   skipWarmup: boolean,
+  weatherLocked = false,
+  targetScore?: number,
 ) {
   const template = document.createElement("template");
   template.innerHTML = matchConfirmMarkup;
@@ -55,6 +58,24 @@ export function matchConfirmDialog(
   }
   for (const group of dialog.querySelectorAll<HTMLElement>("[data-options]")) {
     const key = group.dataset.options as keyof MatchSettings;
+    if (key === "speed" && targetScore) {
+      const legend = group.closest("fieldset")?.querySelector("legend");
+      if (legend) legend.textContent = "Win Condition";
+      group.classList.add("goal-target-options");
+      for (const target of firstToFiveTargets) {
+        const button = option.cloneNode(true) as HTMLButtonElement;
+        button.dataset.setting = "targetScore";
+        button.value = String(target);
+        button.textContent = `${target} GOALS`;
+        button.setAttribute("aria-pressed", String(target === targetScore));
+        group.append(button);
+      }
+      continue;
+    }
+    if (key === "weather" && weatherLocked) {
+      group.textContent = "SNOWPOCALYPSE · Snow · 100% cover (locked)";
+      continue;
+    }
     for (const value of settingsOptions[key]) {
       const button = option.cloneNode(true) as HTMLButtonElement;
       button.dataset.setting = key;
