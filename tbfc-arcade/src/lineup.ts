@@ -160,7 +160,7 @@ export function selectLineup(
   },
   rules: MatchRules = classicRules(),
 ): Promise<Selection | null> {
-  const street = rules.mode === "street",
+  const street = rules.goalkeepers === 0,
     count = rules.teamSize;
   const shapes: Shape[] = street ? streetShapes(count) : classicShapes;
   const home = managedClub;
@@ -360,7 +360,7 @@ export function selectLineup(
         return;
       }
       if (!street && availableWomen(slots) < 2) return;
-      if (street || career || turn?.first) {
+      if (street || career || turn?.first || rules.mode === "houseRules") {
         finish();
         return;
       }

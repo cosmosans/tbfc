@@ -8,7 +8,7 @@ import {menuDirection,menuPad} from './menuPad'
 import {hint,reveal} from './screenUI'
 
 type Choice='resume'|'squad'|'sides'|'simulate'|'quit'
-export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string,clockLabel?:string):Promise<Choice>{
+export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string,clockLabel?:string,rulesSummary?:string[]):Promise<Choice>{
  const dialog=document.createElement('dialog')
  dialog.className='career-whistle pause-menu';dialog.setAttribute('aria-label',practice?'Practice Paused':'Match Paused')
  const clock=clockLabel??Math.floor(seconds/60)+':'+String(Math.floor(seconds)%60).padStart(2,'0')
@@ -68,6 +68,11 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
      label.append(title,output,input);panel.append(label)
     }
     section.prepend(panel)
+   }
+   if(rulesSummary && !confirming){
+    const rules=document.createElement('section');rules.className='house-pause-summary';
+    const title=document.createElement('h3');title.textContent='HOUSE RULES';rules.append(title);
+    const text=document.createElement('p');text.className='house-rules-text';text.textContent=rulesSummary.slice(1).join(' • ');rules.append(text);section.prepend(rules);
    }
    section.insertAdjacentHTML('beforeend',`<div class="menu-legend controller-legend"><button data-choice="back">${hint('Esc','B')} Back</button><span>${hint('Arrows','LS')} Move</span><span>${hint('Enter','A')} Select</span><button data-choice="resume">${hint('Esc','Menu')} Resume</button></div>`)
    section.querySelector<HTMLButtonElement>(confirming?'[data-choice=back]':'[data-choice=resume]')!.focus()

@@ -14,6 +14,7 @@ import courtSettingsTemplate from "./templates/street/court-settings.html?raw";
 import { audio } from "./matchAudio";
 import { padBadge, reveal } from "./screenUI";
 import { menuPad, menuDirection } from "./menuPad";
+import { menuCursor } from "./menuCursor";
 import {
   readStreetPreferences,
   saveStreetPreferences,
@@ -32,6 +33,7 @@ import longRangeArt from "./art/mode-cards/long-range.png";
 import survivalArt from "./art/mode-cards/survival.png";
 import beatTheClockArt from "./art/mode-cards/beat-the-clock.png";
 import airBallsArt from "./art/mode-cards/air-balls.png";
+import houseRulesArt from "./art/mode-cards/house-rules.png";
 import mysteryMatchArt from "./art/mode-cards/mystery-match.png";
 import "./kickOff.css";
 
@@ -51,10 +53,12 @@ export function screen<T>(
       dir = "",
       repeat = 0,
       held = Array.from(menuPad()?.buttons ?? [], (b) => b.pressed);
+    let cursor: ReturnType<typeof menuCursor> | undefined;
     function finish(value: T | null) {
       if (done) return;
       done = true;
       cancelAnimationFrame(frame);
+      cursor?.destroy();
       root.remove();
       main.inert = false;
       audio.menu(value === null ? "nav" : "success");
@@ -62,9 +66,24 @@ export function screen<T>(
     }
     function move(direction: string) {
       const buttons = [
-          ...root.querySelectorAll<HTMLButtonElement>("button:enabled"),
+          ...root.querySelectorAll<HTMLElement>(
+            'button:enabled,input[type="range"]:enabled,input[type="text"]:enabled',
+          ),
         ],
-        current = document.activeElement as HTMLButtonElement;
+        current = document.activeElement as HTMLElement;
+      if (
+        current instanceof HTMLInputElement &&
+        current.type === "range" &&
+        (direction === "l" || direction === "r")
+      ) {
+        const before = current.value;
+        current.stepUp(direction === "l" ? -1 : 1);
+        if (current.value === before) return;
+        current.dispatchEvent(new Event("input", { bubbles: true }));
+        current.dispatchEvent(new Event("change", { bubbles: true }));
+        audio.menu("nav");
+        return;
+      }
       if (!buttons.includes(current)) {
         buttons[0]?.focus();
         return;
@@ -87,10 +106,17 @@ export function screen<T>(
       }
       if (target !== current) {
         target.focus();
+        target.scrollIntoView({ block: "nearest", inline: "nearest" });
         audio.menu("nav");
       }
     }
     root.onkeydown = (e) => {
+      if (
+        e.target instanceof HTMLInputElement &&
+        e.target.type === "text" &&
+        e.key !== "Escape"
+      )
+        return;
       const direction = (
         {
           ArrowLeft: "l",
@@ -112,21 +138,41 @@ export function screen<T>(
     draw(root, finish);
     if (!root.contains(document.activeElement))
       root.querySelector<HTMLButtonElement>("button")?.focus();
+    if (root.classList.contains("house-builder")) cursor = menuCursor(root);
     reveal(root, "h1,.ko-card,.ko-preview,.ko-settings,footer,.ko-mode-legend");
     function poll(now: number) {
       if (done) return;
       const pad = menuPad(),
         next = pad ? menuDirection(pad) : "",
         down = Array.from(pad?.buttons ?? [], (b) => b.pressed);
-      if (next && (next !== dir || now >= repeat)) {
+      cursor?.update(pad, now);
+      if (!cursor && next && (next !== dir || now >= repeat)) {
         move(next);
         repeat = now + (next === dir ? 160 : 380);
       }
       if (down[1] && !held[1]) finish(null);
-      else if (down[0] && !held[0])
-        (document.activeElement as HTMLButtonElement)?.click();
+      else if (down[0] && !held[0]) {
+        if (cursor) cursor.click();
+        else (document.activeElement as HTMLButtonElement)?.click();
+      }
       else if (down[9] && !held[9])
         root.querySelector<HTMLButtonElement>("[data-next]")?.click();
+      else if (down[2] && !held[2])
+        root
+          .querySelector<HTMLButtonElement>('[data-pad-button="2"]:enabled')
+          ?.click();
+      else if (down[3] && !held[3])
+        root
+          .querySelector<HTMLButtonElement>('[data-pad-button="3"]:enabled')
+          ?.click();
+      else if (down[4] && !held[4])
+        root
+          .querySelector<HTMLButtonElement>('[data-pad-button="4"]:enabled')
+          ?.click();
+      else if (down[5] && !held[5])
+        root
+          .querySelector<HTMLButtonElement>('[data-pad-button="5"]:enabled')
+          ?.click();
       held = down;
       dir = next;
       if (!done) frame = requestAnimationFrame(poll);
@@ -210,6 +256,12 @@ export function selectGameMode(initial: GameMode = "classic") {
           title: "PENALTIES",
           tag: "Take your kicks, make your saves, and settle it from the spot.",
           image: penaltyShootoutArt,
+        },
+        {
+          id: "houseRules",
+          title: "HOUSE RULES",
+          tag: "Combine game modes, change the physics and invent your own game.",
+          image: houseRulesArt,
         },
       ]
         .map((m) =>

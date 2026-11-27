@@ -44,6 +44,9 @@
   background: #302820;
   border: 2px solid #69543b;
   padding: 10px;
+  font-family: "Oxanium" !important;
+  font-weight: bold !important;
+  text-transform: capitalize;
 }
 .kickoff-screen button:focus-visible,
 [data-pad-focus] .kickoff-screen button:focus {
@@ -96,6 +99,8 @@
   min-height: 3.6em;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  font-weight: normal;
+  font-size: 10px;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -310,19 +315,60 @@
   font-size: 14px;
   white-space: nowrap;
 }
-#scoreboard[data-mode="firstToFive"] #bugPeriod {font-size:11px;white-space:nowrap}
-#scoreboard[data-mode="firstToFive"] #bugClock {display:none}
-.bug-pips {display:none}
-#scoreboard[data-mode="firstToFive"] .bug-pips {display:grid;gap:2px}
-.bug-pips>span {display:flex;justify-content:center;gap:3px}
-#scoreboard[data-target-score="10"] .bug-pips>span {gap:1px}
-#scoreboard[data-target-score="10"] .bug-pips i {width:5px}
-.bug-pips i {display:block;width:7px;height:5px;background:#4a4a43;border:1px solid #66685b}
-#bugPipsHome i.filled {background:var(--home-club);border-color:#fff2d3}
-#bugPipsAway i.filled {background:var(--away-club);border-color:#fff2d3}
-@keyframes score-pip-pop {50% {transform:scale(1.8);filter:brightness(1.8)}}
-.bug-pips i.fresh {animation:score-pip-pop .7s ease-out}
-@media (prefers-reduced-motion:reduce) {.bug-pips i.fresh {animation:none}}
+#scoreboard[data-mode="firstToFive"] #bugPeriod {
+  font-size: 11px;
+  white-space: nowrap;
+}
+#scoreboard[data-mode="firstToFive"] #bugClock {
+  display: none;
+}
+.bug-pips {
+  display: none;
+}
+#scoreboard[data-mode="firstToFive"] .bug-pips {
+  display: grid;
+  gap: 2px;
+}
+.bug-pips > span {
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+#scoreboard[data-target-score="10"] .bug-pips > span {
+  gap: 1px;
+}
+#scoreboard[data-target-score="10"] .bug-pips i {
+  width: 5px;
+}
+.bug-pips i {
+  display: block;
+  width: 7px;
+  height: 5px;
+  background: #4a4a43;
+  border: 1px solid #66685b;
+}
+#bugPipsHome i.filled {
+  background: var(--home-club);
+  border-color: #fff2d3;
+}
+#bugPipsAway i.filled {
+  background: var(--away-club);
+  border-color: #fff2d3;
+}
+@keyframes score-pip-pop {
+  50% {
+    transform: scale(1.8);
+    filter: brightness(1.8);
+  }
+}
+.bug-pips i.fresh {
+  animation: score-pip-pop 0.7s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bug-pips i.fresh {
+    animation: none;
+  }
+}
 
 /* Reuse menu-legend layout; keep setup button chrome out of the mode legend.
    The badges remain controller-first even before a gamepad is connected. */
@@ -393,19 +439,75 @@
   margin: 8px 0 10px;
 }
 /* Match the compact main-menu controller legend after the setup panel scales. */
-.ko-shell .ko-mode-legend{zoom:min(1,calc(1.15 / var(--menu-scale,1)))}
+.ko-shell .ko-mode-legend {
+  zoom: min(1, calc(1.15 / var(--menu-scale, 1)));
+}
 
 /* Four mode cards per row, with room for three complete rows on desktop. */
-.kickoff-screen:has(.ko-grid) .ko-shell{padding-block:clamp(7px,1.5dvh,20px)}
-.kickoff-screen:has(.ko-grid) .ko-shell header{margin-bottom:clamp(5px,1.2dvh,15px)}
-.kickoff-screen:has(.ko-grid) .ko-shell footer{margin-top:clamp(5px,1.2dvh,15px)}
-@media(max-width:800px){.ko-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kickoff-screen:has(.ko-grid){overflow:auto}}
-@media(max-width:440px){.ko-grid{grid-template-columns:1fr}.ko-card img{height:110px}}
+.kickoff-screen:has(.ko-grid) .ko-shell {
+  padding-block: clamp(7px, 1.5dvh, 20px);
+}
+.kickoff-screen:has(.ko-grid) .ko-shell header {
+  margin-bottom: clamp(5px, 1.2dvh, 15px);
+}
+.kickoff-screen:has(.ko-grid) .ko-shell footer {
+  margin-top: clamp(5px, 1.2dvh, 15px);
+}
+@media (max-width: 800px) {
+  .ko-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kickoff-screen:has(.ko-grid) {
+    overflow: auto;
+  }
+}
+@media (max-width: 440px) {
+  .ko-grid {
+    grid-template-columns: 1fr;
+  }
+  .ko-card img {
+    height: 110px;
+  }
+}
 
-#scoreboard[data-mode="beatTheClock"] #bugPeriod {font-size:11px;white-space:nowrap}
-#scoreboard[data-mode="beatTheClock"] #bugClock {font-size:20px;font-variant-numeric:tabular-nums}
-#scoreboard[data-beat-urgent] #bugClock {color:#ff6c40;animation:beat-clock-pulse .65s ease-in-out infinite alternate}
-@keyframes beat-clock-pulse {to {opacity:.55}}
-.beat-reconnect[hidden] {display:none}
-.beat-reconnect {position:absolute;z-index:800;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;background:#080b10d9;color:#fff3d5;font:22px Upheaval,monospace;pointer-events:auto}
-.beat-reconnect strong {color:#ff7d40;font-size:36px}
+#scoreboard[data-mode="beatTheClock"] #bugPeriod {
+  font-size: 11px;
+  white-space: nowrap;
+}
+#scoreboard[data-mode="beatTheClock"] #bugClock {
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+#scoreboard[data-beat-urgent] #bugClock {
+  color: #ff6c40;
+  animation: beat-clock-pulse 0.65s ease-in-out infinite alternate;
+}
+@keyframes beat-clock-pulse {
+  to {
+    opacity: 0.55;
+  }
+}
+.beat-reconnect[hidden] {
+  display: none;
+}
+.beat-reconnect {
+  position: absolute;
+  z-index: 800;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: center;
+  background: #080b10d9;
+  color: #fff3d5;
+  font:
+    22px Upheaval,
+    monospace;
+  pointer-events: auto;
+}
+.beat-reconnect strong {
+  color: #ff7d40;
+  font-size: 36px;
+}

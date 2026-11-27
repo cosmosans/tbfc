@@ -9,6 +9,7 @@ import { padBadge, reveal } from "./screenUI";
 import { burners, alternateOpponent, onsiderTrading, barelyUnited, atleticoEspresso, grassAssassins, netSixAndChill, crossbarCowboys, goalDiggers, cleatwoodMac, sweeperCreepers, clubAccent, clubs, type Fixture } from "./opponentSquads";
 import { menuPad, menuDirection } from "./menuPad";
 import css from "./teamSelect.css?inline";
+import { rememberTeams, restoreTeams } from "./teamSelectionMemory";
 
 const kitIcons = import.meta.glob<string>("./art/kit-icons/*.png", { eager:true, query:"?url", import:"default" });
 function kitIcon(name: string, secondary: boolean) {
@@ -23,10 +24,10 @@ export function selectTeams(
 ): Promise<Fixture | null> {
   const selectable=[...clubs,alternateOpponent,onsiderTrading,barelyUnited,atleticoEspresso,grassAssassins,netSixAndChill,crossbarCowboys,goalDiggers,cleatwoodMac,sweeperCreepers]
     .sort((a, b) => a.name.localeCompare(b.name, "en", { sensitivity: "base" }));
-  const picks = [
+  const picks = restoreTeams(selectable, [
     previous?.home ?? clubs[0],
     previous?.away ?? clubs[clubs.length - 1],
-  ];
+  ]);
   const orange = "Orange Slices";
   const inter = "Inter Your Mom";
   const crossbar = "Crossbar Cowboys";
@@ -134,6 +135,7 @@ export function selectTeams(
     } while (selectable[index] === picks[1 - i]);
     audio.menu("nav");
     picks[i] = selectable[index];
+    rememberTeams(picks[0], picks[1]);
     paint(i);
     focusSide(i);
   }
@@ -160,6 +162,7 @@ export function selectTeams(
   reveal(root, ".ts-heading,article,.ts-foot");
   return new Promise((resolve) => {
     function finish(back = false) {
+      rememberTeams(picks[0], picks[1]);
       audio.menu(back ? "nav" : "success");
       cancelAnimationFrame(frame);
       window.removeEventListener("keydown", key);

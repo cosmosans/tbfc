@@ -1,5 +1,6 @@
 import {streetGoal} from './streetArena.ts'
-export type GameMode = 'classic' | 'street' | 'snowpocalypse' | 'longRange' | 'firstToFive' | 'inferno' | 'survival' | 'beatTheClock' | 'airBalls' | 'mysteryMatch' | 'penaltyShootout'
+import type {HouseConfig} from './houseRules.ts'
+export type GameMode = 'classic' | 'street' | 'snowpocalypse' | 'longRange' | 'firstToFive' | 'inferno' | 'survival' | 'beatTheClock' | 'airBalls' | 'mysteryMatch' | 'penaltyShootout' | 'houseRules'
 export type StreetSize = 3 | 5
 export const courtPresets = [
  {id:'slate',name:'Gulch Slate',color:'#515e64'},
@@ -14,6 +15,7 @@ export const courtPresets = [
 export type CourtPreset = typeof courtPresets[number]['id']
 export type StreetPreferences = {teamSize:StreetSize;court:CourtPreset;winCondition:'timed'|'target';halfMinutes:number;difficulty?:string;time:'Day'|'Evening'|'Night';weather:'Sun'|'Clouds'|'Rain'|'Snow'}
 export type MatchRules = {
+ house?:HouseConfig;
  mode:GameMode;teamSize:3|5|7;goalkeepers:0|1;arena:string|null;
  goal:{halfWidth:number;height:number;depth?:number};boundary:'touchline'|'enclosed';
  winCondition:'timed'|'target';targetScore:number;halfMinutes:number|null;

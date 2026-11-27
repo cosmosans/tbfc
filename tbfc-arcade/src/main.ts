@@ -1,3 +1,17 @@
+import {
+  houseDefaults,
+  resolveHouse,
+  houseSummary,
+  houseShotProfile,
+  saveHousePreset,
+  saveHouseResult,
+  type HouseConfig,
+} from "./houseRules";
+import {
+  houseBuilder,
+  houseRulesReview,
+  houseEnvironment,
+} from "./houseRulesUI";
 import fullTimeTemplate from "./templates/street/full-time.html?raw";
 import survivalEliminatedTemplate from "./templates/survival/eliminated.html?raw";
 import { renderMarkup } from "./templates/renderMarkup";
@@ -323,8 +337,21 @@ import {
 } from "./stadiumSelect";
 import { buildGrounds } from "./grounds";
 import { createGoal } from "./goal";
-import { airBallsProfile, airGoalEligible, airAccuracy, aerialFinish, type AirFinish } from "./airBalls";
-import { createMysteryState, advanceMystery, mysteryInterval, mysteryTime, mysteryModifiers, type MysteryId } from "./mysteryMatch";
+import {
+  airBallsProfile,
+  airGoalEligible,
+  airAccuracy,
+  aerialFinish,
+  type AirFinish,
+} from "./airBalls";
+import {
+  createMysteryState,
+  advanceMystery,
+  mysteryInterval,
+  mysteryTime,
+  mysteryModifiers,
+  type MysteryId,
+} from "./mysteryMatch";
 import keeperImage from "./art/practice-keeper.png?url";
 import {
   longRangeEligible,
@@ -793,12 +820,22 @@ async function start() {
   let rules = classicRules(),
     streetPrefs = readStreetPreferences(),
     modeChosen = false;
-  let lastMode: GameMode = "classic";
+  let houseDraft = resolveHouse(
+    history.state?.houseEdit?.config ?? houseDefaults(),
+  ).config;
+  let houseCourt = history.state?.houseEdit?.court ?? "slate";
+  let lastMode: GameMode = history.state?.houseEdit ? "houseRules" : "classic";
+  const houseEditFixture = history.state?.houseEdit?.fixture;
+  const editingHouse = !!history.state?.houseEdit;
+  let houseEditing = editingHouse;
+  let houseEnvironmentChosen = false;
+  history.replaceState({ ...history.state, houseEdit: null }, "");
   let fixture: Fixture | undefined,
     managingAway = false,
     awayLineup: Selection | null = null,
     lineup: Selection | null = null,
     portraits = burnerPortraits;
+  if (houseEditFixture) fixture = houseEditFixture;
   audio.state(true, false);
   let music: MenuMusic | undefined;
   let ticket: Ticket | null = null;
@@ -884,7 +921,7 @@ async function start() {
     let destination =
       resume !== undefined
         ? "career"
-        : history.state?.kickoffMenu
+        : history.state?.kickoffMenu || editingHouse
           ? "match"
           : history.state?.practiceMenu
             ? "practice"
@@ -915,39 +952,53 @@ async function start() {
             rematch.rules?.mode === "firstToFive" ||
             rematch.rules?.mode === "inferno" ||
             rematch.rules?.mode === "survival" ||
-            rematch.rules?.mode === "beatTheClock") &&
+            rematch.rules?.mode === "beatTheClock" ||
+            rematch.rules?.mode === "airBalls" ||
+            rematch.rules?.mode === "mysteryMatch" ||
+            rematch.rules?.mode === "houseRules") &&
           rematch.fixture &&
           rematch.lineup &&
-          (rematch.awayLineup || rematch.rules.mode !== "street")
+          (rematch.awayLineup || rematch.rules.goalkeepers !== 0)
         ) {
           fixture = rematch.fixture;
           lineup = rematch.lineup;
           awayLineup = rematch.awayLineup;
           seats = rematch.seats;
           rules =
-            rematch.rules.mode === "snowpocalypse"
-              ? snowpocalypseRules()
-              : rematch.rules.mode === "longRange"
-                ? longRangeRules()
-                : rematch.rules.mode === "firstToFive"
-                  ? firstToFiveRules(rematch.rules.targetScore)
-                  : rematch.rules.mode === "inferno"
-                    ? infernoRules()
-                    : rematch.rules.mode === "survival"
-                      ? survivalRules()
-                      : rematch.rules.mode === "beatTheClock"
-                        ? beatTheClockRules()
-                        : rematch.rules.mode === "airBalls"
-                          ? airBallsRules()
-                        : rematch.rules.mode === "mysteryMatch"
-                          ? mysteryMatchRules()
-                          : streetRules({ ...streetPrefs, ...rematch.rules });
+            rematch.rules.mode === "houseRules"
+              ? {
+                  ...resolveHouse(rematch.rules.house).rules,
+                  court: rematch.rules.court,
+                }
+              : rematch.rules.mode === "snowpocalypse"
+                ? snowpocalypseRules()
+                : rematch.rules.mode === "longRange"
+                  ? longRangeRules()
+                  : rematch.rules.mode === "firstToFive"
+                    ? firstToFiveRules(rematch.rules.targetScore)
+                    : rematch.rules.mode === "inferno"
+                      ? infernoRules()
+                      : rematch.rules.mode === "survival"
+                        ? survivalRules()
+                        : rematch.rules.mode === "beatTheClock"
+                          ? beatTheClockRules()
+                          : rematch.rules.mode === "airBalls"
+                            ? airBallsRules()
+                            : rematch.rules.mode === "mysteryMatch"
+                              ? mysteryMatchRules()
+                              : streetRules({
+                                  ...streetPrefs,
+                                  ...rematch.rules,
+                                });
           gulchDebug = rematch.gulchDebug === true;
           Object.assign(settings, rematch.settings);
           kickOffVenue =
-            rules.mode === "street"
+            rules.goalkeepers === 0
               ? "gulch"
-              : supportsMode(rematch.venue ?? "school", rules.mode)
+              : supportsMode(
+                    rematch.venue ?? "school",
+                    rules.house?.snow ? "snowpocalypse" : rules.mode,
+                  )
                 ? (rematch.venue ?? "school")
                 : "school";
           fixture.home =
@@ -1181,7 +1232,10 @@ async function start() {
         break;
       }
       if (!modeChosen) {
-        const mode = await selectGameMode(lastMode);
+        const mode = houseEditing
+          ? "houseRules"
+          : await selectGameMode(lastMode);
+        houseEditing = false;
         if (!mode) {
           destination = await mainMenu(music);
           continue;
@@ -1189,7 +1243,14 @@ async function start() {
         lastMode = mode;
         if (rules.mode === "classic")
           Object.assign(classicKickOffSettings, kickOffSettings);
-        if (mode === "street") {
+        if (mode === "houseRules") {
+          const chosen = await houseBuilder(houseDraft);
+          if (!chosen) continue;
+          houseDraft = chosen;
+          rules = { ...resolveHouse(chosen).rules, court: houseCourt };
+          if (!houseEnvironmentChosen)
+            Object.assign(kickOffSettings, classicKickOffSettings);
+        } else if (mode === "street") {
           const preferences = await selectStreetSize(streetPrefs);
           if (!preferences) continue;
           streetPrefs = preferences;
@@ -1215,11 +1276,11 @@ async function start() {
                         ? beatTheClockRules()
                         : mode === "airBalls"
                           ? airBallsRules()
-                        : mode === "mysteryMatch"
-                          ? mysteryMatchRules()
-                          : mode === "penaltyShootout"
-                            ? penaltyShootoutRules()
-                            : classicRules();
+                          : mode === "mysteryMatch"
+                            ? mysteryMatchRules()
+                            : mode === "penaltyShootout"
+                              ? penaltyShootoutRules()
+                              : classicRules();
           Object.assign(kickOffSettings, classicKickOffSettings);
           if (mode === "snowpocalypse") kickOffSettings.weather = "Snow";
         }
@@ -1227,23 +1288,29 @@ async function start() {
       }
       const selected = await selectTeams(fixture, undefined, {
         back: "Kickoff",
-        next: rules.mode === "street" ? "Side Select" : "Select Stadium",
+        next: rules.goalkeepers === 0 ? "Side Select" : "Select Stadium",
       });
       if (!selected) {
+        houseEditing = !!rules.house;
         modeChosen = false;
         continue;
       }
       fixture = selected;
       const homeVenue = homeStadium(fixture.home.name);
-      let selectedVenue: StadiumId | null = homeVenue;
+      let selectedVenue: StadiumId | null =
+        rules.house && houseEnvironmentChosen ? kickOffVenue : homeVenue;
       do {
         selectedVenue =
-          rules.mode === "street"
+          rules.goalkeepers === 0
             ? "gulch"
-            : await selectStadium(homeVenue, selectedVenue, rules.mode);
+            : await selectStadium(
+                homeVenue,
+                selectedVenue,
+                rules.house?.snow ? "snowpocalypse" : rules.mode,
+              );
         if (!selectedVenue) break;
         seats = await selectSides(fixture, 0, rules.mode === "beatTheClock");
-      } while (!seats && rules.mode !== "street");
+      } while (!seats && rules.goalkeepers !== 0);
       if (!seats || !selectedVenue) continue;
       if (rules.mode === "beatTheClock" && challengeSide(seats) === null) {
         seats = null;
@@ -1285,10 +1352,11 @@ async function start() {
         break;
       }
       const drafts = new Map<number, Selection>();
-      kickOffSettings.time =
-        kickOffVenue === "school" || kickOffVenue === "westend"
-          ? "Night"
-          : "Evening";
+      if (!rules.house || !houseEnvironmentChosen)
+        kickOffSettings.time =
+          kickOffVenue === "school" || kickOffVenue === "westend"
+            ? "Night"
+            : "Evening";
       for (let step = 0; step < sides.length; ) {
         const side = sides[step];
         const club = side === 1 ? fixture.away : fixture.home;
@@ -1363,7 +1431,7 @@ async function start() {
         if (++step === sides.length) {
           awayLineup = drafts.get(1) ?? null;
           const cpuLineup = (club: Club): Selection => {
-            if (rules.mode !== "street")
+            if (rules.goalkeepers !== 0)
               return {
                 shape: "1-3-3",
                 starters: [...club.outfield, club.keeper],
@@ -1389,12 +1457,35 @@ async function start() {
               bench: names.filter((n) => !starters.includes(n)).slice(0, 4),
             };
           };
-          if (rules.mode === "street")
+          if (rules.goalkeepers === 0)
             awayLineup = drafts.get(1) ?? cpuLineup(fixture.away);
           lineup = {
             ...(drafts.get(-1) ?? cpuLineup(fixture.home)),
-            warmup: rules.mode === "street" ? false : selected.warmup,
+            warmup:
+              rules.goalkeepers === 0 || rules.house ? false : selected.warmup,
           };
+        }
+      }
+      if (lineup && rules.house) {
+        const environment = await houseEnvironment(
+          houseDraft,
+          kickOffSettings,
+          houseCourt,
+          kickOffVenue !== "mill",
+        );
+        if (!environment) {
+          lineup = null;
+          continue;
+        }
+        Object.assign(kickOffSettings, environment.settings);
+        houseCourt = environment.court;
+        houseEnvironmentChosen = true;
+        rules = { ...resolveHouse(houseDraft).rules, court: houseCourt };
+        if (!(await houseRulesReview(houseDraft))) {
+          lineup = null;
+          modeChosen = false;
+          houseEditing = true;
+          continue;
         }
       }
       if (lineup) Object.assign(settings, kickOffSettings);
@@ -1424,7 +1515,7 @@ async function start() {
     stat: Attribute,
     clubName = fixture?.home.name,
   ) {
-    if (rules.mode === "street") {
+    if (rules.goalkeepers === 0) {
       const rating =
         clubName && squadRatings(clubName, name)?.[ratingLabels.indexOf(stat)];
       return rating === undefined ? 1 : 0.75 + rating / 320;
@@ -1438,40 +1529,63 @@ async function start() {
   const { home, away: matchOpponent } = fixture;
   const homeLabel = home === burners ? "TBFC" : home.name;
   const freePractice = selectedDrill === freeDrill;
-  const snowpocalypse = rules.mode === "snowpocalypse";
-  let longRange = rules.mode === "longRange";
-  const firstToFive = rules.mode === "firstToFive";
-  const survival = rules.mode === "survival";
+  const house = rules.mode === "houseRules" ? resolveHouse(rules.house) : null;
+  const snowpocalypse = rules.mode === "snowpocalypse" || !!house?.config.snow;
+  let longRange =
+    rules.mode === "longRange" || house?.config.scoring === "longRange";
+  const firstToFive =
+    rules.mode === "firstToFive" ||
+    (!!house && rules.winCondition === "target");
+  const survival = rules.mode === "survival" || !!house?.has("survival");
   const beatTheClock = rules.mode === "beatTheClock";
   const beatTeam: ChallengeSide | null = beatTheClock
     ? challengeSide(seats)
     : null;
   const beatInitialPlayers = beatTheClock ? seats!.length : 0;
   let inferno = rules.permanentBurn;
-  let physics = physicsFor(rules.mode);
-  const airBalls = rules.mode === "airBalls";
-  const airIntents = new WeakMap<object, {finish:AirFinish; until:number}>();
-  const airShotPower = new WeakMap<object,number>();
-  let airBounceAt = -Infinity, airWasAloft = false;
+  let physics = house?.physics ?? physicsFor(rules.mode);
+  const airOnly =
+    rules.mode === "airBalls" || house?.config.scoring === "airBalls";
+  const airBalls = airOnly || !!house?.aerial;
+  const airIntents = new WeakMap<
+    object,
+    { finish: AirFinish; until: number }
+  >();
+  const airShotPower = new WeakMap<object, number>();
+  let airBounceAt = -Infinity,
+    airWasAloft = false;
   let invalidAirGoals = 0;
+  let houseElapsed = 0;
   let airInvalidUntil = 0;
-  const airIntent = (actor:object):AirFinish => {
-    const intent=airIntents.get(actor);
-    return intent && performance.now()<=intent.until ? intent.finish : "GROUNDED";
+  const airIntent = (actor: object): AirFinish => {
+    const intent = airIntents.get(actor);
+    return intent && performance.now() <= intent.until
+      ? intent.finish
+      : "GROUNDED";
   };
   const mystery = rules.mode === "mysteryMatch" ? createMysteryState() : null;
-  const mysteryOn = (id:MysteryId) => mystery?.current.id === id;
-  const mysteryKickArc = (power:number, available=Infinity) => {
-    const result=kickArc(power,available);
-    if(mysteryOn("moonBall")) {
-      result.duration /= Math.sqrt(.4);
-      result.height /= .4;
+  const mysteryOn = (id: MysteryId) =>
+    mystery?.current.id === id ||
+    !!house?.config.modifiers.some((m) => m === id);
+  const shotProfile = (actor: object, direction: number) =>
+    houseShotProfile(
+      house?.config ?? houseDefaults(),
+      longRange &&
+        longRangeEligible(ball.position.x, ball.position.z, direction),
+      airBalls ? airAccuracy(airIntent(actor)) : 1,
+    );
+  const mysteryKickArc = (power: number, available = Infinity) => {
+    const result = kickArc(power, available);
+    const gravity = house?.gravity ?? (mysteryOn("moonBall") ? 0.4 : 1);
+    if (gravity !== 1) {
+      result.duration /= Math.sqrt(gravity);
+      result.height /= gravity;
     }
     return result;
   };
-  let slippery = snowpocalypse;
+  let slippery = house ? house.config.traction !== "normal" : snowpocalypse;
   if (snowpocalypse) settings.weather = "Snow";
-  const street = rules.mode === "street";
+  const street = rules.goalkeepers === 0;
   const gulch = rules.arena === "gulch";
   let homeShape = positions(lineup.shape);
   const renderer = new T.WebGLRenderer({
@@ -1664,7 +1778,7 @@ async function start() {
     scene.add(circle);
   }
   const longRangeMarks: T.Mesh[] = [];
-  if (longRange || mystery) {
+  if (longRange || mystery || house) {
     const line = new T.MeshBasicMaterial({
       color: 0xffffff,
       depthWrite: false,
@@ -1937,11 +2051,19 @@ async function start() {
   const mysteryReveal = document.createElement("div");
   if (mystery) {
     mysteryHud.className = "mystery-hud";
-    mysteryHud.innerHTML = '<span class="mystery-icon"></span><strong class="mystery-name"></strong><span class="mystery-next"></span><i class="mystery-progress"></i>';
+    mysteryHud.innerHTML =
+      '<span class="mystery-icon"></span><strong class="mystery-name"></strong><span class="mystery-next"></span><i class="mystery-progress"></i>';
     scoreboard.after(mysteryHud);
     mysteryReveal.className = "mystery-reveal";
     mysteryReveal.setAttribute("role", "status");
     matchView.append(mysteryReveal);
+  }
+  if (house) {
+    const badge = document.createElement("span");
+    badge.className = "house-match-label";
+    badge.textContent = "HOUSE RULES";
+    badge.title = houseSummary(house.config).join("\n");
+    scoreboard.append(badge);
   }
   if (firstToFive) scoreboard.dataset.targetScore = String(rules.targetScore);
   scoreboard.style.setProperty("--home-club", clubAccent(home));
@@ -1977,7 +2099,7 @@ async function start() {
     const text = beatTheClock
       ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · BEAT THE CLOCK · ${beatClockText(beatRemaining)}`
       : rules.winCondition === "target"
-        ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · ${firstToFive ? `FIRST TO ${rules.targetScore} GOALS` : `STREET ${rules.teamSize}V${rules.teamSize} · ${phase === "fulltime" ? "FULL TIME" : "FIRST TO " + rules.targetScore}`}`
+        ? `${homeLabel} ${homeScore} – ${awayScore} ${matchOpponent.name} · ${firstToFive ? `FIRST TO ${rules.targetScore} ${house ? "POINTS" : "GOALS"}` : `STREET ${rules.teamSize}V${rules.teamSize} · ${phase === "fulltime" ? "FULL TIME" : "FIRST TO " + rules.targetScore}`}`
         : homeLabel +
           " " +
           homeScore +
@@ -2398,7 +2520,7 @@ async function start() {
     if (index >= 0)
       pendingSurvival = { side, actor: team[index], minute: matchMinute() };
   }
-  function applySurvivalElimination() {
+  function applySurvivalElimination(present = true) {
     if (!pendingSurvival) return false;
     const { side, actor, minute } = pendingSurvival;
     pendingSurvival = null;
@@ -2442,6 +2564,7 @@ async function start() {
     });
     renderSurvivalStrip(side);
     goalCard.hidden = true;
+    if (!present) return true;
     const portrait =
       club === burners
         ? headshots[actor.displayName]
@@ -2681,26 +2804,6 @@ async function start() {
   }
   let squadOpen = false;
   const pitchActors = [...outfield, referee, ...(street ? [] : [sean, awayGK])];
-  const infernoAuras = inferno || mystery
-    ? [...outfield, sean, awayGK].map((actor) => {
-        const mesh = new T.Mesh(
-          new T.RingGeometry(0.33, 0.43, 20),
-          new T.MeshBasicMaterial({
-            color: 0xff6b21,
-            transparent: true,
-            opacity: 0.45,
-            depthWrite: false,
-            side: T.DoubleSide,
-          }),
-        );
-        mesh.rotation.x = -Math.PI / 2;
-        mesh.renderOrder = 1;
-        mesh.visible = inferno;
-        scene.add(mesh);
-        return { actor, mesh };
-      })
-    : [];
-
   const exhaustionMarkers = [
     ...outfield,
     ...(street ? [] : [sean, awayGK]),
@@ -2784,8 +2887,21 @@ async function start() {
         origin?: { x: number; z: number };
       })
     | null = null;
-  let airLooseAttempt: {finish:AirFinish; scorer:typeof sean | null; direction:number} | null = null;
-  const airSeatShots = new Map<number, {side:number; start:number; expires:number; power:number; gesture:CurveGesture}>();
+  let airLooseAttempt: {
+    finish: AirFinish;
+    scorer: typeof sean | null;
+    direction: number;
+  } | null = null;
+  const airSeatShots = new Map<
+    number,
+    {
+      side: number;
+      start: number;
+      expires: number;
+      power: number;
+      gesture: CurveGesture;
+    }
+  >();
   const burnHud = el("burnHud");
   const burnEnabled =
     !celebrationLab && !broadcast && (!standalonePractice || !!tutorialLaunch);
@@ -2871,24 +2987,31 @@ async function start() {
   }
   resetBurn();
   let mysteryRevealUntil = 0;
-  function applyMysteryModifier(previous?:MysteryId) {
+  function applyMysteryModifier(previous?: MysteryId) {
     if (!mystery) return;
     const id = mystery.current.id;
     const wasInferno = inferno;
     inferno = id === "inferno";
     longRange = id === "longRange";
     slippery = id === "blackIce";
-    physics = slippery ? physicsFor("snowpocalypse")
-      : id === "heavyBall" ? {...physicsFor("classic"),ballSpeed:.8,rollingResistance:1.35}
-      : physicsFor("classic");
+    physics = slippery
+      ? physicsFor("snowpocalypse")
+      : id === "heavyBall"
+        ? { ...physicsFor("classic"), ballSpeed: 0.8, rollingResistance: 1.35 }
+        : physicsFor("classic");
     for (const mark of longRangeMarks) mark.visible = longRange;
-    for (const aura of infernoAuras) aura.mesh.visible = inferno;
     if (inferno) resetBurn();
     else if (wasInferno) {
-      for (const m of meters) { m.value = 100; m.seconds = burnWindowSeconds; }
-      renderBurn(0); renderBurn(1);
+      for (const m of meters) {
+        m.value = 100;
+        m.seconds = burnWindowSeconds;
+      }
+      renderBurn(0);
+      renderBurn(1);
     }
-    burnHud.querySelector(".burn-title")!.textContent = inferno ? "BURN ∞" : "BURN";
+    burnHud.querySelector(".burn-title")!.textContent = inferno
+      ? "BURN ∞"
+      : "BURN";
     if (id === "secondWind") {
       for (const actor of [...players, ...opponents, sean, awayGK]) {
         actor.sprintCharge = 100;
@@ -2897,8 +3020,10 @@ async function start() {
     }
     if (previous === "blackIce") snowVelocities.clear();
     mysteryHud.style.setProperty("--mystery-color", mystery.current.color);
-    mysteryHud.querySelector(".mystery-icon")!.textContent = mystery.current.icon;
-    mysteryHud.querySelector(".mystery-name")!.textContent = mystery.current.name;
+    mysteryHud.querySelector(".mystery-icon")!.textContent =
+      mystery.current.icon;
+    mysteryHud.querySelector(".mystery-name")!.textContent =
+      mystery.current.name;
     mysteryReveal.innerHTML = `<strong>MYSTERY MODIFIER!</strong><b>${mystery.current.icon} ${mystery.current.name}</b><span>${mystery.current.description}</span>`;
     mysteryReveal.hidden = false;
     mysteryRevealUntil = performance.now() + 3000;
@@ -2999,13 +3124,19 @@ async function start() {
       shotStart.copy(ball.position);
       shotStart.x = goalEnd * (fieldX - 0.02);
       shot = {
-        airFinish: airBalls ? (airLooseAttempt?.finish ?? ((goalEnd===attackSign ? lastBlue : !lastBlue) ? "OWN GOAL" : "GROUNDED")) : undefined,
+        airFinish: airBalls
+          ? (airLooseAttempt?.finish ??
+            ((goalEnd === attackSign ? lastBlue : !lastBlue)
+              ? "OWN GOAL"
+              : "GROUNDED"))
+          : undefined,
         result: "Goal",
+        points: mysteryOn("doublePoints") ? 2 : 1,
         targetX: goalEnd * (fieldX + 0.2),
         targetZ: ball.position.z,
         duration: 0.02,
       };
-      if (airBalls && airLooseAttempt?.scorer) scorer=airLooseAttempt.scorer;
+      if (airBalls && airLooseAttempt?.scorer) scorer = airLooseAttempt.scorer;
       shotTime = 0;
       arc = kickArc(1);
       shotMultiplier = 1;
@@ -3848,7 +3979,11 @@ async function start() {
         distance = Math.hypot(pos.x - ballPos.x, pos.z - ballPos.z);
       if (ballPos.y > 1 && ballPos.y < 2.5 && distance < 1.5) jump(actor);
       const lift = jumpHeight(actor);
-      if ((!airBalls && lift < 0.15) || ballPos.y > (1.35 + lift) * (airBalls ? airBallsProfile.contact : 1) || distance >= closest)
+      if (
+        (!airBalls && lift < 0.15) ||
+        ballPos.y > (1.35 + lift) * (airBalls ? airBallsProfile.contact : 1) ||
+        distance >= closest
+      )
         continue;
       closest = distance;
       winner = actor;
@@ -3870,23 +4005,36 @@ async function start() {
       firstTimeCross = true;
     }
     if (i < 0) {
-      const finish=aerialFinish(ball.position.y);
-      const buffer=airBalls ? [...airSeatShots.entries()].find(([,b])=>b.side===1 && performance.now()<=b.expires) : undefined;
+      const finish = aerialFinish(ball.position.y);
+      const buffer = airBalls
+        ? [...airSeatShots.entries()].find(
+            ([, b]) => b.side === 1 && performance.now() <= b.expires,
+          )
+        : undefined;
       blueWins(opponents.indexOf(winner), "AIR BALL");
-      if (airBalls && (buffer || !seats?.some(s=>s.side===1))) {
-        airIntents.set(winner,{finish,until:performance.now()+1500});
-        if(buffer) {
-          const strike=buffer[1].gesture.finish(meters[1].value===100);
-          pendingCurve=strike ? {actor:winner,strike} : null;
-          airShotPower.set(winner,buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power);
+      if (airBalls && (buffer || !seats?.some((s) => s.side === 1))) {
+        airIntents.set(winner, { finish, until: performance.now() + 1500 });
+        if (buffer) {
+          const strike = buffer[1].gesture.finish(meters[1].value === 100);
+          pendingCurve = strike ? { actor: winner, strike } : null;
+          airShotPower.set(
+            winner,
+            buffer[1].expires === Infinity
+              ? heldPower(buffer[1].start)
+              : buffer[1].power,
+          );
           airSeatShots.delete(buffer[0]);
         }
-        tryBlueShot(false,true);
+        tryBlueShot(false, true);
       }
-    }
-    else {
+    } else {
       if (i !== active && !airBalls) cancelCharge();
-      if (airBalls && aiHome && !charge && !queued) queued={action:"shot",power:.65,expires:performance.now()+600};
+      if (airBalls && aiHome && !charge && !queued)
+        queued = {
+          action: "shot",
+          power: 0.65,
+          expires: performance.now() + 600,
+        };
       if (!inFlight) homePasser = "";
       bluePass = null;
       blueCarrier = -1;
@@ -4045,7 +4193,9 @@ async function start() {
       (action === "shot" && canChargeLooseShot())
     ) {
       queued = {
-        expires: airBalls ? performance.now()+airBallsProfile.inputBufferMs : undefined,
+        expires: airBalls
+          ? performance.now() + airBallsProfile.inputBufferMs
+          : undefined,
         action,
         power: fraction,
         curve:
@@ -4113,7 +4263,7 @@ async function start() {
     return (Math.round(angle / sector) + 8) % 8;
   }
   function carry() {
-    if (airBalls) airLooseAttempt=null;
+    if (airBalls) airLooseAttempt = null;
     if (kickSpot) {
       ball.position.copy(kickSpot);
       return;
@@ -4503,8 +4653,14 @@ async function start() {
   }
   function reset(blue = false, afterGoal = false) {
     if (airBalls) {
-      airLooseAttempt=null; airWasAloft=false; airBounceAt=-Infinity; airSeatShots.clear();
-      for(const actor of [...players,...opponents]) {airIntents.delete(actor); airShotPower.delete(actor);}
+      airLooseAttempt = null;
+      airWasAloft = false;
+      airBounceAt = -Infinity;
+      airSeatShots.clear();
+      for (const actor of [...players, ...opponents]) {
+        airIntents.delete(actor);
+        airShotPower.delete(actor);
+      }
     }
     // Unopposed court practice always returns the ball to the home team.
     if (gulchDebug) blue = false;
@@ -4517,6 +4673,7 @@ async function start() {
       afterGoal &&
       targetReached(rules, homeScore, awayScore)
     ) {
+      applySurvivalElimination(false);
       clearReplay();
       celebrating = false;
       goalBanner.hidden = true;
@@ -5494,10 +5651,19 @@ async function start() {
   }
   function receivePass(collector: number, aerialFinish: boolean) {
     if (airBalls) {
-      const buffer=[...airSeatShots.entries()].find(([,b])=>b.side===-1 && performance.now()<=b.expires);
-      if(buffer) {
-        queued={action:"shot",power:buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power,
-          curve:buffer[1].gesture.finish(canBlast(players[collector])),expires:performance.now()+600};
+      const buffer = [...airSeatShots.entries()].find(
+        ([, b]) => b.side === -1 && performance.now() <= b.expires,
+      );
+      if (buffer) {
+        queued = {
+          action: "shot",
+          power:
+            buffer[1].expires === Infinity
+              ? heldPower(buffer[1].start)
+              : buffer[1].power,
+          curve: buffer[1].gesture.finish(canBlast(players[collector])),
+          expires: performance.now() + 600,
+        };
         airSeatShots.delete(buffer[0]);
       }
     }
@@ -5550,7 +5716,8 @@ async function start() {
       lastDelivery = { sender: homePasser, receiver };
     }
     homePasser = "";
-    if (airBalls && queued?.expires && performance.now()>queued.expires) queued=null;
+    if (airBalls && queued?.expires && performance.now() > queued.expires)
+      queued = null;
     const intent = charge
       ? {
           action: charge.action,
@@ -5606,17 +5773,25 @@ async function start() {
         goalX = attackSign * fieldX;
       pendingCurve = intent.curve ? { actor, strike: intent.curve } : null;
       const backToGoal = dirs[actor.face][0] * attackSign < -0.35;
-      const halfVolley = airBalls && performance.now()-airBounceAt<=airBallsProfile.halfVolleyMs;
-      const style = halfVolley ? "HALF-VOLLEY" : aerialFinish
-        ? ball.position.y > 0.85 && backToGoal && intent.power >= 0.65
-          ? "BICYCLE KICK"
-          : ball.position.y >= 1.12
-            ? "HEADER"
-            : "VOLLEY"
-        : null;
+      const halfVolley =
+        airBalls &&
+        performance.now() - airBounceAt <= airBallsProfile.halfVolleyMs;
+      const style = halfVolley
+        ? "HALF-VOLLEY"
+        : aerialFinish
+          ? ball.position.y > 0.85 && backToGoal && intent.power >= 0.65
+            ? "BICYCLE KICK"
+            : ball.position.y >= 1.12
+              ? "HEADER"
+              : "VOLLEY"
+          : null;
       if (airBalls) {
-        airIntents.set(actor,{finish:(style ?? "GROUNDED") as AirFinish,until:performance.now()+1500});
-        airBounceAt=-Infinity; airWasAloft=false;
+        airIntents.set(actor, {
+          finish: (style ?? "GROUNDED") as AirFinish,
+          until: performance.now() + 1500,
+        });
+        airBounceAt = -Infinity;
+        airWasAloft = false;
       }
       if (style) {
         aerial = { index: collector, style, age: 0 };
@@ -5649,8 +5824,14 @@ async function start() {
         actor.age = 0;
       } else launchShot(actor);
     } else {
-      if(airBalls && performance.now()-airBounceAt<=airBallsProfile.halfVolleyMs)
-        airIntents.set(players[collector],{finish:"HALF-VOLLEY",until:airBounceAt+airBallsProfile.halfVolleyMs});
+      if (
+        airBalls &&
+        performance.now() - airBounceAt <= airBallsProfile.halfVolleyMs
+      )
+        airIntents.set(players[collector], {
+          finish: "HALF-VOLLEY",
+          until: airBounceAt + airBallsProfile.halfVolleyMs,
+        });
       carry();
       if (intent && intended) {
         players[collector].age = -1;
@@ -5680,8 +5861,17 @@ async function start() {
       blastFlying = true;
       if (aerial) audio.kick(1);
     } else audio.kick(shotMultiplier - 1);
-    if (airBalls && kickSpot) airIntents.set(shooter,{finish:"DIRECT FREE KICK",until:performance.now()+1500});
-    if (airBalls) airLooseAttempt={finish:airIntent(shooter),scorer:shooter,direction:attackSign};
+    if (airBalls && kickSpot)
+      airIntents.set(shooter, {
+        finish: "DIRECT FREE KICK",
+        until: performance.now() + 1500,
+      });
+    if (airBalls)
+      airLooseAttempt = {
+        finish: airIntent(shooter),
+        scorer: shooter,
+        direction: attackSign,
+      };
     kickSpot = null;
     recentHomeKicker = shooter;
     homeLateTime = lateTackleWindow;
@@ -5798,7 +5988,13 @@ async function start() {
       blast
         ? (keeperStart >= 0 ? -1 : 1) * (1.1 + Math.random() * 0.52)
         : undefined,
-      blast ? 0 : (mysteryOn("shootOnSight") ? .82 : 1) / trainingFactor(shooter.displayName, "Shooting") / (airBalls ? airAccuracy(airIntent(shooter)) : 1),
+      blast
+        ? 0
+        : (house
+            ? shotProfile(shooter, attackSign).error
+            : (mysteryOn("shootOnSight") ? 0.82 : 1) /
+              (airBalls ? airAccuracy(airIntent(shooter)) : 1)) /
+            trainingFactor(shooter.displayName, "Shooting"),
       rules.goal.halfWidth,
       street && !blast
         ? streetShotAim(
@@ -5809,17 +6005,24 @@ async function start() {
           )
         : undefined,
       longShot || mysteryOn("shootOnSight"),
-      mysteryOn("theWall") ? .72 : 1,
+      house?.keeperFactor ?? (mysteryOn("theWall") ? 0.72 : 1),
     );
     shot.points = goalValue(
-      mysteryOn("doublePoints") ? "doublePoints" : longRange ? "longRange" : rules.mode,
+      mysteryOn("doublePoints")
+        ? "doublePoints"
+        : longRange
+          ? "longRange"
+          : rules.mode,
       ball.position.x,
       ball.position.z,
       attackSign,
     );
     if (mysteryOn("doublePoints")) shot.points = 2;
     shot.origin = { x: ball.position.x, z: ball.position.z };
-    if (airBalls) { shot.airFinish=airIntent(shooter); airIntents.delete(shooter); }
+    if (airBalls) {
+      shot.airFinish = airIntent(shooter);
+      airIntents.delete(shooter);
+    }
     if (curve) applyCurve(curve, attackSign);
     if (blast)
       shot.duration = T.MathUtils.clamp(shot.duration * 0.46, 0.17, 0.38);
@@ -5844,14 +6047,31 @@ async function start() {
           longRangeBalance.maxShotSpeed,
         shot.duration / longRangeBalance.velocity,
       );
-    if (slippery || mysteryOn("heavyBall"))
+    if (house || slippery || mysteryOn("heavyBall"))
       shot.duration = Math.max(
         0.08,
         Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
         shot.duration / physics.ballSpeed,
       );
-    if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
-    if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED")>1) shot.duration /= airBallsProfile.shotSpeed;
+    if (house) {
+      const tuning = houseShotProfile(
+        house.config,
+        longRange && shot.points === 2,
+        airBalls ? airAccuracy(shot.airFinish ?? "GROUNDED") : 1,
+      );
+      shot.duration /=
+        tuning.speed /
+        (longRange && shot.points === 2 ? longRangeBalance.velocity : 1);
+      shot.duration = Math.max(
+        0.08,
+        shot.duration,
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
+      );
+    } else {
+      if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
+      if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED") > 1)
+        shot.duration /= airBallsProfile.shotSpeed;
+    }
     if (blast) shot.duration /= burnShotVelocityScale;
     arc = mysteryKickArc(shotMultiplier, blast ? shot.duration : Infinity);
     shotTime = 0;
@@ -5870,8 +6090,13 @@ async function start() {
     bendOffset =
       direction *
       curve.rate *
-      (mysteryOn("superCurve") ? 2 : 1) *
-      (longRange && shot.points === 2 ? longRangeBalance.curve : 1) *
+      (house
+        ? Math.max(
+            house.has("superCurve") ? 2 : 1,
+            longRange && shot.points === 2 ? longRangeBalance.curve : 1,
+          )
+        : (mysteryOn("superCurve") ? 2 : 1) *
+          (longRange && shot.points === 2 ? longRangeBalance.curve : 1)) *
       Math.abs(dx) *
       duration *
       0.39;
@@ -5946,7 +6171,7 @@ async function start() {
     actor.sprintTime = 0;
   }
   function blueWins(index: number, reason: string) {
-    if (airBalls) airLooseAttempt=null;
+    if (airBalls) airLooseAttempt = null;
     if ((reason.includes("TACKLE WON") || reason === "SPRINT STRIP") && held)
       tackleReaction(players[ballPlayer]);
     lastDelivery = null;
@@ -5976,7 +6201,8 @@ async function start() {
     noticeTime = 0;
   }
   function spendSprint(actor: typeof sean, dt: number) {
-    if (curveLab || mysteryOn("secondWind")) return dt * (mysteryOn("superSprint") ? 1.35 : 1);
+    if (curveLab || mysteryOn("secondWind"))
+      return dt * (mysteryOn("superSprint") ? 1.35 : 1);
     const duration =
       sprintSeconds *
       trainingFactor(
@@ -6112,26 +6338,25 @@ async function start() {
             : [12, 8, 12][i - 3];
         o.goal.set(attackSign * depth, 0, lanes[i]);
       } else if (blueCarrier === i) {
-          const clearLongLane =
-            longRange &&
-            !players.some(
-              (p) =>
-                !p.penalty &&
-                p.sprite.position.distanceToSquared(pos) < 4.5 ** 2,
-            );
-          const attackDepth = clearLongLane
-            ? fieldX - longRangeBox.depth - 1.2
-            : 18;
-          if (attackSign * pos.x > -attackDepth + 1)
-            o.goal.set(
-              -attackDepth * attackSign,
-              0,
-              T.MathUtils.clamp(pos.z + dribbleSide * 2, -9, 9),
-            );
-          else {
-            if (Math.abs(pos.z - dribbleSide * 9) < 0.5) dribbleSide *= -1;
-            o.goal.set(-(attackDepth + 0.5) * attackSign, 0, dribbleSide * 9);
-          }
+        const clearLongLane =
+          longRange &&
+          !players.some(
+            (p) =>
+              !p.penalty && p.sprite.position.distanceToSquared(pos) < 4.5 ** 2,
+          );
+        const attackDepth = clearLongLane
+          ? fieldX - longRangeBox.depth - 1.2
+          : 18;
+        if (attackSign * pos.x > -attackDepth + 1)
+          o.goal.set(
+            -attackDepth * attackSign,
+            0,
+            T.MathUtils.clamp(pos.z + dribbleSide * 2, -9, 9),
+          );
+        else {
+          if (Math.abs(pos.z - dribbleSide * 9) < 0.5) dribbleSide *= -1;
+          o.goal.set(-(attackDepth + 0.5) * attackSign, 0, dribbleSide * 9);
+        }
       } else if (blueCarrier >= 0 || bluePass) {
         const lead = bluePass
           ? bluePass.end
@@ -6505,7 +6730,7 @@ async function start() {
   function tryBlueShot(blast = false, human = false, windupComplete = false) {
     const carrier = opponents[blueCarrier],
       from = carrier.sprite.position;
-    if (airBalls && !human && airIntent(carrier)==="GROUNDED") return false;
+    if (airOnly && !human && airIntent(carrier) === "GROUNDED") return false;
     let target = 0,
       best = -Infinity;
     const dx = -attackSign * fieldX - ball.position.x;
@@ -6568,7 +6793,12 @@ async function start() {
       return true;
     }
     const curve = pendingCurve?.actor === carrier ? pendingCurve.strike : null;
-    if (airBalls) airLooseAttempt={finish:airIntent(carrier),scorer:carrier,direction:-attackSign};
+    if (airBalls)
+      airLooseAttempt = {
+        finish: airIntent(carrier),
+        scorer: carrier,
+        direction: -attackSign,
+      };
     if (curve) pendingCurve = null;
     flightCurve = null;
     curveRate = 0;
@@ -6578,7 +6808,8 @@ async function start() {
     shotMultiplier = blast
       ? blastMultiplier
       : 1 + T.MathUtils.clamp(range / 15, 0.28, 0.85);
-    if (airBalls && !blast && airShotPower.has(carrier)) shotMultiplier=1+airShotPower.get(carrier)!;
+    if (airBalls && !blast && airShotPower.has(carrier))
+      shotMultiplier = 1 + airShotPower.get(carrier)!;
     airShotPower.delete(carrier);
     audio.kick(shotMultiplier - 1);
     if (
@@ -6625,24 +6856,35 @@ async function start() {
         : target,
       blast
         ? 0
-        : (mysteryOn("shootOnSight") ? .82 : 1) * difficulty().shootingError /
-            trainingFactor(carrier.displayName, "Shooting", matchOpponent.name) / (airBalls ? airAccuracy(airIntent(carrier)) : 1),
+        : ((house
+            ? shotProfile(carrier, -attackSign).error
+            : (mysteryOn("shootOnSight") ? 0.82 : 1) /
+              (airBalls ? airAccuracy(airIntent(carrier)) : 1)) *
+            difficulty().shootingError) /
+            trainingFactor(carrier.displayName, "Shooting", matchOpponent.name),
       rules.goal.halfWidth,
       undefined,
       (longRange &&
         longRangeEligible(ball.position.x, ball.position.z, -attackSign)) ||
         mysteryOn("shootOnSight"),
-      mysteryOn("theWall") ? .72 : 1,
+      house?.keeperFactor ?? (mysteryOn("theWall") ? 0.72 : 1),
     );
     shot.points = goalValue(
-      mysteryOn("doublePoints") ? "doublePoints" : longRange ? "longRange" : rules.mode,
+      mysteryOn("doublePoints")
+        ? "doublePoints"
+        : longRange
+          ? "longRange"
+          : rules.mode,
       ball.position.x,
       ball.position.z,
       -attackSign,
     );
     if (mysteryOn("doublePoints")) shot.points = 2;
     shot.origin = { x: ball.position.x, z: ball.position.z };
-    if (airBalls) { shot.airFinish=airIntent(carrier); airIntents.delete(carrier); }
+    if (airBalls) {
+      shot.airFinish = airIntent(carrier);
+      airIntents.delete(carrier);
+    }
     if (curve) applyCurve(curve, -attackSign);
     if (blast) {
       shot.duration = T.MathUtils.clamp(shot.duration * 0.46, 0.17, 0.38);
@@ -6661,14 +6903,31 @@ async function start() {
           longRangeBalance.maxShotSpeed,
         shot.duration / longRangeBalance.velocity,
       );
-    if (slippery || mysteryOn("heavyBall"))
+    if (house || slippery || mysteryOn("heavyBall"))
       shot.duration = Math.max(
         0.08,
         Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
         shot.duration / physics.ballSpeed,
       );
-    if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
-    if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED")>1) shot.duration /= airBallsProfile.shotSpeed;
+    if (house) {
+      const tuning = houseShotProfile(
+        house.config,
+        longRange && shot.points === 2,
+        airBalls ? airAccuracy(shot.airFinish ?? "GROUNDED") : 1,
+      );
+      shot.duration /=
+        tuning.speed /
+        (longRange && shot.points === 2 ? longRangeBalance.velocity : 1);
+      shot.duration = Math.max(
+        0.08,
+        shot.duration,
+        Math.hypot(shot.targetX - shotStart.x, shot.targetZ - shotStart.z) / 45,
+      );
+    } else {
+      if (mysteryOn("shootOnSight")) shot.duration /= 1.15;
+      if (airBalls && airAccuracy(shot.airFinish ?? "GROUNDED") > 1)
+        shot.duration /= airBallsProfile.shotSpeed;
+    }
     if (blast) shot.duration /= burnShotVelocityScale;
     arc = mysteryKickArc(shotMultiplier, blast ? shot.duration : Infinity);
     carrier.face = facing(shot.targetX - from.x, shot.targetZ - from.z);
@@ -6863,14 +7122,16 @@ async function start() {
       start,
       end,
       age: 0,
-      duration: start.distanceTo(end) / 7.5 * (airBalls ? airBallsProfile.hangTime : 1),
-      loft: airBalls && -attackSign*end.x>0 ? 1.8 : 0,
+      duration:
+        (start.distanceTo(end) / 7.5) *
+        (airBalls ? airBallsProfile.hangTime : 1),
+      loft: airBalls && -attackSign * end.x > 0 ? 1.8 : 0,
     };
     carrier.face = facing(end.x - from.x, end.z - from.z);
     blueCarrier = -1;
   }
   function winBack(index: number, reason: string) {
-    if (airBalls) airLooseAttempt=null;
+    if (airBalls) airLooseAttempt = null;
     if (
       (reason === "TACKLE WON" || reason === "SPRINT STRIP") &&
       blueCarrier >= 0
@@ -7169,20 +7430,41 @@ async function start() {
   }
   function couchInput(s: Seat, index: number, down: boolean) {
     const source = "seat" + s.number + "-" + index;
-    if (airBalls && down && [0,2,3].includes(index)) airSeatShots.delete(s.number);
-    if (airBalls && index===1 && !paused && !celebrating && phase==="play") {
-      const buffered=airSeatShots.get(s.number);
+    if (airBalls && down && [0, 2, 3].includes(index))
+      airSeatShots.delete(s.number);
+    if (
+      airBalls &&
+      index === 1 &&
+      !paused &&
+      !celebrating &&
+      phase === "play"
+    ) {
+      const buffered = airSeatShots.get(s.number);
       if (!down && buffered) {
-        buffered.power=heldPower(buffered.start);
-        buffered.expires=performance.now()+airBallsProfile.inputBufferMs;
+        buffered.power = heldPower(buffered.start);
+        buffered.expires = performance.now() + airBallsProfile.inputBufferMs;
         return;
       }
-      if (down && !held && blueCarrier<0 && (inFlight || bluePass?.loft || keeperRestart || airWasAloft)) {
-        const g=new CurveGesture(), actor=teamActors(s)[s.actor];
-        if(actor) {
-          const [dx,dz]=dirs[actor.face], [x,z]=seatAim(s);
-          g.reset(Math.atan2(dz,dx)); g.sample(x,z,performance.now());
-          airSeatShots.set(s.number,{side:s.side,start:performance.now(),expires:Infinity,power:.5,gesture:g});
+      if (
+        down &&
+        !held &&
+        blueCarrier < 0 &&
+        (inFlight || bluePass?.loft || keeperRestart || airWasAloft)
+      ) {
+        const g = new CurveGesture(),
+          actor = teamActors(s)[s.actor];
+        if (actor) {
+          const [dx, dz] = dirs[actor.face],
+            [x, z] = seatAim(s);
+          g.reset(Math.atan2(dz, dx));
+          g.sample(x, z, performance.now());
+          airSeatShots.set(s.number, {
+            side: s.side,
+            start: performance.now(),
+            expires: Infinity,
+            power: 0.5,
+            gesture: g,
+          });
           return;
         }
       }
@@ -7456,7 +7738,7 @@ async function start() {
         physics.ballSpeed;
       turfDeceleration =
         4 *
-        (slippery
+        (house || slippery
           ? physics.rollingResistance
           : (matchSurface?.friction() ?? 1));
       passDuration = launchSpeed / turfDeceleration;
@@ -7485,7 +7767,9 @@ async function start() {
           fieldZ - 0.5,
         );
       }
-      passDuration = Math.max(0.55, passDuration * (1.35 + 0.15 * boxApproach)) * (airBalls ? airBallsProfile.hangTime : 1);
+      passDuration =
+        Math.max(0.55, passDuration * (1.35 + 0.15 * boxApproach)) *
+        (airBalls ? airBallsProfile.hangTime : 1);
     }
     if (kind !== "through")
       passDuration /= trainingFactor(sender.displayName, "Passing");
@@ -7597,16 +7881,21 @@ async function start() {
         !ticket,
         standalonePractice,
         weatherTest ? matchSurface : undefined,
-        street
-          ? `${rules.teamSize}V${rules.teamSize} · ${rules.winCondition === "target" ? "First to 5" : (half === 1 ? "First" : "Second") + " Half"}`
-          : firstToFive
-            ? `FIRST TO ${rules.targetScore} · NO TIME LIMIT`
-            : beatTheClock
-              ? "BEAT THE CLOCK"
-              : airBalls ? "AIR BALLS" : mystery
-                ? "MYSTERY MATCH"
-              : undefined,
+        house
+          ? "HOUSE RULES"
+          : street
+            ? `${rules.teamSize}V${rules.teamSize} · ${rules.winCondition === "target" ? "First to 5" : (half === 1 ? "First" : "Second") + " Half"}`
+            : firstToFive
+              ? `FIRST TO ${rules.targetScore} · NO TIME LIMIT`
+              : beatTheClock
+                ? "BEAT THE CLOCK"
+                : airBalls
+                  ? "AIR BALLS"
+                  : mystery
+                    ? "MYSTERY MATCH"
+                    : undefined,
         beatTheClock ? beatClockText(beatRemaining) : undefined,
+        house ? houseSummary(house.config) : undefined,
       );
       if (standalonePractice) {
         if (choice === "quit") endWarmup();
@@ -8072,14 +8361,6 @@ async function start() {
         for (const { mesh, sprite } of contactShadows) {
           mesh.visible = sprite.visible;
           mesh.position.set(sprite.position.x, 0.024, sprite.position.z);
-        }
-        for (const { actor, mesh } of infernoAuras) {
-          mesh.visible = inferno && actor.sprite.visible && !actor.penalty;
-          mesh.position.set(
-            actor.sprite.position.x,
-            0.04,
-            actor.sprite.position.z,
-          );
         }
         shadow.position.set(ball.position.x, 0.03, ball.position.z);
         updateSpin();
@@ -9269,11 +9550,12 @@ async function start() {
       beatTheClock
         ? celebrationSeconds > 3
         : goalAge >
-      (costumeReveal
-        ? 0.14
-        : firstToFive && Math.max(homeScore, awayScore) >= rules.targetScore - 1
-          ? 2.2
-          : 0.85)
+          (costumeReveal
+            ? 0.14
+            : firstToFive &&
+                Math.max(homeScore, awayScore) >= rules.targetScore - 1
+              ? 2.2
+              : 0.85)
     )
       goalBanner.hidden = true;
   }
@@ -9323,7 +9605,7 @@ async function start() {
       if (player.age >= 0 || decisionIn > 0) return;
       decisionIn = 0.85 + Math.random() * 0.9;
       const range = Math.hypot(fieldX - pos.x * attackSign, pos.z);
-      if (!airBalls && phase === "play" && range < 12) {
+      if (!airOnly && phase === "play" && range < 12) {
         shotMultiplier = 1.7 + Math.random() * 0.3;
         kick();
         return;
@@ -9354,7 +9636,12 @@ async function start() {
             autoZ = dz / (dist || 1);
           }
         }
-        pass(1.65, (airBalls && range<23) || (Math.abs(pos.z) > 7 && range < 17) ? "cross" : "pass");
+        pass(
+          1.65,
+          (airBalls && range < 23) || (Math.abs(pos.z) > 7 && range < 17)
+            ? "cross"
+            : "pass",
+        );
       }
     } else {
       if (canSwitch() && decisionIn <= 0) {
@@ -9388,7 +9675,7 @@ async function start() {
             const face = portrait
               ? `<img src="${portrait}" alt="">`
               : `<span class="ft-rival" style="background-image:url('${rivalSprites(club === 0 ? home : matchOpponent, g.player)?.idle ?? blueIdle}')"></span>`;
-            return `<li>${face}<b>${g.player}</b> ${g.minute}′${longRange || mystery ? ` · +${goalValues.get(g) ?? 1}` : ""}</li>`;
+            return `<li>${face}<b>${g.player}</b> ${g.minute}′${longRange || mystery || house ? ` · +${goalValues.get(g) ?? 1}` : ""}</li>`;
           })
           .join("");
         return (
@@ -9422,8 +9709,14 @@ async function start() {
       (street
         ? ""
         : statRow("Saves", [
-            onTarget[1] - careerGoals.filter((g) => g.club === 0).length,
-            onTarget[0] - careerGoals.filter((g) => g.club === 1).length,
+            Math.max(
+              0,
+              onTarget[1] - careerGoals.filter((g) => g.club === 1).length,
+            ),
+            Math.max(
+              0,
+              onTarget[0] - careerGoals.filter((g) => g.club === 0).length,
+            ),
           ])) +
       statRow("Woodwork", woodwork) +
       statRow("Passes completed", facts.passes) +
@@ -9510,15 +9803,19 @@ async function start() {
     summary.querySelector("h2")!.outerHTML =
       '<div class="ft-card">' +
       matchCard(
-        pens
-          ? "FINAL · " + pens.join("–") + " PENS"
-          : firstToFive
-            ? `FIRST TO ${rules.targetScore}`
-            : beatTheClock
-              ? "BEAT THE CLOCK"
-              : airBalls ? "AIR BALLS" : mystery
-                ? "MYSTERY MATCH"
-              : "FINAL",
+        house
+          ? "HOUSE RULES · FINAL"
+          : pens
+            ? "FINAL · " + pens.join("–") + " PENS"
+            : firstToFive
+              ? `FIRST TO ${rules.targetScore}`
+              : beatTheClock
+                ? "BEAT THE CLOCK"
+                : airBalls
+                  ? "AIR BALLS"
+                  : mystery
+                    ? "MYSTERY MATCH"
+                    : "FINAL",
       ) +
       "</div>";
     let personal: HTMLElement | null = null;
@@ -9528,14 +9825,37 @@ async function start() {
       personal.className = "ft-player";
       personal.innerHTML = `<span class="ft-sprite" style="background-image:url('${burnerPortraits[name]}')"></span><div><small>Player-manager</small><h3>${name}</h3><div>Goals ${goals} · Assists ${facts.assists} · Completed passes ${facts.personalPasses}</div><b class="ft-xp"></b><progress max="100" aria-label="Progress to next level"></progress></div>`;
       summary.querySelector("p")!.replaceWith(personal);
+    } else if (house) {
+      summary.querySelector("p")!.textContent = houseSummary(house.config).join(
+        " · ",
+      );
+      saveHouseResult(house.config, {
+        score: [homeScore, awayScore],
+        goals: careerGoals,
+        elapsed: houseElapsed,
+        teams: [home.name, matchOpponent.name],
+      });
     } else if (street) {
       summary.querySelector("p")!.textContent =
         `STREET · ${rules.teamSize}V${rules.teamSize} · ${homeScore === awayScore ? "DRAW" : (homeScore > awayScore ? home.name : matchOpponent.name) + " WINS"} · ${careerGoals.map((g) => g.player + (g.assist ? " (assist " + g.assist + ")" : "")).join(" · ")}`;
     } else if (airBalls) {
-      summary.querySelector("p")!.textContent=`AIR BALLS · ${invalidAirGoals} grounded goals disallowed`;
+      summary.querySelector("p")!.textContent =
+        `AIR BALLS · ${invalidAirGoals} grounded goals disallowed`;
     } else if (mystery) {
       summary.querySelector("p")!.textContent =
-        `MYSTERY MATCH · ${mystery.history.length} modifiers activated (active gameplay time): ${mystery.history.map(entry => `${Math.floor(entry.at/60).toString().padStart(2,"0")}:${Math.floor(entry.at%60).toString().padStart(2,"0")} ${mysteryModifiers.find(mod=>mod.id===entry.id)?.name}`).join(" · ")}`;
+        `MYSTERY MATCH · ${mystery.history.length} modifiers activated (active gameplay time): ${mystery.history
+          .map(
+            (entry) =>
+              `${Math.floor(entry.at / 60)
+                .toString()
+                .padStart(2, "0")}:${Math.floor(entry.at % 60)
+                .toString()
+                .padStart(
+                  2,
+                  "0",
+                )} ${mysteryModifiers.find((mod) => mod.id === entry.id)?.name}`,
+          )
+          .join(" · ")}`;
     } else if (firstToFive) {
       const seconds = Math.floor(matchSeconds);
       summary.querySelector("p")!.textContent =
@@ -9600,7 +9920,9 @@ async function start() {
       inferno ||
       survival ||
       beatTheClock ||
-      (airBalls || !!mystery)
+      airBalls ||
+      !!mystery ||
+      !!house
     ) {
       proceed.innerHTML =
         hint("Esc", "B") +
@@ -9628,6 +9950,39 @@ async function start() {
         void finish();
       };
       proceed.before(rematch);
+      if (house) {
+        const save = document.createElement("button");
+        save.textContent = "Save Rules";
+        save.onclick = () => {
+          try {
+            saveHousePreset(house.config);
+            save.textContent = "Rules saved";
+          } catch {
+            save.textContent = "Unable to save";
+          }
+        };
+        const edit = document.createElement("button");
+        edit.textContent = "Edit Rules";
+        edit.onclick = () => {
+          history.replaceState(
+            {
+              ...history.state,
+              houseEdit: { config: house.config, court: rules.court, fixture },
+              kickoffMenu: true,
+              arcadeMenu: true,
+            },
+            "",
+          );
+          void finish();
+        };
+        const menu = document.createElement("button");
+        menu.textContent = "Main Menu";
+        menu.onclick = () => {
+          history.replaceState({ ...history.state, houseMainMenu: true }, "");
+          void finish();
+        };
+        proceed.before(save, edit, menu);
+      }
     }
     async function finish() {
       if (
@@ -9638,12 +9993,17 @@ async function start() {
         inferno ||
         survival ||
         beatTheClock ||
-        (airBalls || !!mystery)
+        airBalls ||
+        !!mystery ||
+        !!house
       )
         history.replaceState(
           {
             ...history.state,
-            kickoffMenu: !gulchDebug || !!history.state?.streetRematch,
+            kickoffMenu: history.state?.houseMainMenu
+              ? false
+              : !gulchDebug || !!history.state?.streetRematch,
+            houseMainMenu: null,
             keeperDebug: gulchDebug && !history.state?.streetRematch,
             arcadeMenu: true,
           },
@@ -9781,7 +10141,9 @@ async function start() {
           inferno ||
           survival ||
           beatTheClock ||
-          (airBalls || !!mystery)) &&
+          airBalls ||
+          !!mystery ||
+          !!house) &&
         !watching &&
         ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.code)
       ) {
@@ -9800,7 +10162,9 @@ async function start() {
           inferno ||
           survival ||
           beatTheClock ||
-          (airBalls || !!mystery)) &&
+          airBalls ||
+          !!mystery ||
+          !!house) &&
         !watching
       ) {
         (document.activeElement as HTMLButtonElement)?.click();
@@ -9844,7 +10208,9 @@ async function start() {
           inferno ||
           survival ||
           beatTheClock ||
-          (airBalls || !!mystery)) &&
+          airBalls ||
+          !!mystery ||
+          !!house) &&
         !watching &&
         direction &&
         direction !== resultDirection
@@ -9860,7 +10226,9 @@ async function start() {
           inferno ||
           survival ||
           beatTheClock ||
-          (airBalls || !!mystery)) &&
+          airBalls ||
+          !!mystery ||
+          !!house) &&
         !watching &&
         down &&
         !held
@@ -9980,24 +10348,32 @@ async function start() {
       ball,
       venue: venueName,
       time: settings.time,
-      kind: airBalls ? "AIR BALLS · 7V7" : mystery
-        ? "MYSTERY MATCH · 7V7"
-        : street
-        ? `STREET · ${rules.teamSize}V${rules.teamSize}${rules.winCondition === "target" ? " · FIRST TO FIVE" : ""}`
-        : firstToFive
-          ? `FIRST TO ${rules.targetScore} · 7V7`
-          : snowpocalypse
-            ? "SNOWPOCALYPSE · 7V7"
-            : inferno
-              ? "INFERNO · 7V7"
-              : survival
-                ? "SURVIVAL · 7V7"
-                : beatTheClock
-                  ? "BEAT THE CLOCK · 7V7"
-                  : "Friendly",
-      modeGuide: airBalls ? "HEADERS. VOLLEYS. SET PIECES. · GROUNDED GOALS DON’T COUNT. · KEEP IT UP!" : mystery
-        ? "THE RULES CHANGE EVERY 60 SECONDS · EXPECT THE UNEXPECTED"
-        : undefined,
+      kind: house
+        ? "HOUSE RULES"
+        : airBalls
+          ? "AIR BALLS · 7V7"
+          : mystery
+            ? "MYSTERY MATCH · 7V7"
+            : street
+              ? `STREET · ${rules.teamSize}V${rules.teamSize}${rules.winCondition === "target" ? " · FIRST TO FIVE" : ""}`
+              : firstToFive
+                ? `FIRST TO ${rules.targetScore} · 7V7`
+                : snowpocalypse
+                  ? "SNOWPOCALYPSE · 7V7"
+                  : inferno
+                    ? "INFERNO · 7V7"
+                    : survival
+                      ? "SURVIVAL · 7V7"
+                      : beatTheClock
+                        ? "BEAT THE CLOCK · 7V7"
+                        : "Friendly",
+      modeGuide: house
+        ? houseSummary(house.config).slice(0, 7).join(" · ")
+        : airBalls
+          ? "HEADERS. VOLLEYS. SET PIECES. · GROUNDED GOALS DON’T COUNT. · KEEP IT UP!"
+          : mystery
+            ? "THE RULES CHANGE EVERY 60 SECONDS · EXPECT THE UNEXPECTED"
+            : undefined,
       ...careerDetails,
       exitPreview: introTest
         ? () => {
@@ -10028,7 +10404,6 @@ async function start() {
         landingRing,
         shadow,
         ...contactShadows.map((s) => s.mesh),
-        ...infernoAuras.map((a) => a.mesh),
       ],
     });
   }
@@ -10042,8 +10417,20 @@ async function start() {
       dt =
         Math.min(0.04, elapsed) *
         (blastShooter ? 0 : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
-        (mysteryOn("turbo") ? 1.5 : mysteryOn("slowMotion") ? .65 : 1);
+        (house?.config.speed ??
+          (mysteryOn("turbo") ? 1.5 : mysteryOn("slowMotion") ? 0.65 : 1));
     last = now;
+    if (
+      house &&
+      !intro &&
+      !paused &&
+      !document.hidden &&
+      !squadOpen &&
+      !fullTimeScreen &&
+      phase === "play" &&
+      !celebrating
+    )
+      houseElapsed += Math.min(0.1, elapsed);
     if (intro) {
       const step = document.hidden ? 0 : Math.min(0.2, elapsed);
       if (!intro.paused) updateWeather(step);
@@ -10117,40 +10504,71 @@ async function start() {
       updateScore();
       if (beatRemaining === 0 && !shot && !inFlight) finishBeatChallenge();
     }
-    if (airBalls && !paused && phase==="play" && !celebrating) {
-      if(airInvalidUntil && now>=airInvalidUntil) {goalBanner.hidden=true;airInvalidUntil=0;}
-      for (const [number,buffer] of airSeatShots) {
-        if(now>buffer.expires || held || blueCarrier>=0 || outBall || shot) airSeatShots.delete(number);
+    if (airBalls && !paused && phase === "play" && !celebrating) {
+      if (airInvalidUntil && now >= airInvalidUntil) {
+        goalBanner.hidden = true;
+        airInvalidUntil = 0;
+      }
+      for (const [number, buffer] of airSeatShots) {
+        if (now > buffer.expires || held || blueCarrier >= 0 || outBall || shot)
+          airSeatShots.delete(number);
         else {
-          const seat=seats?.find(s=>s.number===number);
-          if(seat) {const [x,z]=seatAim(seat); buffer.gesture.sample(x,z,now);}
+          const seat = seats?.find((s) => s.number === number);
+          if (seat) {
+            const [x, z] = seatAim(seat);
+            buffer.gesture.sample(x, z, now);
+          }
         }
       }
-      if (queued?.expires && now>queued.expires) { queued=null; showPower(0); }
-      if (!held && blueCarrier<0 && !shot && ball.position.y>.8) airWasAloft=true;
-      if (airWasAloft && ball.position.y<=restingHeight+.05) { airBounceAt=now; airWasAloft=false; }
-      if (held || blueCarrier>=0) { airWasAloft=false; airBounceAt=-Infinity; }
+      if (queued?.expires && now > queued.expires) {
+        queued = null;
+        showPower(0);
+      }
+      if (!held && blueCarrier < 0 && !shot && ball.position.y > 0.8)
+        airWasAloft = true;
+      if (airWasAloft && ball.position.y <= restingHeight + 0.05) {
+        airBounceAt = now;
+        airWasAloft = false;
+      }
+      if (held || blueCarrier >= 0) {
+        airWasAloft = false;
+        airBounceAt = -Infinity;
+      }
     }
     if (mystery) {
       if (mysteryRevealUntil === Infinity) mysteryRevealUntil = now + 3000;
       if (now >= mysteryRevealUntil) mysteryReveal.hidden = true;
-      if (!paused && !document.hidden && !squadOpen && phase === "play" &&
-          !celebrating && replay.cut < 0 && !outBall && !keeperRestart &&
-          keeperGather <= 0 && resultTime <= 0 && !freeKick) {
+      if (
+        !paused &&
+        !document.hidden &&
+        !squadOpen &&
+        phase === "play" &&
+        !celebrating &&
+        replay.cut < 0 &&
+        !outBall &&
+        !keeperRestart &&
+        keeperGather <= 0 &&
+        resultTime <= 0 &&
+        !freeKick
+      ) {
         const old = mystery.current.id;
         const oldBag = [...mystery.bag];
         if (advanceMystery(mystery, elapsed)) {
           if (shot || inFlight || bluePass) {
             mystery.remaining = 0;
             mystery.history.pop();
-            mystery.current = mysteryModifiers.find(mod=>mod.id===old)!;
+            mystery.current = mysteryModifiers.find((mod) => mod.id === old)!;
             mystery.bag = oldBag;
           } else applyMysteryModifier(old);
         }
       }
-      mysteryHud.querySelector(".mystery-next")!.textContent = `NEXT ${mysteryTime(mystery.remaining)}`;
-      mysteryHud.style.setProperty("--mystery-progress", String(Math.max(0,mystery.remaining/mysteryInterval)));
-      mysteryHud.toggleAttribute("data-warning",mystery.remaining<=5);
+      mysteryHud.querySelector(".mystery-next")!.textContent =
+        `NEXT ${mysteryTime(mystery.remaining)}`;
+      mysteryHud.style.setProperty(
+        "--mystery-progress",
+        String(Math.max(0, mystery.remaining / mysteryInterval)),
+      );
+      mysteryHud.toggleAttribute("data-warning", mystery.remaining <= 5);
     }
     if (!paused && !squadOpen && !document.hidden) {
       impactTime = Math.max(0, impactTime - elapsed);
@@ -11321,7 +11739,10 @@ async function start() {
             .copy(players[ballPlayer].sprite.position)
             .sub(receiverLaunch);
           assistOffset.y = 0;
-          assistOffset.clampLength(0, airBalls && passKind==="cross" ? 1.5 : 1);
+          assistOffset.clampLength(
+            0,
+            airBalls && passKind === "cross" ? 1.5 : 1,
+          );
           ball.position
             .lerpVectors(passStart, passTarget, fraction)
             .addScaledVector(assistOffset, fraction * fraction);
@@ -11353,7 +11774,9 @@ async function start() {
               ball.position,
               players,
               lastSender,
-              wantsFinish ? 1.15 * (airBalls ? airBallsProfile.contact : 1) : 0.78,
+              wantsFinish
+                ? 1.15 * (airBalls ? airBallsProfile.contact : 1)
+                : 0.78,
               wantsFinish ? 2 * (airBalls ? airBallsProfile.contact : 1) : 0.84,
             );
         let passContact: "bounce" | "out" | "live" = "live";
@@ -11403,7 +11826,7 @@ async function start() {
           perfectPass = false;
           if (crossingDrill && training.drill !== 4)
             finishRep(0, "Missed receiver");
-          if (airBalls && passKind==="cross") airBounceAt=performance.now();
+          if (airBalls && passKind === "cross") airBounceAt = performance.now();
           inFlight = false;
           rollingPass = true;
           clearanceLoose = true;
@@ -11559,20 +11982,41 @@ async function start() {
             blueWins(blocker, "BLOCKED");
           } else winBack(blocker, "BLOCKED");
         } else if (t === 1 || curveContact) {
-          if (airBalls && !crossingDrill && shot.result==="Goal" && !airGoalEligible(shot.airFinish ?? "GROUNDED")) {
+          if (
+            airOnly &&
+            !crossingDrill &&
+            shot.result === "Goal" &&
+            !airGoalEligible(shot.airFinish ?? "GROUNDED")
+          ) {
             invalidAirGoals++;
-            const end=shotDirection, side=Math.sign(ball.position.z)||1;
-            shot=null; goalEvent=null; blastFlying=false; held=inFlight=false;
-            blueCarrier=-1; vx=vz=reboundVY=0; resultTime=0;
-            cancelCharge(); lastDelivery=null;
-            const start=new T.Vector3(end*(fieldX-1.5),restingHeight,side*1.5);
-            if(end===attackSign) startBlueBuild(start,true);
-            else keeperRestart={age:0,start,end:new T.Vector3(-end*4,restingHeight,side*3)};
-            el("shotResult").textContent="NO GOAL! · AERIAL FINISHES ONLY!";
-            noticeTime=2;
-            goalBanner.textContent="NO GOAL! · KEEP IT UP!";
-            goalBanner.hidden=false;
-            airInvalidUntil=now+1800;
+            const end = shotDirection,
+              side = Math.sign(ball.position.z) || 1;
+            shot = null;
+            goalEvent = null;
+            blastFlying = false;
+            held = inFlight = false;
+            blueCarrier = -1;
+            vx = vz = reboundVY = 0;
+            resultTime = 0;
+            cancelCharge();
+            lastDelivery = null;
+            const start = new T.Vector3(
+              end * (fieldX - 1.5),
+              restingHeight,
+              side * 1.5,
+            );
+            if (end === attackSign) startBlueBuild(start, true);
+            else
+              keeperRestart = {
+                age: 0,
+                start,
+                end: new T.Vector3(-end * 4, restingHeight, side * 3),
+              };
+            el("shotResult").textContent = "NO GOAL! · AERIAL FINISHES ONLY!";
+            noticeTime = 2;
+            goalBanner.textContent = "NO GOAL! · KEEP IT UP!";
+            goalBanner.hidden = false;
+            airInvalidUntil = now + 1800;
             requestAnimationFrame(tick);
             return;
           }
@@ -11635,7 +12079,7 @@ async function start() {
                     matchMinute() +
                     "′ · " +
                     (scorer?.displayName ?? "Team") +
-                    ((longRange || mystery) && shot.points === 2
+                    ((longRange || mystery || house) && shot.points === 2
                       ? " · +2 GOAL"
                       : " · Goal"),
                 };
@@ -11674,103 +12118,107 @@ async function start() {
               );
             } else if (shot.result === "Goal") {
               cancelCharge();
-                if (
-                  ticket &&
-                  shotDirection === attackSign &&
+              if (
+                ticket &&
+                shotDirection === attackSign &&
+                lastDelivery &&
+                lastDelivery.receiver === scorer?.displayName &&
+                lastDelivery.sender === ticket.career.player
+              )
+                facts.assists++;
+              const goalRecord = {
+                assist:
+                  (street || shotDirection === attackSign) &&
                   lastDelivery &&
-                  lastDelivery.receiver === scorer?.displayName &&
-                  lastDelivery.sender === ticket.career.player
-                )
-                  facts.assists++;
-                const goalRecord = {
-                  assist:
-                    (street || shotDirection === attackSign) &&
-                    lastDelivery &&
-                    lastDelivery.receiver === scorer?.displayName
-                      ? lastDelivery.sender
-                      : undefined,
-                  minute: matchMinute(),
-                  club:
-                    shotDirection === attackSign
-                      ? 0
-                      : ticket
-                        ? opponent(ticket.career)
-                        : 1,
-                  player: scorer?.displayName ?? "Team goal",
-                };
-                careerGoals.push(goalRecord);
-                const points = longRange || mystery ? (shot.points ?? 1) : 1;
-                goalValues.set(goalRecord, points);
-                const beatScored =
-                  beatTheClock &&
-                  (shotDirection === attackSign ? -1 : 1) === beatTeam;
-                if (longRange && points === 2)
-                  twoPointGoals[shotDirection === attackSign ? 0 : 1]++;
-                queueSurvivalElimination(shotDirection === attackSign ? 0 : 1);
-                if (beatTheClock) {
-                  beatRemaining = adjustBeatClock(
-                    beatRemaining,
-                    shotDirection === attackSign ? -1 : 1,
-                    beatTeam!,
-                  );
-                  beatPendingEnd = beatRemaining === 0;
-                }
-                if (shotDirection === attackSign) {
-                  homeScore += points;
-                  tutorial?.record("goal");
-                } else awayScore += points;
-                if (tutorial && tutorial.chapter < 11) {
-                  // Lessons keep their cast and camera. Use the ordinary boundary/keeper
-                  // restart instead of the celebration -> replay -> full-team kickoff path.
-                  goalEvent = null;
-                  updateScore();
-                  ballOut(
-                    ((shot.targetX - shotStart.x) / shot.duration) * 0.15,
-                    0,
-                    ((shot.targetZ - shotStart.z) / shot.duration) * 0.15,
-                  );
-                  el("shotResult").textContent = "GOAL";
-                } else {
-                  audio.goalFire();
-                  scoringColor =
-                    goalColors[shotDirection === attackSign ? 0 : 1];
-                  fireEnd = shotDirection;
-                  showGoalFire(0);
-                  updateScore();
-                  endFollowUpRuns();
-                  celebrating = true;
-                  replay.goal = replay.time;
-                  goalBanner.textContent =
-                    firstToFive && targetReached(rules, homeScore, awayScore)
-                      ? "MATCH WINNER!"
+                  lastDelivery.receiver === scorer?.displayName
+                    ? lastDelivery.sender
+                    : undefined,
+                minute: matchMinute(),
+                club:
+                  shotDirection === attackSign
+                    ? 0
+                    : ticket
+                      ? opponent(ticket.career)
+                      : 1,
+                player: scorer?.displayName ?? "Team goal",
+              };
+              careerGoals.push(goalRecord);
+              const points =
+                longRange || mystery || house ? (shot.points ?? 1) : 1;
+              goalValues.set(goalRecord, points);
+              const beatScored =
+                beatTheClock &&
+                (shotDirection === attackSign ? -1 : 1) === beatTeam;
+              if (longRange && points === 2)
+                twoPointGoals[shotDirection === attackSign ? 0 : 1]++;
+              queueSurvivalElimination(shotDirection === attackSign ? 0 : 1);
+              if (beatTheClock) {
+                beatRemaining = adjustBeatClock(
+                  beatRemaining,
+                  shotDirection === attackSign ? -1 : 1,
+                  beatTeam!,
+                );
+                beatPendingEnd = beatRemaining === 0;
+              }
+              if (shotDirection === attackSign) {
+                homeScore += points;
+                tutorial?.record("goal");
+              } else awayScore += points;
+              if (tutorial && tutorial.chapter < 11) {
+                // Lessons keep their cast and camera. Use the ordinary boundary/keeper
+                // restart instead of the celebration -> replay -> full-team kickoff path.
+                goalEvent = null;
+                updateScore();
+                ballOut(
+                  ((shot.targetX - shotStart.x) / shot.duration) * 0.15,
+                  0,
+                  ((shot.targetZ - shotStart.z) / shot.duration) * 0.15,
+                );
+                el("shotResult").textContent = "GOAL";
+              } else {
+                audio.goalFire();
+                scoringColor = goalColors[shotDirection === attackSign ? 0 : 1];
+                fireEnd = shotDirection;
+                showGoalFire(0);
+                updateScore();
+                endFollowUpRuns();
+                celebrating = true;
+                replay.goal = replay.time;
+                goalBanner.textContent =
+                  firstToFive && targetReached(rules, homeScore, awayScore)
+                    ? "MATCH WINNER!"
+                    : firstToFive &&
+                        homeScore === rules.targetScore - 1 &&
+                        awayScore === rules.targetScore - 1
+                      ? "NEXT GOAL WINS!"
                       : firstToFive &&
-                          homeScore === rules.targetScore - 1 &&
-                          awayScore === rules.targetScore - 1
-                        ? "NEXT GOAL WINS!"
-                        : firstToFive &&
-                            Math.max(homeScore, awayScore) ===
-                              rules.targetScore - 1
-                          ? "MATCH POINT!"
-                          : (longRange || mystery) && points === 2
-                            ? "DOUBLE POINTS!"
-                            : flightCurve && flightCurve.style !== "Curler"
-                              ? "BURNING CURVE!"
-                              : "GOAL!";
-                  if (airBalls) goalBanner.textContent=shot.airFinish && shot.airFinish!=="GROUNDED" ? shot.airFinish+"!" : "GOAL!";
-                  goalBanner.classList.toggle("beat-clock-goal", beatTheClock);
-                  if (beatTheClock) {
-                    goalBanner.innerHTML = `<span class="beat-goal-title">GOAL!</span><span class="beat-time-change ${beatScored ? "positive" : "negative"}">${beatScored ? "+30 seconds!" : "-15 seconds!"}</span>`;
-                    audio.play(beatScored ? "burnReady" : "keeperSave", 0.65);
-                  }
-                  goalBanner.hidden = false;
-                  replayPanel.hidden = true;
-                  el("shotResult").textContent = "";
-                  netTravel = true;
-                  vx = (shot.targetX - shotStart.x) / shot.duration;
-                  vz = (shot.targetZ - shotStart.z) / shot.duration;
-                  showGoalCard();
-                  startGoalScene();
+                          Math.max(homeScore, awayScore) ===
+                            rules.targetScore - 1
+                        ? "MATCH POINT!"
+                        : (longRange || mystery || house) && points === 2
+                          ? "DOUBLE POINTS!"
+                          : flightCurve && flightCurve.style !== "Curler"
+                            ? "BURNING CURVE!"
+                            : "GOAL!";
+                if (airBalls)
+                  goalBanner.textContent =
+                    shot.airFinish && shot.airFinish !== "GROUNDED"
+                      ? shot.airFinish + "!"
+                      : "GOAL!";
+                goalBanner.classList.toggle("beat-clock-goal", beatTheClock);
+                if (beatTheClock) {
+                  goalBanner.innerHTML = `<span class="beat-goal-title">GOAL!</span><span class="beat-time-change ${beatScored ? "positive" : "negative"}">${beatScored ? "+30 seconds!" : "-15 seconds!"}</span>`;
+                  audio.play(beatScored ? "burnReady" : "keeperSave", 0.65);
                 }
+                goalBanner.hidden = false;
+                replayPanel.hidden = true;
+                el("shotResult").textContent = "";
+                netTravel = true;
+                vx = (shot.targetX - shotStart.x) / shot.duration;
+                vz = (shot.targetZ - shotStart.z) / shot.duration;
+                showGoalCard();
+                startGoalScene();
+              }
             } else {
               if (shot.result === "Save") audio.kick(0.13);
               else audio.play(shot.result === "Post" ? "post" : "bar", 0.48);
@@ -11789,8 +12237,16 @@ async function start() {
               reboundVY = shot.result === "Crossbar" ? -2 : 2;
               lastSender = -1;
             }
-            if (airBalls && shot && ["Save","Post","Crossbar"].includes(shot.result))
-              airLooseAttempt={finish:shot.airFinish ?? "GROUNDED",scorer:scorer ?? null,direction:shotDirection};
+            if (
+              airBalls &&
+              shot &&
+              ["Save", "Post", "Crossbar"].includes(shot.result)
+            )
+              airLooseAttempt = {
+                finish: shot.airFinish ?? "GROUNDED",
+                scorer: scorer ?? null,
+                direction: shotDirection,
+              };
             shot = null;
           }
         }
@@ -11858,23 +12314,38 @@ async function start() {
             bluePass.loft ? 8 : 5,
           );
           facts.passes[1]++;
-          const aerialDelivery=airBalls && !!bluePass.loft;
+          const aerialDelivery = airBalls && !!bluePass.loft;
           blueCarrier = bluePass.receiver;
           bluePass = null;
           blueDecisionTime = difficulty().reactionDelayMs / 1000;
-          if(aerialDelivery) {
-            const actor=opponents[blueCarrier];
-            airIntents.set(actor,{finish:"HALF-VOLLEY",until:performance.now()+airBallsProfile.halfVolleyMs});
-            const buffer=[...airSeatShots.entries()].find(([,b])=>b.side===1 && performance.now()<=b.expires);
-            if(buffer || !seats?.some(s=>s.side===1)) {
-              airIntents.set(actor,{finish:"HALF-VOLLEY",until:performance.now()+1500});
-              if(buffer) {
-                airShotPower.set(actor,buffer[1].expires===Infinity ? heldPower(buffer[1].start) : buffer[1].power);
-                const strike=buffer[1].gesture.finish(meters[1].value===100);
-                pendingCurve=strike ? {actor,strike} : null;
+          if (aerialDelivery) {
+            const actor = opponents[blueCarrier];
+            airIntents.set(actor, {
+              finish: "HALF-VOLLEY",
+              until: performance.now() + airBallsProfile.halfVolleyMs,
+            });
+            const buffer = [...airSeatShots.entries()].find(
+              ([, b]) => b.side === 1 && performance.now() <= b.expires,
+            );
+            if (buffer || !seats?.some((s) => s.side === 1)) {
+              airIntents.set(actor, {
+                finish: "HALF-VOLLEY",
+                until: performance.now() + 1500,
+              });
+              if (buffer) {
+                airShotPower.set(
+                  actor,
+                  buffer[1].expires === Infinity
+                    ? heldPower(buffer[1].start)
+                    : buffer[1].power,
+                );
+                const strike = buffer[1].gesture.finish(
+                  meters[1].value === 100,
+                );
+                pendingCurve = strike ? { actor, strike } : null;
                 airSeatShots.delete(buffer[0]);
               }
-              tryBlueShot(false,true);
+              tryBlueShot(false, true);
             }
           }
         }
@@ -11917,7 +12388,8 @@ async function start() {
       } else if (!held) {
         previousPassPosition.copy(ball.position);
         if (reboundVY !== 0 || ball.position.y > restingHeight) {
-          reboundVY -= (mysteryOn("moonBall") ? 6.8 : 17) * dt;
+          reboundVY -=
+            17 * (house?.gravity ?? (mysteryOn("moonBall") ? 0.4 : 1)) * dt;
           ball.position.y += reboundVY * dt;
           if (ball.position.y <= restingHeight) {
             ball.position.y = restingHeight;
@@ -11936,7 +12408,8 @@ async function start() {
         const onWetGround =
           matchSurface && ball.position.y <= restingHeight + 0.025;
         const friction =
-          (slippery || mysteryOn("heavyBall")) && ball.position.y <= restingHeight + 0.025
+          (house || slippery || mysteryOn("heavyBall")) &&
+          ball.position.y <= restingHeight + 0.025
             ? physics.rollingResistance
             : onWetGround
               ? matchSurface.friction()
@@ -12245,10 +12718,6 @@ async function start() {
         sprite.position.z + 0.12,
       );
       mesh.scale.setScalar(0.7);
-    }
-    for (const { actor, mesh } of infernoAuras) {
-      mesh.visible = inferno && actor.sprite.visible && !actor.penalty;
-      mesh.position.set(actor.sprite.position.x, 0.04, actor.sprite.position.z);
     }
     shadow.scale.setScalar(1.15 - 0.16 * (ball.position.y - restingHeight));
     shadow.position.set(ball.position.x, 0.03, ball.position.z);
