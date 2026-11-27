@@ -8,10 +8,13 @@
       <div class="ko-court"><i></i><b></b><em></em></div>
       <strong data-court-name aria-live="polite"></strong
       ><small>Painted concrete · Live colour preview</small>
+      <!-- Keep the palette beside its live preview, also when columns stack. -->
+      <section class="ko-palette" aria-label="Court colour">
+        <h2>COURT COLOUR</h2>
+        <div class="ko-swatches">{{courtSwatches}}</div>
+      </section>
     </div>
     <div class="ko-settings">
-      <h2>COURT COLOUR</h2>
-      <div class="ko-swatches">{{courtSwatches}}</div>
       <h2>MATCH RULES</h2>
       <div class="ko-options">
         <button data-rule="timed">Timed match</button>

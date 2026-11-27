@@ -373,8 +373,11 @@
         left: 50%;
         transform: translateX(-50%);
         white-space: nowrap;
-        padding: 5px 9px;
-        background: #142a24ed;
+        /* The shared legend owns the transparent action styling. */
+        width: max-content;
+        max-width: 90%;
+        padding: 0;
+        background: transparent;
         color: white;
       }
       #replayLabel {
@@ -1362,8 +1365,10 @@
       </div>
       <div id="shotResult" role="status"></div>
       <div hidden id="goalBanner" role="status">GOAL!</div>
-      <div hidden id="replayPanel">
-        <button id="skipReplay" type="button">Skip celebration</button>
+      <div hidden id="replayPanel" class="menu-legend controller-legend" aria-label="Goal replay controls">
+        <button id="skipReplay" type="button">
+          Skip Celebration
+        </button>
       </div>
       <div id="message">Loading pitch…</div>
     </main>

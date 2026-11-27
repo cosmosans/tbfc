@@ -7086,7 +7086,7 @@ async function start() {
   function setReplayHint() {
     replayPanel.hidden = false;
     const button = el("skipReplay");
-    const caption = replay.cut === 3 ? "End replay" : "Next angle";
+    const caption = replay.cut === 3 ? "End Replay" : "Next Angle";
     if (button.textContent?.endsWith(caption)) return;
     button.innerHTML = hint("J", "A") + " " + caption;
   }
@@ -8117,7 +8117,7 @@ async function start() {
     if (!paused && celebrating) {
       if (!document.hidden) celebrationSeconds += elapsed;
       if (!broadcast && !celebrationLab && celebrationSeconds >= 2 && replayPanel.hidden) {
-        el("skipReplay").innerHTML = hint("J", "A") + " Skip celebration";
+        el("skipReplay").innerHTML = hint("J", "A") + " Skip Celebration";
         replayPanel.hidden = false;
       }
       advanceGoalScene(dt, Math.min(elapsed, 0.1), inputPad);

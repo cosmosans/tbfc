@@ -290,6 +290,53 @@ for i in range(11):
     box('Distant Atlanta silhouette',(x,h/2,-34),(random.uniform(3,5),h,5),glass)
     if i in [4,7]:rod('Skyline spire',(x,h,-34),(x,h+4,-34),.15,steel)
 
+# Continuous warehouse blocks close the east/west horizon beyond the viaducts.
+# Tune these tuples as (depth across site, frontage, height); adjoining frontages
+# overlap slightly so low replay cameras never see sky through a building seam.
+# Keep the inner faces outside X=35: goals, boxcars and end cameras stay clear.
+warehouse_blocks = [(-35, 20, 16), (-17, 18, 21), (0, 17, 15),
+                    (16, 17, 19), (34, 21, 23)]
+warehouse_materials = [bricks[2], concrete, bricks[4], mortar, bricks[1]]
+for side, label in [(-1, 'WEST'), (1, 'EAST')]:
+    group('HORIZON_BUILDINGS_' + label)
+    for index, (z, frontage, height) in enumerate(warehouse_blocks):
+        # Offset the roofline on opposite ends without consuming the scene RNG.
+        height += 2 if side == 1 and index % 2 == 0 else 0
+        x = side * 42
+        face = side * 35.9
+        name = label + ' warehouse ' + str(index + 1)
+        box(name + ' masonry shell', (x, height/2-.18, z),
+            (12, height, frontage+.4), warehouse_materials[index])
+        box(name + ' stone plinth', (face, .65, z), (.32, 1.6, frontage+.5), concrete)
+        box(name + ' roof cap', (x, height-.12, z), (12.5, .35, frontage+.7), dark)
+        box(name + ' parapet', (face, height+.35, z), (.42, .8, frontage+.5), concrete)
+        # Recess-colored factory windows, divided by steel mullions and masonry piers.
+        for bay in np.arange(z-frontage/2+2, z+frontage/2-1, 3.5):
+            box(name + ' facade pier', (face-side*.18, height/2, bay-1.6),
+                (.38, height, .38), concrete)
+            for level in np.arange(5, height-1.5, 3.3):
+                box(name + ' window reveal', (face-side*.22, level, bay),
+                    (.13, 2.3, 2.55), dark)
+                box(name + ' window glass', (face-side*.3, level, bay),
+                    (.08, 1.95, 2.2), glass)
+                box(name + ' window mullion', (face-side*.36, level, bay),
+                    (.08, 2.1, .09), steel)
+                box(name + ' window transom', (face-side*.36, level, bay),
+                    (.08, .09, 2.25), steel)
+                box(name + ' window sill', (face-side*.4, level-1.15, bay),
+                    (.45, .17, 2.8), concrete)
+            box(name + ' loading door', (face-side*.25, 2, bay), (.14, 2.8, 2.5), steel)
+            for y in np.arange(.8, 3.4, .4):
+                box(name + ' shutter rib', (face-side*.34, y, bay), (.07, .055, 2.45), dark)
+        # Roof equipment gives the skyline a readable industrial silhouette.
+        box(name + ' rooftop plant', (x, height+.9, z+2), (3.3, 1.8, 4), steel)
+        box(name + ' plant cap', (x, height+1.85, z+2), (3.6, .16, 4.3), dark)
+        for dz in [-.8, .8]:
+            rod(name + ' exhaust', (x+side*2, height, z+dz-4),
+                (x+side*2, height+2.7, z+dz-4), .23, dark, 8)
+        rod(name + ' drainpipe', (face-side*.48, .3, z+frontage/2-.7),
+            (face-side*.48, height, z+frontage/2-.7), .09, dark)
+
 # Rail corridor lies wholly beyond the south touchline.
 group('RAILWAY_INFRASTRUCTURE')
 ballast=material('Rail ballast',(.235,.245,.23))

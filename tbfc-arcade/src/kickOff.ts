@@ -147,7 +147,7 @@ export function selectGameMode(initial: GameMode = "classic") {
         },
         {
           id: "street",
-          title: "STREET",
+          title: "STREET (BETA)",
           subtitle: "3V3 / 5V5 — NO KEEPERS",
           tag: "Off the wall action.",
           image: streetArt,

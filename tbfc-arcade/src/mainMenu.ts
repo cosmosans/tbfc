@@ -1,7 +1,7 @@
 import { audio } from "./matchAudio";
 import { reveal, padBadge } from "./screenUI";
 import type { MenuMusic } from "./menuMusic";
-import crest from "./art/ground/crest.png?url";
+import ArcadeLogo from "../../src/img/arcade-logo.png?url";
 import { loadingScreen } from "./loading";
 import { menuPad, menuDirection, padStatus } from "./menuPad";
 import careerClip from "./art/stadium-previews/grant-park-career.mp4?url";
@@ -23,7 +23,7 @@ export type Destination =
   | "burnLab"
   | "stadiumTest"
   | "gulchTest"
-  | { kind: "matchIntro"; venue: StadiumId; time: typeof introTimes[number] }
+  | { kind: "matchIntro"; venue: StadiumId; time: (typeof introTimes)[number] }
   | "weatherLab"
   | "keeperLab"
   | "curveLab"
@@ -52,15 +52,18 @@ export function mountMenuBackdrop(mode: "menu" | "career" = "menu") {
     playback();
     motion.addEventListener("change", playback);
     document.addEventListener("visibilitychange", playback);
-    return Object.assign(() => {
-      motion.removeEventListener("change", playback);
-      document.removeEventListener("visibilitychange", playback);
-      shot.pause();
-      shot.remove();
-      shot.removeAttribute("src");
-      shot.load();
-      style.remove();
-    }, { ready: Promise.resolve() });
+    return Object.assign(
+      () => {
+        motion.removeEventListener("change", playback);
+        document.removeEventListener("visibilitychange", playback);
+        shot.pause();
+        shot.remove();
+        shot.removeAttribute("src");
+        shot.load();
+        style.remove();
+      },
+      { ready: Promise.resolve() },
+    );
   }
   let feed: HTMLIFrameElement | undefined;
   let finishReady = () => {};
@@ -107,10 +110,14 @@ export function mainMenu(
   music: MenuMusic,
   showIntro = false,
   backdropReady: Promise<void> = Promise.resolve(),
-  initialMenu: "menu" | "debug" | Extract<Destination, { kind: "matchIntro" }> = "menu",
+  initialMenu:
+    | "menu"
+    | "debug"
+    | Extract<Destination, { kind: "matchIntro" }> = "menu",
 ): Promise<Destination> {
   const root = document.createElement("section");
   root.id = "main-menu";
+  root.tabIndex = -1; // The button-free title screen still receives keyboard input.
   root.setAttribute("aria-labelledby", "menu-title");
   const shell = document.createElement("div");
   shell.className = "menu-shell";
@@ -122,13 +129,23 @@ export function mainMenu(
   return new Promise((resolve) => {
     let frame = 0;
     let controllerStatus: HTMLElement | null = null;
-    let screen: "loading" | "intro" | "menu" | "settings" | "debug" | "introWorkshop" | "introTime" | "changeLog";
-    let introField: StadiumId = typeof initialMenu === "object" ? initialMenu.venue : "school";
+    let screen:
+      | "loading"
+      | "intro"
+      | "menu"
+      | "settings"
+      | "debug"
+      | "introWorkshop"
+      | "introTime"
+      | "changeLog";
+    let introField: StadiumId =
+      typeof initialMenu === "object" ? initialMenu.venue : "school";
     const openedAt = performance.now();
     const title =
       '<div class="menu-title"><img src="' +
-      crest +
-      '" alt=""><div><span style="letter-spacing: 4.1px">TURF BURNERS</span><h1 id="menu-title" style="letter-spacing: 0.03em">ARCADE</h1></div></div>';
+      ArcadeLogo +
+      '" alt="Turf Burners Arcade"></div>';
+
     function audioButton(
       action: "music" | "sound",
       label: string,
@@ -158,7 +175,7 @@ export function mainMenu(
       if (next === "intro")
         shell.innerHTML =
           title +
-          '<button class="menu-start" data-action="start">START</button>';
+          '<p class="menu-start-prompt">Press any button to continue</p>';
       if (next === "menu")
         shell.innerHTML =
           title +
@@ -167,9 +184,9 @@ export function mainMenu(
         shell.innerHTML =
           '<h1 id="menu-title">Debug</h1><nav aria-label="Debug"><button data-action="gulchTest">The Gulch · 3v3</button><button data-action="spriteViewer">Sprite Viewer</button><button data-action="celebrations">Goal Celebrations</button><button data-action="introWorkshop">Match Intros</button><button data-action="weatherLab">Weather Playground</button><button data-action="penalties">Penalty Shootout Test</button><button data-action="burnLab">On Fire Scrimmage</button><button data-action="stadiumTest">Stadium Test</button></nav>';
       if (next === "introWorkshop")
-        shell.innerHTML = `<h1 id="menu-title">Match Intros</h1><nav aria-label="Choose field">${grounds.map(g => `<button data-action="${g.id}">${g.name}</button>`).join("")}</nav>`;
+        shell.innerHTML = `<h1 id="menu-title">Match Intros</h1><nav aria-label="Choose field">${grounds.map((g) => `<button data-action="${g.id}">${g.name}</button>`).join("")}</nav>`;
       if (next === "introTime")
-        shell.innerHTML = `<h1 id="menu-title">${stadiumName(introField)} Intro</h1><nav aria-label="Choose time of day">${introTimes.map(t => `<button data-action="${t}">${t}</button>`).join("")}</nav>`;
+        shell.innerHTML = `<h1 id="menu-title">${stadiumName(introField)} Intro</h1><nav aria-label="Choose time of day">${introTimes.map((t) => `<button data-action="${t}">${t}</button>`).join("")}</nav>`;
       if (next === "changeLog") shell.innerHTML = changeLog;
       if (next === "settings")
         shell.innerHTML =
@@ -177,11 +194,15 @@ export function mainMenu(
           audioButton("music", "Music", music.musicEnabled) +
           audioButton("sound", "Sound effects", music.soundEnabled) +
           '<button data-action="changeLog">Change log</button>' +
-          '</nav>';
+          "</nav>";
       if (!["loading", "intro"].includes(next)) {
         const canBack = next !== "menu";
-        shell.insertAdjacentHTML("beforeend", `<div class="menu-legend controller-legend" aria-label="Menu controls">${canBack ? `<button data-action="back">${padBadge("B")} Back</button>` : ""}<span>${padBadge("LS")} ${next === "changeLog" ? "Scroll" : "Move"}</span>${next === "changeLog" ? "" : `<span>${padBadge("A")} Select</span>`}</div>`);
+        shell.insertAdjacentHTML(
+          "beforeend",
+          `<div class="menu-legend controller-legend" aria-label="Menu controls">${canBack ? `<button data-action="back">${padBadge("B")} Back</button>` : ""}<span>${padBadge("LS")} ${next === "changeLog" ? "Scroll" : "Move"}</span>${next === "changeLog" ? "" : `<span>${padBadge("A")} Select</span>`}</div>`,
+        );
       }
+      if (next === "intro") root.focus({ preventScroll: true });
       controllerStatus = shell.querySelector(".menu-controller");
       shell
         .querySelector<HTMLButtonElement>(
@@ -209,13 +230,21 @@ export function mainMenu(
       main.inert = false;
       resolve(destination);
     }
+    function continueFromIntro() {
+      music.start();
+      draw("menu");
+    }
     shell.onclick = (e) => {
+      if (screen === "intro") {
+        continueFromIntro();
+        return;
+      }
       const button = (e.target as HTMLElement).closest<HTMLButtonElement>(
         "button:enabled",
       );
       const action = button?.dataset.action;
       if (screen === "introWorkshop") {
-        const field = grounds.find(g => g.id === action);
+        const field = grounds.find((g) => g.id === action);
         if (field) {
           introField = field.id;
           draw("introTime");
@@ -223,17 +252,13 @@ export function mainMenu(
         }
       }
       if (screen === "introTime") {
-        const time = introTimes.find(t => t === action);
+        const time = introTimes.find((t) => t === action);
         if (time) {
           leave({ kind: "matchIntro", venue: introField, time });
           return;
         }
       }
       switch (button?.dataset.action) {
-        case "start":
-          music.start();
-          draw("menu");
-          break;
         case "career":
           leave("career");
           break;
@@ -300,7 +325,7 @@ export function mainMenu(
     }
     function move(step: number) {
       if (screen === "changeLog") {
-        root.scrollBy(0, step * root.clientHeight * .75);
+        root.scrollBy(0, step * root.clientHeight * 0.75);
         return;
       }
       const choices = Array.from(
@@ -317,6 +342,11 @@ export function mainMenu(
       }
     }
     root.onkeydown = (e) => {
+      if (screen === "intro") {
+        e.preventDefault();
+        if (!e.repeat) continueFromIntro();
+        return;
+      }
       if (e.repeat && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
         return;
@@ -325,7 +355,14 @@ export function mainMenu(
         e.preventDefault();
         move(e.key === "ArrowUp" ? -1 : 1);
       }
-      if (e.key === "Escape" && (screen === "settings" || screen === "debug" || screen === "introWorkshop" || screen === "introTime" || screen === "changeLog")) {
+      if (
+        e.key === "Escape" &&
+        (screen === "settings" ||
+          screen === "debug" ||
+          screen === "introWorkshop" ||
+          screen === "introTime" ||
+          screen === "changeLog")
+      ) {
         e.preventDefault();
         goBack();
       }
@@ -342,12 +379,25 @@ export function mainMenu(
     const confirm = (pad?: Gamepad) =>
       !!(pad?.buttons[0]?.pressed || pad?.buttons[9]?.pressed);
     const initial = menuPad();
+    let introButtonHeld = !!initial?.buttons.some(button => button.pressed);
     let held = screen! === "intro" ? false : confirm(initial),
       backHeld = !!initial?.buttons[1]?.pressed,
       direction = "";
     function poll() {
       const pad = menuPad(),
         dir = pad ? menuDirection(pad) : "";
+      // Consume the opening press so A/Start cannot also launch the focused menu item.
+      const anyButton = !!pad?.buttons.some(button => button.pressed);
+      const openingIntro = screen === "intro" && anyButton && !introButtonHeld;
+      introButtonHeld = anyButton;
+      if (openingIntro) {
+        held = confirm(pad);
+        backHeld = !!pad?.buttons[1]?.pressed;
+        direction = dir;
+        continueFromIntro();
+        frame = requestAnimationFrame(poll);
+        return;
+      }
       if (screen === "loading") {
         const dots = shell.querySelector(".menu-loading-dots");
         if (dots)
@@ -364,12 +414,20 @@ export function mainMenu(
       direction = dir;
       const down = confirm(pad),
         back = !!pad?.buttons[1]?.pressed;
-      if (back && !backHeld && (screen === "settings" || screen === "debug" || screen === "introWorkshop" || screen === "introTime" || screen === "changeLog"))
+      if (
+        back &&
+        !backHeld &&
+        (screen === "settings" ||
+          screen === "debug" ||
+          screen === "introWorkshop" ||
+          screen === "introTime" ||
+          screen === "changeLog")
+      )
         goBack();
       else if (down && !held)
         shell
           .querySelector<HTMLButtonElement>(
-            screen === "intro" ? ".menu-start" : "button:focus",
+            "button:focus",
           )
           ?.click();
       held = down;

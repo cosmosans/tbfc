@@ -88,3 +88,11 @@ Deferred presentation work
   included. Train movement and alternating rail signals already run in game.
   Long balancing sessions, controller hardware and mobile-device performance
   still need playtesting.
+
+East/west horizon enclosure
+  HORIZON_BUILDINGS_WEST and HORIZON_BUILDINGS_EAST contain five adjoining
+  warehouses each, beyond the viaducts at X = +/-42 m. Window bays, shutters,
+  parapets, pipes and rooftop plant are individually editable in the source.
+  Tune warehouse_blocks in build_gulch.py; front faces stay outside X = +/-35 m.
+  All scenery remains text-free and outside the playable collision boundaries.
+  Updated export: 2797068 bytes, 44918 triangles.

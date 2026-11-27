@@ -82,3 +82,6 @@
 @media (max-width: 600px) {
   .ko-settings .ko-options button { font-size: 16px; }
 }
+
+/* Palette belongs to the preview column; settings keep their own heading rhythm. */
+.ko-palette h2 { font: 21px Upheaval, monospace; color: #eeb59c; margin: 8px 0 10px; }
