@@ -1,7 +1,13 @@
-<div class="ko-shell">
-  <header>
-    <h1>KICK OFF</h1>
-  </header>
-  <div class="ko-grid" aria-label="Game Modes">{{modeCards}}</div>
-  {{footer}}
+<div class="mode-carousel-shell">
+  <header><h1 class="mode-carousel-title"></h1></header>
+  <div class="mode-carousel-viewport" role="region" aria-roledescription="carousel" aria-label="Game modes"></div>
+  <p class="mode-carousel-description" aria-live="polite" aria-atomic="true"></p>
+  <div class="mode-carousel-position"><div class="mode-carousel-pips" aria-label="Choose game mode"></div><span class="mode-carousel-count"></span></div>
+  <div class="menu-legend controller-legend ko-mode-legend" aria-label="Menu controls">
+    <span>{{moveHint}} / D-pad Move</span>
+    <button data-pad-button="4" aria-label="Jump back three modes">{{leftHint}} Jump</button>
+    <button data-pad-button="5" aria-label="Jump forward three modes">{{rightHint}} Jump</button>
+    <button data-confirm>{{selectHint}} Select</button>
+    <button data-back>{{backHint}} Back</button>
+  </div>
 </div>

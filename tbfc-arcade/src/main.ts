@@ -172,7 +172,7 @@ import {
 import tutorialScene from "./tutorial/scene.json";
 import { dressPark } from "./tutorial/park";
 import { firstTouchSoundtrack } from "./tutorial/soundtrack";
-import { freeDrill, aerialDrill, warmupPanel, shotPoints } from "./warmup";
+import { freeDrill, aerialDrill, practicePanel, shotPoints } from "./practiceDrills";
 import { startMenuMusic, type MenuMusic } from "./menuMusic";
 import { mainMenu, mountMenuBackdrop } from "./mainMenu";
 import { matchIntro, prepareMatchIntro } from "./matchIntro";
@@ -1050,7 +1050,6 @@ async function start() {
           shape,
           starters: autoStreet(club, [...club.outfield, ...club.bench], shape),
           bench: [],
-          warmup: false,
         });
         lineup = squad(fixture.home);
         awayLineup = squad(fixture.away);
@@ -1223,7 +1222,6 @@ async function start() {
           shape: "1-3-3",
           starters: [...burners.outfield, burners.keeper],
           bench: [...burners.bench],
-          warmup: !tutorialLaunch,
         };
         if (tutorialLaunch) {
           lineup.starters = [...tutorialScene.home, tutorialScene.homeKeeper];
@@ -1237,6 +1235,7 @@ async function start() {
           : await selectGameMode(lastMode);
         houseEditing = false;
         if (!mode) {
+          lastMode = "classic";
           destination = await mainMenu(music);
           continue;
         }
@@ -1341,13 +1340,11 @@ async function start() {
           shape: "1-3-3",
           starters: [...fixture.home.outfield, fixture.home.keeper],
           bench: [],
-          warmup: false,
         };
         awayLineup = {
           shape: "1-3-3",
           starters: [...fixture.away.outfield, fixture.away.keeper],
           bench: [],
-          warmup: false,
         };
         break;
       }
@@ -1461,8 +1458,6 @@ async function start() {
             awayLineup = drafts.get(1) ?? cpuLineup(fixture.away);
           lineup = {
             ...(drafts.get(-1) ?? cpuLineup(fixture.home)),
-            warmup:
-              rules.goalkeepers === 0 || rules.house ? false : selected.warmup,
           };
         }
       }
@@ -2582,7 +2577,9 @@ async function start() {
     reveal.querySelector("[data-remaining]")!.textContent =
       `${team.filter((p) => !p.penalty).length + 1} PLAYERS REMAINING`;
     el("goalPresentation").append(reveal);
-    setTimeout(() => reveal.remove(), 1700);
+    reveal.addEventListener("animationend", (event) => {
+      if (event.animationName === "survival-eliminated-fade") reveal.remove();
+    });
     return true;
   }
   const outfield = [...players, ...opponents];
@@ -2932,6 +2929,8 @@ async function start() {
     };
   });
   let aerialWindup = false;
+  const aerialApproach = new T.Vector3();
+  const aerialContact = new T.Vector3();
   let blastShooter: typeof sean | null = null,
     blastWindup = 0,
     impactTime = 0,
@@ -5813,13 +5812,30 @@ async function start() {
       shotMultiplier = 1 + intent.power;
       if (
         style &&
-        !freePractice &&
         !canBlast(actor) &&
         !(crossingDrill && training.drill === aerialDrill)
       ) {
         held = false;
         blastShooter = actor;
         aerialWindup = true;
+        aerialApproach.copy(ball.position);
+        // Meet the ball at the striking pose instead of leaving it suspended.
+        const contactAge = style === "HEADER" ? 0.30 : 0.24;
+        const animationDuration = ["Pam", "José"].includes(actor.displayName)
+          ? headerAnimationSeconds
+          : 0.42;
+        const lift = Math.sin(Math.PI * contactAge / animationDuration) *
+          (style === "VOLLEY" ? 0.19 : 0.305);
+        const [fx, fz] = dirs[actor.face];
+        const length = Math.hypot(fx, fz);
+        const reach = style === "HEADER" ? 0.18 : 0.40;
+        aerialContact.set(
+          actor.sprite.position.x + fx / length * reach,
+          (style === "HEADER" ? 1.30 : style === "BICYCLE KICK" ? 1.05 : 0.40) + lift,
+          actor.sprite.position.z + fz / length * reach,
+        );
+        // This sequence supplies the jump, so do not stack a second jump on it.
+        jumps.delete(actor);
         blastWindup = 0;
         actor.age = 0;
       } else launchShot(actor);
@@ -7855,10 +7871,6 @@ async function start() {
       exitSimulation();
       return;
     }
-    if (crossingDrill && !standalonePractice) {
-      endWarmup();
-      return;
-    }
     if (squadOpen || phase === "fulltime" || celebrationLab || broadcast)
       return;
     audio.menu("open");
@@ -7896,9 +7908,10 @@ async function start() {
                     : undefined,
         beatTheClock ? beatClockText(beatRemaining) : undefined,
         house ? houseSummary(house.config) : undefined,
+        !standalonePractice && !beatTheClock,
       );
       if (standalonePractice) {
-        if (choice === "quit") endWarmup();
+        if (choice === "quit") exitPractice();
         else pause(false);
         return;
       }
@@ -7948,10 +7961,12 @@ async function start() {
         location.reload();
         return;
       }
-      if (choice === "sides" && ticket) {
+      if (choice === "sides" && !beatTheClock) {
         const selected = await selectSides(
           fixture!,
           seats?.find((s) => s.device === -1)?.side ?? 0,
+          false,
+          seats ?? undefined,
         );
         if (selected) {
           cancelCharge();
@@ -7959,6 +7974,7 @@ async function start() {
           keys.clear();
           couchKeys.clear();
           buttons.clear();
+          switchStickHeld.clear();
           if (keeperGather > 0) {
             const next = selected.find(
               (s) => s.side === (keeperSeat?.side ?? -1),
@@ -7970,6 +7986,12 @@ async function start() {
             }
           }
           seats = selected;
+          lastHome = lastAway = -1;
+          syncSeats();
+          for (const seat of seats) {
+            const pad = seat.device < 0 ? undefined : navigator.getGamepads()[seat.device];
+            buttons.set(seat, Array.from(pad?.buttons ?? [], (button) => button.pressed));
+          }
           aiHome = !seats.some((s) => s.side === -1);
           simulation = false;
           padIndex = null;
@@ -8101,7 +8123,6 @@ async function start() {
   let labControls: ReturnType<typeof celebrationControls> | undefined;
   el("skipReplay").onclick = skipGoalPresentation;
   el("changeView").onclick = () => cycleView(1);
-  let restorePracticeIds = () => {};
   const matchPlayers = players.slice(),
     matchRivals = opponents.slice();
   const bins = createChipBins(scene);
@@ -8118,7 +8139,7 @@ async function start() {
     lastRetry = false;
   const repVelocity = new T.Vector3();
   let repNet = false;
-  const training = warmupPanel(matchView, chooseDrill, endWarmup);
+  const training = practicePanel(matchView, chooseDrill, exitPractice);
   if (standalonePractice) {
     const exit =
       training.panel.querySelector<HTMLButtonElement>("[data-start]")!;
@@ -8247,41 +8268,20 @@ async function start() {
     firstTimeCross = false;
     training.render(players[practiceTarget].displayName);
   }
-  function endWarmup() {
+  function exitPractice() {
     tutorialMusic?.finish();
-    if (standalonePractice) {
-      history.replaceState(
-        {
-          ...history.state,
-          practiceMenu: !stadiumTest && !curveLab && !weatherTest,
-          keeperDebug: weatherTest,
-          tutorialDrills: tutorialLaunch?.mode === "skill",
-          arcadeMenu: true,
-        },
-        "",
-      );
-      music?.carryOver();
-      location.reload();
-      return;
-    }
-    audio.menu("success");
-    reveal(matchView, ":scope > canvas,.bug-stack");
-    bins.hide();
-    restorePracticeIds();
-    crossingDrill = false;
-    training.panel.hidden = true;
-    matchView.classList.remove("training");
-    players.splice(0, players.length, ...matchPlayers);
-    opponents.splice(0, opponents.length, ...matchRivals);
-    for (const actor of pitchActors) {
-      actor.sprite.visible = true;
-      actor.sprintTime = 0;
-      actor.sprintCharge = actor.staminaCapacity = 100;
-    }
-    keys.clear();
-    paused = false;
-    matchView.removeAttribute("data-paused");
-    reset();
+    history.replaceState(
+      {
+        ...history.state,
+        practiceMenu: !stadiumTest && !curveLab && !weatherTest,
+        keeperDebug: weatherTest,
+        tutorialDrills: tutorialLaunch?.mode === "skill",
+        arcadeMenu: true,
+      },
+      "",
+    );
+    music?.carryOver();
+    location.reload();
   }
   new ResizeObserver(resize).observe(renderer.domElement.parentElement!);
   resize();
@@ -8609,7 +8609,7 @@ async function start() {
       };
       el("changeView").after(lighting);
     }
-  } else if (lineup.warmup) {
+  } else if (standalonePractice && !tutorialLaunch) {
     crossingDrill = true;
     const attackNames =
       managedClub === burners
@@ -8638,26 +8638,17 @@ async function start() {
       trio.push(actor);
     }
     // Use existing pitch sprites so camera, contact shadows and input all share the match code.
-    const previous = matchPlayers.slice(0, 3).map(identity),
-      practiceIds = trio.map(identity);
+    const practiceIds = trio.map(identity);
     matchPlayers
       .slice(0, 3)
       .forEach((slot, i) => Object.assign(slot, practiceIds[i]));
-    restorePracticeIds = () =>
-      matchPlayers
-        .slice(0, 3)
-        .forEach((slot, i) => Object.assign(slot, previous[i]));
     players.splice(3);
     opponents.splice(0);
     for (const actor of pitchActors)
       actor.sprite.visible = players.includes(actor) || actor === awayGK;
     training.panel.hidden = false;
     matchView.classList.add("training");
-    training.choose(
-      standalonePractice
-        ? selectedDrill
-        : [0, 1, 2, 3, aerialDrill][Math.floor(Math.random() * 5)],
-    );
+    training.choose(selectedDrill);
     setupRep();
   }
   if (tutorialLaunch) {
@@ -8753,7 +8744,7 @@ async function start() {
         phase = "play";
         el("message").textContent = "";
       },
-      exit: endWarmup,
+      exit: exitPractice,
       chapter: (index) => {
         scoreboard.style.visibility = index === 11 ? "visible" : "hidden";
         tutorialTackler = null;
@@ -8784,7 +8775,7 @@ async function start() {
   el("switchPlayer").onclick = switchPlayer;
   el("reset").onclick = () => {
     if (standalonePractice) {
-      endWarmup();
+      exitPractice();
       return;
     }
     goalEvent = null;
@@ -8954,7 +8945,7 @@ async function start() {
       return;
     if (!weatherTest && (freePractice || crossingDrill) && e.code === "Enter") {
       e.preventDefault();
-      if (!e.repeat) endWarmup();
+      if (!e.repeat) exitPractice();
       return;
     }
     if ((curveLab || crossingDrill) && e.code === "KeyR") {
@@ -10372,7 +10363,7 @@ async function start() {
         : airBalls
           ? "HEADERS. VOLLEYS. SET PIECES. · GROUNDED GOALS DON’T COUNT. · KEEP IT UP!"
           : mystery
-            ? "THE RULES CHANGE EVERY 60 SECONDS · EXPECT THE UNEXPECTED"
+            ? "THE RULES CHANGE EVERY 30 SECONDS · EXPECT THE UNEXPECTED"
             : undefined,
       ...careerDetails,
       exitPreview: introTest
@@ -10416,7 +10407,7 @@ async function start() {
     const elapsed = Math.max(0, now - (last ?? now)) / 1000,
       dt =
         Math.min(0.04, elapsed) *
-        (blastShooter ? 0 : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
+        (blastShooter ? (aerialWindup ? 0.25 : 0) : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
         (house?.config.speed ??
           (mysteryOn("turbo") ? 1.5 : mysteryOn("slowMotion") ? 0.65 : 1));
     last = now;
@@ -10573,20 +10564,39 @@ async function start() {
     if (!paused && !squadOpen && !document.hidden) {
       impactTime = Math.max(0, impactTime - elapsed);
       if (blastShooter) {
-        blastWindup += elapsed;
+        blastWindup += Math.min(elapsed, 0.04);
         const progress = Math.min(1, blastWindup / 0.65);
         blastShooter.age = progress * 0.34;
-        if (aerialWindup && aerial)
-          aerial.age =
-            progress *
-            (["Pam", "José"].includes(blastShooter.displayName) ? 0.45 : 0.32);
+        if (aerialWindup && aerial) {
+          aerial.age = progress * (aerial.style === "HEADER" ? 0.30 : 0.24);
+          ball.position.lerpVectors(aerialApproach, aerialContact, progress);
+          updateSpin();
+          // Keep the surrounding action moving at quarter speed during contact.
+          // Possession stays reserved until the strike has left the shooter.
+          for (const actor of outfield) {
+            if (actor === blastShooter || actor.penalty || !actor.sprite.visible) continue;
+            if (actor.moving && actor.age < 0) {
+              const [x, z] = dirs[actor.face];
+              const step = 3 * dt / Math.hypot(x, z);
+              actor.sprite.position.x = T.MathUtils.clamp(actor.sprite.position.x + x * step, -fieldX, fieldX);
+              actor.sprite.position.z = T.MathUtils.clamp(actor.sprite.position.z + z * step, -fieldZ, fieldZ);
+              actor.runClock += dt;
+            }
+            if (actor.age >= 0 && (actor.age += dt) > kickAnimationSeconds) actor.age = -1;
+          }
+          for (const [actor, age] of jumps) {
+            if (age + dt >= 0.92) jumps.delete(actor);
+            else jumps.set(actor, age + dt);
+          }
+          updateReferee(dt);
+          camTarget.lerp(ball.position, 1 - Math.exp(-6 * dt));
+        }
         if (blastWindup >= 0.65) {
           const shooter = blastShooter;
           blastShooter = null;
           audio.play("blast", aerialWindup ? 0.85 : 0.95);
           if (aerialWindup) {
             aerialWindup = false;
-            impactTime = 0.08;
             launchShot(shooter);
           } else if (opponents.includes(shooter)) tryBlueShot(true);
           else launchShot(shooter, true);
@@ -13504,7 +13514,7 @@ async function start() {
     );
     if (!shot) blastFlying = false;
     for (const [i, ember] of flames.entries()) {
-      ember.visible = (!!blastShooter || blastFlying) && replay.cut < 0;
+      ember.visible = ((!!blastShooter && !aerialWindup) || blastFlying) && replay.cut < 0;
       if (!ember.visible) continue;
       if (blastShooter) {
         const angle = (i * Math.PI) / 6 + blastWindup * 9,

@@ -636,7 +636,7 @@ export function careerHub(
           );
         }
       }
-      const heading = `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
+      const heading = screen === "slots" ? "" : `<div class="cr-heading"><img src="${burners.crest}" alt=""><div><small>CAREER MODE</small><h1 class="${screen === "hub" ? "cr-season-title" : ""}">${screen === "hub" && state ? seasonName(state.season) + " · " + division(state.division) : "Clubhouse"}</h1></div></div>`;
       shell.innerHTML = `${navigation ? `<header class="cr-hub-header">${heading}${navigation}</header><div class="cr-hub-content${tab === "Team Chat" ? " cr-chat-content" : ""}">${content}</div>` : heading + content}<div class="cr-help menu-legend controller-legend"><span>${hint("Arrows", "LS")} Move</span><span>${hint("Enter", "A")} Select</span><button data-action="menu-back">${hint("Esc", "B")} Back</button></div>`;
       const target = shell.querySelector<HTMLElement>(
         focus
@@ -646,6 +646,7 @@ export function careerHub(
             : "button,select",
       );
       root.classList.toggle("cr-hub-open", Boolean(navigation));
+      root.classList.toggle("cr-slots-open", screen === "slots");
       scrollArea().scrollTop = previousScroll;
       target?.focus({ preventScroll: true });
       if (screen === "hub" && state) showRecap(state);

@@ -9,7 +9,14 @@ import { readDraft, writeDraft } from "./localDraft";
 import { backupMatchesLive } from "./backupCompare";
 import ClubDataSkeleton from "./components/ClubDataSkeleton";
 import PullToRefresh from "./components/PullToRefresh";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Navigate,
   matchPath,
@@ -47,8 +54,16 @@ import MatchEventPage from "./features/matches/MatchEventPage";
 import MatchHistory from "./features/matches/MatchHistory";
 import MatchMedia from "./features/matches/MatchMedia";
 import PrivateScrapbook from "./features/matches/PrivateScrapbook";
-import { matchTabs, normalizeMatchTab, visibleMatchTabs } from "./features/matches/matchTabs";
-import { kickoffTime, matchAtTime, matchPhase } from "./features/matches/matchClock";
+import {
+  matchTabs,
+  normalizeMatchTab,
+  visibleMatchTabs,
+} from "./features/matches/matchTabs";
+import {
+  kickoffTime,
+  matchAtTime,
+  matchPhase,
+} from "./features/matches/matchClock";
 import MatchDialog from "./features/matches/MatchDialog";
 import Events from "./features/matches/Events";
 import FreestyleLineupBuilder from "./features/lineup/FreestyleLineupBuilder";
@@ -62,7 +77,13 @@ import TeamDetail from "./features/teams/TeamDetail";
 import Locations from "./features/locations/Locations";
 import { splitMatchLocation } from "./matchLocation";
 import { canEditClub, setManageModeAccess } from "./editAccess";
-import { fetchMatchday, type Matchday, fetchClubData, fetchMatchEvents, publishClubData } from "./remoteData";
+import {
+  fetchMatchday,
+  type Matchday,
+  fetchClubData,
+  fetchMatchEvents,
+  publishClubData,
+} from "./remoteData";
 import FlameIcon from "./img/flame-white.svg";
 
 type Page =
@@ -113,17 +134,26 @@ import { withCleanSheets } from "./cleanSheets";
 export default function App() {
   const manageModeKey = "tbfc-manage-mode";
   const location = useLocation();
-  const [needsFullClub, setNeedsFullClub] = useState(() =>
-    location.pathname !== "/" || window.localStorage.getItem(manageModeKey) === "on");
+  const [needsFullClub, setNeedsFullClub] = useState(
+    () =>
+      location.pathname !== "/" ||
+      window.localStorage.getItem(manageModeKey) === "on",
+  );
   const summaryOnly = !needsFullClub && location.pathname === "/";
   const summaryActive = useRef(summaryOnly);
-  useLayoutEffect(() => { summaryActive.current = summaryOnly; }, [summaryOnly]);
+  useLayoutEffect(() => {
+    summaryActive.current = summaryOnly;
+  }, [summaryOnly]);
   const [cached] = useState(() => ({
     club: readCachedClub(),
     matchday: summaryOnly ? readCachedMatchday() : undefined,
   }));
-  const [hasDisplayData, setHasDisplayData] = useState(!!(cached.club || cached.matchday));
-  const [previousRecord, setPreviousRecord] = useState<Matchday["headToHead"] | undefined>(cached.matchday?.headToHead);
+  const [hasDisplayData, setHasDisplayData] = useState(
+    !!(cached.club || cached.matchday),
+  );
+  const [previousRecord, setPreviousRecord] = useState<
+    Matchday["headToHead"] | undefined
+  >(cached.matchday?.headToHead);
   const [summaryLoaded, setSummaryLoaded] = useState(!!cached.matchday);
   const applyMatchday = useCallback((summary: Matchday) => {
     setData(summary.data);
@@ -132,16 +162,33 @@ export default function App() {
     setSummaryLoaded(true);
     setSyncState("ready");
   }, []);
-  const [sourceData, setData] = useState<ClubData>(() => cached.matchday?.data ?? cached.club ?? (summaryOnly ? {
-    matches: [], players: [], opponents: [], seasons: [], locations: [],
-    events: [], lineups: [], boards: [], standings: [],
-  } : loadData()));
+  const [sourceData, setData] = useState<ClubData>(
+    () =>
+      cached.matchday?.data ??
+      cached.club ??
+      (summaryOnly
+        ? {
+            matches: [],
+            players: [],
+            opponents: [],
+            seasons: [],
+            locations: [],
+            events: [],
+            lineups: [],
+            boards: [],
+            standings: [],
+          }
+        : loadData()),
+  );
   const [clockTime, setClockTime] = useState(Date.now);
   const data = useMemo(
-    () => withCleanSheets({
-      ...sourceData,
-      matches: sourceData.matches.map((match) => matchAtTime(match, clockTime)),
-    }),
+    () =>
+      withCleanSheets({
+        ...sourceData,
+        matches: sourceData.matches.map((match) =>
+          matchAtTime(match, clockTime),
+        ),
+      }),
     [sourceData, clockTime],
   );
   const [syncState, setSyncState] = useState<
@@ -157,13 +204,17 @@ export default function App() {
   useEffect(() => {
     let active = true;
     if (summaryOnly) {
-      void fetchMatchday().then(summary => {
-        if (active) applyMatchday(summary);
-      }).catch(() => {
-        // Also supports older servers during a staged rollout.
-        if (active) setNeedsFullClub(true);
-      });
-      return () => { active = false; };
+      void fetchMatchday()
+        .then((summary) => {
+          if (active) applyMatchday(summary);
+        })
+        .catch(() => {
+          // Also supports older servers during a staged rollout.
+          if (active) setNeedsFullClub(true);
+        });
+      return () => {
+        active = false;
+      };
     }
     setNeedsFullClub(true);
     if (summaryLoaded) {
@@ -184,7 +235,8 @@ export default function App() {
           if (response.ok) {
             const session = await response.json();
             restoreManageMode = session.authenticated === true;
-            if (!restoreManageMode) window.localStorage.removeItem(manageModeKey);
+            if (!restoreManageMode)
+              window.localStorage.removeItem(manageModeKey);
           }
         } catch {
           // Keep the preference until the session can be checked again.
@@ -250,7 +302,10 @@ export default function App() {
   const [editing, setEditing] = useState<Match | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [newMatch, setNewMatch] = useState<Match>(blankMatch);
-  const matchSeasons = useMemo(() => orderedSeasons(sourceData, true), [sourceData]);
+  const matchSeasons = useMemo(
+    () => orderedSeasons(sourceData, true),
+    [sourceData],
+  );
   const requestedTab = new URLSearchParams(location.search).get("tab");
   const activeDetailTab = matchTabs.indexOf(
     normalizeMatchTab(requestedTab, false, canEditClub),
@@ -356,19 +411,24 @@ export default function App() {
     };
   }, []);
   const viewedMatchId = matchRoute?.params.id;
-  const matchdayLiveMatchId = page === "matches"
-    ? data.matches
-        .filter((match) => match.status === "in_progress")
-        .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
-    : undefined;
+  const matchdayLiveMatchId =
+    page === "matches"
+      ? data.matches
+          .filter((match) => match.status === "in_progress")
+          .sort((a, b) => b.date.localeCompare(a.date))[0]?.id
+      : undefined;
   const pollingMatchId = viewedMatchId ?? matchdayLiveMatchId;
-  const stadiumShouldPlay = data.matches.some((match) =>
-    match.id === pollingMatchId &&
-    match.status === "in_progress" &&
-    matchPhase(match, clockTime)?.label !== "HALF TIME"
+  const stadiumShouldPlay = data.matches.some(
+    (match) =>
+      match.id === pollingMatchId &&
+      match.status === "in_progress" &&
+      matchPhase(match, clockTime)?.label !== "HALF TIME",
   );
   const [goalSoundEnabled, setGoalSoundEnabled] = useState(readSoundPreference);
-  const { play: goalSound, playWhistle } = useGoalSound(stadiumShouldPlay, goalSoundEnabled);
+  const { play: goalSound, playWhistle } = useGoalSound(
+    stadiumShouldPlay,
+    goalSoundEnabled,
+  );
   function toggleGoalSound() {
     const enabled = !goalSoundEnabled;
     saveSoundPreference(enabled);
@@ -445,10 +505,19 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [goalBurst]);
   useEffect(() => {
-    const pollingMatch = sourceData.matches.find((match) => match.id === pollingMatchId);
+    const pollingMatch = sourceData.matches.find(
+      (match) => match.id === pollingMatchId,
+    );
     const start = pollingMatch ? kickoffTime(pollingMatch) : null;
-    const liveWindow = start !== null && clockTime >= start && clockTime < start + 61 * 60_000;
-    if (syncState === "loading" || dirty || (manageMode && !pollingMatchId) || (pollingMatchId && !liveWindow)) return;
+    const liveWindow =
+      start !== null && clockTime >= start && clockTime < start + 61 * 60_000;
+    if (
+      syncState === "loading" ||
+      dirty ||
+      (manageMode && !pollingMatchId) ||
+      (pollingMatchId && !liveWindow)
+    )
+      return;
     let active = true;
     let loading = false;
     const refresh = async () => {
@@ -466,8 +535,12 @@ export default function App() {
           const additions = events.filter((event) => !known.has(event.id));
           if (additions.length)
             setNotices((previous) => [...previous, ...additions]);
-          const tbfcGoals = additions.filter((event) => event.kind === "goal" && event.team !== "opponent");
-          additions.filter((event) => event.kind === "penalty_kick").forEach(() => playWhistle.current());
+          const tbfcGoals = additions.filter(
+            (event) => event.kind === "goal" && event.team !== "opponent",
+          );
+          additions
+            .filter((event) => event.kind === "penalty_kick")
+            .forEach(() => playWhistle.current());
           if (tbfcGoals.length) {
             tbfcGoals.forEach(() => goalSound.current());
             setGoalBurst({
@@ -486,7 +559,11 @@ export default function App() {
             matches: match
               ? current.matches.map((existing) =>
                   existing.id === pollingMatchId
-                    ? { ...match, chat: existing.chat, matchAuditComplete: existing.matchAuditComplete }
+                    ? {
+                        ...match,
+                        chat: existing.chat,
+                        matchAuditComplete: existing.matchAuditComplete,
+                      }
                     : existing,
                 )
               : current.matches,
@@ -522,11 +599,24 @@ export default function App() {
       window.clearInterval(timer);
       window.removeEventListener("focus", onFocus);
     };
-  }, [summaryOnly, applyMatchday, manageMode, dirty, pollingMatchId, syncState, goalSound, playWhistle, sourceData.matches, clockTime]);
+  }, [
+    summaryOnly,
+    applyMatchday,
+    manageMode,
+    dirty,
+    pollingMatchId,
+    syncState,
+    goalSound,
+    playWhistle,
+    sourceData.matches,
+    clockTime,
+  ]);
   async function publishCurrentData() {
     if (!canEditClub || publishing || discarding) return;
     setPublishing(true);
-    const minimumDisplayTime = new Promise<void>(resolve => window.setTimeout(resolve, 600));
+    const minimumDisplayTime = new Promise<void>((resolve) =>
+      window.setTimeout(resolve, 600),
+    );
     const version = editVersion.current;
     try {
       await saveQueue.current;
@@ -555,13 +645,19 @@ export default function App() {
       const remote = await fetchClubData();
       if (!remote.data) throw new Error("Published club data is unavailable.");
       if (version !== editVersion.current) return;
-      await writeDraft({ data: remote.data, revision: remote.revision, dirty: false });
+      await writeDraft({
+        data: remote.data,
+        revision: remote.revision,
+        dirty: false,
+      });
       revision.current = remote.revision;
       setData(remote.data);
       setDirty(false);
       setSyncMessage("");
     } catch (error) {
-      setSyncMessage(error instanceof Error ? error.message : "Could not discard changes.");
+      setSyncMessage(
+        error instanceof Error ? error.message : "Could not discard changes.",
+      );
     } finally {
       setDiscarding(false);
     }
@@ -610,7 +706,14 @@ export default function App() {
     const params = new URLSearchParams(location.search);
     params.set("tab", canonical);
     navigate(`${location.pathname}?${params.toString()}`, { replace: true });
-  }, [selected, requestedTab, location.pathname, location.search, navigate, manageMode]);
+  }, [
+    selected,
+    requestedTab,
+    location.pathname,
+    location.search,
+    navigate,
+    manageMode,
+  ]);
   const selectedTeam = data.opponents.find(
     (team) => team.id === teamRoute?.params.id,
   );
@@ -620,11 +723,14 @@ export default function App() {
     .filter((match) => match.status === "in_progress")
     .sort((a, b) => b.date.localeCompare(a.date))[0];
   const nextMatch = liveMatch ?? upcoming.find((match) => match.date >= today);
-  const monitoredMatchId = viewedMatchId ?? (page === "matches" ? nextMatch?.id : undefined);
+  const monitoredMatchId =
+    viewedMatchId ?? (page === "matches" ? nextMatch?.id : undefined);
   useEffect(() => {
     if (!monitoredMatchId) return;
     const stateAt = (now: number) => {
-      const match = currentMatches.current.find((item) => item.id === monitoredMatchId);
+      const match = currentMatches.current.find(
+        (item) => item.id === monitoredMatchId,
+      );
       if (!match) return null;
       return {
         status: matchAtTime(match, now).status,
@@ -642,7 +748,9 @@ export default function App() {
       if (
         (previous.status === "scheduled" && current.status === "in_progress") ||
         (previous.status !== "completed" && current.status === "completed") ||
-        (previous.status === "in_progress" && previous.phase !== "HALF TIME" && current.phase === "HALF TIME") ||
+        (previous.status === "in_progress" &&
+          previous.phase !== "HALF TIME" &&
+          current.phase === "HALF TIME") ||
         (previous.phase === "HALF TIME" && current.phase === "SECOND HALF")
       ) {
         playWhistle.current();
@@ -650,7 +758,8 @@ export default function App() {
       if (
         previous.status !== current.status ||
         (previous.phase === "HALF TIME") !== (current.phase === "HALF TIME")
-      ) setClockTime(now);
+      )
+        setClockTime(now);
       previous = current;
     };
     const timer = window.setInterval(check, 1000);
@@ -664,7 +773,9 @@ export default function App() {
   const tacticsMatches = [
     ...(nextMatch ? [nextMatch] : []),
     ...data.matches
-      .filter((match) => match.status !== "scheduled" && match.id !== nextMatch?.id)
+      .filter(
+        (match) => match.status !== "scheduled" && match.id !== nextMatch?.id,
+      )
       .sort((a, b) => b.date.localeCompare(a.date))
       .slice(0, 5),
   ];
@@ -679,13 +790,17 @@ export default function App() {
         o.id === match.opponentId ||
         o.name.toLowerCase() === match.opponent.trim().toLowerCase(),
     );
-    const opponent = existing ?? (match.opponent.trim() ? {
-      id: crypto.randomUUID(),
-      name: match.opponent.trim(),
-      crestUrl: "",
-      color: "",
-      notes: "",
-    } : undefined);
+    const opponent =
+      existing ??
+      (match.opponent.trim()
+        ? {
+            id: crypto.randomUUID(),
+            name: match.opponent.trim(),
+            crestUrl: "",
+            color: "",
+            notes: "",
+          }
+        : undefined);
     const existingSeason = data.seasons.find(
       (s) =>
         s.id === match.seasonId ||
@@ -706,7 +821,8 @@ export default function App() {
     };
     const next = {
       ...data,
-      opponents: existing || !opponent ? data.opponents : [...data.opponents, opponent],
+      opponents:
+        existing || !opponent ? data.opponents : [...data.opponents, opponent],
       seasons: existingSeason ? data.seasons : [...data.seasons, seasonRecord],
       matches: data.matches.some((m) => m.id === match.id)
         ? data.matches.map((m) => (m.id === match.id ? linked : m))
@@ -720,30 +836,65 @@ export default function App() {
 
   if (location.pathname === "/arcade") {
     return (
-      <Box sx={{ height: "100dvh", display: "flex", flexDirection: "column", bgcolor: "#000",
-        pt: "env(safe-area-inset-top)", pb: "env(safe-area-inset-bottom)" }}>
-        <Button sx={{ alignSelf: "flex-start", color: "#fff" }}
-          onClick={() => location.state?.fromClub ? navigate(-1) : navigate("/", { replace: true })}>
+      <Box
+        sx={{
+          height: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "#000",
+          pt: "env(safe-area-inset-top)",
+          pb: "env(safe-area-inset-bottom)",
+        }}
+      >
+        <Button
+          sx={{ display: "none", alignSelf: "flex-start", color: "#fff" }}
+          onClick={() =>
+            location.state?.fromClub
+              ? navigate(-1)
+              : navigate("/", { replace: true })
+          }
+        >
           ← Back to TBFC
         </Button>
-        <iframe title="TBFC Arcade" src="/tbfc-arcade/play.html" allow="autoplay; gamepad; fullscreen"
+        <iframe
+          title="TBFC Arcade"
+          src="/tbfc-arcade/play.html"
+          allow="autoplay; gamepad; fullscreen"
           onLoad={(event) => event.currentTarget.focus()}
-          style={{ width: "100%", flex: 1, minHeight: 0, border: 0 }} />
+          style={{ width: "100%", flex: 1, minHeight: 0, border: 0 }}
+        />
       </Box>
     );
   }
 
   return (
-    <Box sx={{
-      "--nav-rail-width": "0px",
-      "--nav-bottom-height": "63px",
-      "@media (width > 1200px)": { "--nav-rail-width": "88px", "--nav-bottom-height": "0px" },
-      pl: "var(--nav-rail-width)",
-    }}>
+    <Box
+      sx={{
+        "--nav-rail-width": "0px",
+        "--nav-bottom-height": "63px",
+        "@media (width > 1200px)": {
+          "--nav-rail-width": "88px",
+          "--nav-bottom-height": "0px",
+        },
+        pl: "var(--nav-rail-width)",
+      }}
+    >
       <AppHeader
         onArcade={() => navigate("/arcade", { state: { fromClub: true } })}
-        matchTab={selected ? normalizeMatchTab(requestedTab, selected.status === "scheduled", canEditClub) : undefined}
-        matchTabOptions={selected ? visibleMatchTabs(selected.status === "scheduled", canEditClub) : undefined}
+        matchTab={
+          selected
+            ? normalizeMatchTab(
+                requestedTab,
+                selected.status === "scheduled",
+                canEditClub,
+              )
+            : undefined
+        }
+        matchTabOptions={
+          selected
+            ? visibleMatchTabs(selected.status === "scheduled", canEditClub)
+            : undefined
+        }
         onMatchTabChange={(tab) => {
           const index = matchTabs.indexOf(tab);
           if (index >= 0) setActiveDetailTab(index);
@@ -764,11 +915,22 @@ export default function App() {
                   ? "schedule"
                   : (page ?? "matches")
         }
-        onAdmin={() => { setNeedsFullClub(true); setAdminBackupOpen(true); }}
+        onAdmin={() => {
+          setNeedsFullClub(true);
+          setAdminBackupOpen(true);
+        }}
         onNavigate={(next) => navigate(pagePaths[next])}
       />
       <PullToRefresh
-        enabled={Capacitor.getPlatform() === "ios" && !matchRoute && (page !== null || !!teamRoute || !!playerRoute) && syncState !== "loading" && !dirty && !publishing && !discarding}
+        enabled={
+          Capacitor.getPlatform() === "ios" &&
+          !matchRoute &&
+          (page !== null || !!teamRoute || !!playerRoute) &&
+          syncState !== "loading" &&
+          !dirty &&
+          !publishing &&
+          !discarding
+        }
         onRefresh={refreshMainPage}
       />
       <Container
@@ -787,7 +949,8 @@ export default function App() {
           },
           "@media (width > 1200px)": {
             pb: canEditClub && dirty && !publishing ? 12 : 3,
-            "--event-button-bottom": canEditClub && dirty && !publishing ? "88px" : "22px",
+            "--event-button-bottom":
+              canEditClub && dirty && !publishing ? "88px" : "22px",
           },
           px: { xs: 0, sm: 2, md: 3, lg: 4 },
         }}
@@ -800,7 +963,8 @@ export default function App() {
               position: "fixed",
               left: "var(--nav-rail-width)",
               right: 0,
-              bottom: "calc(var(--nav-bottom-height) + env(safe-area-inset-bottom, 0px))",
+              bottom:
+                "calc(var(--nav-bottom-height) + env(safe-area-inset-bottom, 0px))",
               zIndex: (theme) => theme.zIndex.appBar + 1,
               bgcolor: "#ffad45",
               color: "#21150a",
@@ -826,7 +990,13 @@ export default function App() {
               variant="outlined"
               disabled={publishing || discarding}
               onClick={() => void discardCurrentChanges()}
-              sx={{ color: "#111", borderColor: "#111", minHeight: 44, flexShrink: 0, "&:hover": { borderColor: "#111", bgcolor: "#0001" } }}
+              sx={{
+                color: "#111",
+                borderColor: "#111",
+                minHeight: 44,
+                flexShrink: 0,
+                "&:hover": { borderColor: "#111", bgcolor: "#0001" },
+              }}
             >
               {discarding ? "Discarding…" : "Discard Changes"}
             </Button>
@@ -893,7 +1063,8 @@ export default function App() {
             {backupMessage}
           </Alert>
         )}
-        {(syncState === "loading" && !hasDisplayData) || (summaryLoaded && !summaryOnly) ? (
+        {(syncState === "loading" && !hasDisplayData) ||
+        (summaryLoaded && !summaryOnly) ? (
           <ClubDataSkeleton
             teamCount={data.opponents.length}
             view={
@@ -957,15 +1128,23 @@ export default function App() {
           ) : (
             <>
               <MatchNavigation data={data} match={selected} />
-              <MatchReplay key={`replay-${selected.id}`} data={data} match={selected}
+              <MatchReplay
+                key={`replay-${selected.id}`}
+                data={data}
+                match={selected}
                 publishBarVisible={canEditClub && dirty && !publishing}
                 bannerProps={{
                   detail: true,
                   onPreviewGoal: previewGoal,
                   goalSoundEnabled,
                   onGoalSoundToggle: () => void toggleGoalSound(),
-                  goalTime: goalBurst?.matchId === selected.id ? goalBurst.started : undefined,
-                  onEdit: canEditClub ? () => setEditing({ ...selected }) : undefined,
+                  goalTime:
+                    goalBurst?.matchId === selected.id
+                      ? goalBurst.started
+                      : undefined,
+                  onEdit: canEditClub
+                    ? () => setEditing({ ...selected })
+                    : undefined,
                 }}
               />
               {opponentFor(data, selected)?.notes && (
@@ -1036,10 +1215,19 @@ export default function App() {
                 <MatchMedia
                   key={selected.id}
                   match={selected}
-                  onSaveFullMatch={canEditClub ? fullMatchYouTubeId => update({
-                    ...data,
-                    matches: data.matches.map(match => match.id === selected.id ? { ...match, fullMatchYouTubeId } : match),
-                  }) : undefined}
+                  onSaveFullMatch={
+                    canEditClub
+                      ? (fullMatchYouTubeId) =>
+                          update({
+                            ...data,
+                            matches: data.matches.map((match) =>
+                              match.id === selected.id
+                                ? { ...match, fullMatchYouTubeId }
+                                : match,
+                            ),
+                          })
+                      : undefined
+                  }
                   onSavePhotos={
                     canEditClub
                       ? (photos) =>
@@ -1089,7 +1277,11 @@ export default function App() {
                     previousRecord={summaryOnly ? previousRecord : undefined}
                     goalSoundEnabled={goalSoundEnabled}
                     onGoalSoundToggle={() => void toggleGoalSound()}
-                    goalTime={goalBurst?.matchId === nextMatch.id ? goalBurst.started : undefined}
+                    goalTime={
+                      goalBurst?.matchId === nextMatch.id
+                        ? goalBurst.started
+                        : undefined
+                    }
                     data={data}
                     match={nextMatch}
                     onOpen={() =>
@@ -1115,7 +1307,11 @@ export default function App() {
                 }}
                 onAddFixture={() => {
                   const latest = matchSeasons[0];
-                  setNewMatch({ ...blankMatch(), seasonId: latest?.id, season: latest?.name ?? "" });
+                  setNewMatch({
+                    ...blankMatch(),
+                    seasonId: latest?.id,
+                    season: latest?.name ?? "",
+                  });
                   setShowNew(true);
                 }}
                 onManageSeasons={() => navigate("/stats")}
@@ -1213,12 +1409,30 @@ export default function App() {
         )}
       </Container>
       {syncState === "loading" && hasDisplayData && (
-        <Stack role="status" aria-live="polite" direction="row" spacing={1} alignItems="center"
-          sx={{ position: "fixed", bottom: "calc(12px + env(safe-area-inset-bottom))", left: "50%",
-            transform: "translateX(-50%)", zIndex: 1200, px: 1.5, py: 0.75,
-            borderRadius: 2, bgcolor: "background.paper", boxShadow: 2, pointerEvents: "none" }}>
+        <Stack
+          role="status"
+          aria-live="polite"
+          direction="row"
+          spacing={1}
+          alignItems="center"
+          sx={{
+            position: "fixed",
+            bottom: "calc(12px + env(safe-area-inset-bottom))",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 1200,
+            px: 1.5,
+            py: 0.75,
+            borderRadius: 2,
+            bgcolor: "background.paper",
+            boxShadow: 2,
+            pointerEvents: "none",
+          }}
+        >
           <CircularProgress size={14} color="inherit" />
-          <Typography variant="caption" color="text.secondary">Updating…</Typography>
+          <Typography variant="caption" color="text.secondary">
+            Updating…
+          </Typography>
         </Stack>
       )}
       <PublishingMatchEventDialog open={publishing} />
@@ -1229,14 +1443,18 @@ export default function App() {
           player={noticePlayer}
           opponent={opponentName(data, noticeMatch)}
           opponentCrestUrl={opponentFor(data, noticeMatch)?.crestUrl}
-          creditedTeamColor={notice.team === "opponent"
-            ? opponentFor(data, noticeMatch)?.color || "#828892"
-            : "#CA5126"}
+          creditedTeamColor={
+            notice.team === "opponent"
+              ? opponentFor(data, noticeMatch)?.color || "#828892"
+              : "#CA5126"
+          }
           match={noticeMatch}
           events={data.events}
           remaining={matchNotices.length - 1}
           publishBarVisible={canEditClub && dirty && !publishing}
-          onDismiss={() => setNotices(queue => queue.filter(event => event !== notice))}
+          onDismiss={() =>
+            setNotices((queue) => queue.filter((event) => event !== notice))
+          }
         />
       )}
       {canEditClub && (
@@ -1252,12 +1470,18 @@ export default function App() {
             setShowNew(false);
           }}
           onSave={saveMatch}
-          onDelete={editing ? () => {
-            update(removeMatch(sourceData, editing.id));
-            setNotices(queue => queue.filter(event => event.matchId !== editing.id));
-            setEditing(null);
-            navigate("/schedule", { replace: true });
-          } : undefined}
+          onDelete={
+            editing
+              ? () => {
+                  update(removeMatch(sourceData, editing.id));
+                  setNotices((queue) =>
+                    queue.filter((event) => event.matchId !== editing.id),
+                  );
+                  setEditing(null);
+                  navigate("/schedule", { replace: true });
+                }
+              : undefined
+          }
         />
       )}
       <AdminPanel

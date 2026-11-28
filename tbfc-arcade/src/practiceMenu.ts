@@ -1,4 +1,4 @@
-import { freeDrill } from './warmup'
+import { freeDrill } from './practiceDrills'
 import { menuPad, menuDirection } from './menuPad'
 import { template, element, bind } from './tutorial/templates'
 import './practiceMenu.css'

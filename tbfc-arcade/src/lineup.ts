@@ -93,7 +93,6 @@ export type Selection = {
   shape: Shape;
   starters: string[];
   bench: string[];
-  warmup?: boolean;
 };
 
 type MatchSquad = {
@@ -275,10 +274,9 @@ export function selectLineup(
   const avatar = (name: string) =>
     `<span class="lu-avatar" style="background-image:url('${portraits[name]}')"></span>`;
   return new Promise((resolve) => {
-    function finish(back = false, warmup = false) {
+    function finish(back = false) {
       const result = {
         shape,
-        warmup,
         starters: slots.slice(0, count) as string[],
         bench: slots.slice(count).filter((n): n is string => !!n),
       };
@@ -352,7 +350,6 @@ export function selectLineup(
       dialog.showModal();
       dialog.querySelector<HTMLElement>("#quit-yes")!.focus();
     }
-    let skipWarmup = false;
     function confirmKickoff() {
       if (dialog) return;
       if (match) {
@@ -365,7 +362,7 @@ export function selectLineup(
         return;
       }
       const previous = document.activeElement as HTMLElement | null;
-      dialog = matchConfirmDialog(fixture, settings, skipWarmup, rules.mode === "snowpocalypse", rules.mode === "firstToFive" ? rules.targetScore : undefined);
+      dialog = matchConfirmDialog(fixture, settings, rules.mode === "snowpocalypse", rules.mode === "firstToFive" ? rules.targetScore : undefined);
       root.append(dialog);
       dialog.onclose = () => {
         dialog?.remove();
@@ -378,7 +375,7 @@ export function selectLineup(
       };
       audio.menu("success");
       dialog.showModal();
-      reveal(dialog, "h2,fieldset,#lu-confirm,#lu-warmup,#lu-cancel");
+      reveal(dialog, "h2,fieldset,#lu-confirm,#lu-cancel");
       root.querySelector<HTMLElement>("#lu-confirm")!.focus();
     }
     let lastShape = shape;
@@ -829,11 +826,7 @@ export function selectLineup(
             );
           return;
         }
-        if (b.id === "lu-warmup") {
-          // skipWarmup = !skipWarmup;
-          // b.setAttribute("aria-checked", String(skipWarmup));
-          // audio.menu("nav");
-        } else if (b.id === "lu-confirm") finish(false, !skipWarmup);
+        if (b.id === "lu-confirm") finish();
         else if (b.id === "lu-cancel") dialog.close();
         return;
       }

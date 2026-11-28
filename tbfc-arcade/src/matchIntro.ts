@@ -25,6 +25,7 @@ import { audio, type IntroVenue } from "./matchAudio";
 import beatUrl from "./audio/kassabeat-musical-beat-511114.mp3?url";
 import trafficUrl from "./audio/west-end-intro-traffic.mp3?url";
 import { menuPad } from "./menuPad";
+import { padBadge } from "./screenUI";
 import markup from "./matchIntro.html?raw";
 import "./matchIntro.css";
 
@@ -307,11 +308,24 @@ export function matchIntro(a: Intro) {
     requested = false,
     previousA = !!menuPad()?.buttons[0]?.pressed;
   const start = overlay.querySelector<HTMLButtonElement>("[data-start]")!;
+  const pauseOverlay = document.createElement("div");
+  pauseOverlay.className = "mi-paused";
+  pauseOverlay.hidden = true;
+  pauseOverlay.setAttribute("role", "dialog");
+  pauseOverlay.setAttribute("aria-modal", "true");
+  pauseOverlay.setAttribute("aria-labelledby", "mi-paused-title");
+  pauseOverlay.innerHTML = `<h1 id="mi-paused-title">PAUSED</h1><div class="menu-legend controller-legend"><button type="button">${padBadge("A")} Resume</button></div>`;
+  a.root.append(pauseOverlay);
+  const resume = pauseOverlay.querySelector<HTMLButtonElement>("button")!;
+  resume.onclick = () => setPaused(false);
   let paused = false;
   function setPaused(on: boolean) {
     paused = on;
     audio.setIntroPaused(on);
     start.disabled = on;
+    overlay.inert = on;
+    pauseOverlay.hidden = !on;
+    (on ? resume : start).focus({ preventScroll: true });
   }
   start.onclick = () => {
     if (!paused) requested = true;
@@ -325,8 +339,10 @@ export function matchIntro(a: Intro) {
     if (event.code === "Escape") {
       if (a.exitPreview) a.exitPreview();
       else setPaused(!paused);
-    } else if (!paused && ["KeyJ", "Enter", "Space"].includes(event.code))
-      requested = true;
+    } else if (["KeyJ", "Enter", "Space"].includes(event.code)) {
+      if (paused) setPaused(false);
+      else requested = true;
+    }
   }
   window.addEventListener("keydown", keyboard, true);
   window.addEventListener("keyup", keyboard, true);
@@ -339,7 +355,10 @@ export function matchIntro(a: Intro) {
       menu = !!pad?.buttons[9]?.pressed;
     if (menu && !previousMenu) setPaused(!paused);
     previousMenu = menu;
-    if (!paused && down && !previousA) requested = true;
+    if (down && !previousA) {
+      if (paused) setPaused(false);
+      else requested = true;
+    }
     previousA = down;
     if (paused || document.hidden) return true;
     if (requested) return false;
@@ -576,6 +595,7 @@ export function matchIntro(a: Intro) {
     window.removeEventListener("keydown", keyboard, true);
     window.removeEventListener("keyup", keyboard, true);
     overlay.remove();
+    pauseOverlay.remove();
     delete a.root.dataset.matchIntro;
     if (lamp) a.schoolLights!.lightBanks(a.schoolLights!.positions.length);
     a.train(null);

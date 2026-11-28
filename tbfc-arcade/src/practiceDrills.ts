@@ -9,9 +9,9 @@ export const drills=[
 export const freeDrill=4
 export const aerialDrill=drills.length
 drills.push({name:'Aerial duel',hint:`Meet the descending goal kick at the gold ring. Charge ${control('K','B')} before contact for a header or volley.`})
-export function warmupPanel(parent:HTMLElement,select:(i:number)=>void,kickoff:()=>void){
+export function practicePanel(parent:HTMLElement,select:(i:number)=>void,exit:()=>void){
  const panel=document.createElement('section');panel.className='training-panel'
- panel.innerHTML=`<div><strong></strong><span aria-live="polite"></span></div><p></p><nav><button data-again>Retry ${control('R','View')}</button><button data-start>Match ${control('Enter','Menu')}</button></nav>`
+ panel.innerHTML=`<div><strong></strong><span aria-live="polite"></span></div><p></p><nav><button data-again>Retry ${control('R','View')}</button><button data-start>Drills ${control('Enter','Menu')}</button></nav>`
  parent.append(panel)
  let drill=0,points:number[]=[],last=''
  const hint=panel.querySelector('p')!
@@ -26,7 +26,7 @@ export function warmupPanel(parent:HTMLElement,select:(i:number)=>void,kickoff:(
   hint.innerHTML=drills[drill].hint.replace('{target}',name)
   panel.querySelector('span')!.textContent=drill===4?'':(points.length===5?'Final':('Try '+(points.length+1)+'/5'))+' · '+points.reduce((a,b)=>a+b,0)+'/100'+(last?' · '+last:'')
  }
- panel.querySelector('[data-start]')!.addEventListener('click',kickoff)
+ panel.querySelector('[data-start]')!.addEventListener('click',exit)
  panel.querySelector('[data-again]')!.addEventListener('click',()=>select(drill))
  return {panel,render,get drill(){return drill},get count(){return points.length},
  choose(i:number){drill=i;points=[];last=''},

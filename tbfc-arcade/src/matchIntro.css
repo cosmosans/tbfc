@@ -83,3 +83,27 @@ main[data-match-intro] > :not(canvas):not(.match-intro) {
   text-align: center;
   text-wrap: balance;
 }
+
+.mi-paused {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  background: #000b;
+  color: #fff3df;
+}
+.mi-paused[hidden] { display: none; }
+.mi-paused h1 {
+  margin: 0;
+  font: clamp(56px, 12vw, 160px)/1 Upheaval, monospace;
+  text-shadow: 0 4px 8px #000;
+}
+.mi-paused .controller-legend {
+  width: auto;
+  margin: 0;
+  padding: 0;
+}

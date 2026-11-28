@@ -7,16 +7,16 @@ import {
 import { standardPhysics, snowPhysics } from "./matchPhysics.ts";
 import { mysteryModifiers } from "./mysteryMatch.ts";
 export const houseModifiers = [
-  ["inferno", "Permanent Burn"],
-  ["secondWind", "Unlimited stamina"],
-  ["noRules", "No fouls"],
-  ["survival", "Survival eliminations"],
-  ["theWall", "Super goalkeepers"],
-  ["weakKeepers", "Weak goalkeepers"],
-  ["superCurve", "Super curve"],
-  ["shootOnSight", "Enhanced shooting"],
-  ["aerialAssist", "Forgiving aerial finishes"],
-  ["superSprint", "Super sprint"],
+  ["inferno", "Infinite Burn"],
+  ["secondWind", "Infinite Stamina"],
+  ["noRules", "No Fouls"],
+  ["survival", "Survival Eliminations"],
+  ["theWall", "Super Keepers"],
+  ["weakKeepers", "Weak Keepers"],
+  ["superCurve", "Super Curve"],
+  ["shootOnSight", "Enhanced Shooting"],
+  ["aerialAssist", "Forgiving Aerials"],
+  ["superSprint", "Super Sprint"],
 ] as const;
 export type HouseModifier = (typeof houseModifiers)[number][0];
 export type HouseConfig = {
@@ -126,7 +126,7 @@ export function validateHouse(value: unknown): {
     if (["longRange", "airBalls"].includes(config.scoring)) {
       config.scoring = "standard";
       issues.push(
-        "Long Range and Air Balls scoring require a Classic pitch. Standard scoring selected.",
+        "Long Range and Air Balls scoring require a classic pitch. Standard scoring selected.",
       );
     }
     if (config.gravity !== 1) {

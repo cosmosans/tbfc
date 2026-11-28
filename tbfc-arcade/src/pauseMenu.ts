@@ -8,7 +8,7 @@ import {menuDirection,menuPad} from './menuPad'
 import {hint,reveal} from './screenUI'
 
 type Choice='resume'|'squad'|'sides'|'simulate'|'quit'
-export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string,clockLabel?:string,rulesSummary?:string[]):Promise<Choice>{
+export function pauseMenu(home:Club,away:Club,goals:number[],period:number,seconds:number,canSub:boolean,canSim:boolean,canQuit:boolean,practice=false,playground?:WeatherPlayground,formatLabel?:string,clockLabel?:string,rulesSummary?:string[],canSides=false):Promise<Choice>{
  const dialog=document.createElement('dialog')
  dialog.className='career-whistle pause-menu';dialog.setAttribute('aria-label',practice?'Practice Paused':'Match Paused')
  const clock=clockLabel??Math.floor(seconds/60)+':'+String(Math.floor(seconds)%60).padStart(2,'0')
@@ -32,7 +32,7 @@ export function pauseMenu(home:Club,away:Club,goals:number[],period:number,secon
   function draw(){
    section.innerHTML=confirming?
     '<h3>Simulate Rest of Match?</h3><p>The AI will finish both teams’ remaining time. Your score and match events will count, and the final result will be saved before returning to Central.</p>'+button('simulate','Simulate Rest of Match'):
-    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match')+button('sides','Side Select'):'')+(canSub?button('squad','Substitutions'):'')
+    (canQuit?button('quit',practice?'Quit Practice':'Quit Match'):'')+(canSim?button('ask','Simulate Rest of Match'):'')+(canSides?button('sides','Side Select'):'')+(canSub?button('squad','Substitutions'):'')
    if(playground && !confirming){
     const panel=document.createElement('fieldset')
     panel.className='weather-tuning'

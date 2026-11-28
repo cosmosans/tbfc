@@ -83,8 +83,13 @@
 #career section.cr-panel {
   background: #1d1916;
   border: 1px solid #614736;
-  padding: 16px;
+  padding: 20px;
   margin: 0 0 12px;
+  max-width: 1000px;
+}
+
+#career section.cr-panel h2 {
+  text-align: center;
 }
 #career .cr-grid {
   display: grid;
@@ -723,6 +728,7 @@ button {
 #career .cr-shell {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 #career .cr-saves {
   display: flex;
@@ -739,12 +745,22 @@ button {
   justify-content: center;
   gap: 4px;
   padding: 6px;
+  min-width: 200px;
 }
 #career .cr-saves .cr-face {
-  width: 125px;
+  width: 45px;
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
+  transition: width 0.2s ease;
+}
+#career .cr-saves button:is(:hover, :focus) .cr-face {
+  width: 60px;
+}
+@media (prefers-reduced-motion: reduce) {
+  #career .cr-saves .cr-face {
+    transition: none;
+  }
 }
 #career .cr-saves strong {
   font:
@@ -952,7 +968,6 @@ button {
 #career .cr-help {
   flex: none;
 }
-
 
 #career .cr-panel.cr-upgrade-ready {
   border-color: #a25a36;
@@ -1266,4 +1281,22 @@ body:has(> .career-backdrop) #career section.cr-panel {
 }
 body:has(> .career-backdrop) #career nav {
   background: rgb(12 8 6 / 78%);
+}
+
+/* Center the save selection and its controls without the Clubhouse masthead. */
+#career.cr-slots-open {
+  display: flex;
+}
+#career.cr-slots-open[hidden] {
+  display: none;
+}
+#career.cr-slots-open .cr-shell {
+  flex: none;
+  width: 100%;
+  margin: auto;
+}
+@media (min-width: 1600px) and (min-height: 900px) {
+  #career.cr-slots-open .cr-shell {
+    width: min(2200px, 80vw);
+  }
 }

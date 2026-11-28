@@ -1,5 +1,5 @@
 import { renderMarkup } from "./templates/renderMarkup";
-import modeCardTemplate from "./templates/street/mode-card.html?raw";
+import { mountModeCarousel } from "./modeCarousel";
 import modeLegendTemplate from "./templates/street/mode-legend.html?raw";
 import modeSelectTemplate from "./templates/street/mode-select.html?raw";
 import teamSizeDotTemplate from "./templates/street/team-size-dot.html?raw";
@@ -38,8 +38,17 @@ import mysteryMatchArt from "./art/mode-cards/mystery-match.png";
 import "./kickOff.css";
 
 // One input lifecycle shared by the mode grid, team sizes and court settings.
+export type ScreenNavigation = {
+  move: (direction: string) => void;
+  confirm: () => void;
+  repeatDelay?: number;
+  repeatInterval?: number;
+};
 export function screen<T>(
-  draw: (root: HTMLElement, finish: (value: T | null) => void) => void,
+  draw: (
+    root: HTMLElement,
+    finish: (value: T | null) => void,
+  ) => void | ScreenNavigation,
 ): Promise<T | null> {
   const root = document.createElement("section");
   root.className = "kickoff-screen";
@@ -54,6 +63,7 @@ export function screen<T>(
       repeat = 0,
       held = Array.from(menuPad()?.buttons ?? [], (b) => b.pressed);
     let cursor: ReturnType<typeof menuCursor> | undefined;
+    let navigation: ScreenNavigation | undefined;
     function finish(value: T | null) {
       if (done) return;
       done = true;
@@ -127,7 +137,16 @@ export function screen<T>(
       )[e.key];
       if (direction) {
         e.preventDefault();
-        move(direction);
+        if (navigation) navigation.move(direction);
+        else move(direction);
+      }
+      if (
+        navigation &&
+        (e.key === "Enter" || e.key === " ") &&
+        (e.target as HTMLElement).closest("[data-mode]")
+      ) {
+        e.preventDefault();
+        if (!e.repeat) navigation.confirm();
       }
       if (e.key === "Escape") {
         e.preventDefault();
@@ -135,7 +154,7 @@ export function screen<T>(
       }
       if (e.repeat && (e.key === "Enter" || e.key === " ")) e.preventDefault();
     };
-    draw(root, finish);
+    navigation = draw(root, finish) || undefined;
     if (!root.contains(document.activeElement))
       root.querySelector<HTMLButtonElement>("button")?.focus();
     if (root.classList.contains("house-builder")) cursor = menuCursor(root);
@@ -147,17 +166,23 @@ export function screen<T>(
         down = Array.from(pad?.buttons ?? [], (b) => b.pressed);
       cursor?.update(pad, now);
       if (!cursor && next && (next !== dir || now >= repeat)) {
-        move(next);
-        repeat = now + (next === dir ? 160 : 380);
+        if (navigation) navigation.move(next);
+        else move(next);
+        repeat =
+          now +
+          (next === dir
+            ? (navigation?.repeatInterval ?? 160)
+            : (navigation?.repeatDelay ?? 380));
       }
       if (down[1] && !held[1]) finish(null);
       else if (down[0] && !held[0]) {
         if (cursor) cursor.click();
+        else if (navigation) navigation.confirm();
         else (document.activeElement as HTMLButtonElement)?.click();
-      }
-      else if (down[9] && !held[9])
-        root.querySelector<HTMLButtonElement>("[data-next]")?.click();
-      else if (down[2] && !held[2])
+      } else if (down[9] && !held[9]) {
+        if (navigation) navigation.confirm();
+        else root.querySelector<HTMLButtonElement>("[data-next]")?.click();
+      } else if (down[2] && !held[2])
         root
           .querySelector<HTMLButtonElement>('[data-pad-button="2"]:enabled')
           ?.click();
@@ -189,102 +214,89 @@ const selectionLegend = () =>
   });
 export function selectGameMode(initial: GameMode = "classic") {
   return screen<GameMode>((root, finish) => {
+    const modes = [
+      {
+        id: "classic",
+        title: "CLASSIC",
+        tag: "Grown adults playing recreational coed 7v7 soccer after work. You know, the beautiful game.",
+        image: classicModeArt,
+      },
+      {
+        id: "street",
+        title: "STREET",
+        tag: "3v3 or 5v5 on enclosed courts with mini goals, rebound walls, and absolutely no keepers.",
+        image: streetArt,
+      },
+      {
+        id: "firstToFive",
+        title: "FIRST TO 5",
+        tag: "Be the first team to score 3, 5, or 10 goals and take home the win. No time limit, no halftime.",
+        image: firstToFiveArt,
+      },
+      {
+        id: "longRange",
+        title: "LONG RANGE",
+        tag: "Shooting stats are boosted for all players, and goals from outside the dotted box count double.",
+        image: longRangeArt,
+      },
+      {
+        id: "snowpocalypse",
+        title: "SNOWPOCALYPSE",
+        tag: "A completely snow-covered pitch, slippery physics, and messier tackles. Bring the bread and milk.",
+        image: snowpocalypseArt,
+      },
+      {
+        id: "survival",
+        title: "SURVIVAL",
+        tag: "Every goal costs your team a random player. Build a lead, then fight to defend it.",
+        image: survivalArt,
+      },
+      {
+        id: "inferno",
+        title: "INFERNO",
+        tag: "Both teams have permanently charged BURN. Unleash spectacular shots from the opening whistle.",
+        image: infernoArt,
+      },
+      {
+        id: "beatTheClock",
+        title: "BEAT THE CLOCK",
+        tag: "Start with 90 seconds. Score a goal and gain 30 more seconds, but concede and lose 15. How long can you last?",
+        image: beatTheClockArt,
+      },
+      {
+        id: "airBalls",
+        title: "AIR BALLS",
+        tag: "Enhanced aerial assistance makes spectacular finishes easier, so only headers, volleys, free kicks, and penalties count.",
+        image: airBallsArt,
+      },
+      {
+        id: "mysteryMatch",
+        title: "MYSTERY MATCH",
+        tag: "Every 30 seconds a random match effect is applied. Fire, ice, and unpredictable arcade chaos.",
+        image: mysteryMatchArt,
+      },
+      {
+        id: "penaltyShootout",
+        title: "PENALTIES",
+        tag: "Take your kicks, make your saves, and settle it from the spot.",
+        image: penaltyShootoutArt,
+      },
+      {
+        id: "houseRules",
+        title: "HOUSE RULES",
+        tag: "Combine all available gameplay modifiers to create your perfect flavor of soccer chaos.",
+        image: houseRulesArt,
+      },
+    ] satisfies { id: GameMode; title: string; tag: string; image: string }[];
+    root.classList.add("mode-carousel-screen");
     root.innerHTML = renderMarkup(modeSelectTemplate, {
-      modeCards: [
-        {
-          id: "classic",
-          title: "CLASSIC",
-          tag: "Grown adults playing 7v7 coed soccer after work. The beautiful game.",
-          image: classicModeArt,
-        },
-        {
-          id: "street",
-          title: "STREET",
-          tag: "3v3 or 5v5 with smaller goals, rebound walls, and no keepers.",
-          image: streetArt,
-        },
-        {
-          id: "firstToFive",
-          title: "FIRST TO 5",
-          tag: "No time limit, no halftime. Choose first to 3, 5, or 10 goals.",
-          image: firstToFiveArt,
-        },
-        {
-          id: "longRange",
-          title: "LONG RANGE",
-          tag: "Goals from outside the dotted box count double.",
-          image: longRangeArt,
-        },
-        {
-          id: "snowpocalypse",
-          title: "SNOWPOCALYPSE",
-          tag: "7v7 soccer in extreme (for ATL) winter conditions. Bring the bread and milk.",
-          image: snowpocalypseArt,
-        },
-        {
-          id: "survival",
-          title: "SURVIVAL",
-          tag: "Every goal costs your team a random player. Winning has consequences.",
-          image: survivalArt,
-        },
-        {
-          id: "inferno",
-          title: "INFERNO",
-          tag: "Both teams Burn meters remain permanently filled. ",
-          image: infernoArt,
-        },
-        {
-          id: "beatTheClock",
-          title: "BEAT THE CLOCK",
-          tag: "Start with 90 seconds. Score to gain 30, concede and lose 15.",
-          image: beatTheClockArt,
-        },
-        {
-          id: "airBalls",
-          title: "AIR BALLS",
-          tag: "Headers, volleys, free kicks, and penalties only.",
-          image: airBallsArt,
-        },
-        {
-          id: "mysteryMatch",
-          title: "MYSTERY MATCH",
-          tag: "The rules change every minute. Fire, ice, and unpredictable chaos.",
-          image: mysteryMatchArt,
-        },
-        {
-          id: "penaltyShootout",
-          title: "PENALTIES",
-          tag: "Take your kicks, make your saves, and settle it from the spot.",
-          image: penaltyShootoutArt,
-        },
-        {
-          id: "houseRules",
-          title: "HOUSE RULES",
-          tag: "Combine game modes, change the physics and invent your own game.",
-          image: houseRulesArt,
-        },
-      ]
-        .map((m) =>
-          renderMarkup(modeCardTemplate, {
-            m_id: m.id,
-            m_image: m.image,
-            m_title: m.title,
-            m_tag: m.tag,
-          }),
-        )
-        .join(""),
-      footer: selectionLegend(),
+      moveHint: padBadge("LS"),
+      leftHint: padBadge("LB"),
+      rightHint: padBadge("RB"),
+      selectHint: padBadge("A"),
+      backHint: padBadge("B"),
     });
-    root.querySelectorAll<HTMLButtonElement>("[data-mode]").forEach((b) => {
-      if (b.dataset.mode === initial) b.focus();
-      b.onpointermove = (event) => {
-        if (event.pointerType === "mouse" && document.activeElement !== b)
-          b.focus();
-      };
-      b.onclick = () => finish(b.dataset.mode as GameMode);
-    });
-    root.querySelector<HTMLButtonElement>("[data-back]")!.onclick = () =>
-      finish(null);
+    return mountModeCarousel(root, modes, initial, finish);
   });
 }
 export function selectStreetSize(preferences = readStreetPreferences()) {

@@ -12,18 +12,19 @@ const colors=['#e67732','#1987c4','#229621','#d62828','#9344ae','#168779']
 export function playerColor(number:number){return colors[(number-1)%colors.length]}
 
 export type Seat = { device:number; side:-1|1; number:number; actor:number }
-export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0, beatTheClock=false):Promise<Seat[]|null>{
+export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0, beatTheClock=false, initialSeats?:readonly Seat[]):Promise<Seat[]|null>{
  const root=document.createElement('section')
  root.id='team-select'
  root.className='side-select'
  if(beatTheClock)root.dataset.beatClock=''
  root.innerHTML=`<style>${css}</style><div class="ts-wrap"><h1>Side Select</h1>${beatTheClock?'<p class="beat-side-error" role="alert" hidden>BEAT THE CLOCK REQUIRES ALL HUMAN PLAYERS ON THE SAME TEAM.</p>':''}<div class="ts-match"></div>${renderMarkup(sideLegendTemplate, {backHint:padBadge("B"),moveHint:padBadge("LS"),continueHint:padBadge("A")})}</div>`
  const grid=root.querySelector('.ts-match')!
- const sides=new Map<number,number>([[-1,keyboardSide]])
+ const sides=new Map<number,number>([[-1,keyboardSide],...(initialSeats??[]).map(s=>[s.device,s.side] as [number,number])])
  let suggestedPad:number|null=null
- const held=new Map<number,string>()
+ const command=(p:Gamepad)=>(p.buttons[0]?.pressed||p.buttons[9]?.pressed)?'start':p.buttons[1]?.pressed?'back':p.buttons[14]?.pressed||p.axes[0]<-.6?'left':p.buttons[15]?.pressed||p.axes[0]>.6?'right':''
+ const held=new Map<number,string>(Array.from(navigator.getGamepads?.()??[]).filter((p):p is Gamepad=>!!p).map(p=>[p.index,command(p)]))
  const badges=new Map<number,HTMLElement>()
- const numbers=new Map<number,number>()
+ const numbers=new Map<number,number>((initialSeats??[]).map(s=>[s.device,s.number]))
  function reject(){
   const error=root.querySelector<HTMLElement>('.beat-side-error')
   if(!error)return
@@ -69,8 +70,8 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0, beatTheClock
   for(const [device,side] of sides){
    let badge=badges.get(device)
    if(!badge){
-    let n=1
-    while([...numbers.values()].includes(n))n++
+    let n=numbers.get(device)??1
+    while([...numbers].some(([id,value])=>id!==device&&value===n))n++
     numbers.set(device,n)
     badge=document.createElement('span')
     badge.className='side-badge'
@@ -117,7 +118,7 @@ export function selectSides(fixture:Fixture, keyboardSide:-1|0|1=0, beatTheClock
    const pads=Array.from(navigator.getGamepads?.()??[]).filter((p):p is Gamepad=>!!p)
    for(const id of sides.keys())if(id>=0&&!pads.some(p=>p.index===id)){sides.delete(id);held.delete(id);paint()}
    for(const p of pads){
-    const cmd=(p.buttons[0]?.pressed||p.buttons[9]?.pressed)?'start':p.buttons[1]?.pressed?'back':p.buttons[14]?.pressed||p.axes[0]<-.6?'left':p.buttons[15]?.pressed||p.axes[0]>.6?'right':''
+    const cmd=command(p)
     if(!sides.has(p.index)){
      const firstPad=!beatTheClock&&sides.size===1&&sides.get(-1)===0
      sides.set(p.index,firstPad?-1:0)

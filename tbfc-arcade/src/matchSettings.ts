@@ -37,7 +37,6 @@ export const halfDurationLabel = (speed: MatchSettings["speed"]) =>
 export function matchConfirmDialog(
   fixture: Fixture,
   settings: MatchSettings,
-  skipWarmup: boolean,
   weatherLocked = false,
   targetScore?: number,
 ) {
