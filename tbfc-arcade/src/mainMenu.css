@@ -443,3 +443,27 @@ body:has(> .career-backdrop) :is(#career, #lineup, #team-select) {
   margin: 12px 0 0;
   padding: 4px 0;
 }
+
+.menu-release-notes .change-tags {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3em;
+  margin-right: 0.35em;
+  vertical-align: 0.1em;
+}
+.menu-release-notes .change-tag {
+  display: inline-block;
+  padding: 0.22em 0.45em 0.17em;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  font: 800 0.58em/1.1 var(--ui-font);
+  letter-spacing: 0.045em;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+.menu-release-notes .change-tag--bug-fix { color: #ffa8a8; background: #622629; }
+.menu-release-notes .change-tag--visuals { color: #f3b8f9; background: #4b2856; }
+.menu-release-notes .change-tag--environments { color: #aee3a8; background: #28503a; }
+.menu-release-notes .change-tag--feature { color: #ffbd8c; background: #65351e; }
+.menu-release-notes .change-tag--mechanic-tweak { color: #9ed3ff; background: #254868; }
+.menu-release-notes .change-tag--ui { color: #f8d893; background: #5b4825; }

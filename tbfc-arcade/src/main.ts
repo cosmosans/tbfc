@@ -3938,22 +3938,6 @@ async function start() {
       ? 0
       : Math.sin(Math.PI * Math.min(1, age / 0.72)) * 0.47;
   }
-  function jump(actor: typeof sean) {
-    if (
-      phase === "play" &&
-      !paused &&
-      !celebrating &&
-      !freeKick &&
-      !outBall &&
-      !shot &&
-      replay.cut < 0 &&
-      !blastShooter &&
-      !actor.penalty &&
-      actor.age < 0 &&
-      !jumps.has(actor)
-    )
-      jumps.set(actor, 0);
-  }
   function claimAirball() {
     const ballPos = ball.position;
     if (
@@ -3977,13 +3961,17 @@ async function start() {
         continue;
       const pos = actor.sprite.position,
         distance = Math.hypot(pos.x - ballPos.x, pos.z - ballPos.z);
-      if (ballPos.y > 1 && ballPos.y < 2.5 && distance < 1.5) jump(actor);
-      const lift = jumpHeight(actor);
-      if (
-        (!airBalls && lift < 0.15) ||
-        ballPos.y > (1.35 + lift) * (airBalls ? airBallsProfile.contact : 1) ||
-        distance >= closest
-      )
+      // Let an unplayed aerial ball come down to the receiver's feet.
+      // A buffered or held shot still meets it in the air.
+      const finishing = players.includes(actor)
+        ? (charge?.action === "shot" || queued?.action === "shot")
+        : airBalls && [...airSeatShots.values()].some(
+            (input) => input.side === 1 && performance.now() <= input.expires,
+          );
+      const contactHeight = finishing
+        ? 1.35 * (airBalls ? airBallsProfile.contact : 1)
+        : 0.84;
+      if (ballPos.y > contactHeight || distance >= closest)
         continue;
       closest = distance;
       winner = actor;
