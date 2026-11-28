@@ -144,9 +144,9 @@ export function mainMenu(
       typeof initialMenu === "object" ? initialMenu.venue : "school";
     const openedAt = performance.now();
     const title =
-      '<div class="menu-title"><img src="' +
+      '<div class="menu-title"><div class="menu-logo"><img src="' +
       ArcadeLogo +
-      '" alt="Turf Burners Arcade"></div>';
+      '" alt="Turf Burners Arcade"></div><div class="menu-early-access">EARLY ACCESS</div></div>';
 
     function audioButton(
       action: "music" | "sound",
