@@ -2928,7 +2928,8 @@ async function start() {
       chain: new Set<string>(),
     };
   });
-  let aerialWindup = false;
+  let strikeWindup = false;
+  let windupBurn = false;
   const aerialApproach = new T.Vector3();
   const aerialContact = new T.Vector3();
   let blastShooter: typeof sean | null = null,
@@ -4696,7 +4697,8 @@ async function start() {
     curveRate = 0;
     burningBall.clear();
     jumps.clear();
-    aerialWindup = false;
+    strikeWindup = false;
+    windupBurn = false;
     blastShooter = null;
     blastFlying = false;
     impactTime = 0;
@@ -5810,34 +5812,8 @@ async function start() {
       actor.age = 0.12;
       actor.shooting = true;
       shotMultiplier = 1 + intent.power;
-      if (
-        style &&
-        !canBlast(actor) &&
-        !(crossingDrill && training.drill === aerialDrill)
-      ) {
-        held = false;
-        blastShooter = actor;
-        aerialWindup = true;
-        aerialApproach.copy(ball.position);
-        // Meet the ball at the striking pose instead of leaving it suspended.
-        const contactAge = style === "HEADER" ? 0.30 : 0.24;
-        const animationDuration = ["Pam", "José"].includes(actor.displayName)
-          ? headerAnimationSeconds
-          : 0.42;
-        const lift = Math.sin(Math.PI * contactAge / animationDuration) *
-          (style === "VOLLEY" ? 0.19 : 0.305);
-        const [fx, fz] = dirs[actor.face];
-        const length = Math.hypot(fx, fz);
-        const reach = style === "HEADER" ? 0.18 : 0.40;
-        aerialContact.set(
-          actor.sprite.position.x + fx / length * reach,
-          (style === "HEADER" ? 1.30 : style === "BICYCLE KICK" ? 1.05 : 0.40) + lift,
-          actor.sprite.position.z + fz / length * reach,
-        );
-        // This sequence supplies the jump, so do not stack a second jump on it.
-        jumps.delete(actor);
-        blastWindup = 0;
-        actor.age = 0;
+      if (style && !(crossingDrill && training.drill === aerialDrill)) {
+        beginStrikeWindup(actor, style, canBlast(actor));
       } else launchShot(actor);
     } else {
       if (
@@ -5855,18 +5831,43 @@ async function start() {
       }
     }
   }
+  function beginStrikeWindup(actor: typeof sean, style: string | null, burn: boolean) {
+    held = false;
+    inFlight = false;
+    blastShooter = actor;
+    strikeWindup = true;
+    windupBurn = burn;
+    aerialApproach.copy(ball.position);
+    // Aim the moving ball at the contact pose, then release it on that frame.
+    const contactAge = style === "HEADER" ? 0.30 : 0.24;
+    const animationDuration = ["Pam", "José"].includes(actor.displayName)
+      ? headerAnimationSeconds
+      : 0.42;
+    const lift = style
+      ? Math.sin(Math.PI * contactAge / animationDuration) *
+        (style === "VOLLEY" ? 0.19 : 0.305)
+      : 0;
+    const [fx, fz] = dirs[actor.face];
+    const length = Math.hypot(fx, fz);
+    const reach = style === "HEADER" ? 0.18 : 0.40;
+    aerialContact.set(
+      actor.sprite.position.x + fx / length * reach,
+      (style === "HEADER" ? 1.30 : style === "BICYCLE KICK" ? 1.05 : style ? 0.40 : restingHeight) + lift,
+      actor.sprite.position.z + fz / length * reach,
+    );
+    if (style) jumps.delete(actor);
+    blastWindup = 0;
+    actor.age = 0;
+    actor.shooting = true;
+  }
   function launchShot(shooter: (typeof players)[number], blast = false) {
     if (!blast && canBlast(shooter)) {
       shooter.face = facing(
         attackSign * fieldX - shooter.sprite.position.x,
         -shooter.sprite.position.z,
       );
-      held = false;
-      inFlight = false;
-      blastShooter = shooter;
-      blastWindup = 0;
-      shooter.age = 0;
-      shooter.shooting = true;
+      const style = aerial && players[aerial.index] === shooter ? aerial.style : null;
+      beginStrikeWindup(shooter, style, true);
       return;
     }
     tutorial?.record("shot");
@@ -6787,11 +6788,8 @@ async function start() {
     }
     if (inferno && best === -Infinity && !human) return false;
     if (!blast && meters[1].value === 100) {
-      blastShooter = carrier;
-      blastWindup = 0;
       carrier.face = facing(dx, -from.z);
-      carrier.shooting = true;
-      carrier.age = 0;
+      beginStrikeWindup(carrier, null, true);
       return true;
     }
     if (best === -Infinity && !blast && !human) return false;
@@ -10407,7 +10405,7 @@ async function start() {
     const elapsed = Math.max(0, now - (last ?? now)) / 1000,
       dt =
         Math.min(0.04, elapsed) *
-        (blastShooter ? (aerialWindup ? 0.25 : 0) : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
+        (blastShooter ? (strikeWindup ? 0.25 : 0) : impactTime > 0 ? 0.08 : celebrating ? 0.38 : 1) *
         (house?.config.speed ??
           (mysteryOn("turbo") ? 1.5 : mysteryOn("slowMotion") ? 0.65 : 1));
     last = now;
@@ -10567,8 +10565,9 @@ async function start() {
         blastWindup += Math.min(elapsed, 0.04);
         const progress = Math.min(1, blastWindup / 0.65);
         blastShooter.age = progress * 0.34;
-        if (aerialWindup && aerial) {
-          aerial.age = progress * (aerial.style === "HEADER" ? 0.30 : 0.24);
+        if (strikeWindup) {
+          if (aerial && players[aerial.index] === blastShooter)
+            aerial.age = progress * (aerial.style === "HEADER" ? 0.30 : 0.24);
           ball.position.lerpVectors(aerialApproach, aerialContact, progress);
           updateSpin();
           // Keep the surrounding action moving at quarter speed during contact.
@@ -10594,12 +10593,12 @@ async function start() {
         if (blastWindup >= 0.65) {
           const shooter = blastShooter;
           blastShooter = null;
-          audio.play("blast", aerialWindup ? 0.85 : 0.95);
-          if (aerialWindup) {
-            aerialWindup = false;
-            launchShot(shooter);
-          } else if (opponents.includes(shooter)) tryBlueShot(true);
-          else launchShot(shooter, true);
+          const burn = windupBurn;
+          strikeWindup = false;
+          windupBurn = false;
+          audio.play("blast", burn ? 0.95 : 0.85);
+          if (opponents.includes(shooter)) tryBlueShot(burn);
+          else launchShot(shooter, burn);
         }
       }
     }
@@ -13514,7 +13513,7 @@ async function start() {
     );
     if (!shot) blastFlying = false;
     for (const [i, ember] of flames.entries()) {
-      ember.visible = ((!!blastShooter && !aerialWindup) || blastFlying) && replay.cut < 0;
+      ember.visible = ((!!blastShooter && windupBurn) || blastFlying) && replay.cut < 0;
       if (!ember.visible) continue;
       if (blastShooter) {
         const angle = (i * Math.PI) / 6 + blastWindup * 9,
